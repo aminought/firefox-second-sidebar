@@ -10,6 +10,9 @@ export class WebPanel extends Browser {
    * @param {string} width
    * @param {boolean} loadOnStartup
    * @param {boolean} unloadOnClose
+   * @param {object} params
+   * @param {HTMLElement?} params.element
+   *
    */
   constructor(
     uuid,
@@ -18,9 +21,10 @@ export class WebPanel extends Browser {
     pinned = false,
     width = "400",
     loadOnStartup = false,
-    unloadOnClose = false
+    unloadOnClose = false,
+    { element } = {}
   ) {
-    super({ classList: ["web-panel"] });
+    super({ classList: ["web-panel"], element });
     this.setDisableGlobalHistory("true").setType("content").setRemote("true");
 
     this.uuid = uuid;

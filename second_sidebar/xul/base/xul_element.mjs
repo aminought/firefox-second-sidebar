@@ -1,11 +1,12 @@
 export class XULElement {
   /**
    *
-   * @param {string} tag
+   * @param {string?} tag
    * @param {object} params
    * @param {string?} params.id
    * @param {Array<string>} params.classList
-   * @param {function(string):any} params.create
+   * @param {function(string):HTMLElement} params.create
+   * @param {HTMLElement?} params.element
    */
   constructor(
     tag,
@@ -13,9 +14,10 @@ export class XULElement {
       id = null,
       classList = [],
       create = (tag) => document.createXULElement(tag),
+      element,
     } = {}
   ) {
-    this.element = create(tag);
+    this.element = element ?? create(tag);
     if (id !== null) {
       this.element.id = id;
     }

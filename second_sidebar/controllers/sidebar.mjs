@@ -27,7 +27,10 @@ export class SidebarController {
 
   #setupListeners() {
     this.onClickOutsideWhileUnpinned = (event) => {
-      if (!this.sidebarBox.element.contains(event.target)) {
+      if (
+        !this.sidebarBox.element.contains(event.target) &&
+        !["menuitem", "menupopup"].includes(event.target.tagName)
+      ) {
         this.close();
       }
     };

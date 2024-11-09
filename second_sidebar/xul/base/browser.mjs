@@ -6,9 +6,10 @@ export class Browser extends XULElement {
    * @param {object} params
    * @param {string?} params.id
    * @param {Array<string>} params.classList
+   * @param {HTMLElement?} params.element
    */
-  constructor({ id = null, classList = [] } = {}) {
-    super("browser", { id, classList });
+  constructor({ id = null, classList = [], element } = {}) {
+    super("browser", { id, classList, element });
   }
 
   /**
@@ -119,6 +120,26 @@ export class Browser extends XULElement {
    */
   addProgressListener(listener) {
     this.element.addProgressListener(listener, null);
+    return this;
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   * @returns {Browser}
+   */
+  setDocShellIsActive(value) {
+    this.element.docShellIsActive = value;
+    return this;
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   * @returns {Browser}
+   */
+  preserveLayers(value) {
+    this.element.preserveLayers(value);
     return this;
   }
 }

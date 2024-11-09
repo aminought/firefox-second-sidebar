@@ -4,6 +4,8 @@ import { WebPanelButton } from "../xul/web_panel_button.mjs";
 import { WebPanelButtons } from "../xul/web_panel_buttons.mjs";
 import { WebPanelController } from "./web_panel.mjs";
 import { WebPanelEditController } from "./web_panel_edit.mjs";
+import { WebPanelTab } from "../xul/web_panel_tab.mjs";
+import { WebPanelTabs } from "../xul/web_panel_tabs.mjs";
 import { WebPanels } from "../xul/web_panels.mjs";
 
 const PREF = "second-sidebar.web-panels";
@@ -13,10 +15,12 @@ export class WebPanelsController {
    *
    * @param {WebPanels} webPanels
    * @param {WebPanelButtons} webPanelButtons
+   * @param {WebPanelTabs} webPanelTabs
    */
-  constructor(webPanels, webPanelButtons) {
+  constructor(webPanels, webPanelButtons, webPanelTabs) {
     this.webPanels = webPanels;
     this.webPanelButtons = webPanelButtons;
+    this.webPanelTabs = webPanelTabs;
 
     /**@type {Array<WebPanelController>} */
     this.webPanelControllers = [];
@@ -71,17 +75,8 @@ export class WebPanelsController {
    * @param {WebPanel} webPanel
    * @returns {boolean}
    */
-  isWebPanelInjected(webPanel) {
-    return this.webPanels.contains(webPanel);
-  }
-
-  /**
-   *
-   * @param {WebPanel} webPanel
-   * @returns {boolean}
-   */
   injectWebPanel(webPanel) {
-    if (this.isWebPanelInjected(webPanel)) {
+    if (this.webPanels.contains(webPanel)) {
       return false;
     }
     this.webPanels.appendChild(webPanel);
@@ -93,19 +88,24 @@ export class WebPanelsController {
    * @param {WebPanelButton} webPanelButton
    * @returns {boolean}
    */
-  isWebPanelButtonInjected(webPanelButton) {
-    return this.webPanelButtons.contains(webPanelButton);
+  injectWebPanelButton(webPanelButton) {
+    if (this.webPanelButtons.contains(webPanelButton)) {
+      return false;
+    }
+    this.webPanelButtons.appendChild(webPanelButton);
+    return true;
   }
 
   /**
    *
-   * @param {WebPanelButton} webPanelButton
+   * @param {WebPanelTab} webPanelTab
+   * @returns {boolean}
    */
-  injectWebPanelButton(webPanelButton) {
-    if (this.isWebPanelButtonInjected(webPanelButton)) {
+  injectWebPanelTab(webPanelTab) {
+    if (this.webPanelTabs.contains(webPanelTab)) {
       return false;
     }
-    this.webPanelButtons.appendChild(webPanelButton);
+    this.webPanelTabs.appendChild(webPanelTab);
     return true;
   }
 
@@ -195,19 +195,66 @@ export class WebPanelsController {
 
   /**
    *
-   * @param {object} webPanelPref
+   * @param {string} url
+   * @returns {WebPanelTab}
+   */
+  makeWebPanelTab(url) {
+    return new WebPanelTab(url);
+  }
+
+  /**
+   *
+   * @param {object} params
+   * @param {string} params.uuid
+   * @param {string} params.url
+   * @param {string} params.faviconURL
+   * @param {boolean} params.pinned
+   * @param {string} params.width
+   * @param {boolean} params.loadOnStartup
+   * @param {boolean} params.unloadOnClose
+   * @param {HTMLElement?} params.browserXUL
    * @returns {WebPanel}
    */
-  #makeWebPanel(webPanelPref) {
+  makeWebPanel({
+    uuid,
+    url,
+    faviconURL,
+    pinned = false,
+    width = "400",
+    loadOnStartup = false,
+    unloadOnClose = false,
+    browserXUL,
+  }) {
     return new WebPanel(
-      webPanelPref.uuid ?? crypto.randomUUID(),
-      webPanelPref.url,
-      webPanelPref.faviconURL,
-      webPanelPref.pinned ?? true,
-      webPanelPref.width ?? "400",
-      webPanelPref.loadOnStartup ?? false,
-      webPanelPref.unloadOnClose ?? false
-    ).hide();
+      uuid,
+      url,
+      faviconURL,
+      pinned,
+      width,
+      loadOnStartup,
+      unloadOnClose,
+      { element: browserXUL }
+    );
+  }
+
+  /**
+   *
+   * @param {object} webPanelPref
+   * @param {object} params
+   * @param {HTMLElement} params.browserXUL
+   * @returns {WebPanel}
+   */
+  #makeWebPanelFromPref(webPanelPref, { browserXUL } = {}) {
+    return this.makeWebPanel({
+      uuid: webPanelPref.uuid ?? crypto.randomUUID(),
+      url: webPanelPref.url,
+      faviconURL: webPanelPref.faviconURL,
+      pinned: webPanelPref.pinned ?? true,
+      width: webPanelPref.width ?? "400",
+      loadOnStartup: webPanelPref.loadOnStartup ?? false,
+      unloadOnClose: webPanelPref.unloadOnClose ?? false,
+      browserXUL,
+    }).hide();
   }
 
   /**
@@ -215,7 +262,7 @@ export class WebPanelsController {
    * @param {WebPanel} webPanel
    * @returns {WebPanelButton}
    */
-  #makeWebPanelButton(webPanel) {
+  makeWebPanelButton(webPanel) {
     return new WebPanelButton(webPanel.uuid)
       .setIcon(webPanel.faviconURL)
       .setUnloaded(!webPanel.loadOnStartup);
@@ -225,29 +272,40 @@ export class WebPanelsController {
    *
    * @param {WebPanel} webPanel
    * @param {WebPanelButton} webPanelButton
+   * @param {WebPanelTab} webPanelTab
    * @returns {WebPanelController}
    */
-  #makeWebPanelController(webPanel, webPanelButton) {
-    return new WebPanelController(
+  #makeWebPanelController(webPanel, webPanelButton, webPanelTab) {
+    const webPanelController = new WebPanelController(
       webPanel,
       webPanelButton,
+      webPanelTab
+    );
+    webPanelController.setupDependencies(
       this,
       this.sidebarController,
       this.webPanelEditController
     );
+    return webPanelController;
   }
 
   load() {
     const prefs = JSON.parse(Services.prefs.getStringPref(PREF));
     for (const webPanelPref of prefs) {
-      const webPanel = this.#makeWebPanel(webPanelPref);
-      const webPanelButton = this.#makeWebPanelButton(webPanel);
+      const webPanelTab = this.makeWebPanelTab(webPanelPref.url);
+      const webPanel = this.#makeWebPanelFromPref(webPanelPref, {
+        browserXUL: webPanelTab.getBrowserXUL(),
+      });
+      const webPanelButton = this.makeWebPanelButton(webPanel);
+
       const webPanelController = this.#makeWebPanelController(
         webPanel,
-        webPanelButton
+        webPanelButton,
+        webPanelTab
       );
 
       if (webPanel.loadOnStartup) {
+        this.injectWebPanelTab(webPanelTab);
         this.injectWebPanel(webPanel);
         webPanelController.initWebPanel();
       }

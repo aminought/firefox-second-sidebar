@@ -75,18 +75,29 @@ export class WebPanelNewController {
     this.hidePopup();
 
     const faviconURL = await fetchIconURL(url);
-    const webPanel = new WebPanel(crypto.randomUUID(), url, faviconURL);
-    const webPanelButton = new WebPanelButton(webPanel.uuid).setIcon(
-      webPanel.faviconURL
-    );
+
+    const webPanelTab = this.webPanelsController.makeWebPanelTab(url);
+    const webPanel = this.webPanelsController.makeWebPanel({
+      uuid: crypto.randomUUID(),
+      url,
+      faviconURL,
+      browserXUL: webPanelTab.getBrowserXUL(),
+    });
+    const webPanelButton =
+      this.webPanelsController.makeWebPanelButton(webPanel);
+
     const webPanelController = new WebPanelController(
       webPanel,
       webPanelButton,
+      webPanelTab
+    );
+    webPanelController.setupDependencies(
       this.webPanelsController,
       this.sidebarController,
       this.webPanelEditController
     );
 
+    this.webPanelsController.injectWebPanelTab(webPanelTab);
     this.webPanelsController.injectWebPanel(webPanel);
     webPanelController.initWebPanel();
 
