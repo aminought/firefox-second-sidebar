@@ -98,8 +98,11 @@ export class SidebarToolbar extends Toolbar {
     const moreButton = new ToolbarButtonWithPopup({
       id: "sidebar-2-more-button",
       classList: ["sidebar-2-more-button"],
+    }).setAttributes({
+      image: ICONS.MORE,
       label: "More",
-    }).setIcon(ICONS.MORE);
+      tooltiptext: "More"
+    });
     return moreButton;
   }
 
