@@ -1,13 +1,16 @@
 import { HBox } from "./base/hbox.mjs";
 import { Label } from "./base/label.mjs";
+import { MenuItem } from "./base/menu_item.mjs";
 import { Toolbar } from "./base/toolbar.mjs";
 import { ToolbarButton } from "./base/toolbar_button.mjs";
+import { ToolbarButtonWithPopup } from "./base/toolbar_button_with_popup.mjs";
 
 const ICONS = {
   BACK: "chrome://browser/skin/back.svg",
   FORWARD: "chrome://browser/skin/forward.svg",
   RELOAD: "chrome://global/skin/icons/reload.svg",
   HOME: "chrome://browser/skin/home.svg",
+  MORE: "chrome://devtools/skin/images/more.svg",
   PINNED:
     "chrome://activity-stream/content/data/content/assets/glyph-unpin-16.svg",
   UNPINNED:
@@ -31,6 +34,11 @@ export class SidebarToolbar extends Toolbar {
     this.toolbarTitle = this.#createToolbarTitle();
 
     // Sidebar buttons
+    this.openInNewTabMenuitem = this.#createOpenInNewTabMenuitem();
+    this.copyPageUrlMenuitem = this.#createCopyPageUrlMenuitem();
+    this.moreButton = this.#createMorebutton();
+    this.moreButton.appendChildToPopup(this.openInNewTabMenuitem);
+    this.moreButton.appendChildToPopup(this.copyPageUrlMenuitem);
     this.pinButton = this.#createButton();
     this.closeButton = this.#createButton(ICONS.CLOSE);
     this.sidebarButtons = this.#createSidebarButtons();
@@ -72,12 +80,34 @@ export class SidebarToolbar extends Toolbar {
     return toolbarTitle;
   }
 
+  #createOpenInNewTabMenuitem () {
+    return new MenuItem().setAttributes({
+      label: "Open in New Tab",
+    });
+  }
+
+  #createCopyPageUrlMenuitem () {
+    return new MenuItem().setAttributes({
+      label: "Copy Page URL",
+    });
+  }
+
+  #createMorebutton () {
+    const moreButton = new ToolbarButtonWithPopup({
+      id: "sidebar-2-more-button",
+      classList: ["sidebar-2-more-button"],
+      label: "More",
+    }).setIcon(ICONS.MORE);
+    return moreButton;
+  }
+
   /**
    *
    * @returns {HBox}
    */
   #createSidebarButtons() {
     const toolbarButtons = new HBox({ id: "sidebar-2-toolbar-sidebar-buttons" })
+      .appendChild(this.moreButton)
       .appendChild(this.pinButton)
       .appendChild(this.closeButton);
 
@@ -93,6 +123,22 @@ export class SidebarToolbar extends Toolbar {
    */
   #addButtonClickListener(button, callback) {
     button.addEventListener("mousedown", (event) => {
+      if (event.button !== 0) {
+        return;
+      }
+      callback(event);
+    });
+    return this;
+  }
+
+  /**
+   *
+   * @param {MenuItem} button
+   * @param {function(MouseEvent):void} callback
+   * @returns {SidebarToolbar}
+   */
+  #addMenuitemClickListener (menuitem, callback) {
+    menuitem.addEventListener("mousedown", (event) => {
       if (event.button !== 0) {
         return;
       }
@@ -162,7 +208,25 @@ export class SidebarToolbar extends Toolbar {
    * @param {function(MouseEvent):void} callback
    * @returns {SidebarToolbar}
    */
-  listenPinButtonClick(callback) {
+  listenOpenInNewTabMeuitemClick (callback) {
+    return this.#addMenuitemClickListener(this.openInNewTabMenuitem, callback);
+  }
+
+  /**
+   *
+   * @param {function(MouseEvent):void} callback
+   * @returns {SidebarToolbar}
+   */
+  listenCopyPageUrlMenuitemClick (callback) {
+    return this.#addMenuitemClickListener(this.copyPageUrlMenuitem, callback);
+  }
+
+  /**
+   *
+   * @param {function(MouseEvent):void} callback
+   * @returns {SidebarToolbar}
+   */
+  listenPinButtonClick (callback) {
     return this.#addButtonClickListener(this.pinButton, callback);
   }
 

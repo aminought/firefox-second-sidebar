@@ -87,6 +87,18 @@ export class XULElement {
 
   /**
    *
+   * @param {object} attributes
+   * @returns {MenuItem}
+   */
+  setAttributes (attributes = {}) {
+    for (const [key, value] of Object.entries(attributes)) {
+      this.element.setAttribute(key, value);
+    }
+    return this;
+  }
+
+  /**
+   *
    * @param {string} name
    * @returns {string|number}
    */
