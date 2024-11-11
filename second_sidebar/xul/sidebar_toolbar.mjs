@@ -49,7 +49,7 @@ export class SidebarToolbar extends Toolbar {
    * @param {string?} iconUrl
    * @returns {ToolbarButton}
    */
-  #createButton(iconUrl = null) {
+  #createButton (iconUrl = null) {
     return new ToolbarButton({
       classList: ["sidebar-2-toolbar-button"],
     }).setIcon(iconUrl);
@@ -59,7 +59,7 @@ export class SidebarToolbar extends Toolbar {
    *
    * @returns {HBox}
    */
-  #createNavButtons() {
+  #createNavButtons () {
     const toolbarButtons = new HBox({ id: "sidebar-2-toolbar-nav-buttons" })
       .appendChild(this.backButton)
       .appendChild(this.forwardButton)
@@ -74,7 +74,7 @@ export class SidebarToolbar extends Toolbar {
    *
    * @returns {Label}
    */
-  #createToolbarTitle() {
+  #createToolbarTitle () {
     const toolbarTitle = new Label({ id: "sidebar-2-toolbar-title" });
     this.appendChild(toolbarTitle);
     return toolbarTitle;
@@ -83,12 +83,14 @@ export class SidebarToolbar extends Toolbar {
   #createOpenInNewTabMenuitem () {
     return new MenuItem().setAttributes({
       label: "Open in New Tab",
+      accesskey: 'O'
     });
   }
 
   #createCopyPageUrlMenuitem () {
     return new MenuItem().setAttributes({
       label: "Copy Page URL",
+      accesskey: 'C'
     });
   }
 
@@ -105,7 +107,7 @@ export class SidebarToolbar extends Toolbar {
    *
    * @returns {HBox}
    */
-  #createSidebarButtons() {
+  #createSidebarButtons () {
     const toolbarButtons = new HBox({ id: "sidebar-2-toolbar-sidebar-buttons" })
       .appendChild(this.moreButton)
       .appendChild(this.pinButton)
@@ -121,7 +123,7 @@ export class SidebarToolbar extends Toolbar {
    * @param {function(MouseEvent):void} callback
    * @returns {SidebarToolbar}
    */
-  #addButtonClickListener(button, callback) {
+  #addButtonClickListener (button, callback) {
     button.addEventListener("mousedown", (event) => {
       if (event.button !== 0) {
         return;
@@ -152,7 +154,7 @@ export class SidebarToolbar extends Toolbar {
    * @param {string} title
    * @returns {SidebarToolbar}
    */
-  setTitle(title) {
+  setTitle (title) {
     this.toolbarTitle.setText(title);
     return this;
   }
@@ -162,7 +164,7 @@ export class SidebarToolbar extends Toolbar {
    * @param {boolean} pinned
    * @returns {SidebarToolbar}
    */
-  setPinButtonIcon(pinned) {
+  setPinButtonIcon (pinned) {
     this.pinButton.setIcon(pinned ? ICONS.PINNED : ICONS.UNPINNED);
     return this;
   }
@@ -172,7 +174,7 @@ export class SidebarToolbar extends Toolbar {
    * @param {function(MouseEvent):void} callback
    * @returns {SidebarToolbar}
    */
-  listenBackButtonClick(callback) {
+  listenBackButtonClick (callback) {
     return this.#addButtonClickListener(this.backButton, callback);
   }
 
@@ -181,7 +183,7 @@ export class SidebarToolbar extends Toolbar {
    * @param {function(MouseEvent):void} callback
    * @returns {SidebarToolbar}
    */
-  listenForwardButtonClick(callback) {
+  listenForwardButtonClick (callback) {
     return this.#addButtonClickListener(this.forwardButton, callback);
   }
 
@@ -190,7 +192,7 @@ export class SidebarToolbar extends Toolbar {
    * @param {function(MouseEvent):void} callback
    * @returns {SidebarToolbar}
    */
-  listenReloadButtonClick(callback) {
+  listenReloadButtonClick (callback) {
     return this.#addButtonClickListener(this.reloadButton, callback);
   }
 
@@ -199,7 +201,7 @@ export class SidebarToolbar extends Toolbar {
    * @param {function(MouseEvent):void} callback
    * @returns {SidebarToolbar}
    */
-  listenHomeButtonClick(callback) {
+  listenHomeButtonClick (callback) {
     return this.#addButtonClickListener(this.homeButton, callback);
   }
 
@@ -235,7 +237,7 @@ export class SidebarToolbar extends Toolbar {
    * @param {function(MouseEvent):void} callback
    * @returns {SidebarToolbar}
    */
-  listenCloseButtonClick(callback) {
+  listenCloseButtonClick (callback) {
     return this.#addButtonClickListener(this.closeButton, callback);
   }
 }
