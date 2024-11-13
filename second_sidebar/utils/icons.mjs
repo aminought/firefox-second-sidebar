@@ -1,6 +1,8 @@
 const PREDEFINED_ICONS = {
   "about:newtab": "chrome://browser/skin/tab.svg",
-
+  "about:debugging": "chrome://global/skin/icons/developer.svg",
+  "about:config": "chrome://global/skin/icons/settings.svg",
+  "about:processes": "chrome://global/skin/icons/performance.svg",
   "about:settings": "chrome://global/skin/icons/settings.svg",
   "about:preferences": "chrome://global/skin/icons/settings.svg",
   "chrome://browser/content/preferences/preferences.xhtml":
