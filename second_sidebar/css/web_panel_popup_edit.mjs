@@ -19,7 +19,7 @@ export const WEB_PANEL_POPUP_EDIT_CSS = `
     background-repeat: no-repeat;
   }
 
-  .sidebar-2-web-panel-popup-edit-toggle-group {
+  .sidebar-2-web-panel-popup-edit-group {
     justify-content: space-between;
     align-items: center;
     width: 100%;

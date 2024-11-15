@@ -1,9 +1,11 @@
 import { Button } from "./base/button.mjs";
 import { HBox } from "./base/hbox.mjs";
 import { Header } from "./base/header.mjs";
+import { MenuList } from "./base/menulist.mjs";
 import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";
 import { ToolbarSeparator } from "./base/toolbar_separator.mjs";
+import { XULElement } from "./base/xul_element.mjs";
 
 export class SidebarMainPopupSettings extends Panel {
   constructor() {
@@ -22,19 +24,32 @@ export class SidebarMainPopupSettings extends Panel {
       id: "sidebar-2-main-popup-settings-buttons",
     });
 
+    this.positionMenuList = this.#createPositionMenuList();
+    this.positionGroup = this.#createGroup(
+      this.positionMenuList,
+      "Sidebar position"
+    );
+
     this.autoHideBackToggle = this.#createToggle();
-    this.autoHideBackToggleGroup = this.#createToggleGroup(
+    this.autoHideBackGroup = this.#createGroup(
       this.autoHideBackToggle,
       "Auto hide back button"
     );
     this.autoHideForwardToggle = this.#createToggle();
-    this.autoHideForwardToggleGroup = this.#createToggleGroup(
+    this.autoHideForwardGroup = this.#createGroup(
       this.autoHideForwardToggle,
       "Auto hide forward button"
     );
     this.multiView = this.#createMultiView();
 
     this.addEventListener("popupshown", () => {});
+  }
+
+  #createPositionMenuList() {
+    const positionMenuList = new MenuList();
+    positionMenuList.appendItem("Left", "left");
+    positionMenuList.appendItem("Right", "right");
+    return positionMenuList;
   }
 
   /**
@@ -60,16 +75,16 @@ export class SidebarMainPopupSettings extends Panel {
 
   /**
    *
-   * @param {Button} toggle
+   * @param {XULElement} element
    * @param {string} text
    * @returns {HBox}
    */
-  #createToggleGroup(toggle, text) {
+  #createGroup(element, text) {
     const box = new HBox({
-      classList: ["sidebar-2-web-panel-popup-edit-toggle-group"],
+      classList: ["sidebar-2-web-panel-popup-edit-group"],
     });
     const label = new Header(1).setText(text);
-    box.appendChildren(label, toggle);
+    box.appendChildren(label, element);
     return box;
   }
 
@@ -85,8 +100,9 @@ export class SidebarMainPopupSettings extends Panel {
     }).appendChildren(
       this.panelHeader,
       new ToolbarSeparator(),
-      this.autoHideBackToggleGroup,
-      this.autoHideForwardToggleGroup,
+      this.positionGroup,
+      this.autoHideBackGroup,
+      this.autoHideForwardGroup,
       this.buttons
     );
 
@@ -113,9 +129,10 @@ export class SidebarMainPopupSettings extends Panel {
       if (event.button !== 0) {
         return;
       }
+      const position = this.positionMenuList.getValue();
       const autoHideBackButton = this.autoHideBackToggle.getPressed();
       const autoHideForwardButton = this.autoHideForwardToggle.getPressed();
-      callback(autoHideBackButton, autoHideForwardButton);
+      callback(position, autoHideBackButton, autoHideForwardButton);
     });
   }
 
@@ -142,10 +159,12 @@ export class SidebarMainPopupSettings extends Panel {
 
   /**
    *
+   * @param {string} position
    * @param {boolean} autoHideBackButton
    * @param {boolean} autoHideForwardButton
    */
-  setDefaults(autoHideBackButton, autoHideForwardButton) {
+  setDefaults(position, autoHideBackButton, autoHideForwardButton) {
+    this.positionMenuList.setValue(position);
     this.autoHideBackToggle.setPressed(autoHideBackButton);
     this.autoHideForwardToggle.setPressed(autoHideForwardButton);
   }

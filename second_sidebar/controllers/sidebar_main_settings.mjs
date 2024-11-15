@@ -26,7 +26,8 @@ export class SidebarMainSettingsController {
     });
 
     this.sidebarMainPopupSettings.listenSaveButtonClick(
-      (autoHideBackButton, autoHideForwardButton) => {
+      (position, autoHideBackButton, autoHideForwardButton) => {
+        this.sidebarController.setPosition(position);
         this.sidebarController.autoHideBackButton = autoHideBackButton;
         this.sidebarController.autoHideForwardButton = autoHideForwardButton;
         this.sidebarController.savePref();
@@ -43,6 +44,7 @@ export class SidebarMainSettingsController {
   openPopup(screenX, screenY) {
     this.sidebarMainPopupSettings.openPopupAtScreen(screenX, screenY);
     this.sidebarMainPopupSettings.setDefaults(
+      this.sidebarController.getPosition(),
       this.sidebarController.autoHideBackButton,
       this.sidebarController.autoHideForwardButton
     );
