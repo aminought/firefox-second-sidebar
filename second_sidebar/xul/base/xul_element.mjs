@@ -133,24 +133,6 @@ export class XULElement {
 
   /**
    *
-   * @param {number} screenX
-   * @param {number} screenY
-   * @returns {boolean}
-   */
-  isInside(screenX, screenY) {
-    const rect = this.getBoundingClientRect();
-    const windowScreenX = window.screenX + window.screenEdgeSlopX;
-    const windowScreenY = window.screenY + window.screenEdgeSlopY;
-    return (
-      screenX >= windowScreenX + rect.left &&
-      screenX <= windowScreenX + rect.right &&
-      screenY >= windowScreenY + rect.top &&
-      screenY <= windowScreenY + rect.bottom
-    );
-  }
-
-  /**
-   *
    * @returns {XULElement}
    */
   focus() {

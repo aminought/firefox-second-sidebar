@@ -36,8 +36,8 @@ export class SidebarController {
     /** @param {MouseEvent} event */
     this.onClickOutsideWhileUnpinned = (event) => {
       if (
-        !this.sidebar.isInside(event.screenX, event.screenY) &&
-        !this.sidebarSplitterUnpinned.isInside(event.screenX, event.screenY) &&
+        !this.sidebar.getXUL().contains(event.target) &&
+        !this.sidebarSplitterUnpinned.getXUL().contains(event.target) &&
         !["menuitem", "menupopup"].includes(event.target.tagName)
       ) {
         this.close();

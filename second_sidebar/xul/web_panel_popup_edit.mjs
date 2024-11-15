@@ -242,7 +242,7 @@ export class WebPanelPopupEdit extends Panel {
    */
   #createToggleGroup(toggle, text) {
     const box = new HBox({
-      classList: ["sidebar-2-web-panel-popup-edit-toggle-group"],
+      classList: ["sidebar-2-popup-group"],
     });
     const label = new Header(1).setText(text);
     box.appendChildren(label, toggle);

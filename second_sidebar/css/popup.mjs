@@ -19,6 +19,12 @@ export const POPUP_CSS = `
       .sidebar-2-popup-button.subviewbutton-iconic .toolbarbutton-text {
         display: none;
       }
+
+      .sidebar-2-popup-group {
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+      }
     }
   }
 `;

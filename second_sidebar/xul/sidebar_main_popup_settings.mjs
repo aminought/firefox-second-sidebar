@@ -81,7 +81,7 @@ export class SidebarMainPopupSettings extends Panel {
    */
   #createGroup(element, text) {
     const box = new HBox({
-      classList: ["sidebar-2-web-panel-popup-edit-group"],
+      classList: ["sidebar-2-popup-group"],
     });
     const label = new Header(1).setText(text);
     box.appendChildren(label, element);
