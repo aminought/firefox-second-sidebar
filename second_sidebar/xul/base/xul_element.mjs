@@ -139,11 +139,13 @@ export class XULElement {
    */
   isInside(screenX, screenY) {
     const rect = this.getBoundingClientRect();
+    const windowScreenX = window.screenX + window.screenEdgeSlopX;
+    const windowScreenY = window.screenY + window.screenEdgeSlopY;
     return (
-      screenX >= window.screenX + rect.left &&
-      screenX <= window.screenX + rect.right &&
-      screenY >= window.screenY + rect.top &&
-      screenY <= window.screenY + rect.bottom
+      screenX >= windowScreenX + rect.left &&
+      screenX <= windowScreenX + rect.right &&
+      screenY >= windowScreenY + rect.top &&
+      screenY <= windowScreenY + rect.bottom
     );
   }
 
