@@ -11,17 +11,24 @@ export const SIDEBAR_CSS = `
     #sidebar-2-toolbar {
       display: flex;
       flex-direction: row;
+      min-height: unset;
       gap: 4px;
-      padding: 4px 0;
       background-color: var(--toolbar-bgcolor);
       color: var(--toolbar-color);
 
-      #sidebar-2-toolbar-title {
+      #sidebar-2-toolbar-title-wrapper {
         display: flex;
+        justify-content: center;
         align-items: center;
-        width: 100%;
+        flex: 1;
         overflow: hidden;
+      }
+
+      #sidebar-2-toolbar-title {
+        overflow: hidden;
+        text-overflow: ellipsis;
         white-space: nowrap;
+        margin: 0;
       }
 
       #sidebar-2-pin-button {

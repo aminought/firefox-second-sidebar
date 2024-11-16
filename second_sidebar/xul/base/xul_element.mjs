@@ -137,11 +137,28 @@ export class XULElement {
 
   /**
    *
+   * @returns {DOMRect}
+   */
+  getBoundingClientRect() {
+    return this.element.getBoundingClientRect();
+  }
+
+  /**
+   *
    * @returns {XULElement}
    */
   focus() {
     this.element.focus();
     return this;
+  }
+
+  /**
+   *
+   * @param {string} context
+   * @returns {XULElement}
+   */
+  setContext(context) {
+    return this.setAttribute("context", context);
   }
 
   /**

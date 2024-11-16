@@ -51,6 +51,17 @@ export class Panel extends XULElement {
 
   /**
    *
+   * @param {number} screenX
+   * @param {number} screenY
+   * @returns {Panel}
+   */
+  openPopupAtScreen(screenX, screenY) {
+    this.element.openPopupAtScreen(screenX, screenY);
+    return this;
+  }
+
+  /**
+   *
    * @returns {boolean}
    */
   isPanelOpen() {

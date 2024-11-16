@@ -47,6 +47,7 @@ export class Browser extends XULElement {
     try {
       return this.element.canGoBack;
     } catch (error) {
+      console.log("Failed to get canGoBack:", error);
       return false;
     }
   }
@@ -68,6 +69,7 @@ export class Browser extends XULElement {
     try {
       return this.element.canGoForward;
     } catch (error) {
+      console.log("Failed to get canForward:", error);
       return false;
     }
   }
@@ -97,9 +99,7 @@ export class Browser extends XULElement {
    */
   go(url) {
     this.element.loadURI(NetUtil.newURI(url), {
-      triggeringPrincipal: Services.scriptSecurityManager.createNullPrincipal(
-        {}
-      ),
+      triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal(),
     });
 
     return this;
@@ -140,6 +140,19 @@ export class Browser extends XULElement {
    */
   preserveLayers(value) {
     this.element.preserveLayers(value);
+    return this;
+  }
+
+  /**
+   *
+   * @param {string} userAgent
+   * @returns {Browser}
+   */
+  setCustomUserAgent(userAgent) {
+    const browsingContext = this.element.browsingContext;
+    if (browsingContext && userAgent !== browsingContext.customUserAgent) {
+      browsingContext.customUserAgent = userAgent;
+    }
     return this;
   }
 }

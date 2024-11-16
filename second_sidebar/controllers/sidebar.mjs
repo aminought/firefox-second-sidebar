@@ -1,5 +1,7 @@
+import { Settings } from "../settings.mjs";
 import { Sidebar } from "../xul/sidebar.mjs";
 import { SidebarBox } from "../xul/sidebar_box.mjs";
+import { SidebarSplitterUnpinned } from "../xul/sidebar_splitter_unpinned.mjs";
 import { SidebarToolbar } from "../xul/sidebar_toolbar.mjs";
 import { WebPanelsController } from "./web_panels.mjs";
 
@@ -9,12 +11,17 @@ export class SidebarController {
    * @param {SidebarBox} sidebarBox
    * @param {Sidebar} sidebar
    * @param {SidebarToolbar} sidebarToolbar
+   * @param {SidebarSplitterUnpinned} sidebarSplitterUnpinned
    */
-  constructor(sidebarBox, sidebar, sidebarToolbar) {
+  constructor(sidebarBox, sidebar, sidebarToolbar, sidebarSplitterUnpinned) {
     this.sidebarBox = sidebarBox;
     this.sidebar = sidebar;
     this.sidebarToolbar = sidebarToolbar;
+    this.sidebarSplitterUnpinned = sidebarSplitterUnpinned;
     this.#setupListeners();
+
+    this.autoHideBackButton = false;
+    this.autoHideForwardButton = false;
   }
 
   /**
@@ -26,10 +33,15 @@ export class SidebarController {
   }
 
   #setupListeners() {
+    /** @param {MouseEvent} event */
     this.onClickOutsideWhileUnpinned = (event) => {
       if (
-        !this.sidebarBox.element.contains(event.target) &&
-        !["menuitem", "menupopup"].includes(event.target.tagName)
+        !this.sidebar.getXUL().contains(event.target) &&
+        !this.sidebarSplitterUnpinned.getXUL().contains(event.target) &&
+        !["menuitem", "menupopup"].includes(event.target.tagName) &&
+        (document.contains(event.target) ||
+          event.target.baseURI ===
+            "chrome://browser/content/webext-panels.xhtml")
       ) {
         this.close();
       }
@@ -56,7 +68,7 @@ export class SidebarController {
       addNavButtonListener(event, (webPanel) => webPanel.goHome());
     });
 
-    this.sidebarToolbar.listenPinButtonClick((event) => {
+    this.sidebarToolbar.listenPinButtonClick(() => {
       const webPanelController = this.webPanelsController.getActive();
       if (webPanelController.pinned()) {
         webPanelController.unpin();
@@ -131,7 +143,9 @@ export class SidebarController {
    * @param {boolean} value
    */
   setToolbarBackButtonDisabled(value) {
-    this.sidebarToolbar.backButton.setDisabled(value);
+    const button = this.sidebarToolbar.backButton;
+    button.setDisabled(value);
+    value && this.autoHideBackButton ? button.hide() : button.show();
   }
 
   /**
@@ -139,7 +153,9 @@ export class SidebarController {
    * @param {boolean} value
    */
   setToolbarForwardButtonDisabled(value) {
-    this.sidebarToolbar.forwardButton.setDisabled(value);
+    const button = this.sidebarToolbar.forwardButton;
+    button.setDisabled(value);
+    value && this.autoHideForwardButton ? button.hide() : button.show();
   }
 
   /**
@@ -165,5 +181,42 @@ export class SidebarController {
    */
   getSidebarBoxWidth() {
     return this.sidebarBox.getWidth();
+  }
+
+  /**
+   *
+   * @param {string} position
+   */
+  setPosition(position) {
+    this.sidebar.setPosition(position);
+  }
+
+  /**
+   *
+   * @returns {string}
+   */
+  getPosition() {
+    return this.sidebar.getPosition();
+  }
+
+  /**
+   *
+   * @param {Object | null} sidebarSettingsPref
+   */
+  loadPref(sidebarSettingsPref) {
+    sidebarSettingsPref ??= {};
+    this.setPosition(sidebarSettingsPref.position ?? "right");
+    this.autoHideBackButton = sidebarSettingsPref.autoHideBackButton ?? false;
+    this.autoHideForwardButton =
+      sidebarSettingsPref.autoHideForwardButton ?? false;
+  }
+
+  savePref() {
+    const sidebarSettingsPref = {
+      position: this.getPosition(),
+      autoHideBackButton: this.autoHideBackButton,
+      autoHideForwardButton: this.autoHideForwardButton,
+    };
+    Settings.saveSidebarSettingsPref(sidebarSettingsPref);
   }
 }

@@ -31,7 +31,7 @@ export class SidebarSplittersController {
       this.sidebarController.setWidth(width);
       const webPanelController = this.webPanelsController.getActive();
       webPanelController.setWidth(width);
-      this.webPanelsController.save();
+      this.webPanelsController.savePref();
     });
 
     this.sidebarSplitterPinned.listenWidthChange(() => {
@@ -39,7 +39,7 @@ export class SidebarSplittersController {
       this.sidebarController.setWidth(width);
       const webPanelController = this.webPanelsController.getActive();
       webPanelController.setWidth(width);
-      this.webPanelsController.save();
+      this.webPanelsController.savePref();
     });
   }
 }

@@ -11,6 +11,7 @@ export class WebPanelButton extends ToolbarButton {
     this.uuid = uuid;
 
     this.playingIcon = null;
+    this.setContext("");
   }
 
   /**

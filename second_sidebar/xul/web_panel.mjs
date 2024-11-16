@@ -1,6 +1,8 @@
 import { Browser } from "./base/browser.mjs";
 import { WebPanelTab } from "./web_panel_tab.mjs";
 
+const MOBILE_USER_AGENT = "Mozilla/5.0 (Linux; Android 11; SAMSUNG SM-G973U) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/14.2 Chrome/87.0.4280.141 Mobile Safari/537.36";
+
 /**
  *
  * @param {WebPanelTab} webPanelTab
@@ -20,6 +22,7 @@ export class WebPanel extends Browser {
    * @param {string} faviconURL
    * @param {boolean} pinned
    * @param {string} width
+   * @param {boolean} mobile
    * @param {boolean} loadOnStartup
    * @param {boolean} unloadOnClose
    * @param {object} params
@@ -32,6 +35,7 @@ export class WebPanel extends Browser {
     faviconURL,
     pinned,
     width,
+    mobile,
     loadOnStartup,
     unloadOnClose
   ) {
@@ -49,6 +53,7 @@ export class WebPanel extends Browser {
     this.faviconURL = faviconURL;
     this.pinned = pinned;
     this.width = width;
+    this.mobile = mobile;
     this.loadOnStartup = loadOnStartup;
     this.unloadOnClose = unloadOnClose;
 
@@ -62,6 +67,14 @@ export class WebPanel extends Browser {
    */
   setUUID(uuid) {
     return this.setAttribute("uuid", uuid);
+  }
+
+  /**
+   *
+   * @returns {WebPanel}
+   */
+  updateUserAgent() {
+    return this.setCustomUserAgent(this.mobile ? MOBILE_USER_AGENT : "");
   }
 
   /**
@@ -110,6 +123,7 @@ export class WebPanel extends Browser {
    * @returns {WebPanel}
    */
   goHome() {
+    this.updateUserAgent();
     return this.go(this.url);
   }
 }

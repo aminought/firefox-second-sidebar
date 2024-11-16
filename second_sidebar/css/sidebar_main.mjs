@@ -3,9 +3,16 @@ export const SIDEBAR_MAIN_CSS = `
     display: flex;
     flex-direction: column;
     gap: 8px;
-    order: 7;
     overflow: scroll;
     padding: 0 var(--space-small) 0 var(--space-small);
+  }
+
+  #browser:has(#sidebar-2[position="right"]) #sidebar-2-main {
+    order: 7 !important;
+  }
+
+  #browser:has(#sidebar-2[position="left"]) #sidebar-2-main {
+    order: -3 !important;
   }
 
   #sidebar-2-main-web-panel-buttons {

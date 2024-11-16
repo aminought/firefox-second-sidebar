@@ -1,3 +1,4 @@
+import { Div } from "./base/div.mjs";
 import { HBox } from "./base/hbox.mjs";
 import { Label } from "./base/label.mjs";
 import { MenuItem } from "./base/menu_item.mjs";
@@ -76,7 +77,11 @@ export class SidebarToolbar extends Toolbar {
    */
   #createToolbarTitle () {
     const toolbarTitle = new Label({ id: "sidebar-2-toolbar-title" });
-    this.appendChild(toolbarTitle);
+    const toolbarTitleWrapper = new Div({
+      id: "sidebar-2-toolbar-title-wrapper",
+    });
+    toolbarTitleWrapper.appendChild(toolbarTitle);
+    this.appendChild(toolbarTitleWrapper);
     return toolbarTitle;
   }
 

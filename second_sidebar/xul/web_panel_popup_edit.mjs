@@ -39,11 +39,23 @@ export class WebPanelPopupEdit extends Panel {
       id: "sidebar-2-web-panel-popup-edit-storage-buttons",
     });
 
-    this.loadOnStartupToggle = this.#createLoadOnStartupToggle();
-    this.loadOnStartupGroup = this.#createLoadOnStartupGroup();
+    this.mobileToggle = this.#createToggle();
+    this.mobileGroup = this.#createToggleGroup(
+      this.mobileToggle,
+      "Use mobile User Agent"
+    );
 
-    this.unloadOnCloseToggle = this.#createUnloadOnCloseToggle();
-    this.unloadOnCloseGroup = this.#createUnloadOnCloseGroup();
+    this.loadOnStartupToggle = this.#createToggle();
+    this.loadOnStartupGroup = this.#createToggleGroup(
+      this.loadOnStartupToggle,
+      "Load into memory at startup"
+    );
+
+    this.unloadOnCloseToggle = this.#createToggle();
+    this.unloadOnCloseGroup = this.#createToggleGroup(
+      this.unloadOnCloseToggle,
+      "Unload from memory after closing"
+    );
 
     this.buttonsRow = this.#createButtonsRow();
     this.multiView = this.#createMultiView();
@@ -120,6 +132,7 @@ export class WebPanelPopupEdit extends Panel {
       .appendChild(this.urlInput)
       .appendChild(this.faviconURLInputHeader)
       .appendChild(this.faviconRow)
+      .appendChild(this.mobileGroup)
       .appendChild(this.loadOnStartupGroup)
       .appendChild(this.unloadOnCloseGroup)
       .appendChild(this.buttonsRow);
@@ -204,7 +217,7 @@ export class WebPanelPopupEdit extends Panel {
    *
    * @returns {Button}
    */
-  #createLoadOnStartupToggle() {
+  #createToggle() {
     const button = new Button({
       id: "moz-toggle-button",
       classList: ["toggle-button"],
@@ -223,48 +236,16 @@ export class WebPanelPopupEdit extends Panel {
 
   /**
    *
+   * @param {Button} toggle
+   * @param {string} text
    * @returns {HBox}
    */
-  #createLoadOnStartupGroup() {
+  #createToggleGroup(toggle, text) {
     const box = new HBox({
-      classList: ["sidebar-2-web-panel-popup-edit-toggle-group"],
+      classList: ["sidebar-2-popup-group"],
     });
-    const label = new Header(1).setText("Load into memory at startup");
-    box.appendChild(label).appendChild(this.loadOnStartupToggle);
-    return box;
-  }
-
-  /**
-   *
-   * @returns {Button}
-   */
-  #createUnloadOnCloseToggle() {
-    const button = new Button({
-      id: "moz-toggle-button",
-      classList: ["toggle-button"],
-    });
-    button.setAttribute("part", "button");
-    button.setAttribute("type", "button");
-
-    button.addEventListener("click", (event) => {
-      if (event.button === 0) {
-        button.setPressed(!button.getPressed());
-      }
-    });
-
-    return button;
-  }
-
-  /**
-   *
-   * @returns {HBox}
-   */
-  #createUnloadOnCloseGroup() {
-    const box = new HBox({
-      classList: ["sidebar-2-web-panel-popup-edit-toggle-group"],
-    });
-    const label = new Header(1).setText("Unload from memory after closing");
-    box.appendChild(label).appendChild(this.unloadOnCloseToggle);
+    const label = new Header(1).setText(text);
+    box.appendChildren(label, toggle);
     return box;
   }
 
@@ -280,7 +261,7 @@ export class WebPanelPopupEdit extends Panel {
 
   /**
    *
-   * @param {function(string, string, string, boolean, boolean):void} callback
+   * @param {function(string, string, string, boolean, boolean, boolean):void} callback
    */
   listenSaveButtonClick(callback) {
     this.saveButton.addEventListener("mousedown", (event) => {
@@ -290,10 +271,18 @@ export class WebPanelPopupEdit extends Panel {
 
       const url = this.urlInput.getValue();
       const faviconURL = this.faviconURLInput.getValue();
+      const mobile = this.mobileToggle.getPressed();
       const loadOnStartup = this.loadOnStartupToggle.getPressed();
       const unloadOnClose = this.unloadOnCloseToggle.getPressed();
 
-      callback(this.uuid, url, faviconURL, loadOnStartup, unloadOnClose);
+      callback(
+        this.uuid,
+        url,
+        faviconURL,
+        mobile,
+        loadOnStartup,
+        unloadOnClose
+      );
     });
   }
 
@@ -323,6 +312,7 @@ export class WebPanelPopupEdit extends Panel {
    * @param {string} uuid
    * @param {string} url
    * @param {string} faviconURL
+   * @param {boolean} mobile
    * @param {boolean} loadOnStartup
    * @param {boolean} unloadOnClose
    * @param {boolean} isFirst
@@ -332,6 +322,7 @@ export class WebPanelPopupEdit extends Panel {
     uuid,
     url,
     faviconURL,
+    mobile,
     loadOnStartup,
     unloadOnClose,
     isFirst,
@@ -340,6 +331,7 @@ export class WebPanelPopupEdit extends Panel {
     this.uuid = uuid;
     this.urlInput.setValue(url);
     this.faviconURLInput.setValue(faviconURL).setBackgroundImage(faviconURL);
+    this.mobileToggle.setPressed(mobile);
     this.loadOnStartupToggle.setPressed(loadOnStartup);
     this.unloadOnCloseToggle.setPressed(unloadOnClose);
     this.moveUpButton.setDisabled(isFirst);

@@ -8,7 +8,7 @@ export class WebPanelNewButton extends ToolbarButton {
       classList: ["sidebar-2-main-button"],
     });
 
-    this.setIcon(ICON).setBadged("false");
+    this.setIcon(ICON).setBadged("false").setContext("");
   }
 
   /**

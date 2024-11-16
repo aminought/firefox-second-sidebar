@@ -1,3 +1,4 @@
+import { Settings } from "../settings.mjs";
 import { SidebarController } from "./sidebar.mjs";
 import { WebPanel } from "../xul/web_panel.mjs";
 import { WebPanelButton } from "../xul/web_panel_button.mjs";
@@ -211,6 +212,7 @@ export class WebPanelsController {
    * @param {object} params
    * @param {boolean} params.pinned
    * @param {string} params.width
+   * @param {boolean} params.mobile
    * @param {boolean} params.loadOnStartup
    * @param {boolean} params.unloadOnClose
    * @returns {WebPanel}
@@ -223,6 +225,7 @@ export class WebPanelsController {
     {
       pinned = false,
       width = "400",
+      mobile = false,
       loadOnStartup = false,
       unloadOnClose = false,
     } = {}
@@ -234,6 +237,7 @@ export class WebPanelsController {
       faviconURL,
       pinned,
       width,
+      mobile,
       loadOnStartup,
       unloadOnClose
     );
@@ -254,6 +258,7 @@ export class WebPanelsController {
       {
         pinned: webPanelPref.pinned ?? true,
         width: webPanelPref.width ?? "400",
+        mobile: webPanelPref.mobile ?? false,
         loadOnStartup: webPanelPref.loadOnStartup ?? false,
         unloadOnClose: webPanelPref.unloadOnClose ?? false,
         webPanelTab,
@@ -293,11 +298,12 @@ export class WebPanelsController {
     return webPanelController;
   }
 
-  load() {
-    const prefs = Services.prefs.prefHasUserValue(PREF)
-      ? JSON.parse(Services.prefs.getStringPref(PREF))
-      : [];
-    for (const webPanelPref of prefs) {
+  /**
+   *
+   * @param {Array<Object> | null} webPanelsPref
+   */
+  loadPref(webPanelsPref) {
+    for (const webPanelPref of webPanelsPref ?? []) {
       const webPanelTab = this.makeWebPanelTab(webPanelPref.uuid);
       const webPanel = this.#makeWebPanelFromPref(webPanelPref, webPanelTab);
 
@@ -322,21 +328,21 @@ export class WebPanelsController {
     }
   }
 
-  save() {
-    const prefs = [];
+  savePref() {
+    const webPanelsPref = [];
     for (const webPanelController of this.webPanelControllers) {
       const webPanel = webPanelController.webPanel;
-      prefs.push({
+      webPanelsPref.push({
         uuid: webPanel.uuid,
         url: webPanel.url,
         faviconURL: webPanel.faviconURL,
         pinned: webPanel.pinned,
         width: webPanel.width,
+        mobile: webPanel.mobile,
         loadOnStartup: webPanel.loadOnStartup,
         unloadOnClose: webPanel.unloadOnClose,
       });
     }
-    console.log("Saving prefs:", prefs);
-    Services.prefs.setStringPref(PREF, JSON.stringify(prefs));
+    Settings.saveWebPanelsPref(webPanelsPref);
   }
 }
