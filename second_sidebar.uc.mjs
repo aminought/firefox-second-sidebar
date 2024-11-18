@@ -9,6 +9,10 @@ import { SidebarDecorator } from "./second_sidebar/sidebar_decorator.mjs";
 import { SidebarInjector } from "./second_sidebar/sidebar_injector.mjs";
 
 const run = () => {
+  let chromehidden = document.getElementById("main-window").hasAttribute("chromehidden");
+  if (chromehidden && document.getElementById("main-window").getAttribute("chromehidden").includes("extrachrome")) {
+    return; // do nothing
+  }
   SidebarInjector.inject();
   SidebarDecorator.decorate();
 };
