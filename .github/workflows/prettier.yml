@@ -21,4 +21,3 @@ jobs:
         uses: creyD/prettier_action@v4.3
         with:
           dry: True
-          prettier_options: **/*.{js,mjs,md}
