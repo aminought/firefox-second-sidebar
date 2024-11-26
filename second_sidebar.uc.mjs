@@ -14,4 +14,8 @@ const run = () => {
   }
 };
 
-if (typeof UC_API !== "undefined") { UC_API.Runtime.startupFinished().then(run); } else { delayedStartupPromise.then(run); }
+if (typeof UC_API !== "undefined") {
+  UC_API.Runtime.startupFinished().then(run);
+} else {
+  delayedStartupPromise.then(run);
+}

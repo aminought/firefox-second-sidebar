@@ -2,12 +2,12 @@ name: Prettier
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ "master" ]
+    branches: ["master"]
   schedule:
-    - cron: '31 23 * * 5'
+    - cron: "31 23 * * 5"
 
 jobs:
   prettier:
@@ -21,4 +21,4 @@ jobs:
         uses: creyD/prettier_action@v4.3
         with:
           dry: True
-          prettier_options: --write **/*.{js,mjs,md}
+          prettier_options: --write **/*.{js,mjs,md,yml}
