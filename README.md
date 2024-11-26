@@ -34,7 +34,7 @@ https://github.com/user-attachments/assets/60a2da4f-2165-4d92-983a-f4a79d17e3ef
 ## Install (fx-autoconfig)
 
 1. Install [fx-autoconfig](https://github.com/MrOtherGuy/fx-autoconfig).
-2. Copy `second_sidebar/` and `second_sidebar.uc.mjs` into `chrome/JS/` folder.
+2. Copy the contents of the `src/` directory (`second_sidebar/` and `second_sidebar.uc.mjs`) into `chrome/JS/`.
 3. [Clear](https://github.com/MrOtherGuy/fx-autoconfig?tab=readme-ov-file#deleting-startup-cache) startup-cache.
 4. Have fun!
 
