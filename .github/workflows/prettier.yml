@@ -1,0 +1,23 @@
+name: Prettier
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ "master" ]
+  schedule:
+    - cron: '31 23 * * 5'
+
+jobs:
+  prettier:
+    name: Run prettier in dry mode
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check formatting
+        uses: creyD/prettier_action@v4.3
+        with:
+          dry: True
