@@ -74,11 +74,11 @@ export class WebPanelPopupDelete extends Panel {
   openPopup(webPanelController) {
     this.uuid = webPanelController.getUUID();
 
-    this.restoreButtonOpen = () => {
+    this.restoreWebPanelButtonState = () => {
       webPanelController.webPanelButton.setOpen(webPanelController.isActive());
-      this.removeEventListener("popuphidden", this.restoreButtonOpen);
+      this.removeEventListener("popuphidden", this.restoreWebPanelButtonState);
     };
-    this.addEventListener("popuphidden", this.restoreButtonOpen);
+    this.addEventListener("popuphidden", this.restoreWebPanelButtonState);
 
     Panel.prototype.openPopup.call(this, webPanelController.webPanelButton);
   }

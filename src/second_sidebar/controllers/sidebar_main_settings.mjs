@@ -41,7 +41,8 @@ export class SidebarMainSettingsController {
         this.webPanelNewController.setPosition(value),
       padding: (value) => this.sidebarMainController.setPadding(value),
       faviconSize: (value) => this.sidebarMainController.setFaviconSize(value),
-      unpinnedPadding: (value) => this.sidebarController.setUnpinnedPadding(value),
+      unpinnedPadding: (value) =>
+        this.sidebarController.setUnpinnedPadding(value),
       hideInPopupWindows: (value) =>
         (this.sidebarController.hideInPopupWindows = value),
       autoHideBackButton: (value) => {
@@ -76,8 +77,9 @@ export class SidebarMainSettingsController {
    * @param {number} screenY
    */
   openPopup(screenX, screenY) {
-    this.sidebarMainPopupSettings.openPopupAtScreen(screenX, screenY);
-    this.sidebarMainPopupSettings.setDefaults(
+    this.sidebarMainPopupSettings.openPopupAtScreen(
+      screenX,
+      screenY,
       this.sidebarController.dumpSettings(),
     );
   }

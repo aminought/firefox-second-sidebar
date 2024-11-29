@@ -229,9 +229,11 @@ export class SidebarMainPopupSettings extends Panel {
 
   /**
    *
+   * @param {number} screenX
+   * @param {number} screenY
    * @param {SidebarSettings} settings
    */
-  setDefaults(settings) {
+  openPopupAtScreen(screenX, screenY, settings) {
     this.positionMenuList.setValue(settings.position);
     this.webPanelButtonsPositionMenuList.setValue(
       settings.webPanelButtonsPosition,
@@ -254,6 +256,8 @@ export class SidebarMainPopupSettings extends Panel {
       this.removeEventListener("popuphidden", this.onPopupHidden);
     };
     this.addEventListener("popuphidden", this.onPopupHidden);
+
+    Panel.prototype.openPopupAtScreen.call(this, screenX, screenY);
   }
 
   #cancelChanges() {
