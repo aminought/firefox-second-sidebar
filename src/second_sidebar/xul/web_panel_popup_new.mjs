@@ -1,8 +1,8 @@
 import {
   createCancelButton,
+  createCreateButton,
   createInput,
   createPopupHeader,
-  createSaveButton,
 } from "../utils/xul.mjs";
 
 import { HBox } from "./base/hbox.mjs";
@@ -20,7 +20,7 @@ export class WebPanelPopupNew extends Panel {
     this.setType("arrow").setRole("group");
 
     this.input = createInput();
-    this.saveButton = createSaveButton();
+    this.saveButton = createCreateButton();
     this.cancelButton = createCancelButton();
     this.#compose();
 

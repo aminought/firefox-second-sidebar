@@ -8,7 +8,7 @@ export class SidebarMainMenuPopup extends MenuPopup {
       classList: ["sb2-menupopup"],
     });
 
-    this.settingsItem = new MenuItem().setLabel("Sidebar Settings");
+    this.settingsItem = new MenuItem().setLabel("Sidebar settings");
     this.appendChild(this.settingsItem);
   }
 

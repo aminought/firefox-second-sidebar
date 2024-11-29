@@ -9,9 +9,9 @@ export class WebPanelButtonMenuPopup extends MenuPopup {
       classList: ["sb2-menupopup"],
     });
 
-    this.unloadItem = new MenuItem().setLabel("Unload Web Panel");
-    this.editItem = new MenuItem().setLabel("Edit Web Panel");
-    this.deleteItem = new MenuItem().setLabel("Delete Web Panel");
+    this.unloadItem = new MenuItem().setLabel("Unload web panel");
+    this.editItem = new MenuItem().setLabel("Edit web panel");
+    this.deleteItem = new MenuItem().setLabel("Delete web panel");
     this.#compose();
   }
 

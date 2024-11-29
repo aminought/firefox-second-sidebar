@@ -68,8 +68,8 @@ export class SidebarMainPopupSettings extends Panel {
    */
   #createPlusButtonPositionMenuList() {
     const menuList = new MenuList();
-    menuList.appendItem("Top", "start");
-    menuList.appendItem("Bottom", "end");
+    menuList.appendItem("Above", "start");
+    menuList.appendItem("Below", "end");
     return menuList;
   }
 
@@ -108,7 +108,7 @@ export class SidebarMainPopupSettings extends Panel {
         new ToolbarSeparator(),
         createPopupGroup("Sidebar position", this.positionMenuList),
         createPopupGroup(
-          "Web Panel buttons position",
+          "Sidebar buttons position",
           this.webPanelButtonsPositionMenuList,
         ),
         createPopupGroup(
@@ -116,10 +116,10 @@ export class SidebarMainPopupSettings extends Panel {
           this.plusButtonPositionMenuList,
         ),
         new ToolbarSeparator(),
-        createPopupGroup("Sidebar padding", this.paddingMenuList),
-        createPopupGroup("Favicon size", this.faviconSizeMenuList),
+        createPopupGroup("Sidebar width", this.paddingMenuList),
+        createPopupGroup("Sidebar buttons size", this.faviconSizeMenuList),
         createPopupGroup(
-          "Unpinned web panel padding",
+          "Floating web panel offset",
           this.unpinnedPaddingMenuList,
         ),
         new ToolbarSeparator(),

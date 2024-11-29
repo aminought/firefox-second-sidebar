@@ -101,12 +101,37 @@ export function updateZoomButtons(
 
 /**
  *
+ * @param {string} text
+ * @returns {Button}
+ */
+export function createPrimaryButton(text) {
+  return new Button({
+    classList: ["footer-button", "primary"],
+  }).setText(text);
+}
+
+/**
+ *
+ * @returns {Button}
+ */
+export function createCreateButton() {
+  return createPrimaryButton("Create");
+}
+
+/**
+ *
  * @returns {Button}
  */
 export function createSaveButton() {
-  return new Button({
-    classList: ["footer-button", "primary"],
-  }).setText("Save");
+  return createPrimaryButton("Save");
+}
+
+/**
+ *
+ * @returns {Button}
+ */
+export function createDeleteButton() {
+  return createPrimaryButton("Delete");
 }
 
 /**
@@ -115,16 +140,6 @@ export function createSaveButton() {
  */
 export function createCancelButton() {
   return new Button({ classList: ["footer-button"] }).setText("Cancel");
-}
-
-/**
- *
- * @returns {Button}
- */
-export function createDeleteButton() {
-  return new Button({
-    classList: ["footer-button", "primary"],
-  }).setText("Delete");
 }
 
 /**

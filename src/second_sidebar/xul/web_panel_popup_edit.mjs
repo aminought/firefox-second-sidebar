@@ -107,7 +107,7 @@ export class WebPanelPopupEdit extends Panel {
           id: "sb2-web-panel-edit-favicon-row",
         }).appendChildren(this.faviconURLInput, this.faviconResetButton),
         new ToolbarSeparator(),
-        createPopupGroup("Type", this.pinnedMenuList),
+        createPopupGroup("Web panel type", this.pinnedMenuList),
         createPopupGroup("Use mobile User Agent", this.mobileToggle),
         createPopupGroup(
           "Load into memory at startup",
