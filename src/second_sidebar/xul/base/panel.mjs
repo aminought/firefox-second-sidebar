@@ -62,9 +62,28 @@ export class Panel extends XULElement {
 
   /**
    *
+   * @param {XULElement} target
+   * @param {string} position
+   * @returns {Panel}
+   */
+  moveToAnchor(target, position = "start_before") {
+    this.element.moveToAnchor(target.getXUL(), position);
+    return this;
+  }
+
+  /**
+   *
    * @returns {boolean}
    */
   isPanelOpen() {
     return this.element.getAttribute("panelopen") === "true";
+  }
+
+  /**
+   *
+   * @returns {string}
+   */
+  getState() {
+    return this.element.state;
   }
 }

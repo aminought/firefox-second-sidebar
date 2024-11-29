@@ -29,6 +29,7 @@ export class WebPanel extends Browser {
    * @param {number} zoom
    * @param {boolean} loadOnStartup
    * @param {boolean} unloadOnClose
+   * @param {boolean} hideToolbar
    * @param {object} params
    *
    */
@@ -43,6 +44,7 @@ export class WebPanel extends Browser {
     zoom,
     loadOnStartup,
     unloadOnClose,
+    hideToolbar,
   ) {
     super({
       classList: ["web-panel"],
@@ -62,6 +64,7 @@ export class WebPanel extends Browser {
     this.zoom = zoom;
     this.loadOnStartup = loadOnStartup;
     this.unloadOnClose = unloadOnClose;
+    this.hideToolbar = hideToolbar;
 
     this.listener = null;
   }
@@ -129,48 +132,62 @@ export class WebPanel extends Browser {
    * @returns {WebPanel}
    */
   goHome() {
+    if (this.getZoom() !== this.zoom) {
+      this.setZoom(this.zoom);
+    }
     this.updateUserAgent();
     return this.go(this.url);
   }
 
   /**
    *
+   * @param {boolean} isUnloaded
    * @returns {WebPanel}
    */
-  zoomIn() {
-    Browser.prototype.zoomIn.call(this);
-    this.zoom = this.getZoom();
+  zoomIn(isUnloaded) {
+    if (isUnloaded) {
+      this.zoom = Math.min(
+        Math.round((this.zoom + this.ZOOM_DELTA) * 100) / 100,
+        ZoomManager.MAX,
+      );
+    } else {
+      Browser.prototype.zoomIn.call(this);
+      this.zoom = this.getZoom();
+    }
     return this;
   }
 
   /**
    *
+   * @param {boolean} isUnloaded
    * @returns {WebPanel}
    */
-  zoomOut() {
-    Browser.prototype.zoomOut.call(this);
-    this.zoom = this.getZoom();
+  zoomOut(isUnloaded) {
+    if (isUnloaded) {
+      this.zoom = Math.max(
+        Math.round((this.zoom - this.ZOOM_DELTA) * 100) / 100,
+        ZoomManager.MIN,
+      );
+    } else {
+      Browser.prototype.zoomOut.call(this);
+      this.zoom = this.getZoom();
+    }
     return this;
   }
 
   /**
    *
    * @param {number}
+   * @param {boolean} isUnloaded
    * @returns {WebPanel}
    */
-  setZoom(value) {
-    Browser.prototype.setZoom.call(this, value);
-    this.zoom = this.getZoom();
-    return this;
-  }
-
-  /**
-   *
-   * @returns {WebPanel}
-   */
-  resetZoom() {
-    Browser.prototype.resetZoom.call(this);
-    this.zoom = this.getZoom();
+  setZoom(value, isUnloaded) {
+    if (isUnloaded) {
+      this.zoom = value;
+    } else {
+      Browser.prototype.setZoom.call(this, value);
+      this.zoom = this.getZoom();
+    }
     return this;
   }
 }

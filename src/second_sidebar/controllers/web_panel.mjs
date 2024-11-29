@@ -1,11 +1,19 @@
 /* eslint-disable no-unused-vars */
+import {
+  isLeftMouseButton,
+  isMiddleMouseButton,
+  isRightMouseButton,
+} from "../utils/buttons.mjs";
+
 import { SidebarController } from "./sidebar.mjs";
 import { WebPanel } from "../xul/web_panel.mjs";
 import { WebPanelButton } from "../xul/web_panel_button.mjs";
+import { WebPanelButtonMenuPopup } from "../xul/web_panel_button_menupopup.mjs";
 import { WebPanelEditController } from "./web_panel_edit.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { WebPanelTab } from "../xul/web_panel_tab.mjs";
 import { WebPanelsController } from "./web_panels.mjs";
+
 /* eslint-enable no-unused-vars */
 
 export class WebPanelController {
@@ -14,11 +22,13 @@ export class WebPanelController {
    * @param {WebPanel} webPanel
    * @param {WebPanelButton} webPanelButton
    * @param {WebPanelTab} webPanelTab
+   * @param {WebPanelButtonMenuPopup} webPanelButtonMenuPopup
    */
-  constructor(webPanel, webPanelButton, webPanelTab) {
+  constructor(webPanel, webPanelButton, webPanelTab, webPanelButtonMenuPopup) {
     this.webPanel = webPanel;
     this.webPanelButton = webPanelButton;
     this.webPanelTab = webPanelTab;
+    this.webPanelButtonMenuPopup = webPanelButtonMenuPopup;
   }
 
   /**
@@ -49,6 +59,47 @@ export class WebPanelController {
    *
    * @returns {string}
    */
+  getURL() {
+    return this.webPanel.url;
+  }
+
+  /**
+   *
+   * @param {string} value
+   */
+  setURL(value) {
+    this.webPanel.url = value;
+    this.webPanelButton.setTooltipText(value);
+  }
+
+  /**
+   *
+   * @returns {string}
+   */
+  getFaviconURL() {
+    return this.webPanel.faviconURL;
+  }
+
+  /**
+   *
+   * @param {string} faviconURL
+   */
+  setWebPanelFaviconURL(faviconURL) {
+    this.webPanel.faviconURL = faviconURL;
+  }
+
+  /**
+   *
+   * @param {string} faviconURL
+   */
+  setWebPanelButtonFaviconURL(faviconURL) {
+    this.webPanelButton.setIcon(faviconURL);
+  }
+
+  /**
+   *
+   * @returns {string}
+   */
   getCurrentUrl() {
     return this.webPanel.getCurrentUrl();
   }
@@ -60,11 +111,9 @@ export class WebPanelController {
         const canGoBack = this.webPanel.canGoBack();
         const canGoForward = this.webPanel.canGoForward();
         const title = this.webPanel.getTitle();
-        const zoom = this.webPanel.getZoom();
         this.sidebarController.setToolbarBackButtonDisabled(!canGoBack);
         this.sidebarController.setToolbarForwardButtonDisabled(!canGoForward);
         this.sidebarController.setToolbarTitle(title);
-        this.sidebarController.updateZoomLabel(zoom);
       }
       // mediaController can be changed, so listen here
       this.webPanel.listenPlaybackStateChange((isPlaying) => {
@@ -94,22 +143,19 @@ export class WebPanelController {
           this.webPanel.canGoForward(),
           this.webPanel.getTitle(),
           this.webPanel.getZoom(),
+          this.webPanel.hideToolbar,
         );
         this.show();
       }
     };
 
-    const openWebPanelEditPopup = () => {
-      this.webPanelEditController.openPopup(this);
-    };
-
     this.webPanelButton.listenClick((event) => {
-      if (event.button === 0) {
+      if (isLeftMouseButton(event)) {
         switchWebPanel();
-      } else if (event.button === 1) {
+      } else if (isMiddleMouseButton(event)) {
         this.unload();
-      } else if (event.button === 2) {
-        openWebPanelEditPopup();
+      } else if (isRightMouseButton(event)) {
+        this.webPanelButtonMenuPopup.setWebPanelController(this);
       }
     });
   }
@@ -139,8 +185,95 @@ export class WebPanelController {
    *
    * @returns {boolean}
    */
+  isUnloaded() {
+    return this.webPanelButton.isUnloaded();
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   */
+  setMobile(value) {
+    this.webPanel.mobile = value;
+    if (!this.isUnloaded()) {
+      this.webPanel.goHome();
+    }
+  }
+
+  /**
+   *
+   * @returns {number}
+   */
+  getZoom() {
+    return this.webPanel.zoom;
+  }
+
+  zoomOut() {
+    this.webPanel.zoomOut(this.isUnloaded());
+  }
+
+  zoomIn() {
+    this.webPanel.zoomIn(this.isUnloaded());
+  }
+
+  /**
+   *
+   * @param {number} zoom
+   */
+  setZoom(zoom) {
+    this.webPanel.setZoom(zoom, this.isUnloaded());
+  }
+
+  resetZoom() {
+    this.webPanel.setZoom(1, this.isUnloaded());
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   */
+  setLoadOnStartup(value) {
+    this.webPanel.loadOnStartup = value;
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  getUnloadOnClose() {
+    return this.webPanel.unloadOnClose;
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   */
+  setUnloadOnClose(value) {
+    this.webPanel.unloadOnClose = value;
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   */
+  setHideToolbar(value) {
+    this.webPanel.hideToolbar = value;
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
   isFirst() {
     return this.webPanelsController.isFirst(this.getUUID());
+  }
+
+  /**
+   *
+   * @returns {number}
+   */
+  getIndex() {
+    return this.webPanelsController.getIndex(this.getUUID());
   }
 
   /**
@@ -178,24 +311,17 @@ export class WebPanelController {
   /**
    *
    * @param {string} url
-   * @param {string} faviconURL
-   * @param {boolean} mobile
-   * @param {boolean} loadOnStartup
-   * @param {boolean} unloadOnClose
    */
-  set(url, faviconURL, mobile, loadOnStartup, unloadOnClose) {
-    const needToGoHome = this.webPanel.mobile !== mobile;
+  go(url) {
+    this.webPanel.go(url);
+  }
 
-    this.webPanel.url = url;
-    this.webPanel.faviconURL = faviconURL;
-    this.webPanel.mobile = mobile;
-    this.webPanel.loadOnStartup = loadOnStartup;
-    this.webPanel.unloadOnClose = unloadOnClose;
-    this.webPanelButton.setIcon(faviconURL);
-
-    if (needToGoHome) {
-      this.webPanel.goHome();
-    }
+  /**
+   *
+   * @returns {HTMLElement}
+   */
+  getInsertedBeforeXUL() {
+    return this.webPanelButton.element.nextSibling;
   }
 
   /**
@@ -227,6 +353,7 @@ export class WebPanelController {
       this.webPanel.zoom,
       this.webPanel.loadOnStartup,
       this.webPanel.unloadOnClose,
+      this.webPanel.hideToolbar,
     );
   }
 }

@@ -26,49 +26,100 @@ export class WebPanelEditController {
   }
 
   #setupListeners() {
-    this.webPanelPopupEdit.listenMoveUpButtonClick((uuid) => {
-      const webPanelController = this.webPanelsController.get(uuid);
-      this.webPanelsController.moveUp(uuid);
-      this.hidePopup();
-      this.openPopup(webPanelController);
-      this.webPanelsController.saveSettings();
-    });
-
-    this.webPanelPopupEdit.listenMoveDownButtonClick((uuid) => {
-      const webPanelController = this.webPanelsController.get(uuid);
-      this.webPanelsController.moveDown(uuid);
-      this.hidePopup();
-      this.openPopup(webPanelController);
-      this.webPanelsController.saveSettings();
-    });
-
-    this.webPanelPopupEdit.listenSaveButtonClick(
-      (uuid, url, faviconURL, mobile, loadOnStartup, unloadOnClose) => {
+    this.webPanelPopupEdit.listenChanges({
+      url: (uuid, url, timeout = 0) => {
         const webPanelController = this.webPanelsController.get(uuid);
-        webPanelController.set(
-          url,
-          faviconURL,
-          mobile,
-          loadOnStartup,
-          unloadOnClose,
-        );
-        this.hidePopup();
-        if (unloadOnClose && !webPanelController.isActive()) {
-          webPanelController.unload();
+        const oldUrl = webPanelController.getURL();
+        webPanelController.setURL(url);
+
+        clearTimeout(this.urlTimeout);
+        this.urlTimeout = setTimeout(() => {
+          if (!webPanelController.isUnloaded() && oldUrl !== url) {
+            webPanelController.go(url);
+          }
+        }, timeout);
+      },
+      faviconURL: (uuid, faviconURL, timeout = 0) => {
+        const webPanelController = this.webPanelsController.get(uuid);
+        const oldFaviconURL = webPanelController.getFaviconURL();
+        webPanelController.setWebPanelFaviconURL(faviconURL);
+
+        clearTimeout(this.faviconURLTimeout);
+        this.faviconURLTimeout = setTimeout(() => {
+          if (oldFaviconURL !== faviconURL) {
+            webPanelController.setWebPanelButtonFaviconURL(faviconURL);
+          }
+        }, timeout);
+      },
+      pinned: (uuid, pinned) => {
+        const webPanelController = this.webPanelsController.get(uuid);
+        pinned ? webPanelController.pin() : webPanelController.unpin();
+        if (webPanelController.isActive()) {
+          pinned
+            ? this.sidebarController.pin()
+            : this.sidebarController.unpin();
         }
-        this.webPanelsController.saveSettings();
+      },
+      mobile: (uuid, mobile) => {
+        const webPanelController = this.webPanelsController.get(uuid);
+        webPanelController.setMobile(mobile);
+      },
+      loadOnStartup: (uuid, loadOnStartup) => {
+        const webPanelController = this.webPanelsController.get(uuid);
+        webPanelController.setLoadOnStartup(loadOnStartup);
+      },
+      unloadOnClose: (uuid, unloadOnClose) => {
+        const webPanelController = this.webPanelsController.get(uuid);
+        webPanelController.setUnloadOnClose(unloadOnClose);
+      },
+      hideToolbar: (uuid, hideToolbar) => {
+        const webPanelController = this.webPanelsController.get(uuid);
+        webPanelController.setHideToolbar(hideToolbar);
+        this.sidebarController.setHideToolbar(hideToolbar);
+      },
+      zoom: (uuid, zoomIn = false, zoomOut = false, value = null) => {
+        const webPanelController = this.webPanelsController.get(uuid);
+        if (zoomIn) {
+          webPanelController.zoomIn();
+        } else if (zoomOut) {
+          webPanelController.zoomOut();
+        } else {
+          webPanelController.setZoom(value);
+        }
+        return webPanelController.getZoom();
+      },
+    });
+
+    this.webPanelPopupEdit.listenMoveButtonClick(
+      (uuid, up = false, down = false, child = null) => {
+        const webPanelController = this.webPanelsController.get(uuid);
+        if (up) {
+          this.webPanelsController.moveUp(uuid);
+        } else if (down) {
+          this.webPanelsController.moveDown(uuid);
+        } else {
+          this.webPanelsController.moveBefore(uuid, child);
+        }
+        return {
+          isFirst: webPanelController.isFirst(),
+          isLast: webPanelController.isLast(),
+          insertedBeforeXUL: webPanelController.getInsertedBeforeXUL(),
+        };
       },
     );
 
-    this.webPanelPopupEdit.listenDeleteButtonClick((uuid) => {
+    this.webPanelPopupEdit.listenCancelButtonClick(() => this.hidePopup());
+
+    this.webPanelPopupEdit.listenSaveButtonClick((uuid) => {
       const webPanelController = this.webPanelsController.get(uuid);
-      if (webPanelController.isActive()) {
-        this.sidebarController.close();
+      if (
+        webPanelController.getUnloadOnClose() &&
+        !webPanelController.isActive()
+      ) {
+        webPanelController.unload();
       }
-      this.hidePopup();
-      webPanelController.remove();
-      this.webPanelsController.delete(uuid);
       this.webPanelsController.saveSettings();
+      this.hidePopup();
     });
   }
 
@@ -77,20 +128,7 @@ export class WebPanelEditController {
    * @param {WebPanelController} webPanelController
    */
   openPopup(webPanelController) {
-    const webPanel = webPanelController.webPanel;
-    const webPanelButton = webPanelController.webPanelButton;
-
-    this.webPanelPopupEdit.setDefaults(
-      webPanel.uuid,
-      webPanel.url,
-      webPanel.faviconURL,
-      webPanel.mobile,
-      webPanel.loadOnStartup,
-      webPanel.unloadOnClose,
-      webPanelController.isFirst(),
-      webPanelController.isLast(),
-    );
-    this.webPanelPopupEdit.openPopup(webPanelButton);
+    this.webPanelPopupEdit.openPopup(webPanelController);
   }
 
   hidePopup() {

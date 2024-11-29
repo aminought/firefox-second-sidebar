@@ -66,6 +66,16 @@ export class XULElement {
 
   /**
    *
+   * @param {XULElement} child
+   * @returns {XULElement}
+   */
+  prependChild(child) {
+    this.element.insertBefore(child.getXUL(), this.element.firstChild);
+    return this;
+  }
+
+  /**
+   *
    * @param {Array<XULElement>} children
    * @returns {XULElement}
    */
@@ -198,6 +208,27 @@ export class XULElement {
    */
   addEventListener(event, callback) {
     this.element.addEventListener(event, callback);
+    return this;
+  }
+
+  /**
+   *
+   * @param {string} event
+   * @param {function(MouseEvent):void} callback
+   * @returns {XULElement}
+   */
+  removeEventListener(event, callback) {
+    this.element.removeEventListener(event, callback);
+    return this;
+  }
+
+  /**
+   *
+   * @param {Event} event
+   * @returns {XULElement}
+   */
+  dispatchEvent(event) {
+    this.element.dispatchEvent(event);
     return this;
   }
 

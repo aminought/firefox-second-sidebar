@@ -17,6 +17,8 @@ export class WebPanelSettings {
   #loadOnStartup;
   /**@type {boolean} */
   #unloadOnClose;
+  /**@type {boolean} */
+  #hideToolbar;
 
   /**
    *
@@ -29,6 +31,7 @@ export class WebPanelSettings {
    * @param {number} zoom
    * @param {boolean} loadOnStartup
    * @param {boolean} unloadOnClose
+   * @param {boolean} hideToolbar
    */
   constructor(
     uuid,
@@ -40,6 +43,7 @@ export class WebPanelSettings {
     zoom,
     loadOnStartup,
     unloadOnClose,
+    hideToolbar,
   ) {
     this.#uuid = uuid ?? crypto.randomUUID();
     this.#url = url;
@@ -50,6 +54,7 @@ export class WebPanelSettings {
     this.#zoom = zoom ?? 1;
     this.#loadOnStartup = loadOnStartup ?? false;
     this.#unloadOnClose = unloadOnClose ?? false;
+    this.#hideToolbar = hideToolbar ?? false;
   }
 
   get uuid() {
@@ -88,6 +93,10 @@ export class WebPanelSettings {
     return this.#unloadOnClose;
   }
 
+  get hideToolbar() {
+    return this.#hideToolbar;
+  }
+
   /**
    *
    * @returns {object}
@@ -103,6 +112,7 @@ export class WebPanelSettings {
       zoom: this.#zoom,
       loadOnStartup: this.#loadOnStartup,
       unloadOnClose: this.#unloadOnClose,
+      hideToolbar: this.#hideToolbar,
     };
   }
 }

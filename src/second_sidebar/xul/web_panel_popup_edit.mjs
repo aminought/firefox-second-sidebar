@@ -1,340 +1,358 @@
-import { Button } from "./base/button.mjs";
+import {
+  createCancelButton,
+  createInput,
+  createPopupGroup,
+  createPopupHeader,
+  createSaveButton,
+  createSubviewButton,
+  createSubviewIconicButton,
+  createZoomButtons,
+  updateZoomButtons,
+} from "../utils/xul.mjs";
+
+/* eslint-disable no-unused-vars */
 import { HBox } from "./base/hbox.mjs";
 import { Header } from "./base/header.mjs";
-import { Input } from "./base/input.mjs";
+import { MenuList } from "./base/menulist.mjs";
 import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";
-import { ToolbarButton } from "./base/toolbar_button.mjs";
+import { Toggle } from "./base/toggle.mjs";
 import { ToolbarSeparator } from "./base/toolbar_separator.mjs";
+import { WebPanelController } from "../controllers/web_panel.mjs";
 import { fetchIconURL } from "../utils/icons.mjs";
+import { isLeftMouseButton } from "../utils/buttons.mjs";
+
+/* eslint-enable no-unused-vars */
+
+const ICONS = {
+  DOWN: "chrome://global/skin/icons/arrow-down.svg",
+  UP: "chrome://global/skin/icons/arrow-up.svg",
+  UNDO: "chrome://global/skin/icons/undo.svg",
+  MINUS: "chrome://global/skin/icons/minus.svg",
+  PLUS: "chrome://global/skin/icons/plus.svg",
+};
 
 export class WebPanelPopupEdit extends Panel {
   constructor() {
     super({
-      id: "sidebar-2-web-panel-popup-edit",
-      classList: ["sidebar-2-popup"],
+      id: "sb2-web-panel-edit",
+      classList: ["sb2-popup", "sb2-popup-with-header"],
     });
     this.setType("arrow").setRole("group");
 
-    this.panelHeader = new HBox({ classList: ["panel-header"] });
-    this.header = new Header(1).setText("Edit Web Panel");
-
-    this.urlInputHeader = new Header(1).setText("Page web address");
-    this.urlInput = this.#createURLInput();
-
-    this.faviconURLInputHeader = new Header(1).setText("Favicon web address");
-    this.faviconURLInput = this.#createFaviconURLInput();
-    this.faviconResetButton = this.#createFaviconResetButton();
-    this.faviconRow = this.#createFaviconRow();
-
-    this.moveDownButton = this.#createMoveDownButton();
-    this.moveUpButton = this.#createMoveUpButton();
-    this.moveButtons = new HBox({
-      id: "sidebar-2-web-panel-popup-edit-move-buttons",
-    });
-
-    this.saveButton = this.#createSaveButton();
-    this.deleteButton = this.#createDeleteButton();
-    this.storageButtons = new HBox({
-      id: "sidebar-2-web-panel-popup-edit-storage-buttons",
-    });
-
-    this.mobileToggle = this.#createToggle();
-    this.mobileGroup = this.#createToggleGroup(
-      this.mobileToggle,
-      "Use mobile User Agent",
+    this.urlInput = createInput();
+    this.faviconURLInput = createInput();
+    this.faviconResetButton = createSubviewIconicButton(
+      ICONS.UNDO,
+      "Request Favicon",
     );
+    this.pinnedMenuList = this.#createPinTypeMenuList();
+    this.mobileToggle = new Toggle();
+    this.loadOnStartupToggle = new Toggle();
+    this.unloadOnCloseToggle = new Toggle();
+    this.hideToolbarToggle = new Toggle();
+    this.zoomOutButton = createSubviewIconicButton(ICONS.MINUS, {
+      tooltipText: "Zoom Out",
+    });
+    this.resetZoomButton = createSubviewButton("100%", {
+      id: "sb2-zoom-button",
+      tooltipText: "Reset Zoom",
+    });
+    this.zoomInButton = createSubviewIconicButton(ICONS.PLUS, {
+      tooltipText: "Zoom In",
+    });
+    this.moveDownButton = createSubviewIconicButton(ICONS.DOWN, {
+      tooltipText: "Move Down",
+    });
+    this.moveUpButton = createSubviewIconicButton(ICONS.UP, {
+      tooltipText: "Move Up",
+    });
+    this.cancelButton = createCancelButton();
+    this.saveButton = createSaveButton();
+    this.#setupListeners();
+    this.#compose();
+  }
 
-    this.loadOnStartupToggle = this.#createToggle();
-    this.loadOnStartupGroup = this.#createToggleGroup(
-      this.loadOnStartupToggle,
-      "Load into memory at startup",
+  #setupListeners() {
+    this.faviconResetButton.addEventListener("mousedown", async (event) => {
+      if (isLeftMouseButton(event)) {
+        const faviconURL = await fetchIconURL(this.urlInput.getValue());
+        this.faviconURLInput
+          .setValue(faviconURL)
+          .dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    });
+  }
+
+  /**
+   *
+   * @returns {MenuList}
+   */
+  #createPinTypeMenuList() {
+    const pinTypeMenuList = new MenuList();
+    pinTypeMenuList.appendItem("Pinned", true);
+    pinTypeMenuList.appendItem("Floating", false);
+    return pinTypeMenuList;
+  }
+
+  #compose() {
+    this.appendChild(
+      new PanelMultiView().appendChildren(
+        createPopupHeader("Edit Web Panel"),
+        new ToolbarSeparator(),
+        new Header(1).setText("Page web address"),
+        this.urlInput,
+        new Header(1).setText("Favicon web address"),
+        new HBox({
+          id: "sb2-web-panel-edit-favicon-row",
+        }).appendChildren(this.faviconURLInput, this.faviconResetButton),
+        new ToolbarSeparator(),
+        createPopupGroup("Type", this.pinnedMenuList),
+        createPopupGroup("Use mobile User Agent", this.mobileToggle),
+        createPopupGroup(
+          "Load into memory at startup",
+          this.loadOnStartupToggle,
+        ),
+        createPopupGroup(
+          "Unload from memory after closing",
+          this.unloadOnCloseToggle,
+        ),
+        createPopupGroup("Hide toolbar", this.hideToolbarToggle),
+        new ToolbarSeparator(),
+        createPopupGroup(
+          "Zoom",
+          createZoomButtons(
+            this.zoomOutButton,
+            this.resetZoomButton,
+            this.zoomInButton,
+          ),
+        ),
+        new HBox({
+          id: "sb2-web-panel-edit-multiview-buttons-row",
+        }).appendChildren(
+          new HBox({
+            id: "sb2-web-panel-edit-move-buttons",
+          }).appendChildren(this.moveUpButton, this.moveDownButton),
+          new HBox({
+            id: "sb2-web-panel-edit-storage-buttons",
+          }).appendChildren(this.cancelButton, this.saveButton),
+        ),
+      ),
     );
-
-    this.unloadOnCloseToggle = this.#createToggle();
-    this.unloadOnCloseGroup = this.#createToggleGroup(
-      this.unloadOnCloseToggle,
-      "Unload from memory after closing",
-    );
-
-    this.buttonsRow = this.#createButtonsRow();
-    this.multiView = this.#createMultiView();
-
-    this.addEventListener("popupshown", () => {
-      this.urlInput.focus();
-    });
-  }
-
-  #createFaviconResetButton() {
-    const button = new ToolbarButton({
-      classList: [
-        "subviewbutton",
-        "subviewbutton-iconic",
-        "sidebar-2-popup-button",
-      ],
-    }).setIcon("chrome://global/skin/icons/undo.svg");
-
-    button.addEventListener("mousedown", async (event) => {
-      if (event.button !== 0) {
-        return;
-      }
-
-      const faviconURL = await fetchIconURL(this.urlInput.getValue());
-      this.faviconURLInput.setValue(faviconURL).setBackgroundImage(faviconURL);
-    });
-
-    return button;
-  }
-
-  #createFaviconRow() {
-    const row = new HBox({
-      id: "sidebar-2-web-panel-popup-edit-favicon-row",
-    });
-    row.appendChild(this.faviconURLInput).appendChild(this.faviconResetButton);
-    return row;
   }
 
   /**
    *
-   * @returns {HBox}
+   * @param {object} callbacks
+   * @param {function(string, string, number):void} callbacks.url
+   * @param {function(string, string, number):void} callbacks.faviconURL
+   * @param {function(string, boolean):void} callbacks.mobile
+   * @param {function(string, boolean):void} callbacks.pinned
+   * @param {function(string, boolean):void} callbacks.loadOnStartup
+   * @param {function(string, boolean):void} callbacks.unloadOnClose
+   * @param {function(string, boolean):void} callbacks.hideToolbar
+   * @param {function(string, boolean?, boolean?, number?):number} callbacks.zoom
    */
-  #createButtonsRow() {
-    const row = new HBox({
-      id: "sidebar-2-web-panel-popup-edit-multiview-buttons-row",
-    });
-
-    row
-      .appendChild(
-        this.moveButtons
-          .appendChild(this.moveUpButton)
-          .appendChild(this.moveDownButton),
-      )
-      .appendChild(
-        this.storageButtons
-          .appendChild(this.deleteButton)
-          .appendChild(this.saveButton),
-      );
-    return row;
-  }
-
-  /**
-   *
-   * @returns {PanelMultiView}
-   */
-  #createMultiView() {
-    this.panelHeader.appendChild(this.header);
-    const multiView = new PanelMultiView({
-      id: "sidebar-2-web-panel-popup-edit-multiview",
-    })
-      .appendChild(this.panelHeader)
-      .appendChild(new ToolbarSeparator())
-      .appendChild(this.urlInputHeader)
-      .appendChild(this.urlInput)
-      .appendChild(this.faviconURLInputHeader)
-      .appendChild(this.faviconRow)
-      .appendChild(this.mobileGroup)
-      .appendChild(this.loadOnStartupGroup)
-      .appendChild(this.unloadOnCloseGroup)
-      .appendChild(this.buttonsRow);
-
-    this.appendChild(multiView);
-    return multiView;
-  }
-
-  #createURLInput() {
-    const input = new Input().setType("text");
-    return input;
-  }
-
-  #createFaviconURLInput() {
-    const input = new Input({
-      id: "sidebar-2-web-panel-favicon-input",
-    }).setType("text");
-
-    input.addEventListener("input", () => {
-      const faviconURL = input.getValue();
-      input.setBackgroundImage(faviconURL);
-    });
-
-    return input;
-  }
-
-  /**
-   *
-   * @returns {ToolbarButton}
-   */
-  #createMoveDownButton() {
-    return new ToolbarButton({
-      classList: [
-        "subviewbutton",
-        "subviewbutton-iconic",
-        "sidebar-2-popup-button",
-      ],
-    }).setIcon("chrome://global/skin/icons/arrow-down.svg");
-  }
-
-  /**
-   *
-   * @param {function(string):void} callback
-   */
-  listenMoveDownButtonClick(callback) {
-    this.moveDownButton.addEventListener("mousedown", (event) => {
-      if (event.button !== 0) {
-        return;
-      }
-      callback(this.uuid);
-    });
-  }
-
-  /**
-   *
-   * @returns {ToolbarButton}
-   */
-  #createMoveUpButton() {
-    return new ToolbarButton({
-      classList: [
-        "subviewbutton",
-        "subviewbutton-iconic",
-        "sidebar-2-popup-button",
-      ],
-    }).setIcon("chrome://global/skin/icons/arrow-up.svg");
-  }
-
-  /**
-   *
-   * @param {function(string):void} callback
-   */
-  listenMoveUpButtonClick(callback) {
-    this.moveUpButton.addEventListener("mousedown", (event) => {
-      if (event.button !== 0) {
-        return;
-      }
-      callback(this.uuid);
-    });
-  }
-
-  /**
-   *
-   * @returns {Button}
-   */
-  #createToggle() {
-    const button = new Button({
-      id: "moz-toggle-button",
-      classList: ["toggle-button"],
-    });
-    button.setAttribute("part", "button");
-    button.setAttribute("type", "button");
-
-    button.addEventListener("click", (event) => {
-      if (event.button === 0) {
-        button.setPressed(!button.getPressed());
-      }
-    });
-
-    return button;
-  }
-
-  /**
-   *
-   * @param {Button} toggle
-   * @param {string} text
-   * @returns {HBox}
-   */
-  #createToggleGroup(toggle, text) {
-    const box = new HBox({
-      classList: ["sidebar-2-popup-group"],
-    });
-    const label = new Header(1).setText(text);
-    box.appendChildren(label, toggle);
-    return box;
-  }
-
-  /**
-   *
-   * @returns {Button}
-   */
-  #createSaveButton() {
-    return new Button({
-      classList: ["footer-button", "primary"],
-    }).setText("Save");
-  }
-
-  /**
-   *
-   * @param {function(string, string, string, boolean, boolean, boolean):void} callback
-   */
-  listenSaveButtonClick(callback) {
-    this.saveButton.addEventListener("mousedown", (event) => {
-      if (event.button !== 0) {
-        return;
-      }
-
-      const url = this.urlInput.getValue();
-      const faviconURL = this.faviconURLInput.getValue();
-      const mobile = this.mobileToggle.getPressed();
-      const loadOnStartup = this.loadOnStartupToggle.getPressed();
-      const unloadOnClose = this.unloadOnCloseToggle.getPressed();
-
-      callback(
-        this.uuid,
-        url,
-        faviconURL,
-        mobile,
-        loadOnStartup,
-        unloadOnClose,
-      );
-    });
-  }
-
-  /**
-   *
-   * @returns {Button}
-   */
-  #createDeleteButton() {
-    return new Button({ classList: ["footer-button"] }).setText("Delete");
-  }
-
-  /**
-   *
-   * @param {function(string):void} callback
-   */
-  listenDeleteButtonClick(callback) {
-    this.deleteButton.addEventListener("mousedown", (event) => {
-      if (event.button !== 0) {
-        return;
-      }
-      callback(this.uuid);
-    });
-  }
-
-  /**
-   *
-   * @param {string} uuid
-   * @param {string} url
-   * @param {string} faviconURL
-   * @param {boolean} mobile
-   * @param {boolean} loadOnStartup
-   * @param {boolean} unloadOnClose
-   * @param {boolean} isFirst
-   * @param {boolean} isLast
-   */
-  setDefaults(
-    uuid,
+  listenChanges({
     url,
     faviconURL,
+    pinned,
     mobile,
     loadOnStartup,
     unloadOnClose,
-    isFirst,
-    isLast,
-  ) {
-    this.uuid = uuid;
-    this.urlInput.setValue(url);
-    this.faviconURLInput.setValue(faviconURL).setBackgroundImage(faviconURL);
-    this.mobileToggle.setPressed(mobile);
-    this.loadOnStartupToggle.setPressed(loadOnStartup);
-    this.unloadOnCloseToggle.setPressed(unloadOnClose);
-    this.moveUpButton.setDisabled(isFirst);
-    this.moveDownButton.setDisabled(isLast);
+    hideToolbar,
+    zoom,
+  }) {
+    this.onUrlChange = url;
+    this.onFaviconUrlChange = faviconURL;
+    this.onMobileChange = mobile;
+    this.onPinnedChange = pinned;
+    this.onLoadOnStartupChange = loadOnStartup;
+    this.onUnloadOnCloseChange = unloadOnClose;
+    this.onHideToolbar = hideToolbar;
+    this.onZoom = zoom;
+
+    this.urlInput.addEventListener("input", () => {
+      url(this.settings.uuid, this.urlInput.getValue(), 1000);
+    });
+    this.faviconURLInput.addEventListener("input", () => {
+      faviconURL(this.settings.uuid, this.faviconURLInput.getValue(), 1000);
+    });
+    this.pinnedMenuList.addEventListener("command", () => {
+      pinned(this.settings.uuid, this.pinnedMenuList.getValue() === "true");
+    });
+    this.mobileToggle.addEventListener("toggle", () => {
+      mobile(this.settings.uuid, this.mobileToggle.getPressed());
+    });
+    this.loadOnStartupToggle.addEventListener("toggle", () => {
+      loadOnStartup(this.settings.uuid, this.loadOnStartupToggle.getPressed());
+    });
+    this.unloadOnCloseToggle.addEventListener("toggle", () => {
+      unloadOnClose(this.settings.uuid, this.unloadOnCloseToggle.getPressed());
+    });
+    this.hideToolbarToggle.addEventListener("toggle", () => {
+      hideToolbar(this.settings.uuid, this.hideToolbarToggle.getPressed());
+    });
+    this.zoomInButton.addEventListener("mousedown", (event) => {
+      if (isLeftMouseButton(event)) {
+        this.#updateZoomButtons(zoom(this.settings.uuid, true, false));
+      }
+    });
+    this.zoomOutButton.addEventListener("mousedown", (event) => {
+      if (isLeftMouseButton(event)) {
+        this.#updateZoomButtons(zoom(this.settings.uuid, false, true));
+      }
+    });
+    this.resetZoomButton.addEventListener("mousedown", (event) => {
+      if (isLeftMouseButton(event)) {
+        this.#updateZoomButtons(zoom(this.settings.uuid, false, false, 1));
+      }
+    });
+  }
+
+  /**
+   *
+   * @param {number} zoom
+   */
+  #updateZoomButtons(zoom) {
+    updateZoomButtons(
+      zoom,
+      this.zoomOutButton,
+      this.resetZoomButton,
+      this.zoomInButton,
+    );
+  }
+
+  /**
+   *
+   * @param {function(string, boolean?, boolean?, HTMLElement?):object} callback
+   */
+  listenMoveButtonClick(callback) {
+    this.onMove = callback;
+
+    this.moveDownButton.addEventListener("mousedown", (event) => {
+      if (isLeftMouseButton(event)) {
+        const { isFirst, isLast, insertedBeforeXUL } = callback(
+          this.uuid,
+          false,
+          true,
+        );
+        this.moveDownButton.setDisabled(isLast);
+        this.moveUpButton.setDisabled(isFirst);
+        this.currentInsertedBeforeXUL = insertedBeforeXUL;
+      }
+    });
+
+    this.moveUpButton.addEventListener("mousedown", (event) => {
+      if (isLeftMouseButton(event)) {
+        const {
+          isFirst,
+          isLast,
+          after: insertedBeforeXUL,
+        } = callback(this.uuid, true, false);
+        this.moveDownButton.setDisabled(isLast);
+        this.moveUpButton.setDisabled(isFirst);
+        this.currentInsertedBeforeXUL = insertedBeforeXUL;
+      }
+    });
+  }
+
+  /**
+   *
+   * @param {function():void} callback
+   */
+  listenCancelButtonClick(callback) {
+    this.cancelButton.addEventListener("mousedown", (event) => {
+      if (isLeftMouseButton(event)) {
+        callback();
+      }
+    });
+  }
+
+  /**
+   *
+   * @param {function():void} callback
+   */
+  listenSaveButtonClick(callback) {
+    this.saveButton.addEventListener("mousedown", (event) => {
+      if (isLeftMouseButton(event)) {
+        this.removeEventListener("popuphidden", this.cancelOnPopupHidden);
+        callback(this.settings.uuid);
+      }
+    });
+  }
+
+  /**
+   *
+   * @param {WebPanelController} webPanelController
+   */
+  openPopup(webPanelController) {
+    const settings = webPanelController.dumpSettings();
+    this.uuid = settings.uuid;
+    this.urlInput.setValue(settings.url);
+    this.faviconURLInput.setValue(settings.faviconURL);
+    this.pinnedMenuList.setValue(settings.pinned);
+    this.mobileToggle.setPressed(settings.mobile);
+    this.loadOnStartupToggle.setPressed(settings.loadOnStartup);
+    this.unloadOnCloseToggle.setPressed(settings.unloadOnClose);
+    this.hideToolbarToggle.setPressed(settings.hideToolbar);
+    this.moveUpButton.setDisabled(webPanelController.isFirst());
+    this.moveDownButton.setDisabled(webPanelController.isLast());
+    this.#updateZoomButtons(settings.zoom);
+
+    this.settings = settings;
+    this.insertedBeforeXUL = webPanelController.getInsertedBeforeXUL();
+    this.currentInsertedBeforeXUL = this.insertedBeforeXUL;
+
+    this.cancelOnPopupHidden = () => {
+      if (this.getState() !== "closed") {
+        return;
+      }
+      this.#cancelChanges();
+      this.removeEventListener("popuphidden", this.cancelOnPopupHidden);
+    };
+    this.addEventListener("popuphidden", this.cancelOnPopupHidden);
+
+    this.restoreButtonOpen = () => {
+      webPanelController.webPanelButton.setOpen(webPanelController.isActive());
+      this.removeEventListener("popuphidden", this.restoreButtonOpen);
+    };
+    this.addEventListener("popuphidden", this.restoreButtonOpen);
+
+    Panel.prototype.openPopup.call(this, webPanelController.webPanelButton);
+  }
+
+  #cancelChanges() {
+    if (this.urlInput.getValue() !== this.settings.url) {
+      this.onUrlChange(this.settings.uuid, this.settings.url);
+    }
+    if (this.faviconURLInput.getValue() !== this.settings.faviconURL) {
+      this.onFaviconUrlChange(this.settings.uuid, this.settings.faviconURL);
+    }
+    if ((this.pinnedMenuList.getValue() === "true") !== this.settings.pinned) {
+      this.onPinnedChange(this.settings.uuid, this.settings.pinned);
+    }
+    if (this.mobileToggle.getPressed() !== this.settings.mobile) {
+      this.onMobileChange(this.settings.uuid, this.settings.mobile);
+    }
+    if (this.loadOnStartupToggle.getPressed() !== this.settings.loadOnStartup) {
+      this.onLoadOnStartupChange(
+        this.settings.uuid,
+        this.settings.loadOnStartup,
+      );
+    }
+    if (this.unloadOnCloseToggle.getPressed() !== this.settings.unloadOnClose) {
+      this.onUnloadOnCloseChange(
+        this.settings.uuid,
+        this.settings.unloadOnClose,
+      );
+    }
+    if (this.hideToolbarToggle.getPressed() !== this.settings.hideToolbar) {
+      this.onHideToolbar(this.settings.uuid, this.settings.hideToolbar);
+    }
+    this.onZoom(this.settings.uuid, false, false, this.settings.zoom);
+    if (this.insertedBeforeXUL !== this.currentInsertedBeforeXUL) {
+      this.onMove(this.settings.uuid, false, false, this.insertedBeforeXUL);
+    }
   }
 }

@@ -8,10 +8,7 @@ export class ToolbarButton extends XULElement {
    * @param {Array<string>} params.classList
    */
   constructor({ id = null, classList = [] } = {}) {
-    super("toolbarbutton", {
-      id,
-      classList: [...classList, "toolbarbutton-1"],
-    });
+    super("toolbarbutton", { id, classList });
   }
 
   /**
@@ -29,6 +26,16 @@ export class ToolbarButton extends XULElement {
    */
   getIcon() {
     return this.getAttribute("image");
+  }
+
+  /**
+   *
+   * @param {string} text
+   * @returns {ToolbarButton}
+   */
+  setLabel(text) {
+    this.setAttribute("label", text);
+    return this;
   }
 
   /**
@@ -70,5 +77,35 @@ export class ToolbarButton extends XULElement {
       this.removeAttribute("disabled");
     }
     return true;
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  isDisabled() {
+    return this.getAttribute("disabled") === "true";
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   * @returns {ToolbarButton}
+   */
+  setChecked(value) {
+    if (value) {
+      this.setAttribute("checked", true);
+    } else {
+      this.removeAttribute("checked");
+    }
+    return true;
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  isChecked() {
+    return this.getAttribute("checked") === "true";
   }
 }

@@ -1,6 +1,6 @@
 import { XULElement } from "./xul_element.mjs";
 
-export class Button extends XULElement {
+export class Toggle extends XULElement {
   /**
    *
    * @param {object} params
@@ -8,7 +8,7 @@ export class Button extends XULElement {
    * @param {Array<string>} params.classList
    */
   constructor({ id = null, classList = [] } = {}) {
-    super("button", {
+    super("moz-toggle", {
       id,
       classList,
       create: (tag) => document.createElement(tag),
@@ -17,11 +17,19 @@ export class Button extends XULElement {
 
   /**
    *
-   * @param {string} text
-   * @returns {Button}
+   * @returns {boolean}
    */
-  setText(text) {
-    this.element.innerText = text;
+  getPressed() {
+    return this.element.pressed;
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   * @returns {Toggle}
+   */
+  setPressed(value) {
+    this.element.pressed = value;
     return this;
   }
 }

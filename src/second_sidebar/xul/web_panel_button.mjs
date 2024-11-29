@@ -1,5 +1,8 @@
 import { Img } from "./base/img.mjs";
 import { ToolbarButton } from "./base/toolbar_button.mjs";
+import { ellipsis } from "../utils/string.mjs";
+
+const URL_TOOLTIP_LIMIT = 64;
 
 export class WebPanelButton extends ToolbarButton {
   /**
@@ -7,11 +10,16 @@ export class WebPanelButton extends ToolbarButton {
    * @param {string} uuid
    */
   constructor(uuid) {
-    super({ classList: ["sidebar-2-main-button"] });
-    this.uuid = uuid;
+    super({ classList: ["sb2-main-button", "toolbarbutton-1"] });
+    this.setAttribute("uuid", uuid).setContext(
+      "sb2-web-panel-button-menupopup",
+    );
 
     this.playingIcon = null;
-    this.setContext("");
+  }
+
+  get uuid() {
+    return this.getAttribute("uuid");
   }
 
   /**
@@ -68,6 +76,14 @@ export class WebPanelButton extends ToolbarButton {
 
   /**
    *
+   * @returns {boolean}
+   */
+  isOpen() {
+    return this.element.open;
+  }
+
+  /**
+   *
    * @param {boolean} value
    * @returns {WebPanelButton}
    */
@@ -84,5 +100,23 @@ export class WebPanelButton extends ToolbarButton {
   setUnloaded(value) {
     this.setAttribute("unloaded", value);
     return this;
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  isUnloaded() {
+    return this.getAttribute("unloaded") === "true";
+  }
+
+  /**
+   *
+   * @param {string} text
+   * @returns {WebPanelButton}
+   */
+  setTooltipText(text) {
+    text = ellipsis(text, URL_TOOLTIP_LIMIT);
+    return ToolbarButton.prototype.setTooltipText.call(this, text);
   }
 }

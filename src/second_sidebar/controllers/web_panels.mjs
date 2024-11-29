@@ -2,8 +2,10 @@
 import { SidebarController } from "./sidebar.mjs";
 import { WebPanel } from "../xul/web_panel.mjs";
 import { WebPanelButton } from "../xul/web_panel_button.mjs";
+import { WebPanelButtonMenuPopup } from "../xul/web_panel_button_menupopup.mjs";
 import { WebPanelButtons } from "../xul/web_panel_buttons.mjs";
 import { WebPanelController } from "./web_panel.mjs";
+import { WebPanelDeleteController } from "./web_panel_delete.mjs";
 import { WebPanelEditController } from "./web_panel_edit.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { WebPanelTab } from "../xul/web_panel_tab.mjs";
@@ -12,35 +14,60 @@ import { WebPanels } from "../xul/web_panels.mjs";
 import { WebPanelsSettings } from "../settings/web_panels_settings.mjs";
 /* eslint-enable no-unused-vars */
 
-const URL_TOOLTIP_LIMIT = 64;
-
 export class WebPanelsController {
   /**
    *
    * @param {WebPanels} webPanels
    * @param {WebPanelButtons} webPanelButtons
    * @param {WebPanelTabs} webPanelTabs
+   * @param {WebPanelButtonMenuPopup} webPanelButtonMenuPopup
    */
-  constructor(webPanels, webPanelButtons, webPanelTabs) {
+  constructor(
+    webPanels,
+    webPanelButtons,
+    webPanelTabs,
+    webPanelButtonMenuPopup,
+  ) {
     this.webPanels = webPanels;
     this.webPanelButtons = webPanelButtons;
+    this.webPanelButtonsXUL = webPanelButtons.getXUL();
     this.webPanelTabs = webPanelTabs;
-
-    /**@type {Array<WebPanelController>} */
-    this.webPanelControllers = [];
+    this.webPanelButtonMenuPopup = webPanelButtonMenuPopup;
 
     /**@type {Object<string, WebPanelController>} */
-    this.webPanelControllersMap = {};
+    this.webPanelControllers = {};
+
+    this.#setupListeners();
   }
 
   /**
    *
    * @param {SidebarController} sidebarController
    * @param {WebPanelEditController} webPanelEditController
+   * @param {WebPanelDeleteController} webPanelDeleteController
    */
-  setupDependencies(sidebarController, webPanelEditController) {
+  setupDependencies(
+    sidebarController,
+    webPanelEditController,
+    webPanelDeleteController,
+  ) {
     this.sidebarController = sidebarController;
     this.webPanelEditController = webPanelEditController;
+    this.webPanelDeleteController = webPanelDeleteController;
+  }
+
+  #setupListeners() {
+    this.webPanelButtonMenuPopup.listenUnloadItemClick((webPanelController) => {
+      webPanelController.unload();
+    });
+
+    this.webPanelButtonMenuPopup.listenEditItemClick((webPanelController) => {
+      this.webPanelEditController.openPopup(webPanelController);
+    });
+
+    this.webPanelButtonMenuPopup.listenDeleteItemClick((webPanelController) => {
+      this.webPanelDeleteController.openPopup(webPanelController);
+    });
   }
 
   /**
@@ -48,9 +75,7 @@ export class WebPanelsController {
    * @param {WebPanelController} webPanelController
    */
   add(webPanelController) {
-    this.webPanelControllers.push(webPanelController);
-    this.webPanelControllersMap[webPanelController.getUUID()] =
-      webPanelController;
+    this.webPanelControllers[webPanelController.getUUID()] = webPanelController;
   }
 
   /**
@@ -59,7 +84,7 @@ export class WebPanelsController {
    * @returns {WebPanelController?}
    */
   get(uuid) {
-    return this.webPanelControllersMap[uuid] ?? null;
+    return this.webPanelControllers[uuid] ?? null;
   }
 
   /**
@@ -90,13 +115,18 @@ export class WebPanelsController {
   /**
    *
    * @param {WebPanelButton} webPanelButton
+   * @param {string?} position
    * @returns {boolean}
    */
-  injectWebPanelButton(webPanelButton) {
+  injectWebPanelButton(webPanelButton, position = "end") {
     if (this.webPanelButtons.contains(webPanelButton)) {
       return false;
     }
-    this.webPanelButtons.appendChild(webPanelButton);
+    if (position === "start") {
+      this.webPanelButtons.prependChild(webPanelButton);
+    } else if (position === "end") {
+      this.webPanelButtons.appendChild(webPanelButton);
+    }
     return true;
   }
 
@@ -123,12 +153,10 @@ export class WebPanelsController {
   /**
    *
    * @param {string} uuid
-   * @returns {boolean}
+   * @returns {number}
    */
   getIndex(uuid) {
-    return this.webPanelControllers.findIndex(
-      (webPanelController) => webPanelController.getUUID() === uuid,
-    );
+    return this.webPanelButtons.indexByUUID(uuid);
   }
 
   /**
@@ -138,8 +166,7 @@ export class WebPanelsController {
   delete(uuid) {
     const index = this.getIndex(uuid);
     if (index !== -1) {
-      this.webPanelControllers.splice(index, 1);
-      delete this.webPanelControllersMap[uuid];
+      delete this.webPanelControllers[uuid];
     }
   }
 
@@ -158,7 +185,22 @@ export class WebPanelsController {
    * @returns {boolean}
    */
   isLast(uuid) {
-    return this.getIndex(uuid) === this.webPanelControllers.length - 1;
+    return (
+      this.getIndex(uuid) === Object.values(this.webPanelControllers).length - 1
+    );
+  }
+
+  /**
+   *
+   * @param {string} uuid
+   * @param {HTMLElement} child
+   */
+  moveBefore(uuid, child) {
+    const webPanelController = this.get(uuid);
+    this.webPanelButtons.element.insertBefore(
+      webPanelController.webPanelButton.element,
+      child,
+    );
   }
 
   /**
@@ -166,14 +208,12 @@ export class WebPanelsController {
    * @param {string} uuid
    */
   moveUp(uuid) {
-    const index = this.getIndex(uuid);
-    if (index !== -1) {
-      const [webPanelController] = this.webPanelControllers.splice(index, 1);
-      this.webPanelControllers.splice(index - 1, 0, webPanelController);
-
-      this.webPanelButtons.element.insertBefore(
-        webPanelController.webPanelButton.element,
-        webPanelController.webPanelButton.element.previousSibling,
+    const webPanelController = this.get(uuid);
+    const webPanelButtonXUL = webPanelController.webPanelButton.getXUL();
+    if (webPanelButtonXUL.previousSibling) {
+      this.webPanelButtonsXUL.insertBefore(
+        webPanelButtonXUL,
+        webPanelButtonXUL.previousSibling,
       );
     }
   }
@@ -183,18 +223,14 @@ export class WebPanelsController {
    * @param {string} uuid
    */
   moveDown(uuid) {
-    const index = this.getIndex(uuid);
-    if (index !== -1) {
-      const [webPanelController] = this.webPanelControllers.splice(index, 1);
-      this.webPanelControllers.splice(index + 1, 0, webPanelController);
-
-      this.webPanelButtons.element.insertBefore(
-        webPanelController.webPanelButton.element.nextSibling,
-        webPanelController.webPanelButton.element,
+    const webPanelController = this.get(uuid);
+    const webPanelButtonXUL = webPanelController.webPanelButton.getXUL();
+    if (webPanelButtonXUL.nextSibling) {
+      this.webPanelButtonsXUL.insertBefore(
+        webPanelButtonXUL.nextSibling,
+        webPanelButtonXUL,
       );
     }
-
-    return this;
   }
 
   /**
@@ -218,6 +254,7 @@ export class WebPanelsController {
    * @param {boolean} params.mobile
    * @param {boolean} params.loadOnStartup
    * @param {boolean} params.unloadOnClose
+   * @param {boolean} params.hideToolbar
    * @returns {WebPanel}
    */
   makeWebPanel(
@@ -232,6 +269,7 @@ export class WebPanelsController {
       zoom = 1,
       loadOnStartup = false,
       unloadOnClose = false,
+      hideToolbar = false,
     } = {},
   ) {
     return new WebPanel(
@@ -245,6 +283,7 @@ export class WebPanelsController {
       zoom,
       loadOnStartup,
       unloadOnClose,
+      hideToolbar,
     );
   }
 
@@ -267,6 +306,7 @@ export class WebPanelsController {
         zoom: webPanelSettings.zoom,
         loadOnStartup: webPanelSettings.loadOnStartup,
         unloadOnClose: webPanelSettings.unloadOnClose,
+        hideToolbar: webPanelSettings.hideToolbar,
         webPanelTab,
       },
     ).hide();
@@ -280,11 +320,7 @@ export class WebPanelsController {
   makeWebPanelButton(webPanel) {
     return new WebPanelButton(webPanel.uuid)
       .setIcon(webPanel.faviconURL)
-      .setTooltipText(
-        webPanel.url.length > URL_TOOLTIP_LIMIT
-          ? webPanel.url.slice(0, URL_TOOLTIP_LIMIT - 3) + "..."
-          : webPanel.url,
-      )
+      .setTooltipText(webPanel.url)
       .setUnloaded(!webPanel.loadOnStartup);
   }
 
@@ -295,11 +331,12 @@ export class WebPanelsController {
    * @param {WebPanelTab} webPanelTab
    * @returns {WebPanelController}
    */
-  #makeWebPanelController(webPanel, webPanelButton, webPanelTab) {
+  makeWebPanelController(webPanel, webPanelButton, webPanelTab) {
     const webPanelController = new WebPanelController(
       webPanel,
       webPanelButton,
       webPanelTab,
+      this.webPanelButtonMenuPopup,
     );
     webPanelController.setupDependencies(
       this,
@@ -323,7 +360,7 @@ export class WebPanelsController {
 
       const webPanelButton = this.makeWebPanelButton(webPanel);
 
-      const webPanelController = this.#makeWebPanelController(
+      const webPanelController = this.makeWebPanelController(
         webPanel,
         webPanelButton,
         webPanelTab,
@@ -342,11 +379,21 @@ export class WebPanelsController {
     }
   }
 
-  saveSettings() {
-    new WebPanelsSettings(
-      this.webPanelControllers.map((webPanelController) =>
-        webPanelController.dumpSettings(),
+  /**
+   *
+   * @returns {WebPanelsSettings}
+   */
+  dumpSettings() {
+    return new WebPanelsSettings(
+      Array.from(this.webPanelButtons.element.children).map((webPanelButton) =>
+        this.webPanelControllers[
+          webPanelButton.getAttribute("uuid")
+        ].dumpSettings(),
       ),
-    ).save();
+    );
+  }
+
+  saveSettings() {
+    this.dumpSettings().save();
   }
 }

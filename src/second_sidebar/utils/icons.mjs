@@ -35,7 +35,7 @@ export function fetchIconURL(url) {
       try {
         if (!faviconURL) {
           provider = "google";
-          faviconURL = `https://www.google.com/s2/favicons?domain=${uri.host}&sz=32`;
+          faviconURL = `https://www.google.com/sb2/favicons?domain=${uri.host}&sz=32`;
           const response = await fetch(faviconURL);
           if (response.status !== 200) {
             throw Error(`Got ${response.status} from google`);

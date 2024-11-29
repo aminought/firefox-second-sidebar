@@ -38,6 +38,7 @@ export class WebPanelsSettings {
             webPanelPref.zoom,
             webPanelPref.loadOnStartup,
             webPanelPref.unloadOnClose,
+            webPanelPref.hideToolbar,
           ),
       ),
     );

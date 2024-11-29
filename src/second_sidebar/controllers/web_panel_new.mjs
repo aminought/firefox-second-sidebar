@@ -87,7 +87,7 @@ export class WebPanelNewController {
     const webPanelButton =
       this.webPanelsController.makeWebPanelButton(webPanel);
 
-    const webPanelController = new WebPanelController(
+    const webPanelController = this.webPanelsController.makeWebPanelController(
       webPanel,
       webPanelButton,
       webPanelTab,
@@ -102,7 +102,10 @@ export class WebPanelNewController {
     this.webPanelsController.injectWebPanel(webPanel);
     webPanelController.initWebPanel();
 
-    this.webPanelsController.injectWebPanelButton(webPanelButton);
+    this.webPanelsController.injectWebPanelButton(
+      webPanelButton,
+      this.getPosition(),
+    );
     webPanelController.initWebPanelButton();
 
     this.sidebarController.close();
@@ -113,6 +116,7 @@ export class WebPanelNewController {
       webPanel.canGoForward(),
       webPanel.getTitle(),
       webPanel.getZoom(),
+      webPanel.hideToolbar,
     );
     webPanelController.show();
 
@@ -122,5 +126,23 @@ export class WebPanelNewController {
 
   hidePopup() {
     this.webPanelPopupNew.hidePopup();
+  }
+
+  /**
+   *
+   * @returns {string}
+   */
+  getPosition() {
+    return this.webPanelNewButton.getProperty("order") === "-1"
+      ? "start"
+      : "end";
+  }
+
+  /**
+   *
+   * @param {string} value
+   */
+  setPosition(value) {
+    this.webPanelNewButton.setProperty("order", value === "start" ? -1 : 1);
   }
 }

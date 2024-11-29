@@ -5,6 +5,7 @@ import { Label } from "./base/label.mjs";
 import { MenuPopup } from "./base/menupopup.mjs";
 import { Toolbar } from "./base/toolbar.mjs";
 import { ToolbarButton } from "./base/toolbar_button.mjs";
+import { isLeftMouseButton } from "../utils/buttons.mjs";
 /* eslint-enable no-unused-vars */
 
 const ICONS = {
@@ -22,7 +23,7 @@ const ICONS = {
 
 export class SidebarToolbar extends Toolbar {
   constructor() {
-    super({ id: "sidebar-2-toolbar" });
+    super({ id: "sb2-toolbar" });
     this.setMode("icons");
 
     // Navigation buttons
@@ -50,7 +51,7 @@ export class SidebarToolbar extends Toolbar {
    */
   #createButton(tooltipText = null, iconUrl = null) {
     return new ToolbarButton({
-      classList: ["sidebar-2-toolbar-button"],
+      classList: ["sb2-toolbar-button", "toolbarbutton-1"],
     })
       .setIcon(iconUrl)
       .setTooltipText(tooltipText);
@@ -71,7 +72,7 @@ export class SidebarToolbar extends Toolbar {
    * @returns {HBox}
    */
   #createNavButtons() {
-    const toolbarButtons = new HBox({ id: "sidebar-2-toolbar-nav-buttons" })
+    const toolbarButtons = new HBox({ id: "sb2-toolbar-nav-buttons" })
       .appendChild(this.backButton)
       .appendChild(this.forwardButton)
       .appendChild(this.reloadButton)
@@ -86,9 +87,9 @@ export class SidebarToolbar extends Toolbar {
    * @returns {Label}
    */
   #createToolbarTitle() {
-    const toolbarTitle = new Label({ id: "sidebar-2-toolbar-title" });
+    const toolbarTitle = new Label({ id: "sb2-toolbar-title" });
     const toolbarTitleWrapper = new Div({
-      id: "sidebar-2-toolbar-title-wrapper",
+      id: "sb2-toolbar-title-wrapper",
     });
     toolbarTitleWrapper.appendChild(toolbarTitle);
     this.appendChild(toolbarTitleWrapper);
@@ -100,7 +101,7 @@ export class SidebarToolbar extends Toolbar {
    * @returns {HBox}
    */
   #createSidebarButtons() {
-    const toolbarButtons = new HBox({ id: "sidebar-2-toolbar-sidebar-buttons" })
+    const toolbarButtons = new HBox({ id: "sb2-toolbar-sidebar-buttons" })
       .appendChild(this.moreButton)
       .appendChild(this.pinButton)
       .appendChild(this.closeButton);
@@ -117,10 +118,9 @@ export class SidebarToolbar extends Toolbar {
    */
   #addButtonClickListener(button, callback) {
     button.addEventListener("mousedown", (event) => {
-      if (event.button !== 0) {
-        return;
+      if (isLeftMouseButton) {
+        callback(event);
       }
-      callback(event);
     });
     return this;
   }
@@ -132,16 +132,6 @@ export class SidebarToolbar extends Toolbar {
    */
   setTitle(title) {
     this.toolbarTitle.setText(title);
-    return this;
-  }
-
-  /**
-   *
-   * @param {MenuPopup} menuPopup
-   * @returns {SidebarToolbar}
-   */
-  setMoreButtonMenuPopup(menuPopup) {
-    this.moreButton.appendChild(menuPopup);
     return this;
   }
 

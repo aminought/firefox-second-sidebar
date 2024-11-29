@@ -10,10 +10,12 @@ export class SidebarMainController {
    *
    * @param {SidebarMain} sidebarMain
    * @param {SidebarMainMenuPopup} sidebarMainMenuPopup
+   * @param {XULElement} browser
    */
-  constructor(sidebarMain, sidebarMainMenuPopup) {
+  constructor(sidebarMain, sidebarMainMenuPopup, browser) {
     this.sidebarMain = sidebarMain;
     this.sidebarMainMenuPopup = sidebarMainMenuPopup;
+    this.browser = browser;
 
     this.#setupListeners();
   }
@@ -39,22 +41,49 @@ export class SidebarMainController {
    *
    * @returns {string}
    */
-  getWidth() {
-    const browser = new XULElement(null, {
-      element: document.querySelector("#browser"),
-    });
-    const value = browser.getProperty("--sidebar-2-main-padding");
+  getPadding() {
+    const value = this.browser.getProperty("--sb2-main-padding");
     return value.match(/var\(--space-([^)]+)\)/)[1];
   }
 
   /**
    *
-   * @param {string} width
+   * @param {string} value
    */
-  setWidth(width) {
-    const browser = new XULElement(null, {
-      element: document.querySelector("#browser"),
-    });
-    browser.setProperty("--sidebar-2-main-padding", `var(--space-${width})`);
+  setPadding(value) {
+    this.browser.setProperty("--sb2-main-padding", `var(--space-${value})`);
+  }
+
+  /**
+   *
+   * @returns {number}
+   */
+  getFaviconSize() {
+    const value = this.browser.getProperty("--sb2-main-button-icon-size");
+    return value.match(/(\d+)px/)[1];
+  }
+
+  /**
+   *
+   * @param {number} value
+   */
+  setFaviconSize(value) {
+    this.browser.setProperty("--sb2-main-button-icon-size", value + "px");
+  }
+
+  /**
+   *
+   * @returns {string}
+   */
+  getWebPanelButtonsPosition() {
+    return this.browser.getProperty("--sb2-main-web-panel-buttons-position");
+  }
+
+  /**
+   *
+   * @param {string} value
+   */
+  setWebPanelButtonsPosition(value) {
+    this.browser.setProperty("--sb2-main-web-panel-buttons-position", value);
   }
 }

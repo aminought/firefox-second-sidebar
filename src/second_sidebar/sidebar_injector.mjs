@@ -8,17 +8,21 @@ import { SidebarMainController } from "./controllers/sidebar_main.mjs";
 import { SidebarMainMenuPopup } from "./xul/sidebar_main_menupopup.mjs";
 import { SidebarMainPopupSettings } from "./xul/sidebar_main_popup_settings.mjs";
 import { SidebarMainSettingsController } from "./controllers/sidebar_main_settings.mjs";
-import { SidebarMoreMenuPopup } from "./xul/sidebar_more_menupopup.mjs";
 import { SidebarSettings } from "./settings/sidebar_settings.mjs";
 import { SidebarSplitterPinned } from "./xul/sidebar_splitter_pinned.mjs";
 import { SidebarSplitterUnpinned } from "./xul/sidebar_splitter_unpinned.mjs";
 import { SidebarSplittersController } from "./controllers/sidebar_splitters.mjs";
 import { SidebarToolbar } from "./xul/sidebar_toolbar.mjs";
+import { WebPanelButtonMenuPopup } from "./xul/web_panel_button_menupopup.mjs";
 import { WebPanelButtons } from "./xul/web_panel_buttons.mjs";
+import { WebPanelDeleteController } from "./controllers/web_panel_delete.mjs";
 import { WebPanelEditController } from "./controllers/web_panel_edit.mjs";
+import { WebPanelMoreController } from "./controllers/web_panel_more.mjs";
 import { WebPanelNewButton } from "./xul/web_panel_new_button.mjs";
 import { WebPanelNewController } from "./controllers/web_panel_new.mjs";
+import { WebPanelPopupDelete } from "./xul/web_panel_popup_delete.mjs";
 import { WebPanelPopupEdit } from "./xul/web_panel_popup_edit.mjs";
+import { WebPanelPopupMore } from "./xul/web_panel_popup_more.mjs";
 import { WebPanelPopupNew } from "./xul/web_panel_popup_new.mjs";
 import { WebPanelTabs } from "./xul/web_panel_tabs.mjs";
 import { WebPanels } from "./xul/web_panels.mjs";
@@ -68,16 +72,21 @@ export class SidebarInjector {
    */
   static #createElements() {
     return {
+      browser: new XULElement(null, {
+        element: document.querySelector("#browser"),
+      }),
       sidebarMain: new SidebarMain(),
       webPanelTabs: new WebPanelTabs(),
       webPanelButtons: new WebPanelButtons(),
+      webPanelButtonMenuPopup: new WebPanelButtonMenuPopup(),
       webPanelNewButton: new WebPanelNewButton(),
       webPanelPopupNew: new WebPanelPopupNew(),
       webPanelPopupEdit: new WebPanelPopupEdit(),
+      webPanelPopupMore: new WebPanelPopupMore(),
+      webPanelPopupDelete: new WebPanelPopupDelete(),
       sidebarBox: new SidebarBox(),
       sidebar: new Sidebar(),
       sidebarToolbar: new SidebarToolbar(),
-      sidebarMoreMenuPopup: new SidebarMoreMenuPopup(),
       webPanels: new WebPanels(),
       sidebarSplitterPinned: new SidebarSplitterPinned(),
       sidebarSplitterUnpinned: new SidebarSplitterUnpinned(),
@@ -96,6 +105,7 @@ export class SidebarInjector {
       elements.webPanelButtons,
       elements.webPanelNewButton,
     );
+    elements.sidebarToolbar.moreButton.appendChild(elements.webPanelPopupMore);
     elements.sidebar.appendChildren(
       elements.sidebarToolbar,
       elements.webPanels,
@@ -119,8 +129,10 @@ export class SidebarInjector {
       element: document.querySelector("#mainPopupSet"),
     });
     mainPopupSet.appendChildren(
+      elements.webPanelButtonMenuPopup,
       elements.webPanelPopupNew,
       elements.webPanelPopupEdit,
+      elements.webPanelPopupDelete,
       elements.sidebarMainMenuPopup,
       elements.sidebarMainPopupSettings,
     );
@@ -137,6 +149,7 @@ export class SidebarInjector {
     this.sidebarMainController = new SidebarMainController(
       elements.sidebarMain,
       elements.sidebarMainMenuPopup,
+      elements.browser,
     );
     this.sidebarMainSettingsController = new SidebarMainSettingsController(
       elements.sidebarMainPopupSettings,
@@ -145,8 +158,9 @@ export class SidebarInjector {
       elements.sidebarBox,
       elements.sidebar,
       elements.sidebarToolbar,
-      elements.sidebarMoreMenuPopup,
       elements.sidebarSplitterUnpinned,
+      elements.webPanelPopupEdit,
+      elements.browser,
     );
     this.sidebarSplittersController = new SidebarSplittersController(
       elements.sidebarSplitterUnpinned,
@@ -156,6 +170,7 @@ export class SidebarInjector {
       elements.webPanels,
       elements.webPanelButtons,
       elements.webPanelTabs,
+      elements.webPanelButtonMenuPopup,
     );
     this.webPanelNewController = new WebPanelNewController(
       elements.webPanelNewButton,
@@ -163,6 +178,12 @@ export class SidebarInjector {
     );
     this.webPanelEditController = new WebPanelEditController(
       elements.webPanelPopupEdit,
+    );
+    this.webPanelMoreController = new WebPanelMoreController(
+      elements.webPanelPopupMore,
+    );
+    this.webPanelDeleteController = new WebPanelDeleteController(
+      elements.webPanelPopupDelete,
     );
     this.contextItemController = new ContextItemController();
   }
@@ -174,10 +195,12 @@ export class SidebarInjector {
     this.sidebarMainSettingsController.setupDependencies(
       this.sidebarMainController,
       this.sidebarController,
+      this.webPanelNewController,
     );
     this.sidebarController.setupDepenedencies(
       this.sidebarMainController,
       this.webPanelsController,
+      this.webPanelNewController,
     );
     this.sidebarSplittersController.setupDependencies(
       this.sidebarController,
@@ -186,6 +209,7 @@ export class SidebarInjector {
     this.webPanelsController.setupDependencies(
       this.sidebarController,
       this.webPanelEditController,
+      this.webPanelDeleteController,
     );
     this.webPanelNewController.setupDependencies(
       this.sidebarController,
@@ -193,6 +217,14 @@ export class SidebarInjector {
       this.webPanelEditController,
     );
     this.webPanelEditController.setupDependencies(
+      this.webPanelsController,
+      this.sidebarController,
+    );
+    this.webPanelMoreController.setupDependencies(
+      this.webPanelsController,
+      this.sidebarController,
+    );
+    this.webPanelDeleteController.setupDependencies(
       this.webPanelsController,
       this.sidebarController,
     );

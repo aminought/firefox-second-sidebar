@@ -2,6 +2,6 @@ import { Box } from "./base/box.mjs";
 
 export class SidebarBoxFiller extends Box {
   constructor() {
-    super({ id: "sidebar-2-box-filler" });
+    super({ id: "sb2-box-filler" });
   }
 }

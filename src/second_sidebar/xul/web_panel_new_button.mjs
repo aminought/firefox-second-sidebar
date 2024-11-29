@@ -5,7 +5,7 @@ const ICON = "chrome://global/skin/icons/plus.svg";
 export class WebPanelNewButton extends ToolbarButton {
   constructor() {
     super({
-      classList: ["sidebar-2-main-button"],
+      classList: ["sb2-main-button", "toolbarbutton-1"],
     });
 
     this.setIcon(ICON).setBadged("false").setContext("");
