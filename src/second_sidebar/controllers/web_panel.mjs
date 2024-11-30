@@ -167,7 +167,7 @@ export class WebPanelController {
   }
 
   hide() {
-    this.webPanel.hide();
+    this.webPanel.hide().setDocShellIsActive(false).preserveLayers(true);
     if (this.webPanel.unloadOnClose) {
       this.unload();
     }

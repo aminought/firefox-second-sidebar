@@ -13,6 +13,10 @@ export class Browser extends XULElement {
     this.ZOOM_DELTA = 0.1;
   }
 
+  getTabBrowser() {
+    return this.element.getTabBrowser();
+  }
+
   /**
    *
    * @param {string} value
