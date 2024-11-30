@@ -166,13 +166,6 @@ export class WebPanelsController {
   delete(uuid) {
     const index = this.getIndex(uuid);
     if (index !== -1) {
-      const webPanelController = this.get(uuid);
-      const webPanel = webPanelController.webPanel;
-
-      // Revert hack to deceive AsyncTabSwitcher
-      const tabBrowser = webPanel.getTabBrowser();
-      tabBrowser._printPreviewBrowsers.delete(webPanel.getXUL());
-
       delete this.webPanelControllers[uuid];
     }
   }
@@ -292,11 +285,6 @@ export class WebPanelsController {
       unloadOnClose,
       hideToolbar,
     );
-
-    // Hack to deceive AsyncTabSwitcher
-    const tabBrowser = webPanel.getTabBrowser();
-    tabBrowser._printPreviewBrowsers.add(webPanel.getXUL());
-
     return webPanel;
   }
 

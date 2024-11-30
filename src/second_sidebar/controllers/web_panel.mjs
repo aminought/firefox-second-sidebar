@@ -104,7 +104,19 @@ export class WebPanelController {
     return this.webPanel.getCurrentUrl();
   }
 
+  hackAsyncTabSwitcher() {
+    const tabBrowser = this.webPanel.getTabBrowser();
+    tabBrowser._printPreviewBrowsers.add(this.webPanel.getXUL());
+  }
+
+  unhackAsyncTabSwitcher() {
+    const tabBrowser = this.webPanel.getTabBrowser();
+    tabBrowser._printPreviewBrowsers.delete(this.webPanel.getXUL());
+  }
+
   initWebPanel() {
+    this.hackAsyncTabSwitcher();
+
     this.webPanel.listenBrowserProgressListener(() => {
       this.webPanel.setZoom(this.webPanel.zoom);
       if (this.webPanel.isActive()) {
@@ -175,6 +187,7 @@ export class WebPanelController {
   }
 
   unload() {
+    this.unhackAsyncTabSwitcher();
     this.sidebarController.close();
     this.webPanel.remove();
     this.webPanelTab.remove();
@@ -333,6 +346,7 @@ export class WebPanelController {
   }
 
   remove() {
+    this.unhackAsyncTabSwitcher();
     this.webPanel.remove();
     this.webPanelTab.remove();
     this.webPanelButton.remove();
