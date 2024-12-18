@@ -62,7 +62,13 @@ export class WebPanelController {
   getURL() {
     return this.webPanel.url;
   }
-
+ /**
+   *
+   * @returns {string}
+   */
+ getUserContextId() {
+  
+}
   /**
    *
    * @param {string} value
@@ -70,6 +76,15 @@ export class WebPanelController {
   setURL(value) {
     this.webPanel.url = value;
     this.webPanelButton.setTooltipText(value);
+  }
+
+   /**
+   *
+   * @param {string} value
+   */
+   setUserContextId(value) {
+    this.webPanelTab.setUserContextId(value);
+    this.webPanel.setUserContextId(value);
   }
 
   /**
@@ -106,6 +121,8 @@ export class WebPanelController {
 
   hackAsyncTabSwitcher() {
     const tabBrowser = this.webPanel.getTabBrowser();
+
+ 
     tabBrowser._printPreviewBrowsers.add(this.webPanel.getXUL());
   }
 
@@ -113,11 +130,17 @@ export class WebPanelController {
     const tabBrowser = this.webPanel.getTabBrowser();
     tabBrowser._printPreviewBrowsers.delete(this.webPanel.getXUL());
   }
+   
 
   initWebPanel() {
     this.hackAsyncTabSwitcher();
 
-    this.webPanel.listenBrowserProgressListener(() => {
+    this.webPanel.addEventListener("visibilitychange", (event) => { 
+      console.log("visibilitychange",event);
+    })
+    this.webPanel.listenBrowserProgressListener((event) => {
+      console.log(event);
+      console.log(this.getCurrentUrl());
       this.webPanel.setZoom(this.webPanel.zoom);
       if (this.webPanel.isActive()) {
         const canGoBack = this.webPanel.canGoBack();
@@ -368,6 +391,7 @@ export class WebPanelController {
       this.webPanel.loadOnStartup,
       this.webPanel.unloadOnClose,
       this.webPanel.hideToolbar,
+      this.webPanel.userContextId,
     );
   }
 }

@@ -107,7 +107,7 @@ export class SidebarSettings {
       pref.unpinnedPadding ?? "small",
       pref.hideInPopupWindows ?? false,
       pref.autoHideBackButton ?? false,
-      pref.autoHideForwardButton ?? false,
+      pref.autoHideForwardButton ?? false
     );
   }
 

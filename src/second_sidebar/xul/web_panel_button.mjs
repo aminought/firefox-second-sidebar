@@ -1,7 +1,7 @@
 import { Img } from "./base/img.mjs";
 import { ToolbarButton } from "./base/toolbar_button.mjs";
 import { ellipsis } from "../utils/string.mjs";
-
+Components.utils.import("resource://gre/modules/ContextualIdentityService.jsm");
 const URL_TOOLTIP_LIMIT = 64;
 
 export class WebPanelButton extends ToolbarButton {
@@ -14,7 +14,7 @@ export class WebPanelButton extends ToolbarButton {
     this.setAttribute("uuid", uuid).setContext(
       "sb2-web-panel-button-menupopup",
     );
-
+   
     this.playingIcon = null;
   }
 
@@ -91,6 +91,22 @@ export class WebPanelButton extends ToolbarButton {
     this.element.open = value;
     return this;
   }
+
+
+  /**
+   *
+   * @param {string} value
+   * @returns {WebPanelButton}
+   */
+  setUserContextId(value) {
+    let identity = ContextualIdentityService.getPublicIdentityFromId(value);
+    if (identity) {
+        this.element.style=`border-left: 2px solid ${identity.color};`
+      }
+  
+    return this;
+  }
+
 
   /**
    *

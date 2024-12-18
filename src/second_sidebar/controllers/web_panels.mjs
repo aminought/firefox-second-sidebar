@@ -255,6 +255,7 @@ export class WebPanelsController {
    * @param {boolean} params.loadOnStartup
    * @param {boolean} params.unloadOnClose
    * @param {boolean} params.hideToolbar
+   * @param {number} params.userContextId
    * @returns {WebPanel}
    */
   makeWebPanel(
@@ -270,6 +271,7 @@ export class WebPanelsController {
       loadOnStartup = false,
       unloadOnClose = false,
       hideToolbar = false,
+      userContextId = 0,
     } = {},
   ) {
     const webPanel = new WebPanel(
@@ -284,6 +286,7 @@ export class WebPanelsController {
       loadOnStartup,
       unloadOnClose,
       hideToolbar,
+      userContextId,
     );
     return webPanel;
   }
@@ -308,6 +311,7 @@ export class WebPanelsController {
         loadOnStartup: webPanelSettings.loadOnStartup,
         unloadOnClose: webPanelSettings.unloadOnClose,
         hideToolbar: webPanelSettings.hideToolbar,
+        userContextId: webPanelSettings.userContextId,
         webPanelTab,
       },
     ).hide();
@@ -321,7 +325,7 @@ export class WebPanelsController {
   makeWebPanelButton(webPanel) {
     return new WebPanelButton(webPanel.uuid)
       .setIcon(webPanel.faviconURL)
-      .setTooltipText(webPanel.url)
+      .setTooltipText(webPanel.url).setUserContextId(webPanel.userContextId)
       .setUnloaded(!webPanel.loadOnStartup);
   }
 
