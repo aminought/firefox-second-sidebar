@@ -135,12 +135,9 @@ export class WebPanelController {
   initWebPanel() {
     this.hackAsyncTabSwitcher();
 
-    this.webPanel.addEventListener("visibilitychange", (event) => { 
-      console.log("visibilitychange",event);
-    })
+     
     this.webPanel.listenBrowserProgressListener((event) => {
-      console.log(event);
-      console.log(this.getCurrentUrl());
+      
       this.webPanel.setZoom(this.webPanel.zoom);
       if (this.webPanel.isActive()) {
         const canGoBack = this.webPanel.canGoBack();

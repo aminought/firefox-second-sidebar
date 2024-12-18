@@ -25,8 +25,7 @@ export class WebPanelsSettings {
    */
   static load() {
     const pref = Settings.load(PREF) ?? [];
-
-    console.log("WebPanelsSettings.load", pref);
+ 
     return new WebPanelsSettings(
       pref.map(
         (webPanelPref) =>
