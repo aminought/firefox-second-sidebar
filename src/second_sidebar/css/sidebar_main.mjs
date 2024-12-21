@@ -12,6 +12,12 @@ export const SIDEBAR_MAIN_CSS = `
       flex: 1;
       min-height: 10px;
       max-height: 112px;
+      min-width: unset;
+      max-width: unset;
+    }
+
+    .toolbaritem-combined-buttons {
+      justify-content: center;
     }
   }
 
