@@ -10,9 +10,16 @@ export class WebPanelButton extends ToolbarButton {
    * @param {string} uuid
    */
   constructor(uuid) {
-    super({id: uuid, classList: ["sb2-main-button", "toolbarbutton-1"] });
+    super({
+      id: uuid,
+      classList: [
+        "sb2-main-button",
+        "sb2-main-web-panel-button",
+        "toolbarbutton-1",
+      ],
+    });
     this.setAttribute("uuid", uuid).setContext(
-      "sb2-web-panel-button-menupopup",
+      "sb2-web-panel-button-menupopup"
     );
 
     this.playingIcon = null;

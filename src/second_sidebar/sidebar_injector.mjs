@@ -4,7 +4,6 @@ import { SidebarBox } from "./xul/sidebar_box.mjs";
 import { SidebarBoxFiller } from "./xul/sidebar_box_filler.mjs";
 import { SidebarController } from "./controllers/sidebar.mjs";
 import { SidebarMain } from "./xul/sidebar_main.mjs";
-import { SidebarMainButtons } from "./xul/sidebar_main_buttons.mjs";
 import { SidebarMainController } from "./controllers/sidebar_main.mjs";
 import { SidebarMainMenuPopup } from "./xul/sidebar_main_menupopup.mjs";
 import { SidebarMainPopupSettings } from "./xul/sidebar_main_popup_settings.mjs";
@@ -57,33 +56,20 @@ export class SidebarInjector {
 
     CustomizableUI.registerToolbarNode(document.getElementById("sb2-main"));
 
-    // this.obs = [];
     gNavToolbox.addEventListener("customizationready", () => {
       const browser = document.querySelector("#browser");
       browser.hidden = false;
 
-      // const items = document.querySelectorAll("#sb2-main toolbarpaletteitem");
-      // for (const o of this.obs) {
-      //   o.disconnect();
-      // }
-      // this.obs = [];
-      // for (const item of items) {
-      //   const o = new MutationObserver((e) => e.forEach((r) => {
-      //     const e = r.target;
-      //     if (e.style.borderInlineStartWidth == '36px') {
-      //       e.style.borderInlineStartWidth = null;
-      //       e.style.borderBlockStartWidth = '36px';
-      //     } else if (e.style.borderInlineEndWidth == '36px') {
-      //       e.style.borderInlineEndWidth = null;
-      //       e.style.borderBlockEndWidth = '36px';
-      //     }
-      //   }));
-      //   o.observe(item, {
-      //     attributeFilter: ["style"],
-      //     attributeOldValue: true,
-      //   });
-      //   this.obs.push(o);
-      // }
+      // const spring = CustomizableUI.createSpecialWidget(
+      //   "customizableui-special-spring-ultra",
+      //   gCustomizeMode.document
+      // );
+      // spring.setAttribute("title", "Ultra Flexible Space");
+      // const wrapper = gCustomizeMode.wrapToolbarItem(spring, "palette");
+      // wrapper.setAttribute("title", "Ultra Flexible Space");
+      // const fragment = gCustomizeMode.document.createDocumentFragment();
+      // fragment.appendChild(wrapper);
+      // gCustomizeMode.visiblePalette.appendChild(fragment);
     });
 
     return true;
@@ -113,7 +99,6 @@ export class SidebarInjector {
         element: document.querySelector("#browser"),
       }),
       sidebarMain: new SidebarMain(),
-      sidebarMainButtons: new SidebarMainButtons(),
       webPanelTabs: new WebPanelTabs(),
       webPanelButtonMenuPopup: new WebPanelButtonMenuPopup(),
       webPanelNewButton: new WebPanelNewButton(),
@@ -138,10 +123,7 @@ export class SidebarInjector {
    * @param {Object<string, XULElement>} elements
    */
   static #injectElements(elements) {
-    elements.sidebarMainButtons.appendChild(elements.webPanelNewButton);
-    elements.sidebarMain.appendChildren(
-      elements.sidebarMainButtons,
-    );
+    elements.sidebarMain.appendChildren(elements.webPanelNewButton);
     elements.sidebarToolbar.moreButton.appendChild(elements.webPanelPopupMore);
     elements.sidebar.appendChildren(
       elements.sidebarToolbar,
@@ -205,7 +187,7 @@ export class SidebarInjector {
     );
     this.webPanelsController = new WebPanelsController(
       elements.webPanels,
-      elements.sidebarMainButtons,
+      elements.sidebarMain,
       elements.webPanelTabs,
       elements.webPanelButtonMenuPopup
     );

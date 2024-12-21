@@ -21,6 +21,7 @@ export class CustomizeModePatcher {
     gCustomizeMode._onDragStart = customizeMode._onDragStart;
     gCustomizeMode._onDragOver = customizeMode._onDragOver;
     gCustomizeMode._setDragActive = customizeMode._setDragActive;
+    gCustomizeMode._getDragItemSize = customizeMode._getDragItemSize;
   }
 }
 
@@ -401,6 +402,76 @@ const customizeMode = {
         }
       }
     }
+  },
+
+  _getDragItemSize(aDragOverNode, aDraggedItem) {
+    // Cache it good, cache it real good.
+    if (!gCustomizeMode._dragSizeMap) {
+      gCustomizeMode._dragSizeMap = new WeakMap();
+    }
+    if (!gCustomizeMode._dragSizeMap.has(aDraggedItem)) {
+      gCustomizeMode._dragSizeMap.set(aDraggedItem, new WeakMap());
+    }
+    let itemMap = gCustomizeMode._dragSizeMap.get(aDraggedItem);
+    let targetArea = gCustomizeMode._getCustomizableParent(aDragOverNode);
+    let currentArea = gCustomizeMode._getCustomizableParent(aDraggedItem);
+    // Return the size for gCustomizeMode target from cache, if it exists.
+    let size = itemMap.get(targetArea);
+    if (size) {
+      return size;
+    }
+
+    // Calculate size of the item when it'd be dropped in gCustomizeMode position.
+    let currentParent = aDraggedItem.parentNode;
+    let currentSibling = aDraggedItem.nextElementSibling;
+    const kAreaType = "cui-areatype";
+    let areaType, currentType;
+
+    if (targetArea != currentArea) {
+      // Move the widget temporarily next to the placeholder.
+      aDragOverNode.parentNode.insertBefore(aDraggedItem, aDragOverNode);
+      // Update the node's areaType.
+      if (targetArea.id === "sb2-main") {
+        areaType = "panel";
+      } else {
+        areaType = CustomizableUI.getAreaType(targetArea.id);
+      }
+      currentType =
+        aDraggedItem.hasAttribute(kAreaType) &&
+        aDraggedItem.getAttribute(kAreaType);
+      if (areaType) {
+        aDraggedItem.setAttribute(kAreaType, areaType);
+      }
+      gCustomizeMode.wrapToolbarItem(aDraggedItem, areaType || "palette");
+      CustomizableUI.onWidgetDrag(aDraggedItem.id, targetArea.id);
+    } else {
+      aDraggedItem.parentNode.hidden = false;
+    }
+
+    // Fetch the new size.
+    let rect = aDraggedItem.parentNode.getBoundingClientRect();
+    size = { width: rect.width, height: rect.height };
+    // Cache the found value of size for gCustomizeMode target.
+    itemMap.set(targetArea, size);
+
+    if (targetArea != currentArea) {
+      gCustomizeMode.unwrapToolbarItem(aDraggedItem.parentNode);
+      // Put the item back into its previous position.
+      currentParent.insertBefore(aDraggedItem, currentSibling);
+      // restore the areaType
+      if (areaType) {
+        if (currentType === false) {
+          aDraggedItem.removeAttribute(kAreaType);
+        } else {
+          aDraggedItem.setAttribute(kAreaType, currentType);
+        }
+      }
+      gCustomizeMode.createOrUpdateWrapper(aDraggedItem, null, true);
+      CustomizableUI.onWidgetDrag(aDraggedItem.id);
+    } else {
+      aDraggedItem.parentNode.hidden = true;
+    }
+    return size;
   },
 };
 

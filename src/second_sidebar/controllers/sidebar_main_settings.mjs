@@ -2,7 +2,6 @@
 import { SidebarController } from "./sidebar.mjs";
 import { SidebarMainController } from "./sidebar_main.mjs";
 import { SidebarMainPopupSettings } from "../xul/sidebar_main_popup_settings.mjs";
-import { WebPanelNewController } from "./web_panel_new.mjs";
 /* eslint-enable no-unused-vars */
 
 export class SidebarMainSettingsController {
@@ -20,16 +19,13 @@ export class SidebarMainSettingsController {
    *
    * @param {SidebarMainController} sidebarMainController
    * @param {SidebarController} sidebarController
-   * @param {WebPanelNewController} webPanelNewController
    */
   setupDependencies(
     sidebarMainController,
     sidebarController,
-    webPanelNewController,
   ) {
     this.sidebarMainController = sidebarMainController;
     this.sidebarController = sidebarController;
-    this.webPanelNewController = webPanelNewController;
   }
 
   #setupListeners() {

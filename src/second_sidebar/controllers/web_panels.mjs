@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { SidebarController } from "./sidebar.mjs";
-import { SidebarMainButtons } from "../xul/sidebar_main_buttons.mjs";
+import { SidebarMain } from "../xul/sidebar_main.mjs";
 import { WebPanel } from "../xul/web_panel.mjs";
 import { WebPanelButton } from "../xul/web_panel_button.mjs";
 import { WebPanelButtonMenuPopup } from "../xul/web_panel_button_menupopup.mjs";
@@ -18,19 +18,18 @@ export class WebPanelsController {
   /**
    *
    * @param {WebPanels} webPanels
-   * @param {SidebarMainButtons} sidebarMainButtons
+   * @param {SidebarMain} sidebarMain
    * @param {WebPanelTabs} webPanelTabs
    * @param {WebPanelButtonMenuPopup} webPanelButtonMenuPopup
    */
   constructor(
     webPanels,
-    sidebarMainButtons,
+    sidebarMain,
     webPanelTabs,
     webPanelButtonMenuPopup
   ) {
     this.webPanels = webPanels;
-    this.sidebarMainButtons = sidebarMainButtons;
-    this.sidebarMainButtonsXUL = sidebarMainButtons.getXUL();
+    this.sidebarMain = sidebarMain;
     this.webPanelTabs = webPanelTabs;
     this.webPanelButtonMenuPopup = webPanelButtonMenuPopup;
 
@@ -119,13 +118,13 @@ export class WebPanelsController {
    * @returns {boolean}
    */
   injectWebPanelButton(webPanelButton, position = "end") {
-    if (this.sidebarMainButtons.contains(webPanelButton)) {
+    if (this.sidebarMain.contains(webPanelButton)) {
       return false;
     }
     if (position === "start") {
-      this.sidebarMainButtons.prependChild(webPanelButton);
+      this.sidebarMain.prependChild(webPanelButton);
     } else if (position === "end") {
-      this.sidebarMainButtons.appendChild(webPanelButton);
+      this.sidebarMain.appendChild(webPanelButton);
     }
     return true;
   }
@@ -155,10 +154,7 @@ export class WebPanelsController {
    * @param {string} uuid
    */
   delete(uuid) {
-    const index = this.getIndex(uuid);
-    if (index !== -1) {
-      delete this.webPanelControllers[uuid];
-    }
+    delete this.webPanelControllers[uuid];
   }
 
   /**
@@ -314,9 +310,9 @@ export class WebPanelsController {
    */
   dumpSettings() {
     return new WebPanelsSettings(
-      Array.from(this.sidebarMainButtons.element.children)
+      Array.from(this.sidebarMain.element.children)
         .filter((sidebarMainButton) =>
-          sidebarMainButton.classList.contains("sb2-main-button")
+          sidebarMainButton.classList.contains("sb2-main-web-panel-button")
         )
         .map((webPanelButton) =>
           this.webPanelControllers[

@@ -6,9 +6,7 @@ import { SidebarSettings } from "../settings/sidebar_settings.mjs";
 import { SidebarSplitterUnpinned } from "../xul/sidebar_splitter_unpinned.mjs";
 import { SidebarToolbar } from "../xul/sidebar_toolbar.mjs";
 import { ToolbarButton } from "../xul/base/toolbar_button.mjs";
-import { WebPanelNewController } from "./web_panel_new.mjs";
 import { WebPanelPopupEdit } from "../xul/web_panel_popup_edit.mjs";
-import { WebPanelPopupMore } from "../xul/web_panel_popup_more.mjs";
 import { WebPanelsController } from "./web_panels.mjs";
 import { XULElement } from "../xul/base/xul_element.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
@@ -49,16 +47,13 @@ export class SidebarController {
    *
    * @param {SidebarMainController} sidebarMainController
    * @param {WebPanelsController} webPanelsController
-   * @param {WebPanelNewController} webPanelNewController
    */
   setupDepenedencies(
     sidebarMainController,
     webPanelsController,
-    webPanelNewController,
   ) {
     this.sidebarMainController = sidebarMainController;
     this.webPanelsController = webPanelsController;
-    this.webPanelNewController = webPanelNewController;
   }
 
   #setupListeners() {
@@ -275,7 +270,6 @@ export class SidebarController {
    */
   loadSettings(settings) {
     this.setPosition(settings.position);
-    this.webPanelNewController.setPosition(settings.plusButtonPosition);
     this.sidebarMainController.setPadding(settings.padding);
     this.sidebarMainController.setFaviconSize(settings.faviconSize);
     this.setUnpinnedPadding(settings.unpinnedPadding);
@@ -291,7 +285,6 @@ export class SidebarController {
   dumpSettings() {
     return new SidebarSettings(
       this.getPosition(),
-      this.webPanelNewController.getPosition(),
       this.sidebarMainController.getPadding(),
       this.sidebarMainController.getFaviconSize(),
       this.getUnpinnedPadding(),

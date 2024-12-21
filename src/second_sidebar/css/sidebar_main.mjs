@@ -5,6 +5,8 @@ export const SIDEBAR_MAIN_CSS = `
     justify-content: var(--sb2-main-web-panel-buttons-position);
     gap: var(--space-small);
     padding: 0 var(--sb2-main-padding) var(--space-small) var(--sb2-main-padding);
+    overflow-y: scroll;
+    scrollbar-width: none;
 
     toolbarspring {
       min-height: 28px;

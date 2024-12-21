@@ -347,6 +347,7 @@ export class WebPanelController {
 
   remove() {
     this.unhackAsyncTabSwitcher();
+    CustomizableUI.removeWidgetFromArea(this.webPanel.id); // FIXME: not working now
     this.webPanel.remove();
     this.webPanelTab.remove();
     this.webPanelButton.remove();
