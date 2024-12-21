@@ -4,9 +4,18 @@ export const SIDEBAR_MAIN_CSS = `
     flex-direction: column;
     justify-content: var(--sb2-main-web-panel-buttons-position);
     gap: var(--space-small);
-    overflow-y: scroll;
-    scrollbar-width: none;
     padding: 0 var(--sb2-main-padding) var(--space-small) var(--sb2-main-padding);
+
+    toolbarspring {
+      min-height: 28px;
+      max-height: 112px;
+    }
+  }
+
+  :root[customizing] {
+    #sb2-main, #sb2-main-buttons {
+      min-width: unset !important;
+    }
   }
 
   #browser:has(#sb2[position="right"]) #sb2-main {
@@ -17,14 +26,11 @@ export const SIDEBAR_MAIN_CSS = `
     order: -3 !important;
   }
 
-  #sb2-main-web-panel-buttons {
+  #sb2-main-buttons {
     display: flex;
+    height: 100%;
     flex-direction: column;
     gap: 8px;
-  }
-
-  #sb2-main-web-panel-buttons:empty {
-    display: none;
   }
 
   .sb2-main-button {

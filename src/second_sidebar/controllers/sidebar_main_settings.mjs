@@ -35,10 +35,6 @@ export class SidebarMainSettingsController {
   #setupListeners() {
     this.sidebarMainPopupSettings.listenChanges({
       position: (value) => this.sidebarController.setPosition(value),
-      webPanelButtonsPosition: (value) =>
-        this.sidebarMainController.setWebPanelButtonsPosition(value),
-      plusButtonPosition: (value) =>
-        this.webPanelNewController.setPosition(value),
       padding: (value) => this.sidebarMainController.setPadding(value),
       faviconSize: (value) => this.sidebarMainController.setFaviconSize(value),
       unpinnedPadding: (value) =>

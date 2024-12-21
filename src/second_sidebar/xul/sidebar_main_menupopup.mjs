@@ -9,11 +9,18 @@ export class SidebarMainMenuPopup extends MenuPopup {
     });
 
     this.settingsItem = new MenuItem().setLabel("Sidebar settings");
-    this.appendChild(this.settingsItem);
+    this.customizeItem = new MenuItem().setLabel("Customize");
+    this.appendChildren(this.settingsItem, this.customizeItem);
   }
 
   listenSettingsItemClick(callback) {
     this.settingsItem.addEventListener("click", (event) => {
+      callback(event);
+    });
+  }
+
+  listenCustomizeItemClick(callback) {
+    this.customizeItem.addEventListener("click", (event) => {
       callback(event);
     });
   }

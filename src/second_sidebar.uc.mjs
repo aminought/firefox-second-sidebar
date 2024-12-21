@@ -5,12 +5,14 @@
 // @homepageURL     https://github.com/aminought/firefox-second-sidebar
 // ==/UserScript==
 
+import { CustomizeModePatcher } from "./second_sidebar/customize_mode_patcher.mjs";
 import { SidebarDecorator } from "./second_sidebar/sidebar_decorator.mjs";
 import { SidebarInjector } from "./second_sidebar/sidebar_injector.mjs";
 
 const run = () => {
   if (SidebarInjector.inject()) {
     SidebarDecorator.decorate();
+    CustomizeModePatcher.patch();
   }
 };
 

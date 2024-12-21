@@ -275,9 +275,6 @@ export class SidebarController {
    */
   loadSettings(settings) {
     this.setPosition(settings.position);
-    this.sidebarMainController.setWebPanelButtonsPosition(
-      settings.webPanelButtonsPosition,
-    );
     this.webPanelNewController.setPosition(settings.plusButtonPosition);
     this.sidebarMainController.setPadding(settings.padding);
     this.sidebarMainController.setFaviconSize(settings.faviconSize);
@@ -294,7 +291,6 @@ export class SidebarController {
   dumpSettings() {
     return new SidebarSettings(
       this.getPosition(),
-      this.sidebarMainController.getWebPanelButtonsPosition(),
       this.webPanelNewController.getPosition(),
       this.sidebarMainController.getPadding(),
       this.sidebarMainController.getFaviconSize(),

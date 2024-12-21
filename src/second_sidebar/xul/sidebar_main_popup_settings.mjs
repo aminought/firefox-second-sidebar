@@ -26,9 +26,6 @@ export class SidebarMainPopupSettings extends Panel {
     this.setType("arrow").setRole("group");
 
     this.positionMenuList = this.#createPositionMenuList();
-    this.webPanelButtonsPositionMenuList =
-      this.#createWebPanelButtonsPositionMenuList();
-    this.plusButtonPositionMenuList = this.#createPlusButtonPositionMenuList();
     this.paddingMenuList = this.#createPaddingMenuList();
     this.hideInPopupWindowsToggle = new Toggle();
     this.autoHideBackToggle = new Toggle();
@@ -48,28 +45,6 @@ export class SidebarMainPopupSettings extends Panel {
     const menuList = new MenuList();
     menuList.appendItem("Left", "left");
     menuList.appendItem("Right", "right");
-    return menuList;
-  }
-
-  /**
-   *
-   * @returns {MenuList}
-   */
-  #createWebPanelButtonsPositionMenuList() {
-    const menuList = new MenuList();
-    menuList.appendItem("Top", "start");
-    menuList.appendItem("Bottom", "end");
-    return menuList;
-  }
-
-  /**
-   *
-   * @returns {MenuList}
-   */
-  #createPlusButtonPositionMenuList() {
-    const menuList = new MenuList();
-    menuList.appendItem("Above", "start");
-    menuList.appendItem("Below", "end");
     return menuList;
   }
 
@@ -107,14 +82,6 @@ export class SidebarMainPopupSettings extends Panel {
         createPopupHeader("Sidebar Settings"),
         new ToolbarSeparator(),
         createPopupGroup("Sidebar position", this.positionMenuList),
-        createPopupGroup(
-          "Sidebar buttons position",
-          this.webPanelButtonsPositionMenuList,
-        ),
-        createPopupGroup(
-          "Plus button position",
-          this.plusButtonPositionMenuList,
-        ),
         new ToolbarSeparator(),
         createPopupGroup("Sidebar width", this.paddingMenuList),
         createPopupGroup("Sidebar buttons size", this.faviconSizeMenuList),
@@ -143,8 +110,6 @@ export class SidebarMainPopupSettings extends Panel {
    *
    * @param {object} callbacks
    * @param {function(string):void} callbacks.position
-   * @param {function(string):void} callbacks.webPanelButtonsPosition
-   * @param {function(string):void} callbacks.plusButtonPosition
    * @param {function(string):void} callbacks.padding
    * @param {function(number):void} callbacks.faviconSize
    * @param {function(string):void} callbacks.unpinnedPadding
@@ -154,8 +119,6 @@ export class SidebarMainPopupSettings extends Panel {
    */
   listenChanges({
     position,
-    webPanelButtonsPosition,
-    plusButtonPosition,
     padding,
     faviconSize,
     unpinnedPadding,
@@ -164,8 +127,6 @@ export class SidebarMainPopupSettings extends Panel {
     autoHideForwardButton,
   }) {
     this.onPositionChange = position;
-    this.onWebPanelButtonsPositionChange = webPanelButtonsPosition;
-    this.onPlusButtonPositionChange = plusButtonPosition;
     this.onPaddingChange = padding;
     this.onFaviconSizeChange = faviconSize;
     this.onUnpinnedPaddingChange = unpinnedPadding;
@@ -175,12 +136,6 @@ export class SidebarMainPopupSettings extends Panel {
 
     this.positionMenuList.addEventListener("command", () =>
       position(this.positionMenuList.getValue()),
-    );
-    this.webPanelButtonsPositionMenuList.addEventListener("command", () =>
-      webPanelButtonsPosition(this.webPanelButtonsPositionMenuList.getValue()),
-    );
-    this.plusButtonPositionMenuList.addEventListener("command", () =>
-      plusButtonPosition(this.plusButtonPositionMenuList.getValue()),
     );
     this.paddingMenuList.addEventListener("command", () =>
       padding(this.paddingMenuList.getValue()),
@@ -235,10 +190,6 @@ export class SidebarMainPopupSettings extends Panel {
    */
   openPopupAtScreen(screenX, screenY, settings) {
     this.positionMenuList.setValue(settings.position);
-    this.webPanelButtonsPositionMenuList.setValue(
-      settings.webPanelButtonsPosition,
-    );
-    this.plusButtonPositionMenuList.setValue(settings.plusButtonPosition);
     this.paddingMenuList.setValue(settings.padding);
     this.faviconSizeMenuList.setValue(settings.faviconSize);
     this.unpinnedPaddingMenuList.setValue(settings.unpinnedPadding);
@@ -263,20 +214,6 @@ export class SidebarMainPopupSettings extends Panel {
   #cancelChanges() {
     if (this.positionMenuList.getValue() !== this.settings.position) {
       this.onPositionChange(this.settings.position);
-    }
-    if (
-      this.webPanelButtonsPositionMenuList.getValue() !==
-      this.settings.webPanelButtonsPosition
-    ) {
-      this.onWebPanelButtonsPositionChange(
-        this.settings.webPanelButtonsPosition,
-      );
-    }
-    if (
-      this.plusButtonPositionMenuList.getValue() !==
-      this.settings.plusButtonPosition
-    ) {
-      this.onPlusButtonPositionChange(this.settings.plusButtonPosition);
     }
     if (this.paddingMenuList.getValue() !== this.settings.padding) {
       this.onPaddingChange(this.settings.padding);

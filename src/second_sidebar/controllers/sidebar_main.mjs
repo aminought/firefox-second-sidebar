@@ -35,6 +35,10 @@ export class SidebarMainController {
         event.screenY,
       );
     });
+
+    this.sidebarMainMenuPopup.listenCustomizeItemClick(() => {
+      gCustomizeMode.enter();
+    });
   }
 
   /**
@@ -69,21 +73,5 @@ export class SidebarMainController {
    */
   setFaviconSize(value) {
     this.browser.setProperty("--sb2-main-button-icon-size", value + "px");
-  }
-
-  /**
-   *
-   * @returns {string}
-   */
-  getWebPanelButtonsPosition() {
-    return this.browser.getProperty("--sb2-main-web-panel-buttons-position");
-  }
-
-  /**
-   *
-   * @param {string} value
-   */
-  setWebPanelButtonsPosition(value) {
-    this.browser.setProperty("--sb2-main-web-panel-buttons-position", value);
   }
 }

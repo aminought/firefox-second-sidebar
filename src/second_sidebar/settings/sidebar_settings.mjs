@@ -6,10 +6,6 @@ export class SidebarSettings {
   /**@type {string} */
   #position;
   /**@type {string} */
-  #webPanelButtonsPosition;
-  /**@type {string} */
-  #plusButtonPosition;
-  /**@type {string} */
   #padding;
   /**@type {number} */
   #faviconSize;
@@ -25,8 +21,6 @@ export class SidebarSettings {
   /**
    *
    * @param {string} position
-   * @param {string} webPanelButtonsPosition
-   * @param {string} plusButtonPosition
    * @param {string} padding
    * @param {string} faviconSize
    * @param {string} unpinnedPadding
@@ -36,8 +30,6 @@ export class SidebarSettings {
    */
   constructor(
     position,
-    webPanelButtonsPosition,
-    plusButtonPosition,
     padding,
     faviconSize,
     unpinnedPadding,
@@ -46,8 +38,6 @@ export class SidebarSettings {
     autoHideForwardButton,
   ) {
     this.#position = position;
-    this.#webPanelButtonsPosition = webPanelButtonsPosition;
-    this.#plusButtonPosition = plusButtonPosition;
     this.#padding = padding;
     this.#faviconSize = faviconSize;
     this.#unpinnedPadding = unpinnedPadding;
@@ -58,14 +48,6 @@ export class SidebarSettings {
 
   get position() {
     return this.#position;
-  }
-
-  get webPanelButtonsPosition() {
-    return this.#webPanelButtonsPosition;
-  }
-
-  get plusButtonPosition() {
-    return this.#plusButtonPosition;
   }
 
   get padding() {
@@ -100,8 +82,6 @@ export class SidebarSettings {
     const pref = Settings.load(PREF) ?? {};
     return new SidebarSettings(
       pref.position ?? "right",
-      pref.webPanelButtonsPosition ?? "start",
-      pref.plusButtonPosition ?? "end",
       pref.padding ?? "small",
       pref.faviconSize ?? 32,
       pref.unpinnedPadding ?? "small",
@@ -114,8 +94,6 @@ export class SidebarSettings {
   save() {
     Settings.save(PREF, {
       position: this.#position,
-      webPanelButtonsPosition: this.#webPanelButtonsPosition,
-      plusButtonPosition: this.#plusButtonPosition,
       padding: this.#padding,
       faviconSize: this.#faviconSize,
       unpinnedPadding: this.#unpinnedPadding,

@@ -5,6 +5,7 @@ const ICON = "chrome://global/skin/icons/plus.svg";
 export class WebPanelNewButton extends ToolbarButton {
   constructor() {
     super({
+      id: "new-web-panel",
       classList: ["sb2-main-button", "toolbarbutton-1"],
     });
 
