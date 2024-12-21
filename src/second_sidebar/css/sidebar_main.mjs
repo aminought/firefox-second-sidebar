@@ -8,8 +8,9 @@ export const SIDEBAR_MAIN_CSS = `
     overflow-y: scroll;
     scrollbar-width: none;
 
-    toolbarspring {
-      min-height: 28px;
+    toolbarpaletteitem[place="panel"][id^="wrapper-customizableui-special-spring"], toolbarspring {
+      flex: 1;
+      min-height: 10px;
       max-height: 112px;
     }
   }
