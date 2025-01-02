@@ -7,16 +7,16 @@ export class WebPanelNewButton extends Widget {
     super({
       id: "new-web-panel",
       label: "New Web Panel",
-      icon: ICON,
+      iconURL: ICON,
     });
   }
 
   /**
    *
    * @param {function(MouseEvent):void} callback
+   * @returns {WebPanelNewButton}
    */
   listenClick(callback) {
-    // this.addEventListener("click", (event) => callback(event));
-    this.setOnClick(callback);
+    return this.setOnClick(callback);
   }
 }

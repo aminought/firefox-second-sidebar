@@ -53,13 +53,13 @@ export class SidebarInjector {
     });
 
     gNavToolbox.addEventListener("aftercustomization", () => {
-      const springs = document.querySelectorAll('#sb2-main toolbarspring');
+      const springs = document.querySelectorAll("#sb2-main toolbarspring");
       for (const spring of springs) {
-        spring.removeAttribute('context');
+        spring.removeAttribute("context");
       }
     });
 
-    this.#applySettings(elements.webPanelNewButton);
+    this.#applySettings();
     this.contextItemController.injectContextItem();
 
     return true;
@@ -116,12 +116,12 @@ export class SidebarInjector {
     elements.sidebarToolbar.moreButton.appendChild(elements.webPanelPopupMore);
     elements.sidebar.appendChildren(
       elements.sidebarToolbar,
-      elements.webPanels
+      elements.webPanels,
     );
     elements.sidebarBox.appendChildren(
       elements.sidebarBoxFiller,
       elements.sidebarSplitterUnpinned,
-      elements.sidebar
+      elements.sidebar,
     );
 
     const browser = new XULElement(null, {
@@ -130,7 +130,7 @@ export class SidebarInjector {
     browser.appendChildren(
       elements.sidebarSplitterPinned,
       elements.sidebarBox,
-      elements.sidebarMain
+      elements.sidebarMain,
     );
 
     const mainPopupSet = new XULElement(null, {
@@ -142,7 +142,7 @@ export class SidebarInjector {
       elements.webPanelPopupEdit,
       elements.webPanelPopupDelete,
       elements.sidebarMainMenuPopup,
-      elements.sidebarMainPopupSettings
+      elements.sidebarMainPopupSettings,
     );
 
     const body = new XULElement(null, { element: document.body });
@@ -157,10 +157,10 @@ export class SidebarInjector {
     this.sidebarMainController = new SidebarMainController(
       elements.sidebarMain,
       elements.sidebarMainMenuPopup,
-      elements.browser
+      elements.browser,
     );
     this.sidebarMainSettingsController = new SidebarMainSettingsController(
-      elements.sidebarMainPopupSettings
+      elements.sidebarMainPopupSettings,
     );
     this.sidebarController = new SidebarController(
       elements.sidebarBox,
@@ -168,79 +168,79 @@ export class SidebarInjector {
       elements.sidebarToolbar,
       elements.sidebarSplitterUnpinned,
       elements.webPanelPopupEdit,
-      elements.browser
+      elements.browser,
     );
     this.sidebarSplittersController = new SidebarSplittersController(
       elements.sidebarSplitterUnpinned,
-      elements.sidebarSplitterPinned
+      elements.sidebarSplitterPinned,
     );
     this.webPanelsController = new WebPanelsController(
       elements.webPanels,
       elements.sidebarMain,
       elements.webPanelTabs,
-      elements.webPanelButtonMenuPopup
+      elements.webPanelButtonMenuPopup,
     );
     this.webPanelNewController = new WebPanelNewController(
       elements.webPanelNewButton,
-      elements.webPanelPopupNew
+      elements.webPanelPopupNew,
     );
     this.webPanelEditController = new WebPanelEditController(
-      elements.webPanelPopupEdit
+      elements.webPanelPopupEdit,
     );
     this.webPanelMoreController = new WebPanelMoreController(
-      elements.webPanelPopupMore
+      elements.webPanelPopupMore,
     );
     this.webPanelDeleteController = new WebPanelDeleteController(
-      elements.webPanelPopupDelete
+      elements.webPanelPopupDelete,
     );
     this.contextItemController = new ContextItemController();
   }
 
   static #setupDependencies() {
     this.sidebarMainController.setupDependencies(
-      this.sidebarMainSettingsController
+      this.sidebarMainSettingsController,
     );
     this.sidebarMainSettingsController.setupDependencies(
       this.sidebarMainController,
       this.sidebarController,
-      this.webPanelNewController
+      this.webPanelNewController,
     );
     this.sidebarController.setupDepenedencies(
       this.sidebarMainController,
       this.webPanelsController,
-      this.webPanelNewController
+      this.webPanelNewController,
     );
     this.sidebarSplittersController.setupDependencies(
       this.sidebarController,
-      this.webPanelsController
+      this.webPanelsController,
     );
     this.webPanelsController.setupDependencies(
       this.sidebarController,
       this.webPanelEditController,
-      this.webPanelDeleteController
+      this.webPanelDeleteController,
     );
     this.webPanelNewController.setupDependencies(
       this.sidebarController,
       this.webPanelsController,
-      this.webPanelEditController
+      this.webPanelEditController,
     );
     this.webPanelEditController.setupDependencies(
       this.webPanelsController,
-      this.sidebarController
+      this.sidebarController,
     );
     this.webPanelMoreController.setupDependencies(
       this.webPanelsController,
-      this.sidebarController
+      this.sidebarController,
     );
     this.webPanelDeleteController.setupDependencies(
       this.webPanelsController,
-      this.sidebarController
+      this.sidebarController,
     );
     this.contextItemController.setupDependencies(this.webPanelNewController);
   }
 
-  static #applySettings(webPanelNewButton) {
+  static #applySettings() {
     this.sidebarController.loadSettings(this.sidebarSettings);
-    this.webPanelsController.loadSettings(this.webPanelsSettings, webPanelNewButton);
+    this.webPanelsController.loadSettings(this.webPanelsSettings);
   }
 }

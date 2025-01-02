@@ -111,7 +111,6 @@ export const SIDEBAR_BOX_CSS = `
     }
 
     #sb2-box {
-      left: var(--sb2-main-width);
       padding-inline-start: var(--sb2-box-unpinned-side-padding);
     }
   }

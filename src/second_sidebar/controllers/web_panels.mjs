@@ -219,6 +219,7 @@ export class WebPanelsController {
   /**
    *
    * @param {WebPanel} webPanel
+   * @param {string?} position
    * @returns {WebPanelButton}
    */
   makeWebPanelButton(webPanel, position = null) {
@@ -249,7 +250,7 @@ export class WebPanelsController {
    *
    * @param {WebPanelsSettings} webPanelsSettings
    */
-  loadSettings(webPanelsSettings, webPanelNewButton) {
+  loadSettings(webPanelsSettings) {
     console.log("Loading web panels");
     for (const webPanelSettings of webPanelsSettings.webPanels) {
       const webPanelTab = this.makeWebPanelTab(webPanelSettings.uuid);

@@ -32,10 +32,7 @@ export class WebPanelController {
    * @param {WebPanelsController} webPanelsController
    * @param {SidebarController} sidebarController
    */
-  setupDependencies(
-    webPanelsController,
-    sidebarController,
-  ) {
+  setupDependencies(webPanelsController, sidebarController) {
     this.webPanelsController = webPanelsController;
     this.sidebarController = sidebarController;
   }

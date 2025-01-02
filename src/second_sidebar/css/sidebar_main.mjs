@@ -26,7 +26,7 @@ export const SIDEBAR_MAIN_CSS = `
   }
 
   :root[customizing] {
-    #sb2-main, #sb2-main-buttons {
+    #sb2-main {
       min-width: unset !important;
     }
   }
@@ -37,13 +37,6 @@ export const SIDEBAR_MAIN_CSS = `
 
   #browser:has(#sb2[position="left"]) #sb2-main {
     order: -3 !important;
-  }
-
-  #sb2-main-buttons {
-    display: flex;
-    height: 100%;
-    flex-direction: column;
-    gap: 8px;
   }
 
   .sb2-main-button {

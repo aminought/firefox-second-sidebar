@@ -29,7 +29,7 @@ const customizeMode = {
   async _wrapToolbarItem(aArea) {
     let target = CustomizableUI.getCustomizeTargetForArea(
       aArea,
-      gCustomizeMode.window
+      gCustomizeMode.window,
     );
     if (!target || gCustomizeMode.areas.has(target)) {
       return null;
@@ -53,7 +53,7 @@ const customizeMode = {
   _wrapToolbarItemSync(aArea) {
     let target = CustomizableUI.getCustomizeTargetForArea(
       aArea,
-      gCustomizeMode.window
+      gCustomizeMode.window,
     );
     if (!target || gCustomizeMode.areas.has(target)) {
       return null;
@@ -69,7 +69,9 @@ const customizeMode = {
           gCustomizeMode.wrapToolbarItem(child, getPlaceForItem(child));
         }
       }
-    } catch (ex) {}
+    } catch (ex) {
+      console.log(ex);
+    }
 
     gCustomizeMode.areas.add(target);
     return target;
@@ -182,7 +184,7 @@ const customizeMode = {
             item.nextElementSibling,
             "before",
             draggedItem.id,
-            placeForItem
+            placeForItem,
           );
           gCustomizeMode._dragOverItem = item.nextElementSibling;
         } else if (canUsePrevSibling && item.previousElementSibling) {
@@ -190,7 +192,7 @@ const customizeMode = {
             item.previousElementSibling,
             "after",
             draggedItem.id,
-            placeForItem
+            placeForItem,
           );
           gCustomizeMode._dragOverItem = item.previousElementSibling;
         }
@@ -202,7 +204,7 @@ const customizeMode = {
     };
     gCustomizeMode._dragInitializeTimeout = gCustomizeMode.window.setTimeout(
       gCustomizeMode._initializeDragAfterMove,
-      0
+      0,
     );
   },
 
@@ -224,11 +226,11 @@ const customizeMode = {
 
     let draggedItemId = aEvent.dataTransfer.mozGetDataAt(
       kDragDataTypePrefix + documentId,
-      0
+      0,
     );
     let draggedWrapper = document.getElementById("wrapper-" + draggedItemId);
     let targetArea = gCustomizeMode._getCustomizableParent(
-      aOverrideTarget || aEvent.currentTarget
+      aOverrideTarget || aEvent.currentTarget,
     );
     let originArea = gCustomizeMode._getCustomizableParent(draggedWrapper);
 
@@ -255,7 +257,7 @@ const customizeMode = {
       aEvent,
       targetArea,
       targetAreaType,
-      draggedItemId
+      draggedItemId,
     );
 
     // We need to determine the place that the widget is being dropped in
@@ -267,7 +269,7 @@ const customizeMode = {
       dragOverItem =
         (targetAreaType == "toolbar"
           ? gCustomizeMode._findVisiblePreviousSiblingNode(
-              targetNode.lastElementChild
+              targetNode.lastElementChild,
             )
           : targetNode.lastElementChild) || targetNode;
       dragValue = "after";
@@ -275,13 +277,13 @@ const customizeMode = {
       let targetParent = targetNode.parentNode;
       let position = Array.prototype.indexOf.call(
         targetParent.children,
-        targetNode
+        targetNode,
       );
       if (position == -1) {
         dragOverItem =
           targetAreaType == "toolbar"
             ? gCustomizeMode._findVisiblePreviousSiblingNode(
-                targetNode.lastElementChild
+                targetNode.lastElementChild,
               )
             : targetNode.lastElementChild;
         dragValue = "after";
@@ -330,7 +332,7 @@ const customizeMode = {
     ) {
       gCustomizeMode._cancelDragActive(
         gCustomizeMode._dragOverItem,
-        dragOverItem
+        dragOverItem,
       );
     }
 
@@ -343,7 +345,7 @@ const customizeMode = {
           dragOverItem,
           dragValue,
           draggedItemId,
-          targetAreaType
+          targetAreaType,
         );
       }
       gCustomizeMode._dragOverItem = dragOverItem;
@@ -475,36 +477,11 @@ const customizeMode = {
   },
 };
 
-const __dumpDragData = (aEvent, caller) => {
-  let str =
-    "Dumping drag data (" +
-    (caller ? caller + " in " : "") +
-    "CustomizeMode.sys.mjs) {\n";
-  str += "  type: " + aEvent.type + "\n";
-  for (let el of ["target", "currentTarget", "relatedTarget"]) {
-    if (aEvent[el]) {
-      str +=
-        "  " +
-        el +
-        ": " +
-        aEvent[el] +
-        "(localName=" +
-        aEvent[el].localName +
-        "; id=" +
-        aEvent[el].id +
-        ")\n";
-    }
-  }
-  for (let prop in aEvent.dataTransfer) {
-    if (typeof aEvent.dataTransfer[prop] != "function") {
-      str +=
-        "  dataTransfer[" + prop + "]: " + aEvent.dataTransfer[prop] + "\n";
-    }
-  }
-  str += "}";
-};
+function __dumpDragData() {
+  return;
+}
 
-const getPlaceForItem = (aElement) => {
+function getPlaceForItem(aElement) {
   let place;
   let node = aElement;
   while (node && !place) {
@@ -521,4 +498,4 @@ const getPlaceForItem = (aElement) => {
     node = node.parentNode;
   }
   return place;
-};
+}

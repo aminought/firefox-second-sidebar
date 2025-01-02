@@ -8,8 +8,9 @@ export class WebPanelButton extends Widget {
   /**
    *
    * @param {string} uuid
+   * @param {string?} position
    */
-  constructor(uuid, position) {
+  constructor(uuid, position = null) {
     super({
       id: uuid,
       classList: ["sb2-main-button", "sb2-main-web-panel-button"],

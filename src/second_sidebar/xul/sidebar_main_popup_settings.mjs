@@ -27,7 +27,8 @@ export class SidebarMainPopupSettings extends Panel {
 
     this.positionMenuList = this.#createPositionMenuList();
     this.paddingMenuList = this.#createPaddingMenuList();
-    this.newWebPanelPositionMenuList = this.#createNewWebPanelPositionMenuList();
+    this.newWebPanelPositionMenuList =
+      this.#createNewWebPanelPositionMenuList();
     this.hideInPopupWindowsToggle = new Toggle();
     this.autoHideBackToggle = new Toggle();
     this.autoHideForwardToggle = new Toggle();
@@ -87,7 +88,10 @@ export class SidebarMainPopupSettings extends Panel {
           "Floating web panel offset",
           this.unpinnedPaddingMenuList,
         ),
-        createPopupGroup("New web panel position", this.newWebPanelPositionMenuList),
+        createPopupGroup(
+          "New web panel position",
+          this.newWebPanelPositionMenuList,
+        ),
         new ToolbarSeparator(),
         createPopupGroup(
           "Hide sidebar in popup windows",
@@ -217,7 +221,10 @@ export class SidebarMainPopupSettings extends Panel {
     if (this.paddingMenuList.getValue() !== this.settings.padding) {
       this.onPaddingChange(this.settings.padding);
     }
-    if (this.newWebPanelPositionMenuList.getValue() !== this.settings.newWebPanelPosition) {
+    if (
+      this.newWebPanelPositionMenuList.getValue() !==
+      this.settings.newWebPanelPosition
+    ) {
       this.onNewWebPanelPositionChange(this.settings.newWebPanelPosition);
     }
     if (

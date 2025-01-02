@@ -133,11 +133,13 @@ export class SidebarController {
     this.setToolbarForwardButtonDisabled(!canGoForward);
     this.setToolbarTitle(title);
     this.setHideToolbar(hideToolbar);
-    pinned ? this.pin() : this.unpin();
 
-    const sidebarMainWidth =
-      Math.round(this.sidebarMainController.getActualWidth()) + "px";
-    this.sidebarBox.setProperty("right", sidebarMainWidth);
+    const sidebarMainWidth = this.sidebarMainController.getWidth();
+    this.getPosition() === "left"
+      ? this.setAbsoluteLeft(sidebarMainWidth)
+      : this.setAbsoluteRight(sidebarMainWidth);
+
+    pinned ? this.pin() : this.unpin();
   }
 
   close() {
@@ -270,6 +272,24 @@ export class SidebarController {
       "--sb2-box-unpinned-padding",
       `var(--space-${value})`,
     );
+  }
+
+  /**
+   *
+   * @param {string} value
+   */
+  setAbsoluteRight(value) {
+    this.sidebarBox.setProperty("left", "unset");
+    this.sidebarBox.setProperty("right", value);
+  }
+
+  /**
+   *
+   * @param {string} value
+   */
+  setAbsoluteLeft(value) {
+    this.sidebarBox.setProperty("left", value);
+    this.sidebarBox.setProperty("right", "unset");
   }
 
   /**

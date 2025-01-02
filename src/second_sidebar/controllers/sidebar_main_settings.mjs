@@ -36,7 +36,8 @@ export class SidebarMainSettingsController {
     this.sidebarMainPopupSettings.listenChanges({
       position: (value) => this.sidebarController.setPosition(value),
       padding: (value) => this.sidebarMainController.setPadding(value),
-      newWebPanelPosition: (value) => this.webPanelNewController.setNewWebPanelPosition(value),
+      newWebPanelPosition: (value) =>
+        this.webPanelNewController.setNewWebPanelPosition(value),
       unpinnedPadding: (value) =>
         this.sidebarController.setUnpinnedPadding(value),
       hideInPopupWindows: (value) =>

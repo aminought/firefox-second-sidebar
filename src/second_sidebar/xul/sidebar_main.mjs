@@ -11,6 +11,11 @@ export class SidebarMain extends Toolbar {
 }
 
 // https://searchfox.org/mozilla-central/source/browser/base/content/navigator-toolbox.js#106
+/**
+ *
+ * @param {MouseEvent} event
+ * @returns
+ */
 function onMouseDown(event) {
   let element = event.target.closest(`
         #firefox-view-button,

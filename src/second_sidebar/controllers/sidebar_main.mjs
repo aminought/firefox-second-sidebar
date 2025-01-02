@@ -58,7 +58,11 @@ export class SidebarMainController {
     this.browser.setProperty("--sb2-main-padding", `var(--space-${value})`);
   }
 
-  getActualWidth() {
-    return this.sidebarMain.getBoundingClientRect().width;
+  /**
+   *
+   * @returns {string}
+   */
+  getWidth() {
+    return Math.round(this.sidebarMain.getBoundingClientRect().width) + "px";
   }
 }

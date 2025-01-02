@@ -1,7 +1,9 @@
+/* eslint-disable no-unused-vars */
 import { MenuItem } from "./base/menuitem.mjs";
 import { MenuPopup } from "./base/menupopup.mjs";
 import { MenuSeparator } from "./base/menuseparator.mjs";
 import { WebPanelsController } from "../controllers/web_panels.mjs";
+/* eslint-enable no-unused-vars */
 
 export class WebPanelButtonMenuPopup extends MenuPopup {
   constructor() {
@@ -15,8 +17,10 @@ export class WebPanelButtonMenuPopup extends MenuPopup {
     this.deleteItem = new MenuItem().setLabel("Delete web panel");
     this.#compose();
 
-    this.addEventListener('popupshowing', () => {
-      this.webPanelController = this.webPanelsController.get(this.element.triggerNode.id);
+    this.addEventListener("popupshowing", () => {
+      this.webPanelController = this.webPanelsController.get(
+        this.element.triggerNode.id,
+      );
     });
   }
 
@@ -30,16 +34,16 @@ export class WebPanelButtonMenuPopup extends MenuPopup {
   }
 
   /**
-   * 
-   * @param {WebPanelsController} webPanelsController 
+   *
+   * @param {WebPanelsController} webPanelsController
    */
   setWebPanelsController(webPanelsController) {
     this.webPanelsController = webPanelsController;
   }
 
   /**
-   * 
-   * @param {WebPanelsController} webPanelsController 
+   *
+   * @param {WebPanelsController} webPanelsController
    */
   listenUnloadItemClick(callback) {
     this.unloadItem.addEventListener("click", () => {
@@ -48,8 +52,8 @@ export class WebPanelButtonMenuPopup extends MenuPopup {
   }
 
   /**
-   * 
-   * @param {WebPanelsController} webPanelsController 
+   *
+   * @param {WebPanelsController} webPanelsController
    */
   listenEditItemClick(callback) {
     this.editItem.addEventListener("click", () => {
@@ -58,8 +62,8 @@ export class WebPanelButtonMenuPopup extends MenuPopup {
   }
 
   /**
-   * 
-   * @param {WebPanelsController} webPanelsController 
+   *
+   * @param {WebPanelsController} webPanelsController
    */
   listenDeleteItemClick(callback) {
     this.deleteItem.addEventListener("click", () => {
