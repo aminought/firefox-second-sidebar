@@ -39,14 +39,16 @@ export class WebPanelButton extends Widget {
    * @returns {WebPanelButton}
    */
   showPlayingIcon() {
-    if (this.playingIcon === null) {
-      this.playingIcon = new Img({ classList: ["tab-icon-overlay"] })
-        .setAttribute("role", "presentation")
-        .setAttribute("soundplaying", "")
-        .setAttribute("pinned", "");
-      this.appendChild(this.playingIcon);
+    if (this.button) {
+      if (this.playingIcon === null) {
+        this.playingIcon = new Img({ classList: ["tab-icon-overlay"] })
+          .setAttribute("role", "presentation")
+          .setAttribute("soundplaying", "")
+          .setAttribute("pinned", "");
+        this.button.appendChild(this.playingIcon);
+      }
+      this.playingIcon.removeAttribute("hidden");
     }
-    this.playingIcon.removeAttribute("hidden");
     return this;
   }
 
@@ -55,7 +57,7 @@ export class WebPanelButton extends Widget {
    * @returns {WebPanelButton}
    */
   hidePlayingIcon() {
-    if (this.playingIcon !== null) {
+    if (this.button && this.playingIcon !== null) {
       this.playingIcon.setAttribute("hidden", "true");
     }
     return this;
