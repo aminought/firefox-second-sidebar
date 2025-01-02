@@ -90,24 +90,6 @@ export class WebPanelEditController {
       },
     });
 
-    this.webPanelPopupEdit.listenMoveButtonClick(
-      (uuid, up = false, down = false, child = null) => {
-        const webPanelController = this.webPanelsController.get(uuid);
-        if (up) {
-          this.webPanelsController.moveUp(uuid);
-        } else if (down) {
-          this.webPanelsController.moveDown(uuid);
-        } else {
-          this.webPanelsController.moveBefore(uuid, child);
-        }
-        return {
-          isFirst: webPanelController.isFirst(),
-          isLast: webPanelController.isLast(),
-          insertedBeforeXUL: webPanelController.getInsertedBeforeXUL(),
-        };
-      },
-    );
-
     this.webPanelPopupEdit.listenCancelButtonClick(() => this.hidePopup());
 
     this.webPanelPopupEdit.listenSaveButtonClick((uuid) => {

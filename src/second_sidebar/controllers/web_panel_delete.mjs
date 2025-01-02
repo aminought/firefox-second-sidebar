@@ -34,8 +34,8 @@ export class WebPanelDeleteController {
       if (webPanelController.isActive()) {
         this.sidebarController.close();
       }
-      this.webPanelsController.delete(uuid);
       webPanelController.remove();
+      this.webPanelsController.delete(uuid);
       this.webPanelsController.saveSettings();
       this.hidePopup();
     });

@@ -53,7 +53,7 @@ export const SIDEBAR_MAIN_CSS = `
 
   .sb2-main-button {
     position: relative;
-    padding: 0 !important;
+    padding: 0;
 
     .tab-icon-overlay {
       position: absolute !important;
@@ -74,5 +74,9 @@ export const SIDEBAR_MAIN_CSS = `
     .toolbarbutton-icon {
       opacity: var(--toolbarbutton-disabled-opacity);
     }
+  }
+
+  #widget-overflow-fixed-list .sb2-main-button {
+    padding: var(--arrowpanel-menuitem-padding);
   }
 `;

@@ -22,12 +22,7 @@ export class WebPanelsController {
    * @param {WebPanelTabs} webPanelTabs
    * @param {WebPanelButtonMenuPopup} webPanelButtonMenuPopup
    */
-  constructor(
-    webPanels,
-    sidebarMain,
-    webPanelTabs,
-    webPanelButtonMenuPopup
-  ) {
+  constructor(webPanels, sidebarMain, webPanelTabs, webPanelButtonMenuPopup) {
     this.webPanels = webPanels;
     this.sidebarMain = sidebarMain;
     this.webPanelTabs = webPanelTabs;
@@ -48,7 +43,7 @@ export class WebPanelsController {
   setupDependencies(
     sidebarController,
     webPanelEditController,
-    webPanelDeleteController
+    webPanelDeleteController,
   ) {
     this.sidebarController = sidebarController;
     this.webPanelEditController = webPanelEditController;
@@ -56,6 +51,8 @@ export class WebPanelsController {
   }
 
   #setupListeners() {
+    this.webPanelButtonMenuPopup.setWebPanelsController(this);
+
     this.webPanelButtonMenuPopup.listenUnloadItemClick((webPanelController) => {
       webPanelController.unload();
     });
@@ -93,7 +90,7 @@ export class WebPanelsController {
   getActive() {
     return (
       Object.values(this.webPanelControllers).find((webPanelController) =>
-        webPanelController.webPanel.isActive()
+        webPanelController.webPanel.isActive(),
       ) ?? null
     );
   }
@@ -121,11 +118,21 @@ export class WebPanelsController {
     if (this.sidebarMain.contains(webPanelButton)) {
       return false;
     }
-    if (position === "start") {
-      this.sidebarMain.prependChild(webPanelButton);
-    } else if (position === "end") {
-      this.sidebarMain.appendChild(webPanelButton);
-    }
+    // if (position === "start") {
+    //   this.sidebarMain.prependChild(webPanelButton);
+    // } else if (position === "end") {
+    //   this.sidebarMain.appendChild(webPanelButton);
+    // }
+    // const panel = document.getElementById(CustomizableUI.AREA_FIXED_OVERFLOW_PANEL);
+    // panel.appendChild(webPanelButton.getXUL());
+
+    // const uuid = webPanelButton.uuid;
+    // const placement = CustomizableUI.getPlacementOfWidget(uuid);
+    // console.log('Placement of ', uuid , ': ', placement);
+    // if (placement === null) {
+    //   CustomizableUI.addWidgetToArea(uuid, "sb2-main");
+    // }
+
     return true;
   }
 
@@ -194,7 +201,7 @@ export class WebPanelsController {
       loadOnStartup = false,
       unloadOnClose = false,
       hideToolbar = false,
-    } = {}
+    } = {},
   ) {
     const webPanel = new WebPanel(
       webPanelTab,
@@ -207,7 +214,7 @@ export class WebPanelsController {
       zoom,
       loadOnStartup,
       unloadOnClose,
-      hideToolbar
+      hideToolbar,
     );
     return webPanel;
   }
@@ -233,7 +240,7 @@ export class WebPanelsController {
         unloadOnClose: webPanelSettings.unloadOnClose,
         hideToolbar: webPanelSettings.hideToolbar,
         webPanelTab,
-      }
+      },
     ).hide();
   }
 
@@ -242,8 +249,8 @@ export class WebPanelsController {
    * @param {WebPanel} webPanel
    * @returns {WebPanelButton}
    */
-  makeWebPanelButton(webPanel) {
-    return new WebPanelButton(webPanel.uuid)
+  makeWebPanelButton(webPanel, isNew = false) {
+    return new WebPanelButton(webPanel.uuid, isNew)
       .setIcon(webPanel.faviconURL)
       .setTooltipText(webPanel.url)
       .setUnloaded(!webPanel.loadOnStartup);
@@ -261,13 +268,8 @@ export class WebPanelsController {
       webPanel,
       webPanelButton,
       webPanelTab,
-      this.webPanelButtonMenuPopup
     );
-    webPanelController.setupDependencies(
-      this,
-      this.sidebarController,
-      this.webPanelEditController
-    );
+    webPanelController.setupDependencies(this, this.sidebarController);
     return webPanelController;
   }
 
@@ -275,12 +277,13 @@ export class WebPanelsController {
    *
    * @param {WebPanelsSettings} webPanelsSettings
    */
-  loadSettings(webPanelsSettings) {
+  loadSettings(webPanelsSettings, webPanelNewButton) {
+    console.log("Loading web panels");
     for (const webPanelSettings of webPanelsSettings.webPanels) {
       const webPanelTab = this.makeWebPanelTab(webPanelSettings.uuid);
       const webPanel = this.#makeWebPanelFromPref(
         webPanelSettings,
-        webPanelTab
+        webPanelTab,
       );
 
       const webPanelButton = this.makeWebPanelButton(webPanel);
@@ -288,7 +291,7 @@ export class WebPanelsController {
       const webPanelController = this.makeWebPanelController(
         webPanel,
         webPanelButton,
-        webPanelTab
+        webPanelTab,
       );
 
       if (webPanel.loadOnStartup) {
@@ -302,6 +305,17 @@ export class WebPanelsController {
 
       this.add(webPanelController);
     }
+
+    console.log("Registering area sb2-main");
+    CustomizableUI.registerArea("sb2-main", {
+      type: window.CustomizableUI.TYPE_TOOLBAR,
+      defaultCollapsed: false,
+      overflowable: false,
+      defaultPlacements: ["new-web-panel"],
+    });
+
+    console.log("Registering toolbar node sb2-main");
+    CustomizableUI.registerToolbarNode(document.getElementById("sb2-main"));
   }
 
   /**
@@ -310,15 +324,9 @@ export class WebPanelsController {
    */
   dumpSettings() {
     return new WebPanelsSettings(
-      Array.from(this.sidebarMain.element.children)
-        .filter((sidebarMainButton) =>
-          sidebarMainButton.classList.contains("sb2-main-web-panel-button")
-        )
-        .map((webPanelButton) =>
-          this.webPanelControllers[
-            webPanelButton.getAttribute("uuid")
-          ].dumpSettings()
-        )
+      Object.values(this.webPanelControllers).map((webPanelController) =>
+        webPanelController.dumpSettings(),
+      ),
     );
   }
 

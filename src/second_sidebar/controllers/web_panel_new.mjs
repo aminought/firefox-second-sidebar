@@ -61,7 +61,7 @@ export class WebPanelNewController {
 
     this.webPanelPopupNew
       .setInputValue(suggest)
-      .openPopup(this.webPanelNewButton);
+      .openPopup(this.webPanelNewButton.element);
   }
 
   async createWebPanelAndOpen(url) {
@@ -85,7 +85,7 @@ export class WebPanelNewController {
       faviconURL,
     );
     const webPanelButton =
-      this.webPanelsController.makeWebPanelButton(webPanel);
+      this.webPanelsController.makeWebPanelButton(webPanel, true);
 
     const webPanelController = this.webPanelsController.makeWebPanelController(
       webPanel,
@@ -104,7 +104,7 @@ export class WebPanelNewController {
 
     this.webPanelsController.injectWebPanelButton(
       webPanelButton,
-      this.getPosition(),
+      null
     );
     webPanelController.initWebPanelButton();
 

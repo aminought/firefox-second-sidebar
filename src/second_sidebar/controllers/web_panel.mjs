@@ -8,8 +8,6 @@ import {
 import { SidebarController } from "./sidebar.mjs";
 import { WebPanel } from "../xul/web_panel.mjs";
 import { WebPanelButton } from "../xul/web_panel_button.mjs";
-import { WebPanelButtonMenuPopup } from "../xul/web_panel_button_menupopup.mjs";
-import { WebPanelEditController } from "./web_panel_edit.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { WebPanelTab } from "../xul/web_panel_tab.mjs";
 import { WebPanelsController } from "./web_panels.mjs";
@@ -22,29 +20,24 @@ export class WebPanelController {
    * @param {WebPanel} webPanel
    * @param {WebPanelButton} webPanelButton
    * @param {WebPanelTab} webPanelTab
-   * @param {WebPanelButtonMenuPopup} webPanelButtonMenuPopup
    */
-  constructor(webPanel, webPanelButton, webPanelTab, webPanelButtonMenuPopup) {
+  constructor(webPanel, webPanelButton, webPanelTab) {
     this.webPanel = webPanel;
     this.webPanelButton = webPanelButton;
     this.webPanelTab = webPanelTab;
-    this.webPanelButtonMenuPopup = webPanelButtonMenuPopup;
   }
 
   /**
    *
    * @param {WebPanelsController} webPanelsController
    * @param {SidebarController} sidebarController
-   * @param {WebPanelEditController} webPanelEditController
    */
   setupDependencies(
     webPanelsController,
     sidebarController,
-    webPanelEditController,
   ) {
     this.webPanelsController = webPanelsController;
     this.sidebarController = sidebarController;
-    this.webPanelEditController = webPanelEditController;
   }
 
   /**
@@ -166,8 +159,6 @@ export class WebPanelController {
         switchWebPanel();
       } else if (isMiddleMouseButton(event)) {
         this.unload();
-      } else if (isRightMouseButton(event)) {
-        this.webPanelButtonMenuPopup.setWebPanelController(this);
       }
     });
   }
@@ -334,7 +325,7 @@ export class WebPanelController {
    * @returns {HTMLElement}
    */
   getInsertedBeforeXUL() {
-    return this.webPanelButton.element.nextSibling;
+    return this.webPanelButton.nextSibling;
   }
 
   /**
@@ -347,7 +338,6 @@ export class WebPanelController {
 
   remove() {
     this.unhackAsyncTabSwitcher();
-    CustomizableUI.removeWidgetFromArea(this.webPanel.id); // FIXME: not working now
     this.webPanel.remove();
     this.webPanelTab.remove();
     this.webPanelButton.remove();

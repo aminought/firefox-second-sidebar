@@ -117,7 +117,7 @@ export class SidebarToolbar extends Toolbar {
    * @returns {SidebarToolbar}
    */
   #addButtonClickListener(button, callback) {
-    button.addEventListener("mousedown", (event) => {
+    button.addEventListener("click", (event) => {
       if (isLeftMouseButton) {
         callback(event);
       }

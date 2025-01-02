@@ -72,7 +72,7 @@ export class WebPanelPopupMore extends Panel {
    * @param {function(string):void} callback
    */
   listenOpenInNewTabButtonClick(callback) {
-    this.openInNewTabButton.addEventListener("mousedown", (event) => {
+    this.openInNewTabButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
         callback(event, this.settings.uuid);
       }
@@ -84,7 +84,7 @@ export class WebPanelPopupMore extends Panel {
    * @param {function(string):void} callback
    */
   listenCopyPageUrlButtonClick(callback) {
-    this.copyPageUrlButton.addEventListener("mousedown", (event) => {
+    this.copyPageUrlButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
         callback(this.settings.uuid);
       }
@@ -96,7 +96,7 @@ export class WebPanelPopupMore extends Panel {
    * @param {function(string, boolean):void} callback
    */
   listenMobileButtonClick(callback) {
-    this.mobileButton.addEventListener("mousedown", (event) => {
+    this.mobileButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
         callback(this.settings.uuid, !this.mobileButton.isChecked());
       }
@@ -108,7 +108,7 @@ export class WebPanelPopupMore extends Panel {
    * @param {function(string):number} callback
    */
   listenZoomInButtonClick(callback) {
-    this.zoomInButton.addEventListener("mousedown", (event) => {
+    this.zoomInButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
         const zoom = callback(this.settings.uuid);
         this.#updateZoomButtons(zoom);
@@ -121,7 +121,7 @@ export class WebPanelPopupMore extends Panel {
    * @param {function(string):number} callback
    */
   listenZoomOutButtonClick(callback) {
-    this.zoomOutButton.addEventListener("mousedown", (event) => {
+    this.zoomOutButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
         const zoom = callback(this.settings.uuid);
         this.#updateZoomButtons(zoom);
@@ -134,7 +134,7 @@ export class WebPanelPopupMore extends Panel {
    * @param {function(string):number} callback
    */
   listenResetZoomButtonClick(callback) {
-    this.resetZoomButton.addEventListener("mousedown", (event) => {
+    this.resetZoomButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
         const zoom = callback(this.settings.uuid);
         this.#updateZoomButtons(zoom);

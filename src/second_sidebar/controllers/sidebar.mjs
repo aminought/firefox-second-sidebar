@@ -149,13 +149,13 @@ export class SidebarController {
   pin() {
     this.sidebar.pin();
     this.sidebarToolbar.changePinButton(true);
-    document.removeEventListener("mousedown", this.onClickOutsideWhileUnpinned);
+    document.removeEventListener("click", this.onClickOutsideWhileUnpinned);
   }
 
   unpin() {
     this.sidebar.unpin();
     this.sidebarToolbar.changePinButton(false);
-    document.addEventListener("mousedown", this.onClickOutsideWhileUnpinned);
+    document.addEventListener("click", this.onClickOutsideWhileUnpinned);
   }
 
   /**

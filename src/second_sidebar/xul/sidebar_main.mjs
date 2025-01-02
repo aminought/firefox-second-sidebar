@@ -6,7 +6,7 @@ export class SidebarMain extends Toolbar {
     this.setMode("icons")
       .setContext("sb2-main-menupopup")
       .setAttribute("customizable", "true")
-      .addEventListener("mousedown", onMouseDown);
+      .addEventListener("click", onMouseDown);
   }
 }
 

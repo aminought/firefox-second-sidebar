@@ -47,7 +47,7 @@ export class WebPanelPopupDelete extends Panel {
    * @returns {WebPanelPopupNew}
    */
   listenDeleteButtonClick(callback) {
-    this.deleteButton.addEventListener("mousedown", (event) => {
+    this.deleteButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
         callback(this.uuid);
       }
@@ -60,7 +60,7 @@ export class WebPanelPopupDelete extends Panel {
    * @returns {WebPanelPopupNew}
    */
   listenCancelButtonClick(callback) {
-    this.cancelButton.addEventListener("mousedown", (event) => {
+    this.cancelButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
         callback();
       }

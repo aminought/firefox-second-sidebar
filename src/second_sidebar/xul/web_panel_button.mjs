@@ -1,26 +1,23 @@
 import { Img } from "./base/img.mjs";
-import { ToolbarButton } from "./base/toolbar_button.mjs";
+import { Widget } from "./base/widget.mjs";
 import { ellipsis } from "../utils/string.mjs";
 
 const URL_TOOLTIP_LIMIT = 64;
 
-export class WebPanelButton extends ToolbarButton {
+export class WebPanelButton extends Widget {
   /**
    *
    * @param {string} uuid
    */
-  constructor(uuid) {
+  constructor(uuid, isNew) {
     super({
       id: uuid,
-      classList: [
-        "sb2-main-button",
-        "sb2-main-web-panel-button",
-        "toolbarbutton-1",
-      ],
+      classList: ["sb2-main-button", "sb2-main-web-panel-button"],
+      label: "Web Panel",
+      tooltiptext: "Web Panel",
+      context: "sb2-web-panel-button-menupopup",
+      isNew
     });
-    this.setAttribute("uuid", uuid).setContext(
-      "sb2-web-panel-button-menupopup"
-    );
 
     this.playingIcon = null;
   }
@@ -35,7 +32,7 @@ export class WebPanelButton extends ToolbarButton {
    * @returns {WebPanelButton}
    */
   listenClick(callback) {
-    this.addEventListener("mousedown", (event) => {
+    this.setOnClick((event) => {
       event.stopPropagation();
       callback(event);
     });
@@ -86,7 +83,7 @@ export class WebPanelButton extends ToolbarButton {
    * @returns {boolean}
    */
   isOpen() {
-    return this.element.open;
+    return this.element.getAttribute("open") === "true";
   }
 
   /**
@@ -95,7 +92,13 @@ export class WebPanelButton extends ToolbarButton {
    * @returns {WebPanelButton}
    */
   setOpen(value) {
-    this.element.open = value;
+    if (this.element) {
+      if (value) {
+        this.element.setAttribute("open", value);
+      } else {
+        this.element.removeAttribute("open");
+      }
+    }
     return this;
   }
 
@@ -105,7 +108,13 @@ export class WebPanelButton extends ToolbarButton {
    * @returns {WebPanelButton}
    */
   setUnloaded(value) {
-    this.setAttribute("unloaded", value);
+    if (this.element) {
+      if (value) {
+        this.element.setAttribute("unloaded", value);
+      } else {
+        this.element.removeAttribute("unloaded");
+      }
+    }
     return this;
   }
 
@@ -114,7 +123,7 @@ export class WebPanelButton extends ToolbarButton {
    * @returns {boolean}
    */
   isUnloaded() {
-    return this.getAttribute("unloaded") === "true";
+    return this.element.getAttribute("unloaded") === "true";
   }
 
   /**
@@ -124,6 +133,6 @@ export class WebPanelButton extends ToolbarButton {
    */
   setTooltipText(text) {
     text = ellipsis(text, URL_TOOLTIP_LIMIT);
-    return ToolbarButton.prototype.setTooltipText.call(this, text);
+    return Widget.prototype.setTooltipText.call(this, text);
   }
 }

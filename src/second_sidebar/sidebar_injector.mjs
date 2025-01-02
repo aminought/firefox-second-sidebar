@@ -46,32 +46,10 @@ export class SidebarInjector {
     this.#injectElements(elements);
     this.#buildControllers(elements);
     this.#setupDependencies();
-    this.#applySettings();
-    this.contextItemController.injectContextItem();
-
-    CustomizableUI.registerArea("sb2-main", {
-      type: window.CustomizableUI.TYPE_TOOLBAR,
-      defaultCollapsed: false,
-      overflowable: false,
-      defaultPlacements: [],
-    });
-
-    CustomizableUI.registerToolbarNode(document.getElementById("sb2-main"));
 
     gNavToolbox.addEventListener("customizationready", () => {
       const browser = document.querySelector("#browser");
       browser.hidden = false;
-
-      // const spring = CustomizableUI.createSpecialWidget(
-      //   "customizableui-special-spring-ultra",
-      //   gCustomizeMode.document
-      // );
-      // spring.setAttribute("title", "Ultra Flexible Space");
-      // const wrapper = gCustomizeMode.wrapToolbarItem(spring, "palette");
-      // wrapper.setAttribute("title", "Ultra Flexible Space");
-      // const fragment = gCustomizeMode.document.createDocumentFragment();
-      // fragment.appendChild(wrapper);
-      // gCustomizeMode.visiblePalette.appendChild(fragment);
     });
 
     gNavToolbox.addEventListener("aftercustomization", () => {
@@ -80,6 +58,9 @@ export class SidebarInjector {
         spring.removeAttribute('context');
       }
     });
+
+    this.#applySettings(elements.webPanelNewButton);
+    this.contextItemController.injectContextItem();
 
     return true;
   }
@@ -132,7 +113,6 @@ export class SidebarInjector {
    * @param {Object<string, XULElement>} elements
    */
   static #injectElements(elements) {
-    elements.sidebarMain.appendChildren(elements.webPanelNewButton);
     elements.sidebarToolbar.moreButton.appendChild(elements.webPanelPopupMore);
     elements.sidebar.appendChildren(
       elements.sidebarToolbar,
@@ -259,8 +239,8 @@ export class SidebarInjector {
     this.contextItemController.setupDependencies(this.webPanelNewController);
   }
 
-  static #applySettings() {
+  static #applySettings(webPanelNewButton) {
     this.sidebarController.loadSettings(this.sidebarSettings);
-    this.webPanelsController.loadSettings(this.webPanelsSettings);
+    this.webPanelsController.loadSettings(this.webPanelsSettings, webPanelNewButton);
   }
 }

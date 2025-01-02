@@ -162,7 +162,7 @@ export class SidebarMainPopupSettings extends Panel {
    * @param {function():void} callback
    */
   listenCancelButtonClick(callback) {
-    this.cancelButton.addEventListener("mousedown", (event) => {
+    this.cancelButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
         callback();
       }
@@ -174,7 +174,7 @@ export class SidebarMainPopupSettings extends Panel {
    * @param {function():void} callback
    */
   listenSaveButtonClick(callback) {
-    this.saveButton.addEventListener("mousedown", (event) => {
+    this.saveButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
         this.removeEventListener("popuphidden", this.onPopupHidden);
         callback();

@@ -1,15 +1,15 @@
-import { ToolbarButton } from "./base/toolbar_button.mjs";
+import { Widget } from "./base/widget.mjs";
 
 const ICON = "chrome://global/skin/icons/plus.svg";
 
-export class WebPanelNewButton extends ToolbarButton {
+export class WebPanelNewButton extends Widget {
   constructor() {
     super({
       id: "new-web-panel",
-      classList: ["sb2-main-button", "toolbarbutton-1"],
+      label: "New Web Panel",
+      tooltiptext: "New Web Panel",
+      icon: ICON,
     });
-
-    this.setIcon(ICON).setBadged("false").setContext("");
   }
 
   /**
@@ -17,6 +17,7 @@ export class WebPanelNewButton extends ToolbarButton {
    * @param {function(MouseEvent):void} callback
    */
   listenClick(callback) {
-    this.addEventListener("mousedown", (event) => callback(event));
+    // this.addEventListener("click", (event) => callback(event));
+    this.setOnClick(callback);
   }
 }

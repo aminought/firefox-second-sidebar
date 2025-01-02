@@ -62,7 +62,7 @@ export class WebPanelPopupNew extends Panel {
    * @returns {WebPanelPopupNew}
    */
   listenSaveButtonClick(callback) {
-    this.saveButton.addEventListener("mousedown", (event) => {
+    this.saveButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
         callback(this.input.getValue());
       }
@@ -75,7 +75,7 @@ export class WebPanelPopupNew extends Panel {
    * @returns {WebPanelPopupNew}
    */
   listenCancelButtonClick(callback) {
-    this.cancelButton.addEventListener("mousedown", (event) => {
+    this.cancelButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
         callback(this.input.getValue());
       }
