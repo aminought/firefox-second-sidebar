@@ -59,7 +59,7 @@ export class WebPanelController {
    */
   setURL(value) {
     this.webPanel.url = value;
-    this.webPanelButton.setLabel(value);
+    this.webPanelButton.setLabel(value).setTooltipText(value);
   }
 
   /**

@@ -2,6 +2,7 @@ import { Img } from "./base/img.mjs";
 import { Widget } from "./base/widget.mjs";
 import { ellipsis } from "../utils/string.mjs";
 
+const URL_LABEL_LIMIT = 24;
 const URL_TOOLTIP_LIMIT = 64;
 
 export class WebPanelButton extends Widget {
@@ -83,8 +84,21 @@ export class WebPanelButton extends Widget {
   setLabel(text) {
     text = ellipsis(
       text.replace("https://", "").replace("http://", ""),
-      URL_TOOLTIP_LIMIT,
+      URL_LABEL_LIMIT,
     );
     return Widget.prototype.setLabel.call(this, text);
+  }
+
+  /**
+   *
+   * @param {string} text
+   * @returns {WebPanelButton}
+   */
+  setTooltipText(text) {
+    text = ellipsis(
+      text.replace("https://", "").replace("http://", ""),
+      URL_TOOLTIP_LIMIT,
+    );
+    return Widget.prototype.setTooltipText.call(this, text);
   }
 }

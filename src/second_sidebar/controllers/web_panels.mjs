@@ -226,6 +226,7 @@ export class WebPanelsController {
     return new WebPanelButton(webPanel.uuid, position)
       .setIcon(webPanel.faviconURL)
       .setLabel(webPanel.url)
+      .setTooltipText(webPanel.url)
       .setUnloaded(!webPanel.loadOnStartup);
   }
 

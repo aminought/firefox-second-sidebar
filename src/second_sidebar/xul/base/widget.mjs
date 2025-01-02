@@ -6,6 +6,8 @@ export class Widget {
    * @param {object} params
    * @param {string?} params.id
    * @param {string[]} params.classList
+   * @param {string?} params.label
+   * @param {string?} params.tooltipText
    * @param {string?} params.iconURL
    * @param {boolean} params.open
    * @param {boolean} params.unloaded
@@ -16,6 +18,7 @@ export class Widget {
     id,
     classList = [],
     label,
+    tooltipText,
     iconURL,
     open = false,
     unloaded = true,
@@ -26,11 +29,11 @@ export class Widget {
     this.onClick = null;
     this.iconURL = iconURL;
     this.label = label;
+    this.tooltipText = tooltipText;
     this.open = open;
     this.unloaded = unloaded;
     this.widget = CustomizableUI.createWidget({
       id,
-      label,
       type: "button",
       localized: false,
       onCreated: (element) => {
@@ -42,7 +45,9 @@ export class Widget {
         }
         if (this.label) {
           this.button.setLabel(this.label);
-          this.button.setTooltipText(this.label);
+        }
+        if (this.tooltipText) {
+          this.button.setTooltipText(this.tooltipText);
         }
         if (context) {
           this.button.setContext(context);
@@ -96,7 +101,19 @@ export class Widget {
     this.label = text;
     if (this.button) {
       this.button.setLabel(this.label);
-      this.button.setTooltipText(this.label);
+    }
+    return this;
+  }
+
+  /**
+   *
+   * @param {string} iconURL
+   * @returns {Widget}
+   */
+  setTooltipText(text) {
+    this.tooltipText = text;
+    if (this.button) {
+      this.button.setTooltipText(this.tooltipText);
     }
     return this;
   }
