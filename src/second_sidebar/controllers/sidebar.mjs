@@ -65,6 +65,7 @@ export class SidebarController {
     this.onClickOutsideWhileUnpinned = (event) => {
       const target = new XULElement(null, { element: event.target });
       if (
+        isLeftMouseButton(event) &&
         !this.sidebar.contains(target) &&
         !this.sidebarSplitterUnpinned.contains(target) &&
         !this.webPanelPopupEdit.contains(target) &&
