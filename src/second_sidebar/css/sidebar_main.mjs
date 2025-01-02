@@ -19,6 +19,15 @@ export const SIDEBAR_MAIN_CSS = `
     .toolbaritem-combined-buttons {
       justify-content: center;
     }
+
+    .toolbarbutton-1 {
+      padding: 0 !important;
+    }
+
+    .toolbarbutton-icon, .toolbarbutton-badge-stack {
+      width: var(--sb2-main-button-icon-size) !important;
+      height: var(--sb2-main-button-icon-size) !important;
+    }
   }
 
   :root[customizing] {
@@ -45,11 +54,6 @@ export const SIDEBAR_MAIN_CSS = `
   .sb2-main-button {
     position: relative;
     padding: 0 !important;
-
-    .toolbarbutton-icon {
-      width: var(--sb2-main-button-icon-size) !important;
-      height: var(--sb2-main-button-icon-size) !important;
-    }
 
     .tab-icon-overlay {
       position: absolute !important;
