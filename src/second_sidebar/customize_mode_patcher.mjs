@@ -9,7 +9,8 @@ ChromeUtils.defineESModuleGetters(lazy, {
 });
 
 // https://searchfox.org/mozilla-central/source/browser/components/customizableui/CustomizeMode.sys.mjs
-// this -> gCustomizeMode, delete "lazy" staff, use custom getPlaceForItem, use shared gDraggingInToolbars
+// this -> gCustomizeMode, delete "lazy" staff, use custom getPlaceForItem, use shared gDraggingInToolbars,
+// remove __dumpDragData
 export class CustomizeModePatcher {
   static patch() {
     gCustomizeMode._wrapToolbarItem = customizeMode._wrapToolbarItem;
@@ -128,7 +129,6 @@ const customizeMode = {
   },
 
   _onDragStart(aEvent) {
-    __dumpDragData(aEvent);
     let item = aEvent.target;
     while (item && item.localName != "toolbarpaletteitem") {
       if (
@@ -215,8 +215,6 @@ const customizeMode = {
     if (gCustomizeMode._initializeDragAfterMove) {
       gCustomizeMode._initializeDragAfterMove();
     }
-
-    __dumpDragData(aEvent);
 
     let document = aEvent.target.ownerDocument;
     let documentId = document.documentElement.id;
@@ -476,10 +474,6 @@ const customizeMode = {
     return size;
   },
 };
-
-function __dumpDragData() {
-  return;
-}
 
 function getPlaceForItem(aElement) {
   let place;
