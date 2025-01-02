@@ -98,7 +98,7 @@ export class WebPanelPopupMore extends Panel {
   listenMobileButtonClick(callback) {
     this.mobileButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
-        callback(this.settings.uuid, !this.mobileButton.isChecked());
+        callback(this.settings.uuid, this.mobileButton.isChecked());
       }
     });
   }
