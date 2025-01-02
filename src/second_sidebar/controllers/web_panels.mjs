@@ -64,6 +64,10 @@ export class WebPanelsController {
     this.webPanelButtonMenuPopup.listenDeleteItemClick((webPanelController) => {
       this.webPanelDeleteController.openPopup(webPanelController);
     });
+
+    this.webPanelButtonMenuPopup.listenCustomizeItemClick(() => {
+      gCustomizeMode.enter();
+    });
   }
 
   /**

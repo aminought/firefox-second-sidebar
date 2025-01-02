@@ -15,6 +15,7 @@ export class WebPanelButtonMenuPopup extends MenuPopup {
     this.unloadItem = new MenuItem().setLabel("Unload web panel");
     this.editItem = new MenuItem().setLabel("Edit web panel");
     this.deleteItem = new MenuItem().setLabel("Delete web panel");
+    this.customizeItem = new MenuItem().setLabel("Customize Toolbar...");
     this.#compose();
 
     this.addEventListener("popupshowing", () => {
@@ -30,6 +31,8 @@ export class WebPanelButtonMenuPopup extends MenuPopup {
       new MenuSeparator(),
       this.editItem,
       this.deleteItem,
+      new MenuSeparator(),
+      this.customizeItem,
     );
   }
 
@@ -68,6 +71,16 @@ export class WebPanelButtonMenuPopup extends MenuPopup {
   listenDeleteItemClick(callback) {
     this.deleteItem.addEventListener("click", () => {
       callback(this.webPanelController);
+    });
+  }
+
+  /**
+   *
+   * @param {function(MouseEvent):void} callback
+   */
+  listenCustomizeItemClick(callback) {
+    this.customizeItem.addEventListener("click", (event) => {
+      callback(event);
     });
   }
 }

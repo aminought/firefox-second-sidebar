@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
 import { SidebarController } from "./sidebar.mjs";
-import { WebPanelController } from "./web_panel.mjs";
 import { WebPanelEditController } from "./web_panel_edit.mjs";
 import { WebPanelNewButton } from "../xul/web_panel_new_button.mjs";
 import { WebPanelPopupNew } from "../xul/web_panel_popup_new.mjs";
 import { WebPanelsController } from "./web_panels.mjs";
 import { fetchIconURL } from "../utils/icons.mjs";
+import { isLeftMouseButton } from "../utils/buttons.mjs";
 /* eslint-enable no-unused-vars */
 
 export class WebPanelNewController {
@@ -18,8 +18,10 @@ export class WebPanelNewController {
     this.webPanelNewButton = webPanelNewButton;
     this.webPanelPopupNew = webPanelPopupNew;
 
-    this.webPanelNewButton.listenClick(() => {
-      this.openPopup();
+    this.webPanelNewButton.listenClick((event) => {
+      if (isLeftMouseButton(event)) {
+        this.openPopup();
+      }
     });
 
     this.webPanelPopupNew.listenInputChange((url) => {
