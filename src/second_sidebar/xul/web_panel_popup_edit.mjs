@@ -122,12 +122,8 @@ export class WebPanelPopupEdit extends Panel {
           ),
         ),
         new HBox({
-          id: "sb2-web-panel-edit-multiview-buttons-row",
-        }).appendChildren(
-          new HBox({
-            id: "sb2-web-panel-edit-storage-buttons",
-          }).appendChildren(this.cancelButton, this.saveButton),
-        ),
+          id: "sb2-web-panel-edit-buttons",
+        }).appendChildren(this.cancelButton, this.saveButton),
       ),
     );
   }
