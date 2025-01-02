@@ -2,6 +2,7 @@
 import { Sidebar } from "../xul/sidebar.mjs";
 import { SidebarBox } from "../xul/sidebar_box.mjs";
 import { SidebarMainController } from "./sidebar_main.mjs";
+import { SidebarMainPopupSettings } from "../xul/sidebar_main_popup_settings.mjs";
 import { SidebarSettings } from "../settings/sidebar_settings.mjs";
 import { SidebarSplitterUnpinned } from "../xul/sidebar_splitter_unpinned.mjs";
 import { SidebarToolbar } from "../xul/sidebar_toolbar.mjs";
@@ -21,6 +22,7 @@ export class SidebarController {
    * @param {SidebarToolbar} sidebarToolbar
    * @param {SidebarSplitterUnpinned} sidebarSplitterUnpinned
    * @param {WebPanelPopupEdit} webPanelPopupEdit
+   * @param {SidebarMainPopupSettings} sidebarMainPopupSettings
    * @param {XULElement} browser
    */
   constructor(
@@ -29,6 +31,7 @@ export class SidebarController {
     sidebarToolbar,
     sidebarSplitterUnpinned,
     webPanelPopupEdit,
+    sidebarMainPopupSettings,
     browser,
   ) {
     this.sidebarBox = sidebarBox;
@@ -36,6 +39,7 @@ export class SidebarController {
     this.sidebarToolbar = sidebarToolbar;
     this.sidebarSplitterUnpinned = sidebarSplitterUnpinned;
     this.webPanelPopupEdit = webPanelPopupEdit;
+    this.sidebarMainPopupSettings = sidebarMainPopupSettings;
     this.browser = browser;
     this.#setupListeners();
 
@@ -69,6 +73,7 @@ export class SidebarController {
         !this.sidebar.contains(target) &&
         !this.sidebarSplitterUnpinned.contains(target) &&
         !this.webPanelPopupEdit.contains(target) &&
+        !this.sidebarMainPopupSettings.contains(target) &&
         !["menuitem", "menupopup"].includes(event.target.tagName) &&
         (document.contains(event.target) ||
           event.target.baseURI ===
@@ -134,12 +139,7 @@ export class SidebarController {
     this.setToolbarForwardButtonDisabled(!canGoForward);
     this.setToolbarTitle(title);
     this.setHideToolbar(hideToolbar);
-
-    const sidebarMainWidth = this.sidebarMainController.getWidth();
-    this.getPosition() === "left"
-      ? this.setAbsoluteLeft(sidebarMainWidth)
-      : this.setAbsoluteRight(sidebarMainWidth);
-
+    this.updateAbsolutePosition();
     pinned ? this.pin() : this.unpin();
   }
 
@@ -213,6 +213,7 @@ export class SidebarController {
   setWidth(width) {
     this.sidebarBox.setWidth(width);
     this.sidebar.setWidth(width);
+    this.updateAbsolutePosition();
   }
 
   /**
@@ -237,6 +238,7 @@ export class SidebarController {
    */
   setPosition(position) {
     this.sidebar.setPosition(position);
+    this.updateAbsolutePosition();
   }
 
   /**
@@ -273,6 +275,14 @@ export class SidebarController {
       "--sb2-box-unpinned-padding",
       `var(--space-${value})`,
     );
+    this.updateAbsolutePosition();
+  }
+
+  updateAbsolutePosition() {
+    const sidebarMainWidth = this.sidebarMainController.getWidth();
+    this.getPosition() === "left"
+      ? this.setAbsoluteLeft(sidebarMainWidth)
+      : this.setAbsoluteRight(sidebarMainWidth);
   }
 
   /**

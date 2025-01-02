@@ -168,6 +168,7 @@ export class SidebarInjector {
       elements.sidebarToolbar,
       elements.sidebarSplitterUnpinned,
       elements.webPanelPopupEdit,
+      elements.sidebarMainPopupSettings,
       elements.browser,
     );
     this.sidebarSplittersController = new SidebarSplittersController(
@@ -199,6 +200,7 @@ export class SidebarInjector {
   static #setupDependencies() {
     this.sidebarMainController.setupDependencies(
       this.sidebarMainSettingsController,
+      this.sidebarController,
     );
     this.sidebarMainSettingsController.setupDependencies(
       this.sidebarMainController,

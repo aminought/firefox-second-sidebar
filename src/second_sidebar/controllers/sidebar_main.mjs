@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import { SidebarController } from "./sidebar.mjs";
 import { SidebarMain } from "../xul/sidebar_main.mjs";
 import { SidebarMainMenuPopup } from "../xul/sidebar_main_menupopup.mjs";
 import { SidebarMainSettingsController } from "./sidebar_main_settings.mjs";
@@ -23,9 +24,11 @@ export class SidebarMainController {
   /**
    *
    * @param {SidebarMainSettingsController} sidebarMainSettingsController
+   * @param {SidebarController} sidebarController
    */
-  setupDependencies(sidebarMainSettingsController) {
+  setupDependencies(sidebarMainSettingsController, sidebarController) {
     this.sidebarMainSettingsController = sidebarMainSettingsController;
+    this.sidebarController = sidebarController;
   }
 
   #setupListeners() {
@@ -56,6 +59,7 @@ export class SidebarMainController {
    */
   setPadding(value) {
     this.browser.setProperty("--sb2-main-padding", `var(--space-${value})`);
+    this.sidebarController.updateAbsolutePosition();
   }
 
   /**
