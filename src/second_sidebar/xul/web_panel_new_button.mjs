@@ -7,7 +7,6 @@ export class WebPanelNewButton extends Widget {
     super({
       id: "new-web-panel",
       label: "New Web Panel",
-      tooltiptext: "New Web Panel",
       icon: ICON,
     });
   }

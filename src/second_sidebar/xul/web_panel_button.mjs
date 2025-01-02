@@ -13,10 +13,8 @@ export class WebPanelButton extends Widget {
     super({
       id: uuid,
       classList: ["sb2-main-button", "sb2-main-web-panel-button"],
-      label: "Web Panel",
-      tooltiptext: "Web Panel",
       context: "sb2-web-panel-button-menupopup",
-      isNew
+      isNew,
     });
 
     this.playingIcon = null;
@@ -131,8 +129,11 @@ export class WebPanelButton extends Widget {
    * @param {string} text
    * @returns {WebPanelButton}
    */
-  setTooltipText(text) {
-    text = ellipsis(text, URL_TOOLTIP_LIMIT);
-    return Widget.prototype.setTooltipText.call(this, text);
+  setLabel(text) {
+    text = ellipsis(
+      text.replace("https://", "").replace("http://", ""),
+      URL_TOOLTIP_LIMIT,
+    );
+    return Widget.prototype.setLabel.call(this, text);
   }
 }

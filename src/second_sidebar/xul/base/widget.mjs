@@ -5,7 +5,6 @@ export class Widget {
     id,
     classList = [],
     label,
-    tooltiptext,
     icon,
     context = null,
     isNew = false,
@@ -13,16 +12,20 @@ export class Widget {
     this.element = null;
     this.onClick = null;
     this.icon = icon;
+    this.label = label;
     this.widget = CustomizableUI.createWidget({
       id,
       label,
-      tooltiptext,
       type: "button",
       localized: false,
       onCreated: (element) => {
         this.element = new XULElement(null, { element, classList });
         if (this.icon) {
           this.element.setAttribute("image", this.icon);
+        }
+        if (this.label) {
+          this.element.setAttribute("label", this.label);
+          this.element.setAttribute("tooltiptext", this.label);
         }
         if (context) {
           this.element.setContext(context);
@@ -53,9 +56,11 @@ export class Widget {
     return this;
   }
 
-  setTooltipText(text) {
+  setLabel(text) {
+    this.label = text;
     if (this.element) {
-      this.element.setAttribute("tooltiptext", text);
+      this.element.setAttribute("label", this.label);
+      this.element.setAttribute("tooltiptext", this.label);
     }
     return this;
   }
