@@ -51,6 +51,8 @@ export class SidebarInjector {
 
     CustomizableUI.registerArea("sb2-main", {
       type: window.CustomizableUI.TYPE_TOOLBAR,
+      defaultCollapsed: false,
+      overflowable: false,
       defaultPlacements: [],
     });
 
