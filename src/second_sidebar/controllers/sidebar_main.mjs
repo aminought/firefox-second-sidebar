@@ -57,21 +57,4 @@ export class SidebarMainController {
   setPadding(value) {
     this.browser.setProperty("--sb2-main-padding", `var(--space-${value})`);
   }
-
-  /**
-   *
-   * @returns {number}
-   */
-  getFaviconSize() {
-    const value = this.browser.getProperty("--sb2-main-button-icon-size");
-    return value.match(/(\d+)px/)[1];
-  }
-
-  /**
-   *
-   * @param {number} value
-   */
-  setFaviconSize(value) {
-    this.browser.setProperty("--sb2-main-button-icon-size", value + "px");
-  }
 }

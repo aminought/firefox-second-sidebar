@@ -10,12 +10,10 @@ import { SidebarDecorator } from "./second_sidebar/sidebar_decorator.mjs";
 import { SidebarInjector } from "./second_sidebar/sidebar_injector.mjs";
 
 const run = () => {
-  setTimeout(() => {
-    if (SidebarInjector.inject()) {
-      SidebarDecorator.decorate();
-      CustomizeModePatcher.patch();
-    }
-  }, 3000);
+  if (SidebarInjector.inject()) {
+    SidebarDecorator.decorate();
+    CustomizeModePatcher.patch();
+  }
 };
 
 if (typeof UC_API !== "undefined") {

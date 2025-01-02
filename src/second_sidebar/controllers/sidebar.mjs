@@ -271,7 +271,6 @@ export class SidebarController {
   loadSettings(settings) {
     this.setPosition(settings.position);
     this.sidebarMainController.setPadding(settings.padding);
-    this.sidebarMainController.setFaviconSize(settings.faviconSize);
     this.setUnpinnedPadding(settings.unpinnedPadding);
     this.hideInPopupWindows = settings.hideInPopupWindows;
     this.autoHideBackButton = settings.autoHideBackButton;
@@ -286,7 +285,6 @@ export class SidebarController {
     return new SidebarSettings(
       this.getPosition(),
       this.sidebarMainController.getPadding(),
-      this.sidebarMainController.getFaviconSize(),
       this.getUnpinnedPadding(),
       this.hideInPopupWindows,
       this.autoHideBackButton,

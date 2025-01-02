@@ -32,7 +32,6 @@ export class SidebarMainSettingsController {
     this.sidebarMainPopupSettings.listenChanges({
       position: (value) => this.sidebarController.setPosition(value),
       padding: (value) => this.sidebarMainController.setPadding(value),
-      faviconSize: (value) => this.sidebarMainController.setFaviconSize(value),
       unpinnedPadding: (value) =>
         this.sidebarController.setUnpinnedPadding(value),
       hideInPopupWindows: (value) =>

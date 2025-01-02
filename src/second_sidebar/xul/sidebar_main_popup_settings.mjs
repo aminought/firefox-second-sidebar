@@ -30,7 +30,6 @@ export class SidebarMainPopupSettings extends Panel {
     this.hideInPopupWindowsToggle = new Toggle();
     this.autoHideBackToggle = new Toggle();
     this.autoHideForwardToggle = new Toggle();
-    this.faviconSizeMenuList = this.#createFaviconSizeMenuList();
     this.unpinnedPaddingMenuList = this.#createPaddingMenuList();
     this.saveButton = createSaveButton();
     this.cancelButton = createCancelButton();
@@ -64,18 +63,6 @@ export class SidebarMainPopupSettings extends Panel {
     return menuList;
   }
 
-  /**
-   *
-   * @returns {MenuList}
-   */
-  #createFaviconSizeMenuList() {
-    const menuList = new MenuList();
-    for (let i = 24; i <= 64; i += 2) {
-      menuList.appendItem(i + " px", i);
-    }
-    return menuList;
-  }
-
   #compose() {
     this.appendChild(
       new PanelMultiView().appendChildren(
@@ -84,7 +71,6 @@ export class SidebarMainPopupSettings extends Panel {
         createPopupGroup("Sidebar position", this.positionMenuList),
         new ToolbarSeparator(),
         createPopupGroup("Sidebar width", this.paddingMenuList),
-        createPopupGroup("Sidebar buttons size", this.faviconSizeMenuList),
         createPopupGroup(
           "Floating web panel offset",
           this.unpinnedPaddingMenuList,
@@ -111,7 +97,6 @@ export class SidebarMainPopupSettings extends Panel {
    * @param {object} callbacks
    * @param {function(string):void} callbacks.position
    * @param {function(string):void} callbacks.padding
-   * @param {function(number):void} callbacks.faviconSize
    * @param {function(string):void} callbacks.unpinnedPadding
    * @param {function(boolean):void} callbacks.hideInPopupWindows
    * @param {function(boolean):void} callbacks.autoHideBackButton
@@ -120,7 +105,6 @@ export class SidebarMainPopupSettings extends Panel {
   listenChanges({
     position,
     padding,
-    faviconSize,
     unpinnedPadding,
     hideInPopupWindows,
     autoHideBackButton,
@@ -128,7 +112,6 @@ export class SidebarMainPopupSettings extends Panel {
   }) {
     this.onPositionChange = position;
     this.onPaddingChange = padding;
-    this.onFaviconSizeChange = faviconSize;
     this.onUnpinnedPaddingChange = unpinnedPadding;
     this.onHideInPopupWindowsChange = hideInPopupWindows;
     this.onAutoHideBackButtonChange = autoHideBackButton;
@@ -139,9 +122,6 @@ export class SidebarMainPopupSettings extends Panel {
     );
     this.paddingMenuList.addEventListener("command", () =>
       padding(this.paddingMenuList.getValue()),
-    );
-    this.faviconSizeMenuList.addEventListener("command", () =>
-      faviconSize(this.faviconSizeMenuList.getValue()),
     );
     this.unpinnedPaddingMenuList.addEventListener("command", () =>
       unpinnedPadding(this.unpinnedPaddingMenuList.getValue()),
@@ -191,7 +171,6 @@ export class SidebarMainPopupSettings extends Panel {
   openPopupAtScreen(screenX, screenY, settings) {
     this.positionMenuList.setValue(settings.position);
     this.paddingMenuList.setValue(settings.padding);
-    this.faviconSizeMenuList.setValue(settings.faviconSize);
     this.unpinnedPaddingMenuList.setValue(settings.unpinnedPadding);
     this.hideInPopupWindowsToggle.setPressed(settings.hideInPopupWindows);
     this.autoHideBackToggle.setPressed(settings.autoHideBackButton);
@@ -217,9 +196,6 @@ export class SidebarMainPopupSettings extends Panel {
     }
     if (this.paddingMenuList.getValue() !== this.settings.padding) {
       this.onPaddingChange(this.settings.padding);
-    }
-    if (this.faviconSizeMenuList.getValue() !== this.settings.faviconSize) {
-      this.onFaviconSizeChange(this.settings.faviconSize);
     }
     if (
       this.unpinnedPaddingMenuList.getValue() !== this.settings.unpinnedPadding

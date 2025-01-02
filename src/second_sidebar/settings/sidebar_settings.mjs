@@ -7,8 +7,6 @@ export class SidebarSettings {
   #position;
   /**@type {string} */
   #padding;
-  /**@type {number} */
-  #faviconSize;
   /**@type {string} */
   #unpinnedPadding;
   /**@type {boolean} */
@@ -22,7 +20,6 @@ export class SidebarSettings {
    *
    * @param {string} position
    * @param {string} padding
-   * @param {string} faviconSize
    * @param {string} unpinnedPadding
    * @param {boolean} hideInPopupWindows
    * @param {boolean} autoHideBackButton
@@ -31,7 +28,6 @@ export class SidebarSettings {
   constructor(
     position,
     padding,
-    faviconSize,
     unpinnedPadding,
     hideInPopupWindows,
     autoHideBackButton,
@@ -39,7 +35,6 @@ export class SidebarSettings {
   ) {
     this.#position = position;
     this.#padding = padding;
-    this.#faviconSize = faviconSize;
     this.#unpinnedPadding = unpinnedPadding;
     this.#hideInPopupWindows = hideInPopupWindows;
     this.#autoHideBackButton = autoHideBackButton;
@@ -52,10 +47,6 @@ export class SidebarSettings {
 
   get padding() {
     return this.#padding;
-  }
-
-  get faviconSize() {
-    return this.#faviconSize;
   }
 
   get unpinnedPadding() {
@@ -83,7 +74,6 @@ export class SidebarSettings {
     return new SidebarSettings(
       pref.position ?? "right",
       pref.padding ?? "small",
-      pref.faviconSize ?? 32,
       pref.unpinnedPadding ?? "small",
       pref.hideInPopupWindows ?? false,
       pref.autoHideBackButton ?? false,
@@ -95,7 +85,6 @@ export class SidebarSettings {
     Settings.save(PREF, {
       position: this.#position,
       padding: this.#padding,
-      faviconSize: this.#faviconSize,
       unpinnedPadding: this.#unpinnedPadding,
       hideInPopupWindows: this.#hideInPopupWindows,
       autoHideBackButton: this.#autoHideBackButton,

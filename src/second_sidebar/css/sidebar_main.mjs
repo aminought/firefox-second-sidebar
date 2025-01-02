@@ -23,11 +23,6 @@ export const SIDEBAR_MAIN_CSS = `
     .toolbarbutton-1 {
       padding: 0 !important;
     }
-
-    .toolbarbutton-icon, .toolbarbutton-badge-stack {
-      width: var(--sb2-main-button-icon-size) !important;
-      height: var(--sb2-main-button-icon-size) !important;
-    }
   }
 
   :root[customizing] {
