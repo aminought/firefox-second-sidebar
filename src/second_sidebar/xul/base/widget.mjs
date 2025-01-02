@@ -1,4 +1,4 @@
-import { XULElement } from "./xul_element.mjs";
+import { ToolbarButton } from "./toolbar_button.mjs";
 
 export class Widget {
   /**
@@ -7,6 +7,8 @@ export class Widget {
    * @param {string?} params.id
    * @param {string[]} params.classList
    * @param {string?} params.iconURL
+   * @param {boolean} params.open
+   * @param {boolean} params.unloaded
    * @param {string?} params.context
    * @param {string?} params.position
    */
@@ -15,29 +17,35 @@ export class Widget {
     classList = [],
     label,
     iconURL,
+    open = false,
+    unloaded = true,
     context = null,
     position = null,
   }) {
-    this.element = null;
+    this.button = null;
     this.onClick = null;
     this.iconURL = iconURL;
     this.label = label;
+    this.open = open;
+    this.unloaded = unloaded;
     this.widget = CustomizableUI.createWidget({
       id,
       label,
       type: "button",
       localized: false,
       onCreated: (element) => {
-        this.element = new XULElement(null, { element, classList });
+        this.button = new ToolbarButton({ element, classList });
+        this.button.setOpen(this.open);
+        this.button.setUnloaded(this.unloaded);
         if (this.iconURL) {
-          this.element.setAttribute("image", this.iconURL);
+          this.button.setIcon(this.iconURL);
         }
         if (this.label) {
-          this.element.setAttribute("label", this.label);
-          this.element.setAttribute("tooltiptext", this.label);
+          this.button.setLabel(this.label);
+          this.button.setTooltipText(this.label);
         }
         if (context) {
-          this.element.setContext(context);
+          this.button.setContext(context);
         }
       },
       onClick: (event) => {
@@ -73,8 +81,8 @@ export class Widget {
    */
   setIcon(iconURL) {
     this.iconURL = iconURL;
-    if (this.element) {
-      this.element.setAttribute("image", this.iconURL);
+    if (this.button) {
+      this.button.setIcon(this.iconURL);
     }
     return this;
   }
@@ -86,9 +94,51 @@ export class Widget {
    */
   setLabel(text) {
     this.label = text;
-    if (this.element) {
-      this.element.setAttribute("label", this.label);
-      this.element.setAttribute("tooltiptext", this.label);
+    if (this.button) {
+      this.button.setLabel(this.label);
+      this.button.setTooltipText(this.label);
+    }
+    return this;
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  isUnloaded() {
+    return this.unloaded;
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   * @returns {WebPanelButton}
+   */
+  setUnloaded(value) {
+    this.unloaded = value;
+    if (this.button) {
+      this.button.setUnloaded(value);
+    }
+    return this;
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  isOpen() {
+    return this.open;
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   * @returns {WebPanelButton}
+   */
+  setOpen(value) {
+    this.open = value;
+    if (this.button) {
+      this.button.setOpen(value);
     }
     return this;
   }
@@ -100,21 +150,18 @@ export class Widget {
    * @returns {Widget}
    */
   setAttribute(name, value) {
-    if (this.element) {
-      this.element.setAttribute(name, value);
+    if (this.button) {
+      this.button.setAttribute(name, value);
     }
     return this;
   }
 
   /**
    *
-   * @returns {HTMLElement}
+   * @returns {ToolbarButton?}
    */
-  getXUL() {
-    if (this.element) {
-      return this.element.getXUL();
-    }
-    return null;
+  getButton() {
+    return this.button;
   }
 
   /**
@@ -122,7 +169,7 @@ export class Widget {
    * @returns {Widget}
    */
   remove() {
-    CustomizableUI.destroyWidget(this.element.element.id);
+    CustomizableUI.destroyWidget(this.button.id);
     return this;
   }
 }

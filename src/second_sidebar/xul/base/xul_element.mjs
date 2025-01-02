@@ -26,6 +26,10 @@ export class XULElement {
     }
   }
 
+  get id() {
+    return this.element.id;
+  }
+
   getXUL() {
     return this.element;
   }

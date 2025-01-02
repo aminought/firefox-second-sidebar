@@ -61,7 +61,7 @@ export class WebPanelNewController {
 
     this.webPanelPopupNew
       .setInputValue(suggest)
-      .openPopup(this.webPanelNewButton.element);
+      .openPopup(this.webPanelNewButton.button);
   }
 
   async createWebPanelAndOpen(url) {

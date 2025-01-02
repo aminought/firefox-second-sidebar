@@ -6,9 +6,10 @@ export class ToolbarButton extends XULElement {
    * @param {object} params
    * @param {string?} params.id
    * @param {Array<string>} params.classList
+   * @param {HTMLElement?} params.element
    */
-  constructor({ id = null, classList = [] } = {}) {
-    super("toolbarbutton", { id, classList });
+  constructor({ id = null, classList = [], element } = {}) {
+    super("toolbarbutton", { id, classList, element });
   }
 
   /**
@@ -63,6 +64,34 @@ export class ToolbarButton extends XULElement {
    */
   setTooltipText(text) {
     return this.setAttribute("tooltiptext", text);
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   * @returns {ToolbarButton}
+   */
+  setOpen(value) {
+    if (value) {
+      this.setAttribute("open", value);
+    } else {
+      this.removeAttribute("open");
+    }
+    return this;
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   * @returns {ToolbarButton}
+   */
+  setUnloaded(value) {
+    if (value) {
+      this.setAttribute("unloaded", value);
+    } else {
+      this.removeAttribute("unloaded");
+    }
+    return this;
   }
 
   /**

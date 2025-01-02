@@ -21,10 +21,6 @@ export class WebPanelButton extends Widget {
     this.playingIcon = null;
   }
 
-  get uuid() {
-    return this.getAttribute("uuid");
-  }
-
   /**
    *
    * @param {function(MouseEvent):void} callback
@@ -75,54 +71,6 @@ export class WebPanelButton extends Widget {
       return this.showPlayingIcon();
     }
     return this.hidePlayingIcon();
-  }
-
-  /**
-   *
-   * @returns {boolean}
-   */
-  isOpen() {
-    return this.element.getAttribute("open") === "true";
-  }
-
-  /**
-   *
-   * @param {boolean} value
-   * @returns {WebPanelButton}
-   */
-  setOpen(value) {
-    if (this.element) {
-      if (value) {
-        this.element.setAttribute("open", value);
-      } else {
-        this.element.removeAttribute("open");
-      }
-    }
-    return this;
-  }
-
-  /**
-   *
-   * @param {boolean} value
-   * @returns {WebPanelButton}
-   */
-  setUnloaded(value) {
-    if (this.element) {
-      if (value) {
-        this.element.setAttribute("unloaded", value);
-      } else {
-        this.element.removeAttribute("unloaded");
-      }
-    }
-    return this;
-  }
-
-  /**
-   *
-   * @returns {boolean}
-   */
-  isUnloaded() {
-    return this.element.getAttribute("unloaded") === "true";
   }
 
   /**
