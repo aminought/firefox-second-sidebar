@@ -91,7 +91,6 @@ export const SIDEBAR_BOX_CSS = `
     }
 
     #sb2-box {
-      right: var(--sb2-main-width);
       padding-inline-end: var(--sb2-box-unpinned-side-padding);
     }
   }

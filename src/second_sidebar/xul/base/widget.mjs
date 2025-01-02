@@ -7,7 +7,7 @@ export class Widget {
     label,
     icon,
     context = null,
-    isNew = false,
+    position = null,
   }) {
     this.element = null;
     this.onClick = null;
@@ -37,9 +37,9 @@ export class Widget {
         }
       },
     });
-    if (isNew) {
+    if (position) {
       const placement = CustomizableUI.getPlacementOfWidget('new-web-panel');
-      CustomizableUI.addWidgetToArea(id, placement.area, placement.position);
+      CustomizableUI.addWidgetToArea(id, placement.area, placement.position + (position === "before" ? 0 : 1));
     }
   }
 

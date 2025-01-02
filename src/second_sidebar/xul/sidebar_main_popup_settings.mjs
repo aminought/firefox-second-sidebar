@@ -27,6 +27,7 @@ export class SidebarMainPopupSettings extends Panel {
 
     this.positionMenuList = this.#createPositionMenuList();
     this.paddingMenuList = this.#createPaddingMenuList();
+    this.newWebPanelPositionMenuList = this.#createNewWebPanelPositionMenuList();
     this.hideInPopupWindowsToggle = new Toggle();
     this.autoHideBackToggle = new Toggle();
     this.autoHideForwardToggle = new Toggle();
@@ -63,6 +64,17 @@ export class SidebarMainPopupSettings extends Panel {
     return menuList;
   }
 
+  /**
+   *
+   * @returns {MenuList}
+   */
+  #createNewWebPanelPositionMenuList() {
+    const menuList = new MenuList();
+    menuList.appendItem("Before Plus Button", "before");
+    menuList.appendItem("After Plus Button", "after");
+    return menuList;
+  }
+
   #compose() {
     this.appendChild(
       new PanelMultiView().appendChildren(
@@ -75,6 +87,7 @@ export class SidebarMainPopupSettings extends Panel {
           "Floating web panel offset",
           this.unpinnedPaddingMenuList,
         ),
+        createPopupGroup("New web panel position", this.newWebPanelPositionMenuList),
         new ToolbarSeparator(),
         createPopupGroup(
           "Hide sidebar in popup windows",
@@ -97,6 +110,7 @@ export class SidebarMainPopupSettings extends Panel {
    * @param {object} callbacks
    * @param {function(string):void} callbacks.position
    * @param {function(string):void} callbacks.padding
+   * @param {function(string):void} callbacks.newWebPanelPosition
    * @param {function(string):void} callbacks.unpinnedPadding
    * @param {function(boolean):void} callbacks.hideInPopupWindows
    * @param {function(boolean):void} callbacks.autoHideBackButton
@@ -105,6 +119,7 @@ export class SidebarMainPopupSettings extends Panel {
   listenChanges({
     position,
     padding,
+    newWebPanelPosition,
     unpinnedPadding,
     hideInPopupWindows,
     autoHideBackButton,
@@ -112,6 +127,7 @@ export class SidebarMainPopupSettings extends Panel {
   }) {
     this.onPositionChange = position;
     this.onPaddingChange = padding;
+    this.onNewWebPanelPositionChange = newWebPanelPosition;
     this.onUnpinnedPaddingChange = unpinnedPadding;
     this.onHideInPopupWindowsChange = hideInPopupWindows;
     this.onAutoHideBackButtonChange = autoHideBackButton;
@@ -122,6 +138,9 @@ export class SidebarMainPopupSettings extends Panel {
     );
     this.paddingMenuList.addEventListener("command", () =>
       padding(this.paddingMenuList.getValue()),
+    );
+    this.newWebPanelPositionMenuList.addEventListener("command", () =>
+      newWebPanelPosition(this.newWebPanelPositionMenuList.getValue()),
     );
     this.unpinnedPaddingMenuList.addEventListener("command", () =>
       unpinnedPadding(this.unpinnedPaddingMenuList.getValue()),
@@ -171,6 +190,7 @@ export class SidebarMainPopupSettings extends Panel {
   openPopupAtScreen(screenX, screenY, settings) {
     this.positionMenuList.setValue(settings.position);
     this.paddingMenuList.setValue(settings.padding);
+    this.newWebPanelPositionMenuList.setValue(settings.newWebPanelPosition);
     this.unpinnedPaddingMenuList.setValue(settings.unpinnedPadding);
     this.hideInPopupWindowsToggle.setPressed(settings.hideInPopupWindows);
     this.autoHideBackToggle.setPressed(settings.autoHideBackButton);
@@ -196,6 +216,9 @@ export class SidebarMainPopupSettings extends Panel {
     }
     if (this.paddingMenuList.getValue() !== this.settings.padding) {
       this.onPaddingChange(this.settings.padding);
+    }
+    if (this.newWebPanelPositionMenuList.getValue() !== this.settings.newWebPanelPosition) {
+      this.onNewWebPanelPositionChange(this.settings.newWebPanelPosition);
     }
     if (
       this.unpinnedPaddingMenuList.getValue() !== this.settings.unpinnedPadding

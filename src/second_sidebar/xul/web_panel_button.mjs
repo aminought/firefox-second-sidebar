@@ -9,12 +9,12 @@ export class WebPanelButton extends Widget {
    *
    * @param {string} uuid
    */
-  constructor(uuid, isNew) {
+  constructor(uuid, position) {
     super({
       id: uuid,
       classList: ["sb2-main-button", "sb2-main-web-panel-button"],
       context: "sb2-web-panel-button-menupopup",
-      isNew,
+      position,
     });
 
     this.playingIcon = null;

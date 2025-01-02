@@ -110,34 +110,6 @@ export class WebPanelsController {
 
   /**
    *
-   * @param {WebPanelButton} webPanelButton
-   * @param {string?} position
-   * @returns {boolean}
-   */
-  injectWebPanelButton(webPanelButton, position = "end") {
-    if (this.sidebarMain.contains(webPanelButton)) {
-      return false;
-    }
-    // if (position === "start") {
-    //   this.sidebarMain.prependChild(webPanelButton);
-    // } else if (position === "end") {
-    //   this.sidebarMain.appendChild(webPanelButton);
-    // }
-    // const panel = document.getElementById(CustomizableUI.AREA_FIXED_OVERFLOW_PANEL);
-    // panel.appendChild(webPanelButton.getXUL());
-
-    // const uuid = webPanelButton.uuid;
-    // const placement = CustomizableUI.getPlacementOfWidget(uuid);
-    // console.log('Placement of ', uuid , ': ', placement);
-    // if (placement === null) {
-    //   CustomizableUI.addWidgetToArea(uuid, "sb2-main");
-    // }
-
-    return true;
-  }
-
-  /**
-   *
    * @param {WebPanelTab} webPanelTab
    * @returns {boolean}
    */
@@ -249,8 +221,8 @@ export class WebPanelsController {
    * @param {WebPanel} webPanel
    * @returns {WebPanelButton}
    */
-  makeWebPanelButton(webPanel, isNew = false) {
-    return new WebPanelButton(webPanel.uuid, isNew)
+  makeWebPanelButton(webPanel, position = null) {
+    return new WebPanelButton(webPanel.uuid, position)
       .setIcon(webPanel.faviconURL)
       .setLabel(webPanel.url)
       .setUnloaded(!webPanel.loadOnStartup);
@@ -300,7 +272,6 @@ export class WebPanelsController {
         webPanelController.initWebPanel();
       }
 
-      this.injectWebPanelButton(webPanelButton);
       webPanelController.initWebPanelButton();
 
       this.add(webPanelController);

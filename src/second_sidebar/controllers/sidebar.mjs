@@ -6,6 +6,7 @@ import { SidebarSettings } from "../settings/sidebar_settings.mjs";
 import { SidebarSplitterUnpinned } from "../xul/sidebar_splitter_unpinned.mjs";
 import { SidebarToolbar } from "../xul/sidebar_toolbar.mjs";
 import { ToolbarButton } from "../xul/base/toolbar_button.mjs";
+import { WebPanelNewController } from "./web_panel_new.mjs";
 import { WebPanelPopupEdit } from "../xul/web_panel_popup_edit.mjs";
 import { WebPanelsController } from "./web_panels.mjs";
 import { XULElement } from "../xul/base/xul_element.mjs";
@@ -47,13 +48,16 @@ export class SidebarController {
    *
    * @param {SidebarMainController} sidebarMainController
    * @param {WebPanelsController} webPanelsController
+   * @param {WebPanelNewController} webPanelNewController
    */
   setupDepenedencies(
     sidebarMainController,
     webPanelsController,
+    webPanelNewController,
   ) {
     this.sidebarMainController = sidebarMainController;
     this.webPanelsController = webPanelsController;
+    this.webPanelNewController = webPanelNewController;
   }
 
   #setupListeners() {
@@ -130,6 +134,10 @@ export class SidebarController {
     this.setToolbarTitle(title);
     this.setHideToolbar(hideToolbar);
     pinned ? this.pin() : this.unpin();
+
+    const sidebarMainWidth =
+      Math.round(this.sidebarMainController.getActualWidth()) + "px";
+    this.sidebarBox.setProperty("right", sidebarMainWidth);
   }
 
   close() {
@@ -271,6 +279,9 @@ export class SidebarController {
   loadSettings(settings) {
     this.setPosition(settings.position);
     this.sidebarMainController.setPadding(settings.padding);
+    this.webPanelNewController.setNewWebPanelPosition(
+      settings.newWebPanelPosition,
+    );
     this.setUnpinnedPadding(settings.unpinnedPadding);
     this.hideInPopupWindows = settings.hideInPopupWindows;
     this.autoHideBackButton = settings.autoHideBackButton;
@@ -285,6 +296,7 @@ export class SidebarController {
     return new SidebarSettings(
       this.getPosition(),
       this.sidebarMainController.getPadding(),
+      this.webPanelNewController.getNewWebPanelPosition(),
       this.getUnpinnedPadding(),
       this.hideInPopupWindows,
       this.autoHideBackButton,

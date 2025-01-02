@@ -84,8 +84,10 @@ export class WebPanelNewController {
       url,
       faviconURL,
     );
-    const webPanelButton =
-      this.webPanelsController.makeWebPanelButton(webPanel, true);
+    const webPanelButton = this.webPanelsController.makeWebPanelButton(
+      webPanel,
+      this.newWebPanelPosition,
+    );
 
     const webPanelController = this.webPanelsController.makeWebPanelController(
       webPanel,
@@ -102,10 +104,6 @@ export class WebPanelNewController {
     this.webPanelsController.injectWebPanel(webPanel);
     webPanelController.initWebPanel();
 
-    this.webPanelsController.injectWebPanelButton(
-      webPanelButton,
-      null
-    );
     webPanelController.initWebPanelButton();
 
     this.sidebarController.close();
@@ -132,17 +130,15 @@ export class WebPanelNewController {
    *
    * @returns {string}
    */
-  getPosition() {
-    return this.webPanelNewButton.getProperty("order") === "-1"
-      ? "start"
-      : "end";
+  getNewWebPanelPosition() {
+    return this.newWebPanelPosition;
   }
 
   /**
    *
    * @param {string} value
    */
-  setPosition(value) {
-    this.webPanelNewButton.setProperty("order", value === "start" ? -1 : 1);
+  setNewWebPanelPosition(value) {
+    this.newWebPanelPosition = value;
   }
 }

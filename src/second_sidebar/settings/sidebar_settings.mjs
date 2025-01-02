@@ -8,6 +8,8 @@ export class SidebarSettings {
   /**@type {string} */
   #padding;
   /**@type {string} */
+  #newWebPanelPosition;
+  /**@type {string} */
   #unpinnedPadding;
   /**@type {boolean} */
   #hideInPopupWindows;
@@ -20,6 +22,7 @@ export class SidebarSettings {
    *
    * @param {string} position
    * @param {string} padding
+   * @param {string} newWebPanelPosition
    * @param {string} unpinnedPadding
    * @param {boolean} hideInPopupWindows
    * @param {boolean} autoHideBackButton
@@ -28,6 +31,7 @@ export class SidebarSettings {
   constructor(
     position,
     padding,
+    newWebPanelPosition,
     unpinnedPadding,
     hideInPopupWindows,
     autoHideBackButton,
@@ -35,6 +39,7 @@ export class SidebarSettings {
   ) {
     this.#position = position;
     this.#padding = padding;
+    this.#newWebPanelPosition = newWebPanelPosition;
     this.#unpinnedPadding = unpinnedPadding;
     this.#hideInPopupWindows = hideInPopupWindows;
     this.#autoHideBackButton = autoHideBackButton;
@@ -47,6 +52,10 @@ export class SidebarSettings {
 
   get padding() {
     return this.#padding;
+  }
+
+  get newWebPanelPosition() {
+    return this.#newWebPanelPosition;
   }
 
   get unpinnedPadding() {
@@ -74,6 +83,7 @@ export class SidebarSettings {
     return new SidebarSettings(
       pref.position ?? "right",
       pref.padding ?? "small",
+      pref.newWebPanelPosition ?? "before",
       pref.unpinnedPadding ?? "small",
       pref.hideInPopupWindows ?? false,
       pref.autoHideBackButton ?? false,
@@ -85,6 +95,7 @@ export class SidebarSettings {
     Settings.save(PREF, {
       position: this.#position,
       padding: this.#padding,
+      newWebPanelPosition: this.#newWebPanelPosition,
       unpinnedPadding: this.#unpinnedPadding,
       hideInPopupWindows: this.#hideInPopupWindows,
       autoHideBackButton: this.#autoHideBackButton,
