@@ -72,6 +72,13 @@ export class SidebarInjector {
       // gCustomizeMode.visiblePalette.appendChild(fragment);
     });
 
+    gNavToolbox.addEventListener("aftercustomization", () => {
+      const springs = document.querySelectorAll('#sb2-main toolbarspring');
+      for (const spring of springs) {
+        spring.removeAttribute('context');
+      }
+    });
+
     return true;
   }
 
