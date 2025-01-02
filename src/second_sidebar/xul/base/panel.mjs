@@ -1,4 +1,7 @@
+/* eslint-disable no-unused-vars */
+import { Widget } from "./widget.mjs";
 import { XULElement } from "./xul_element.mjs";
+/* eslint-enable no-unused-vars */
 
 export class Panel extends XULElement {
   /**
@@ -40,7 +43,7 @@ export class Panel extends XULElement {
 
   /**
    *
-   * @param {XULElement} target
+   * @param {XULElement | Widget} target
    * @param {string} position
    * @returns {Panel}
    */

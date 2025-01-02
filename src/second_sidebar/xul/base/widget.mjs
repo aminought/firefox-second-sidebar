@@ -175,10 +175,10 @@ export class Widget {
 
   /**
    *
-   * @returns {ToolbarButton?}
+   * @returns {HTMLElement?}
    */
-  getButton() {
-    return this.button;
+  getXUL() {
+    return this.button?.getXUL();
   }
 
   /**

@@ -179,7 +179,7 @@ export class WebPanelController {
     this.sidebarController.close();
     this.webPanel.remove();
     this.webPanelTab.remove();
-    this.webPanelButton.setUnloaded(true).hidePlayingIcon();
+    this.webPanelButton.hidePlayingIcon().setUnloaded(true);
   }
 
   /**
