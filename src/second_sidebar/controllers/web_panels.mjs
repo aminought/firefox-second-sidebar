@@ -2,12 +2,10 @@
 import { SidebarController } from "./sidebar.mjs";
 import { SidebarMain } from "../xul/sidebar_main.mjs";
 import { WebPanel } from "../xul/web_panel.mjs";
-import { WebPanelButton } from "../xul/web_panel_button.mjs";
 import { WebPanelButtonMenuPopup } from "../xul/web_panel_button_menupopup.mjs";
 import { WebPanelController } from "./web_panel.mjs";
 import { WebPanelDeleteController } from "./web_panel_delete.mjs";
 import { WebPanelEditController } from "./web_panel_edit.mjs";
-import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { WebPanelTab } from "../xul/web_panel_tab.mjs";
 import { WebPanelTabs } from "../xul/web_panel_tabs.mjs";
 import { WebPanels } from "../xul/web_panels.mjs";
@@ -162,11 +160,12 @@ export class WebPanelsController {
     }
 
     console.log("Registering area sb2-main");
+    const uuids = Object.keys(this.webPanelControllers);
     CustomizableUI.registerArea("sb2-main", {
       type: window.CustomizableUI.TYPE_TOOLBAR,
       defaultCollapsed: false,
       overflowable: false,
-      defaultPlacements: ["new-web-panel"],
+      defaultPlacements: uuids.concat(["new-web-panel"]),
     });
 
     console.log("Registering toolbar node sb2-main");
