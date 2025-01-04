@@ -25,6 +25,7 @@ export class WebPanelsSettings {
    */
   static load() {
     const pref = Settings.load(PREF) ?? [];
+
     return new WebPanelsSettings(
       pref.map(
         (webPanelPref) =>
@@ -39,6 +40,7 @@ export class WebPanelsSettings {
             webPanelPref.loadOnStartup,
             webPanelPref.unloadOnClose,
             webPanelPref.hideToolbar,
+            webPanelPref.userContextId,
           ),
       ),
     );

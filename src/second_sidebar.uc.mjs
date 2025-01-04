@@ -10,6 +10,7 @@ import { SidebarDecorator } from "./second_sidebar/sidebar_decorator.mjs";
 import { SidebarInjector } from "./second_sidebar/sidebar_injector.mjs";
 
 const run = () => {
+  ContextualIdentityService.ensureDataReady();
   if (SidebarInjector.inject()) {
     SidebarDecorator.decorate();
     CustomizeModePatcher.patch();

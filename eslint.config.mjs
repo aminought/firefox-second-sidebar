@@ -21,6 +21,8 @@ export default [
         gUnifiedExtensions: "readonly",
         openTrustedLinkIn: "readonly",
         BrowserPageActions: "readonly",
+        Components: "readonly",
+        ContextualIdentityService: "readonly",
         CustomizableUI: "readonly",
         ChromeUtils: "readonly",
         DownloadsIndicatorView: "readonly",

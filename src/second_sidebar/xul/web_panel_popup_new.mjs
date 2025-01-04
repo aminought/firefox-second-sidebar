@@ -2,10 +2,12 @@ import {
   createCancelButton,
   createCreateButton,
   createInput,
+  createPopupGroup,
   createPopupHeader,
 } from "../utils/xul.mjs";
 
 import { HBox } from "./base/hbox.mjs";
+import { MenuList } from "./base/menulist.mjs";
 import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";
 import { ToolbarSeparator } from "./base/toolbar_separator.mjs";
@@ -20,6 +22,8 @@ export class WebPanelPopupNew extends Panel {
     this.setType("arrow").setRole("group");
 
     this.input = createInput();
+    this.containerList = this.#createContainerList();
+
     this.saveButton = createCreateButton();
     this.cancelButton = createCancelButton();
     this.#compose();
@@ -35,6 +39,10 @@ export class WebPanelPopupNew extends Panel {
         createPopupHeader("New Web Panel"),
         new ToolbarSeparator(),
         this.input,
+        createPopupGroup("Container", this.containerList),
+        new HBox({
+          id: "sb2-web-panel-new-buttons",
+        }).appendChildren(this.cancelButton, this.saveButton),
         new HBox({
           id: "sb2-web-panel-new-buttons",
         }).appendChildren(this.cancelButton, this.saveButton),
@@ -58,13 +66,30 @@ export class WebPanelPopupNew extends Panel {
 
   /**
    *
+   * @returns {MenuList}
+   */
+  #createContainerList() {
+    // const containers = await browser.contextualIdentities.query({});
+    const containerMenuList = new MenuList();
+    const containers = ContextualIdentityService.getPublicUserContextIds();
+    containerMenuList.appendItem("Unset", "0");
+    for (const container of containers) {
+      const label = ContextualIdentityService.getUserContextLabel(container);
+      containerMenuList.appendItem(label, container);
+    }
+
+    return containerMenuList;
+  }
+
+  /**
+   *
    * @param {function(string):void} callback
    * @returns {WebPanelPopupNew}
    */
   listenSaveButtonClick(callback) {
     this.saveButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
-        callback(this.input.getValue());
+        callback(this.input.getValue(), this.containerList.getValue());
       }
     });
   }

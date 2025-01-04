@@ -25,7 +25,15 @@ export class Browser extends XULElement {
   setDisableGlobalHistory(value) {
     return this.setAttribute("disableglobalhistory", value);
   }
-
+  /**
+   *
+   * @param {string} value
+   * @returns {Browser}
+   */
+  setUserContextId(value) {
+    this.userContextId = value;
+    return this.setAttribute("userContextId", value);
+  }
   /**
    *
    * @param {string} value
@@ -167,7 +175,20 @@ export class Browser extends XULElement {
    * @returns {Browser}
    */
   addProgressListener(listener) {
-    this.element.addProgressListener(listener, null);
+    this.element.addProgressListener(
+      listener,
+      Components.interfaces.nsIWebProgress.NOTIFY_ALL,
+    );
+    return this;
+  }
+
+  /**
+   *
+   * @param {object} listener
+   * @returns {Browser}
+   */
+  addEventListener(type, callback) {
+    this.element.addEventListener(type, callback);
     return this;
   }
 

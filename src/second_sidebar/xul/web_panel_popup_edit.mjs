@@ -47,6 +47,7 @@ export class WebPanelPopupEdit extends Panel {
       "Request Favicon",
     );
     this.pinnedMenuList = this.#createPinTypeMenuList();
+    this.containerList = this.#createContainerList();
     this.mobileToggle = new Toggle();
     this.loadOnStartupToggle = new Toggle();
     this.unloadOnCloseToggle = new Toggle();
@@ -89,6 +90,23 @@ export class WebPanelPopupEdit extends Panel {
     return pinTypeMenuList;
   }
 
+  /**
+   *
+   * @returns {MenuList}
+   */
+  #createContainerList() {
+    // const containers = await browser.contextualIdentities.query({});
+    const containerMenuList = new MenuList();
+    const containers = ContextualIdentityService.getPublicUserContextIds();
+    containerMenuList.appendItem("Unset", "0");
+    for (const container of containers) {
+      const label = ContextualIdentityService.getUserContextLabel(container);
+      containerMenuList.appendItem(label, container);
+    }
+
+    return containerMenuList;
+  }
+
   #compose() {
     this.appendChild(
       new PanelMultiView().appendChildren(
@@ -102,6 +120,9 @@ export class WebPanelPopupEdit extends Panel {
         }).appendChildren(this.faviconURLInput, this.faviconResetButton),
         new ToolbarSeparator(),
         createPopupGroup("Web panel type", this.pinnedMenuList),
+
+        createPopupGroup("Container", this.containerList),
+
         createPopupGroup("Use mobile User Agent", this.mobileToggle),
         createPopupGroup(
           "Load into memory at startup",
@@ -144,6 +165,7 @@ export class WebPanelPopupEdit extends Panel {
     url,
     faviconURL,
     pinned,
+    container,
     mobile,
     loadOnStartup,
     unloadOnClose,
@@ -160,13 +182,21 @@ export class WebPanelPopupEdit extends Panel {
     this.onZoom = zoom;
 
     this.urlInput.addEventListener("input", () => {
-      url(this.settings.uuid, this.urlInput.getValue(), 1000);
+      url(
+        this.settings.uuid,
+        this.urlInput.getValue(),
+        this.containerList.getValue(),
+        1000,
+      );
     });
     this.faviconURLInput.addEventListener("input", () => {
       faviconURL(this.settings.uuid, this.faviconURLInput.getValue(), 1000);
     });
     this.pinnedMenuList.addEventListener("command", () => {
       pinned(this.settings.uuid, this.pinnedMenuList.getValue() === "true");
+    });
+    this.containerList.addEventListener("command", () => {
+      container(this.settings.uuid, this.containerList.getValue());
     });
     this.mobileToggle.addEventListener("toggle", () => {
       mobile(this.settings.uuid, this.mobileToggle.getPressed());
@@ -245,6 +275,7 @@ export class WebPanelPopupEdit extends Panel {
     this.urlInput.setValue(settings.url);
     this.faviconURLInput.setValue(settings.faviconURL);
     this.pinnedMenuList.setValue(settings.pinned);
+    this.containerList.setValue(settings.userContextId);
     this.mobileToggle.setPressed(settings.mobile);
     this.loadOnStartupToggle.setPressed(settings.loadOnStartup);
     this.unloadOnCloseToggle.setPressed(settings.unloadOnClose);

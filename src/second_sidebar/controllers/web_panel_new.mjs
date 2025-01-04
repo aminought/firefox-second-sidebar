@@ -28,8 +28,8 @@ export class WebPanelNewController {
       this.createWebPanelAndOpen(url);
     });
 
-    this.webPanelPopupNew.listenSaveButtonClick((url) => {
-      this.createWebPanelAndOpen(url);
+    this.webPanelPopupNew.listenSaveButtonClick((url, userContextId) => {
+      this.createWebPanelAndOpen(url, userContextId);
     });
 
     this.webPanelPopupNew.listenCancelButtonClick(() => {
@@ -66,7 +66,7 @@ export class WebPanelNewController {
       .openPopup(this.webPanelNewButton.button);
   }
 
-  async createWebPanelAndOpen(url) {
+  async createWebPanelAndOpen(url, userContextId) {
     try {
       NetUtil.newURI(url);
     } catch (error) {
@@ -79,12 +79,17 @@ export class WebPanelNewController {
     const faviconURL = await fetchIconURL(url);
     const uuid = crypto.randomUUID();
 
+    userContextId;
+
     const webPanelTab = this.webPanelsController.makeWebPanelTab(uuid);
     const webPanel = this.webPanelsController.makeWebPanel(
       webPanelTab,
       uuid,
       url,
       faviconURL,
+      {
+        userContextId,
+      },
     );
     const webPanelButton = this.webPanelsController.makeWebPanelButton(
       webPanel,

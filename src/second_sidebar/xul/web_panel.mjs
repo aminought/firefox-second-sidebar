@@ -11,7 +11,9 @@ const MOBILE_USER_AGENT =
  * @param {WebPanelTab} webPanelTab
  * @returns {HTMLElement}
  */
-const createBrowserForTab = (webPanelTab) => {
+const createBrowserForTab = (webPanelTab, userContextId) => {
+  webPanelTab.element.userContextId = userContextId;
+
   const result = gBrowser._createBrowserForTab(webPanelTab.getXUL(), {});
   return result.browser;
 };
@@ -30,7 +32,7 @@ export class WebPanel extends Browser {
    * @param {boolean} loadOnStartup
    * @param {boolean} unloadOnClose
    * @param {boolean} hideToolbar
-   * @param {object} params
+   * @param {number} userContextId
    *
    */
   constructor(
@@ -45,15 +47,17 @@ export class WebPanel extends Browser {
     loadOnStartup,
     unloadOnClose,
     hideToolbar,
+    userContextId,
   ) {
     super({
       classList: ["web-panel"],
-      element: createBrowserForTab(webPanelTab),
+      element: createBrowserForTab(webPanelTab, userContextId),
     });
     this.setUUID(uuid)
       .setDisableGlobalHistory("true")
       .setType("content")
-      .setRemote("true");
+      .setRemote("true")
+      .setUserContextId(userContextId);
 
     this.uuid = uuid;
     this.url = url;
@@ -65,7 +69,7 @@ export class WebPanel extends Browser {
     this.loadOnStartup = loadOnStartup;
     this.unloadOnClose = unloadOnClose;
     this.hideToolbar = hideToolbar;
-
+    this.userContextId = userContextId;
     this.listener = null;
   }
 
@@ -84,6 +88,14 @@ export class WebPanel extends Browser {
    */
   updateUserAgent() {
     return this.setCustomUserAgent(this.mobile ? MOBILE_USER_AGENT : "");
+  }
+
+  /**
+   *
+   * @returns {WebPanel}
+   */
+  updateUserContextId(contextId) {
+    return this.setUserContextId(contextId);
   }
 
   /**
@@ -136,6 +148,7 @@ export class WebPanel extends Browser {
       this.setZoom(this.zoom);
     }
     this.updateUserAgent();
+    this.updateUserContextId(this.userContextId);
     return this.go(this.url);
   }
 
