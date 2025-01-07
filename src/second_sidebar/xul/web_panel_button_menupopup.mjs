@@ -49,7 +49,7 @@ export class WebPanelButtonMenuPopup extends MenuPopup {
    * @param {WebPanelsController} webPanelsController
    */
   listenUnloadItemClick(callback) {
-    this.unloadItem.addEventListener("click", () => {
+    this.unloadItem.addEventListener("command", () => {
       callback(this.webPanelController);
     });
   }
@@ -59,7 +59,7 @@ export class WebPanelButtonMenuPopup extends MenuPopup {
    * @param {WebPanelsController} webPanelsController
    */
   listenEditItemClick(callback) {
-    this.editItem.addEventListener("click", () => {
+    this.editItem.addEventListener("command", () => {
       callback(this.webPanelController);
     });
   }
@@ -69,7 +69,7 @@ export class WebPanelButtonMenuPopup extends MenuPopup {
    * @param {WebPanelsController} webPanelsController
    */
   listenDeleteItemClick(callback) {
-    this.deleteItem.addEventListener("click", () => {
+    this.deleteItem.addEventListener("command", () => {
       callback(this.webPanelController);
     });
   }
@@ -79,7 +79,7 @@ export class WebPanelButtonMenuPopup extends MenuPopup {
    * @param {function(MouseEvent):void} callback
    */
   listenCustomizeItemClick(callback) {
-    this.customizeItem.addEventListener("click", (event) => {
+    this.customizeItem.addEventListener("command", (event) => {
       callback(event);
     });
   }

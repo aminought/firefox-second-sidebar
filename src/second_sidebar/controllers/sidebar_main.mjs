@@ -34,8 +34,8 @@ export class SidebarMainController {
   #setupListeners() {
     this.sidebarMainMenuPopup.listenSettingsItemClick((event) => {
       this.sidebarMainSettingsController.openPopup(
-        event.screenX,
-        event.screenY,
+        event.target.screenX,
+        event.target.screenY,
       );
     });
 
