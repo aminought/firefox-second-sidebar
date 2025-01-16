@@ -13,7 +13,7 @@ export class SidebarMainMenuPopup extends MenuPopup {
     this.customizeItem = new MenuItem().setLabel("Customize Toolbar...");
     this.#compose();
 
-    this.addEventListener("popupshowing", () => {
+    this.addEventListener("popupshown", () => {
       this.screenX = this.element.screenX;
       this.screenY = this.element.screenY;
     });
