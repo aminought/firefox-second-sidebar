@@ -12,11 +12,6 @@ export class SidebarMainMenuPopup extends MenuPopup {
     this.settingsItem = new MenuItem().setLabel("Sidebar settings");
     this.customizeItem = new MenuItem().setLabel("Customize Toolbar...");
     this.#compose();
-
-    this.addEventListener("popupshown", () => {
-      this.screenX = this.element.screenX;
-      this.screenY = this.element.screenY;
-    });
   }
 
   #compose() {
@@ -33,7 +28,7 @@ export class SidebarMainMenuPopup extends MenuPopup {
    */
   listenSettingsItemClick(callback) {
     this.settingsItem.addEventListener("command", () => {
-      callback(this.screenX, this.screenY);
+      callback();
     });
   }
 
