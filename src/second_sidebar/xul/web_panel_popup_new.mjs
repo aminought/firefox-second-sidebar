@@ -57,21 +57,12 @@ export class WebPanelPopupNew extends Panel {
    * @param {function(string):void} callback
    * @returns {WebPanelPopupNew}
    */
-  listenInputChange(callback) {
+  listenSaveButtonClick(callback) {
     this.input.addEventListener("keyup", (event) => {
       if (event.key === "Enter" || event.keyCode === 13) {
-        callback(this.input.getValue());
+        callback(this.input.getValue(), this.containerMenuList.getValue());
       }
     });
-    return this;
-  }
-
-  /**
-   *
-   * @param {function(string):void} callback
-   * @returns {WebPanelPopupNew}
-   */
-  listenSaveButtonClick(callback) {
     this.saveButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
         callback(this.input.getValue(), this.containerMenuList.getValue());
