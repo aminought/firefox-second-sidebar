@@ -8,7 +8,7 @@ export class MenuList extends XULElement {
    * @param {Array<string>} params.classList
    */
   constructor({ id = null, classList = [] } = {}) {
-    super("menulist", { id, classList });
+    super({ tag: "menulist", id, classList });
   }
 
   /**

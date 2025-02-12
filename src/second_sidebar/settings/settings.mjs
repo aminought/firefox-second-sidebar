@@ -1,3 +1,5 @@
+import { PreferencesWrapper } from "../wrappers/preferences.mjs";
+
 export class Settings {
   /**
    *
@@ -5,8 +7,8 @@ export class Settings {
    * @returns {Object | Array<Object> | null}
    */
   static load(pref) {
-    const value = Services.prefs.prefHasUserValue(pref)
-      ? JSON.parse(Services.prefs.getStringPref(pref))
+    const value = PreferencesWrapper.prefHasUserValue(pref)
+      ? JSON.parse(PreferencesWrapper.getStringPref(pref))
       : null;
     console.log(`Loaded pref "${pref}":`, value);
     return value;
@@ -19,6 +21,6 @@ export class Settings {
    */
   static save(pref, value) {
     console.log(`Saving pref "${pref}":`, value);
-    Services.prefs.setStringPref(pref, JSON.stringify(value));
+    PreferencesWrapper.setStringPref(pref, JSON.stringify(value));
   }
 }

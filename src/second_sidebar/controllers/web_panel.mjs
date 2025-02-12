@@ -1,14 +1,10 @@
-/* eslint-disable no-unused-vars */
-import { isLeftMouseButton, isMiddleMouseButton } from "../utils/buttons.mjs";
+import { WebPanelEvents, sendEvent } from "./events.mjs";
 
-import { SidebarController } from "./sidebar.mjs";
+import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { WebPanel } from "../xul/web_panel.mjs";
 import { WebPanelButton } from "../xul/web_panel_button.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { WebPanelTab } from "../xul/web_panel_tab.mjs";
-import { WebPanelsController } from "./web_panels.mjs";
-
-/* eslint-enable no-unused-vars */
 
 export class WebPanelController {
   /**
@@ -21,16 +17,6 @@ export class WebPanelController {
     this.webPanel = webPanel;
     this.webPanelButton = webPanelButton;
     this.webPanelTab = webPanelTab;
-  }
-
-  /**
-   *
-   * @param {WebPanelsController} webPanelsController
-   * @param {SidebarController} sidebarController
-   */
-  setupDependencies(webPanelsController, sidebarController) {
-    this.webPanelsController = webPanelsController;
-    this.sidebarController = sidebarController;
   }
 
   /**
@@ -91,8 +77,8 @@ export class WebPanelController {
     this.webPanelButton.setUserContextId(userContextId);
 
     if (isActive) {
-      this.webPanelsController.injectWebPanelTab(webPanelTab);
-      this.webPanelsController.injectWebPanel(webPanel);
+      SidebarControllers.webPanelsController.injectWebPanelTab(webPanelTab);
+      SidebarControllers.webPanelsController.injectWebPanel(webPanel);
       this.initWebPanel();
       this.webPanel.setDocShellIsActive(true).preserveLayers(false);
     } else {
@@ -153,9 +139,13 @@ export class WebPanelController {
         const canGoBack = this.webPanel.canGoBack();
         const canGoForward = this.webPanel.canGoForward();
         const title = this.webPanel.getTitle();
-        this.sidebarController.setToolbarBackButtonDisabled(!canGoBack);
-        this.sidebarController.setToolbarForwardButtonDisabled(!canGoForward);
-        this.sidebarController.setToolbarTitle(title);
+        SidebarControllers.sidebarController.setToolbarBackButtonDisabled(
+          !canGoBack,
+        );
+        SidebarControllers.sidebarController.setToolbarForwardButtonDisabled(
+          !canGoForward,
+        );
+        SidebarControllers.sidebarController.setToolbarTitle(title);
       }
       // mediaController can be changed, so listen here
       this.webPanel.listenPlaybackStateChange((isPlaying) => {
@@ -167,37 +157,52 @@ export class WebPanelController {
   }
 
   initWebPanelButton() {
-    const switchWebPanel = () => {
-      if (this.webPanel.isActive()) {
-        this.sidebarController.close();
-      } else {
-        this.webPanelsController.hideActive();
-        if (
-          this.webPanelsController.injectWebPanelTab(this.webPanelTab) &&
-          this.webPanelsController.injectWebPanel(this.webPanel)
-        ) {
-          this.initWebPanel();
-        }
-        this.sidebarController.open(
-          this.webPanel.pinned,
-          this.webPanel.width,
-          this.webPanel.canGoBack(),
-          this.webPanel.canGoForward(),
-          this.webPanel.getTitle(),
-          this.webPanel.getZoom(),
-          this.webPanel.hideToolbar,
-        );
-        this.show();
-      }
-    };
-
     this.webPanelButton.listenClick((event) => {
-      if (isLeftMouseButton(event)) {
-        switchWebPanel();
-      } else if (isMiddleMouseButton(event)) {
-        this.unload();
-      }
+      sendEvent(WebPanelEvents.OPEN_WEB_PANEL, {
+        uuid: this.webPanel.uuid,
+        event,
+      });
     });
+  }
+
+  openWebPanel() {
+    SidebarControllers.sidebarController.close();
+    SidebarControllers.sidebarController.open(
+      this.webPanel.pinned,
+      this.webPanel.width,
+      this.webPanel.canGoBack(),
+      this.webPanel.canGoForward(),
+      this.webPanel.getTitle(),
+      this.webPanel.getZoom(),
+      this.webPanel.hideToolbar,
+    );
+    this.show();
+  }
+
+  switchWebPanel() {
+    if (this.webPanel.isActive()) {
+      SidebarControllers.sidebarController.close();
+    } else {
+      SidebarControllers.webPanelsController.hideActive();
+      if (
+        SidebarControllers.webPanelsController.injectWebPanelTab(
+          this.webPanelTab,
+        ) &&
+        SidebarControllers.webPanelsController.injectWebPanel(this.webPanel)
+      ) {
+        this.initWebPanel();
+      }
+      SidebarControllers.sidebarController.open(
+        this.webPanel.pinned,
+        this.webPanel.width,
+        this.webPanel.canGoBack(),
+        this.webPanel.canGoForward(),
+        this.webPanel.getTitle(),
+        this.webPanel.getZoom(),
+        this.webPanel.hideToolbar,
+      );
+      this.show();
+    }
   }
 
   show() {
@@ -216,7 +221,7 @@ export class WebPanelController {
 
   unload() {
     this.unhackAsyncTabSwitcher();
-    this.sidebarController.close();
+    SidebarControllers.sidebarController.close();
     this.webPanel.remove();
     this.webPanelTab.remove();
     this.webPanelButton.hidePlayingIcon().setUnloaded(true);
@@ -299,30 +304,6 @@ export class WebPanelController {
    */
   setHideToolbar(value) {
     this.webPanel.hideToolbar = value;
-  }
-
-  /**
-   *
-   * @returns {boolean}
-   */
-  isFirst() {
-    return this.webPanelsController.isFirst(this.getUUID());
-  }
-
-  /**
-   *
-   * @returns {number}
-   */
-  getIndex() {
-    return this.webPanelsController.getIndex(this.getUUID());
-  }
-
-  /**
-   *
-   * @returns {boolean}
-   */
-  isLast() {
-    return this.webPanelsController.isLast(this.getUUID());
   }
 
   /**

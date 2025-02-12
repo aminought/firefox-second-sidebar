@@ -8,7 +8,7 @@ export class Splitter extends XULElement {
    * @param {Array<string>} params.classList
    */
   constructor({ id = null, classList = [] } = {}) {
-    super("splitter", { id, classList });
+    super({ tag: "splitter", id, classList });
   }
 
   /**

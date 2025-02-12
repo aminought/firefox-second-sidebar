@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
-import { SidebarController } from "./sidebar.mjs";
+import { WebPanelEvents, sendEvents } from "./events.mjs";
+
 import { WebPanelController } from "./web_panel.mjs";
 import { WebPanelPopupDelete } from "../xul/web_panel_popup_delete.mjs";
-import { WebPanelPopupEdit } from "../xul/web_panel_popup_edit.mjs";
-import { WebPanelsController } from "./web_panels.mjs";
+
 /* eslint-enable no-unused-vars */
 
 export class WebPanelDeleteController {
@@ -16,27 +16,11 @@ export class WebPanelDeleteController {
     this.#setupListeners();
   }
 
-  /**
-   *
-   * @param {WebPanelsController} webPanelsController
-   * @param {SidebarController} sidebarController
-   */
-  setupDependencies(webPanelsController, sidebarController) {
-    this.webPanelsController = webPanelsController;
-    this.sidebarController = sidebarController;
-  }
-
   #setupListeners() {
     this.webPanelPopupDelete.listenCancelButtonClick(() => this.hidePopup());
 
     this.webPanelPopupDelete.listenDeleteButtonClick((uuid) => {
-      const webPanelController = this.webPanelsController.get(uuid);
-      if (webPanelController.isActive()) {
-        this.sidebarController.close();
-      }
-      webPanelController.remove();
-      this.webPanelsController.delete(uuid);
-      this.webPanelsController.saveSettings();
+      sendEvents(WebPanelEvents.DELETE_WEB_PANEL, { uuid });
       this.hidePopup();
     });
   }

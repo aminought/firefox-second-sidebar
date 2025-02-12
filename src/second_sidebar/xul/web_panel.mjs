@@ -1,6 +1,9 @@
 /* eslint-disable no-unused-vars */
 import { Browser } from "./base/browser.mjs";
+import { ChromeUtilsWrapper } from "../wrappers/chrome_utils.mjs";
 import { WebPanelTab } from "./web_panel_tab.mjs";
+import { ZoomManagerWrapper } from "../wrappers/zoom_manager.mjs";
+import { gBrowserWrapper } from "../wrappers/g_browser.mjs";
 /* eslint-enable no-unused-vars */
 
 const MOBILE_USER_AGENT =
@@ -12,7 +15,7 @@ const MOBILE_USER_AGENT =
  * @returns {HTMLElement}
  */
 const createBrowserForTab = (webPanelTab) => {
-  const result = gBrowser._createBrowserForTab(webPanelTab.getXUL(), {});
+  const result = gBrowserWrapper.createBrowserForTab(webPanelTab.getXUL(), {});
   return result.browser;
 };
 
@@ -49,6 +52,7 @@ export class WebPanel extends Browser {
     } = {},
   ) {
     super({
+      id: `webpanel_${uuid}`,
       classList: ["web-panel"],
       element: createBrowserForTab(webPanelTab),
     });
@@ -115,7 +119,7 @@ export class WebPanel extends Browser {
    */
   listenBrowserProgressListener(callback) {
     this.listener = {
-      QueryInterface: ChromeUtils.generateQI([
+      QueryInterface: ChromeUtilsWrapper.generateQI([
         "nsIWebProgressListener",
         "nsISupportsWeakReference",
       ]),
@@ -149,7 +153,7 @@ export class WebPanel extends Browser {
     if (isUnloaded) {
       this.zoom = Math.min(
         Math.round((this.zoom + this.ZOOM_DELTA) * 100) / 100,
-        ZoomManager.MAX,
+        ZoomManagerWrapper.MAX,
       );
     } else {
       Browser.prototype.zoomIn.call(this);
@@ -167,7 +171,7 @@ export class WebPanel extends Browser {
     if (isUnloaded) {
       this.zoom = Math.max(
         Math.round((this.zoom - this.ZOOM_DELTA) * 100) / 100,
-        ZoomManager.MIN,
+        ZoomManagerWrapper.MIN,
       );
     } else {
       Browser.prototype.zoomOut.call(this);

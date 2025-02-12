@@ -1,3 +1,4 @@
+import { CustomizableUIWrapper } from "../../wrappers/customizable_ui.mjs";
 import { ToolbarButton } from "./toolbar_button.mjs";
 
 export class Widget {
@@ -25,47 +26,79 @@ export class Widget {
     context = null,
     position = null,
   }) {
-    this.button = null;
-    this.onClick = null;
-    this.iconURL = iconURL;
+    this.id = id;
+    this.classList = classList;
     this.label = label;
     this.tooltipText = tooltipText;
+    this.iconURL = iconURL;
     this.open = open;
     this.unloaded = unloaded;
-    this.widget = CustomizableUI.createWidget({
-      id,
-      type: "button",
-      localized: false,
-      onCreated: (element) => {
-        this.button = new ToolbarButton({ element, classList });
-        this.button.setOpen(this.open);
-        this.button.setUnloaded(this.unloaded);
-        if (this.iconURL) {
-          this.button.setIcon(this.iconURL);
-        }
-        if (this.label) {
-          this.button.setLabel(this.label);
-        }
-        if (this.tooltipText) {
-          this.button.setTooltipText(this.tooltipText);
-        }
-        if (context) {
-          this.button.setContext(context);
-        }
-      },
-      onClick: (event) => {
-        if (this.onClick) {
-          this.onClick(event);
-        }
-      },
-    });
+    this.context = context;
+    this.onClick = null;
+    try {
+      this.widget = CustomizableUIWrapper.createWidget({
+        id,
+        onCreated: async (element) => {
+          console.log(`Widget ${id} was created`);
+          this.#setup(new ToolbarButton({ element, classList }));
+        },
+        onClick: async (event) => {
+          if (this.onClick) {
+            this.onClick(event);
+          }
+        },
+      });
+    } catch {
+      console.log(`Widget ${id} is already created`);
+      this.#setup(this.button);
+    }
     if (position) {
-      const placement = CustomizableUI.getPlacementOfWidget("new-web-panel");
-      CustomizableUI.addWidgetToArea(
+      const placement =
+        CustomizableUIWrapper.getPlacementOfWidget("new-web-panel");
+      CustomizableUIWrapper.addWidgetToArea(
         id,
         placement.area,
         placement.position + (position === "before" ? 0 : 1),
       );
+    }
+  }
+
+  /**
+   * @returns {ToolbarButton?}
+   */
+  get button() {
+    const widget = CustomizableUIWrapper.getWidget(this.id);
+    if (!widget) {
+      return null;
+    }
+    const instance = widget.forWindow(window);
+    if (!instance) {
+      return null;
+    }
+    return new ToolbarButton({
+      element: instance.node,
+      classList: this.classList,
+    });
+  }
+
+  /**
+   *
+   * @param {HTMLElement} button
+   */
+  #setup(button) {
+    button.setOpen(this.open);
+    button.setUnloaded(this.unloaded);
+    if (this.iconURL) {
+      button.setIcon(this.iconURL);
+    }
+    if (this.label) {
+      button.setLabel(this.label);
+    }
+    if (this.tooltipText) {
+      button.setTooltipText(this.tooltipText);
+    }
+    if (this.context) {
+      button.setContext(this.context);
     }
   }
 
@@ -86,8 +119,9 @@ export class Widget {
    */
   setIcon(iconURL) {
     this.iconURL = iconURL;
-    if (this.button) {
-      this.button.setIcon(this.iconURL);
+    const button = this.button;
+    if (button) {
+      button.setIcon(this.iconURL);
     }
     return this;
   }
@@ -99,8 +133,9 @@ export class Widget {
    */
   setLabel(text) {
     this.label = text;
-    if (this.button) {
-      this.button.setLabel(this.label);
+    const button = this.button;
+    if (button) {
+      button.setLabel(this.label);
     }
     return this;
   }
@@ -112,8 +147,9 @@ export class Widget {
    */
   setTooltipText(text) {
     this.tooltipText = text;
-    if (this.button) {
-      this.button.setTooltipText(this.tooltipText);
+    const button = this.button;
+    if (button) {
+      button.setTooltipText(this.tooltipText);
     }
     return this;
   }
@@ -133,8 +169,9 @@ export class Widget {
    */
   setUnloaded(value) {
     this.unloaded = value;
-    if (this.button) {
-      this.button.setUnloaded(value);
+    const button = this.button;
+    if (button) {
+      button.setUnloaded(value);
     }
     return this;
   }
@@ -154,8 +191,9 @@ export class Widget {
    */
   setOpen(value) {
     this.open = value;
-    if (this.button) {
-      this.button.setOpen(value);
+    const button = this.button;
+    if (button) {
+      button.setOpen(value);
     }
     return this;
   }
@@ -167,8 +205,9 @@ export class Widget {
    * @returns {Widget}
    */
   setAttribute(name, value) {
-    if (this.button) {
-      this.button.setAttribute(name, value);
+    const button = this.button;
+    if (button) {
+      button.setAttribute(name, value);
     }
     return this;
   }
@@ -186,7 +225,7 @@ export class Widget {
    * @returns {Widget}
    */
   remove() {
-    CustomizableUI.destroyWidget(this.button.id);
+    CustomizableUIWrapper.destroyWidget(this.id);
     return this;
   }
 

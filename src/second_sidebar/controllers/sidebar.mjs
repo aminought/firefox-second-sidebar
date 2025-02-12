@@ -1,18 +1,24 @@
 /* eslint-disable no-unused-vars */
+import {
+  SidebarEvents,
+  WebPanelEvents,
+  listenEvent,
+  sendEvents,
+} from "./events.mjs";
+
 import { Sidebar } from "../xul/sidebar.mjs";
 import { SidebarBox } from "../xul/sidebar_box.mjs";
-import { SidebarMainController } from "./sidebar_main.mjs";
+import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarMainPopupSettings } from "../xul/sidebar_main_popup_settings.mjs";
 import { SidebarSettings } from "../settings/sidebar_settings.mjs";
 import { SidebarSplitterUnpinned } from "../xul/sidebar_splitter_unpinned.mjs";
 import { SidebarToolbar } from "../xul/sidebar_toolbar.mjs";
 import { ToolbarButton } from "../xul/base/toolbar_button.mjs";
-import { WebPanelNewController } from "./web_panel_new.mjs";
 import { WebPanelPopupEdit } from "../xul/web_panel_popup_edit.mjs";
-import { WebPanelsController } from "./web_panels.mjs";
 import { XULElement } from "../xul/base/xul_element.mjs";
 import { changeContainerBorder } from "../utils/containers.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
+
 /* eslint-enable no-unused-vars */
 
 export class SidebarController {
@@ -24,7 +30,6 @@ export class SidebarController {
    * @param {SidebarSplitterUnpinned} sidebarSplitterUnpinned
    * @param {WebPanelPopupEdit} webPanelPopupEdit
    * @param {SidebarMainPopupSettings} sidebarMainPopupSettings
-   * @param {XULElement} root
    */
   constructor(
     sidebarBox,
@@ -33,7 +38,6 @@ export class SidebarController {
     sidebarSplitterUnpinned,
     webPanelPopupEdit,
     sidebarMainPopupSettings,
-    root,
   ) {
     this.sidebarBox = sidebarBox;
     this.sidebar = sidebar;
@@ -41,7 +45,7 @@ export class SidebarController {
     this.sidebarSplitterUnpinned = sidebarSplitterUnpinned;
     this.webPanelPopupEdit = webPanelPopupEdit;
     this.sidebarMainPopupSettings = sidebarMainPopupSettings;
-    this.root = root;
+    this.root = new XULElement({ element: document.documentElement });
     this.#setupListeners();
 
     this.hideInPopupWindows = false;
@@ -50,26 +54,10 @@ export class SidebarController {
     this.containerBorder = "left";
   }
 
-  /**
-   *
-   * @param {SidebarMainController} sidebarMainController
-   * @param {WebPanelsController} webPanelsController
-   * @param {WebPanelNewController} webPanelNewController
-   */
-  setupDepenedencies(
-    sidebarMainController,
-    webPanelsController,
-    webPanelNewController,
-  ) {
-    this.sidebarMainController = sidebarMainController;
-    this.webPanelsController = webPanelsController;
-    this.webPanelNewController = webPanelNewController;
-  }
-
   #setupListeners() {
     /** @param {MouseEvent} event */
     this.onClickOutsideWhileUnpinned = (event) => {
-      const target = new XULElement(null, { element: event.target });
+      const target = new XULElement({ element: event.target });
       if (
         isLeftMouseButton(event) &&
         !this.sidebar.contains(target) &&
@@ -87,7 +75,8 @@ export class SidebarController {
 
     const addWebPanelButtonListener = (event, callback) => {
       if (isLeftMouseButton(event)) {
-        const webPanelController = this.webPanelsController.getActive();
+        const webPanelController =
+          SidebarControllers.webPanelsController.getActive();
         return callback(webPanelController.webPanel);
       }
     };
@@ -106,21 +95,85 @@ export class SidebarController {
     });
 
     this.sidebarToolbar.listenPinButtonClick(() => {
-      const webPanelController = this.webPanelsController.getActive();
-      if (webPanelController.pinned()) {
-        webPanelController.unpin();
-        this.unpin();
-      } else {
-        webPanelController.pin();
-        this.pin();
-      }
-      this.webPanelsController.saveSettings();
+      const webPanelController =
+        SidebarControllers.webPanelsController.getActive();
+      sendEvents(WebPanelEvents.EDIT_WEB_PANEL_PINNED, {
+        uuid: webPanelController.getUUID(),
+        pinned: !webPanelController.pinned(),
+      });
+      sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
     });
 
     this.sidebarToolbar.listenCloseButtonClick(() => {
-      const webPanelController = this.webPanelsController.getActive();
+      const webPanelController =
+        SidebarControllers.webPanelsController.getActive();
       webPanelController.unload();
       this.close();
+    });
+
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_POSITION, (event) => {
+      const value = event.detail.value;
+      this.setPosition(value);
+    });
+
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_PADDING, (event) => {
+      const value = event.detail.value;
+      SidebarControllers.sidebarMainController.setPadding(value);
+    });
+
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_NEW_WEB_PANEL_POSITION, (event) => {
+      const value = event.detail.value;
+      SidebarControllers.webPanelNewController.setNewWebPanelPosition(value);
+    });
+
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_UNPINNED_PADDING, (event) => {
+      const value = event.detail.value;
+      this.setUnpinnedPadding(value);
+    });
+
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_HIDE_IN_POPUP_WINDOWS, (event) => {
+      const value = event.detail.value;
+      this.hideInPopupWindows = value;
+    });
+
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_BACK_BUTTON, (event) => {
+      const value = event.detail.value;
+      this.autoHideBackButton = value;
+      this.autoHideButton(this.sidebarToolbar.backButton, value);
+    });
+
+    listenEvent(
+      SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_FORWARD_BUTTON,
+      (event) => {
+        const value = event.detail.value;
+        this.autoHideForwardButton = value;
+        this.autoHideButton(this.sidebarToolbar.forwardButton, value);
+      },
+    );
+
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_CONTAINER_BORDER, (event) => {
+      const value = event.detail.value;
+      this.autoHideForwardButton = value;
+      this.setContainerBorder(value);
+    });
+
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_WIDTH, (event) => {
+      const uuid = event.detail.uuid;
+      const width = event.detail.width;
+
+      const webPanelController =
+        SidebarControllers.webPanelsController.get(uuid);
+      webPanelController.setWidth(width);
+      if (webPanelController.isActive()) {
+        this.setWidth(width);
+      }
+    });
+
+    listenEvent(SidebarEvents.SAVE_SIDEBAR, (event) => {
+      const isWindowActive = event.detail.isWindowActive;
+      if (isWindowActive) {
+        this.saveSettings();
+      }
     });
   }
 
@@ -148,7 +201,7 @@ export class SidebarController {
   close() {
     this.sidebarBox.hide();
     this.unpin();
-    this.webPanelsController.hideActive();
+    SidebarControllers.webPanelsController.hideActive();
   }
 
   /**
@@ -281,7 +334,8 @@ export class SidebarController {
   }
 
   updateAbsolutePosition() {
-    const sidebarMainWidth = this.sidebarMainController.getWidth();
+    const sidebarMainWidth =
+      SidebarControllers.sidebarMainController.getWidth();
     this.getPosition() === "left"
       ? this.setAbsoluteLeft(sidebarMainWidth)
       : this.setAbsoluteRight(sidebarMainWidth);
@@ -328,8 +382,8 @@ export class SidebarController {
    */
   loadSettings(settings) {
     this.setPosition(settings.position);
-    this.sidebarMainController.setPadding(settings.padding);
-    this.webPanelNewController.setNewWebPanelPosition(
+    SidebarControllers.sidebarMainController.setPadding(settings.padding);
+    SidebarControllers.webPanelNewController.setNewWebPanelPosition(
       settings.newWebPanelPosition,
     );
     this.setUnpinnedPadding(settings.unpinnedPadding);
@@ -346,8 +400,8 @@ export class SidebarController {
   dumpSettings() {
     return new SidebarSettings(
       this.getPosition(),
-      this.sidebarMainController.getPadding(),
-      this.webPanelNewController.getNewWebPanelPosition(),
+      SidebarControllers.sidebarMainController.getPadding(),
+      SidebarControllers.webPanelNewController.getNewWebPanelPosition(),
       this.getUnpinnedPadding(),
       this.hideInPopupWindows,
       this.autoHideBackButton,

@@ -28,7 +28,6 @@ export default [
         BrowserPageActions: "readonly",
         Cc: "readonly",
         Ci: "readonly",
-        Components: "readonly",
         ContentAnalysis: "readonly",
         ContextualIdentityService: "readonly",
         CustomizableUI: "readonly",

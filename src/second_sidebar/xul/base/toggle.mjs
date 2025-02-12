@@ -8,11 +8,7 @@ export class Toggle extends XULElement {
    * @param {Array<string>} params.classList
    */
   constructor({ id = null, classList = [] } = {}) {
-    super("moz-toggle", {
-      id,
-      classList,
-      create: (tag) => document.createElement(tag),
-    });
+    super({ tag: "moz-toggle", id, classList, isXUL: false });
   }
 
   /**

@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-vars */
-import { SidebarController } from "./sidebar.mjs";
+import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarMain } from "../xul/sidebar_main.mjs";
 import { SidebarMainMenuPopup } from "../xul/sidebar_main_menupopup.mjs";
-import { SidebarMainSettingsController } from "./sidebar_main_settings.mjs";
 import { XULElement } from "../xul/base/xul_element.mjs";
+import { gCustomizeModeWrapper } from "../wrappers/g_customize_mode.mjs";
+import { gNavToolboxWrapper } from "../wrappers/g_nav_toolbox.mjs";
 import { isRightMouseButton } from "../utils/buttons.mjs";
 /* eslint-enable no-unused-vars */
 
@@ -12,24 +13,13 @@ export class SidebarMainController {
    *
    * @param {SidebarMain} sidebarMain
    * @param {SidebarMainMenuPopup} sidebarMainMenuPopup
-   * @param {XULElement} root
    */
-  constructor(sidebarMain, sidebarMainMenuPopup, root) {
+  constructor(sidebarMain, sidebarMainMenuPopup) {
     this.sidebarMain = sidebarMain;
     this.sidebarMainMenuPopup = sidebarMainMenuPopup;
-    this.root = root;
+    this.root = new XULElement({ element: document.documentElement });
 
     this.#setupListeners();
-  }
-
-  /**
-   *
-   * @param {SidebarMainSettingsController} sidebarMainSettingsController
-   * @param {SidebarController} sidebarController
-   */
-  setupDependencies(sidebarMainSettingsController, sidebarController) {
-    this.sidebarMainSettingsController = sidebarMainSettingsController;
-    this.sidebarController = sidebarController;
   }
 
   #setupListeners() {
@@ -41,11 +31,27 @@ export class SidebarMainController {
     });
 
     this.sidebarMainMenuPopup.listenSettingsItemClick(() => {
-      this.sidebarMainSettingsController.openPopup(this.mouseX, this.mouseY);
+      SidebarControllers.sidebarMainSettingsController.openPopup(
+        this.mouseX,
+        this.mouseY,
+      );
     });
 
     this.sidebarMainMenuPopup.listenCustomizeItemClick(() => {
-      gCustomizeMode.enter();
+      gCustomizeModeWrapper.enter();
+    });
+
+    const browser = new XULElement({
+      element: document.getElementById("browser"),
+    });
+    gNavToolboxWrapper.addEventListener("customizationready", () => {
+      browser.show();
+    });
+    gNavToolboxWrapper.addEventListener("aftercustomization", () => {
+      const springs = document.querySelectorAll("#sb2-main toolbarspring");
+      for (const spring of springs) {
+        spring.removeAttribute("context");
+      }
     });
   }
 
@@ -64,7 +70,7 @@ export class SidebarMainController {
    */
   setPadding(value) {
     this.root.setProperty("--sb2-main-padding", `var(--space-${value})`);
-    this.sidebarController.updateAbsolutePosition();
+    SidebarControllers.sidebarController.updateAbsolutePosition();
   }
 
   /**

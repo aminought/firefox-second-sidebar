@@ -8,6 +8,6 @@ export class MenuSeparator extends XULElement {
    * @param {Array<string>} params.classList
    */
   constructor({ id = null, classList = [] } = {}) {
-    super("menuseparator", { id, classList });
+    super({ tag: "menuseparator", id, classList });
   }
 }

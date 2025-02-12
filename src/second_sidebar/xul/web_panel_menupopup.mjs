@@ -5,7 +5,7 @@ import { MenuSeparator } from "./base/menuseparator.mjs";
 import { WebPanelsController } from "../controllers/web_panels.mjs";
 /* eslint-enable no-unused-vars */
 
-export class WebPanelButtonMenuPopup extends MenuPopup {
+export class WebPanelMenuPopup extends MenuPopup {
   constructor() {
     super({
       id: "sb2-web-panel-button-menupopup",

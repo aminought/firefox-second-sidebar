@@ -10,7 +10,7 @@ export class Tab extends XULElement {
    * @param {HTMLElement?} params.element
    */
   constructor(userContextId, { id = null, classList = [], element } = {}) {
-    super("tab", { id, classList, element });
+    super({ tag: "tab", id, classList, element });
     this.element.userContextId = userContextId;
   }
 

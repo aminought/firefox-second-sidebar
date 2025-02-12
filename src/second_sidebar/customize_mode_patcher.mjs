@@ -70,8 +70,8 @@ const customizeMode = {
           gCustomizeMode.wrapToolbarItem(child, getPlaceForItem(child));
         }
       }
-    } catch (ex) {
-      console.log(ex);
+    } catch (error) {
+      console.log(error);
     }
 
     gCustomizeMode.areas.add(target);

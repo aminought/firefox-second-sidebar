@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
-import { SidebarController } from "./sidebar.mjs";
-import { SidebarMainController } from "./sidebar_main.mjs";
+import { SidebarEvents, sendEvents } from "./events.mjs";
+
+import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarMainPopupSettings } from "../xul/sidebar_main_popup_settings.mjs";
-import { WebPanelNewController } from "./web_panel_new.mjs";
+
 /* eslint-enable no-unused-vars */
 
 export class SidebarMainSettingsController {
@@ -16,49 +17,28 @@ export class SidebarMainSettingsController {
     this.#setupListeners();
   }
 
-  /**
-   *
-   * @param {SidebarMainController} sidebarMainController
-   * @param {SidebarController} sidebarController
-   * @param {WebPanelNewController} webPanelNewController
-   */
-  setupDependencies(
-    sidebarMainController,
-    sidebarController,
-    webPanelNewController,
-  ) {
-    this.sidebarMainController = sidebarMainController;
-    this.sidebarController = sidebarController;
-    this.webPanelNewController = webPanelNewController;
-  }
-
   #setupListeners() {
     this.sidebarMainPopupSettings.listenChanges({
-      position: (value) => this.sidebarController.setPosition(value),
-      padding: (value) => this.sidebarMainController.setPadding(value),
+      position: (value) =>
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_POSITION, { value }),
+      padding: (value) =>
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_PADDING, { value }),
       newWebPanelPosition: (value) =>
-        this.webPanelNewController.setNewWebPanelPosition(value),
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_NEW_WEB_PANEL_POSITION, {
+          value,
+        }),
       unpinnedPadding: (value) =>
-        this.sidebarController.setUnpinnedPadding(value),
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_UNPINNED_PADDING, { value }),
       hideInPopupWindows: (value) =>
-        (this.sidebarController.hideInPopupWindows = value),
-      autoHideBackButton: (value) => {
-        this.sidebarController.autoHideBackButton = value;
-        this.sidebarController.autoHideButton(
-          this.sidebarController.sidebarToolbar.backButton,
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_HIDE_IN_POPUP_WINDOWS, { value }),
+      autoHideBackButton: (value) =>
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_BACK_BUTTON, { value }),
+      autoHideForwardButton: (value) =>
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_FORWARD_BUTTON, {
           value,
-        );
-      },
-      autoHideForwardButton: (value) => {
-        this.sidebarController.autoHideForwardButton = value;
-        this.sidebarController.autoHideButton(
-          this.sidebarController.sidebarToolbar.forwardButton,
-          value,
-        );
-      },
-      containerBorder: (value) => {
-        this.sidebarController.setContainerBorder(value);
-      },
+        }),
+      containerBorder: (value) =>
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_CONTAINER_BORDER, { value }),
     });
 
     this.sidebarMainPopupSettings.listenCancelButtonClick(() =>
@@ -66,7 +46,7 @@ export class SidebarMainSettingsController {
     );
 
     this.sidebarMainPopupSettings.listenSaveButtonClick(() => {
-      this.sidebarController.saveSettings();
+      sendEvents(SidebarEvents.SAVE_SIDEBAR);
       this.sidebarMainPopupSettings.hidePopup();
     });
   }
@@ -80,7 +60,7 @@ export class SidebarMainSettingsController {
     this.sidebarMainPopupSettings.openPopupAtScreen(
       screenX,
       screenY,
-      this.sidebarController.dumpSettings(),
+      SidebarControllers.sidebarController.dumpSettings(),
     );
   }
 }

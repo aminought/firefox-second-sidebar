@@ -1,7 +1,11 @@
 /* eslint-disable no-unused-vars */
-import { SidebarController } from "./sidebar.mjs";
+import { OPEN_URL_IN, openTrustedLinkInWrapper } from "../wrappers/global.mjs";
+import { WebPanelEvents, sendEvents } from "./events.mjs";
+
+import { ClipboardHelperWrapper } from "../wrappers/clipboard_helper.mjs";
+import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { WebPanelPopupMore } from "../xul/web_panel_popup_more.mjs";
-import { WebPanelsController } from "./web_panels.mjs";
+
 /* eslint-enable no-unused-vars */
 
 export class WebPanelMoreController {
@@ -14,61 +18,67 @@ export class WebPanelMoreController {
     this.#setupListeners();
   }
 
-  /**
-   *
-   * @param {WebPanelsController} webPanelsController
-   * @param {SidebarController} sidebarController
-   */
-  setupDependencies(webPanelsController, sidebarController) {
-    this.webPanelsController = webPanelsController;
-    this.sidebarController = sidebarController;
-  }
-
   #setupListeners() {
     this.webPanelPopupMore.listenPopupShowing(() => {
-      const webPanelController = this.webPanelsController.getActive();
+      const webPanelController =
+        SidebarControllers.webPanelsController.getActive();
       this.webPanelPopupMore.setDefaults(webPanelController.dumpSettings());
     });
 
     this.webPanelPopupMore.listenOpenInNewTabButtonClick((event, uuid) => {
-      const webPanelController = this.webPanelsController.get(uuid);
-      openTrustedLinkIn(
+      const webPanelController =
+        SidebarControllers.webPanelsController.get(uuid);
+      openTrustedLinkInWrapper(
         webPanelController.getCurrentUrl(),
-        event.ctrlKey ? "tabshifted" : "tab",
+        event.ctrlKey ? OPEN_URL_IN.BACKGROUND_TAB : OPEN_URL_IN.TAB,
       );
     });
 
     this.webPanelPopupMore.listenCopyPageUrlButtonClick((uuid) => {
-      const webPanelController = this.webPanelsController.get(uuid);
-      Cc["@mozilla.org/widget/clipboardhelper;1"]
-        .getService(Ci.nsIClipboardHelper)
-        .copyString(webPanelController.getCurrentUrl());
+      const webPanelController =
+        SidebarControllers.webPanelsController.get(uuid);
+      ClipboardHelperWrapper.copyString(webPanelController.getCurrentUrl());
     });
 
     this.webPanelPopupMore.listenMobileButtonClick((uuid, mobile) => {
-      const webPanelController = this.webPanelsController.get(uuid);
-      webPanelController.setMobile(mobile);
-      this.webPanelsController.saveSettings();
-    });
-
-    this.webPanelPopupMore.listenZoomInButtonClick((uuid) => {
-      const webPanelController = this.webPanelsController.get(uuid);
-      webPanelController.zoomIn();
-      this.webPanelsController.saveSettings();
-      return webPanelController.getZoom();
+      sendEvents(WebPanelEvents.EDIT_WEB_PANEL_MOBILE, {
+        uuid,
+        mobile,
+      });
+      sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
     });
 
     this.webPanelPopupMore.listenZoomOutButtonClick((uuid) => {
-      const webPanelController = this.webPanelsController.get(uuid);
-      webPanelController.zoomOut();
-      this.webPanelsController.saveSettings();
+      sendEvents(WebPanelEvents.EDIT_WEB_PANEL_ZOOM_OUT, {
+        uuid,
+      });
+      sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
+
+      const webPanelController =
+        SidebarControllers.webPanelsController.get(uuid);
+      return webPanelController.getZoom();
+    });
+
+    this.webPanelPopupMore.listenZoomInButtonClick((uuid) => {
+      sendEvents(WebPanelEvents.EDIT_WEB_PANEL_ZOOM_IN, {
+        uuid,
+      });
+      sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
+
+      const webPanelController =
+        SidebarControllers.webPanelsController.get(uuid);
       return webPanelController.getZoom();
     });
 
     this.webPanelPopupMore.listenResetZoomButtonClick((uuid) => {
-      const webPanelController = this.webPanelsController.get(uuid);
-      webPanelController.resetZoom();
-      this.webPanelsController.saveSettings();
+      sendEvents(WebPanelEvents.EDIT_WEB_PANEL_ZOOM, {
+        uuid,
+        value: 1,
+      });
+      sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
+
+      const webPanelController =
+        SidebarControllers.webPanelsController.get(uuid);
       return webPanelController.getZoom();
     });
   }

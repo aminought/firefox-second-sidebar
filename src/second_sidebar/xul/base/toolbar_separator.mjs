@@ -8,6 +8,6 @@ export class ToolbarSeparator extends XULElement {
    * @param {Array<string>} params.classList
    */
   constructor({ id = null, classList = [] } = {}) {
-    super("toolbarseparator", { id, classList });
+    super({ tag: "toolbarseparator", id, classList });
   }
 }

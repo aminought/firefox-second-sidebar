@@ -9,7 +9,7 @@ export class ToolbarButton extends XULElement {
    * @param {HTMLElement?} params.element
    */
   constructor({ id = null, classList = [], element } = {}) {
-    super("toolbarbutton", { id, classList, element });
+    super({ tag: "toolbarbutton", id, classList, element });
   }
 
   /**

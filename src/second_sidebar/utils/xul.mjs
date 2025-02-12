@@ -4,6 +4,7 @@ import { Header } from "../xul/base/header.mjs";
 import { Input } from "../xul/base/input.mjs";
 import { Label } from "../xul/base/label.mjs";
 import { ToolbarButton } from "../xul/base/toolbar_button.mjs";
+import { ZoomManagerWrapper } from "../wrappers/zoom_manager.mjs";
 
 /**
  *
@@ -95,8 +96,8 @@ export function updateZoomButtons(
   resetZoomButton
     .setLabel((zoom * 100).toFixed(0) + "%")
     .setDisabled(zoom === 1);
-  zoomInButton.setDisabled(zoom >= ZoomManager.MAX);
-  zoomOutButton.setDisabled(zoom <= ZoomManager.MIN);
+  zoomInButton.setDisabled(zoom >= ZoomManagerWrapper.MAX);
+  zoomOutButton.setDisabled(zoom <= ZoomManagerWrapper.MIN);
 }
 
 /**

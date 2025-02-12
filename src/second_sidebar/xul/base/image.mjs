@@ -8,7 +8,7 @@ export class Image extends XULElement {
    * @param {Array<string>} params.classList
    */
   constructor({ id = null, classList = [] } = {}) {
-    super("image", { id, classList });
+    super({ tag: "image", id, classList });
   }
 
   /**

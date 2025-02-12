@@ -8,6 +8,6 @@ export class Box extends XULElement {
    * @param {Array<string>} params.classList
    */
   constructor({ id = null, classList = [] } = {}) {
-    super("box", { id, classList });
+    super({ tag: "box", id, classList });
   }
 }

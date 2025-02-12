@@ -8,6 +8,6 @@ export class Div extends XULElement {
    * @param {Array<string>} params.classList
    */
   constructor({ id = null, classList = [] } = {}) {
-    super("div", { id, classList });
+    super({ tag: "div", id, classList });
   }
 }
