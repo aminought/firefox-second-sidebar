@@ -146,7 +146,9 @@ export class WebPanelPopupEdit extends Panel {
    * @param {function(string, boolean):void} callbacks.loadOnStartup
    * @param {function(string, boolean):void} callbacks.unloadOnClose
    * @param {function(string, boolean):void} callbacks.hideToolbar
-   * @param {function(string, boolean?, boolean?, number?):number} callbacks.zoom
+   * @param {function(string):number} callbacks.zoomOut
+   * @param {function(string):number} callbacks.zoomIn
+   * @param {function(string, number):number} callbacks.zoom
    */
   listenChanges({
     url,
@@ -157,6 +159,8 @@ export class WebPanelPopupEdit extends Panel {
     loadOnStartup,
     unloadOnClose,
     hideToolbar,
+    zoomOut,
+    zoomIn,
     zoom,
   }) {
     this.onUrlChange = url;
@@ -167,6 +171,8 @@ export class WebPanelPopupEdit extends Panel {
     this.onLoadOnStartupChange = loadOnStartup;
     this.onUnloadOnCloseChange = unloadOnClose;
     this.onHideToolbar = hideToolbar;
+    this.onZoomOut = zoomOut;
+    this.onZoomIn = zoomIn;
     this.onZoom = zoom;
 
     this.urlInput.addEventListener("input", () => {
@@ -193,21 +199,21 @@ export class WebPanelPopupEdit extends Panel {
     this.hideToolbarToggle.addEventListener("toggle", () => {
       hideToolbar(this.settings.uuid, this.hideToolbarToggle.getPressed());
     });
-    this.zoomInButton.addEventListener("click", (event) => {
+    this.zoomOutButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
-        this.zoom = zoom(this.settings.uuid, true, false);
+        this.zoom = zoomOut(this.settings.uuid);
         this.#updateZoomButtons(this.zoom);
       }
     });
-    this.zoomOutButton.addEventListener("click", (event) => {
+    this.zoomInButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
-        this.zoom = zoom(this.settings.uuid, false, true);
+        this.zoom = zoomIn(this.settings.uuid);
         this.#updateZoomButtons(this.zoom);
       }
     });
     this.resetZoomButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
-        this.zoom = zoom(this.settings.uuid, false, false, 1);
+        this.zoom = zoom(this.settings.uuid, 1);
         this.#updateZoomButtons(this.zoom);
       }
     });
@@ -240,24 +246,13 @@ export class WebPanelPopupEdit extends Panel {
 
   /**
    *
-   * @param {function():void} callback
+   * @param {function(string):void} callback
    */
   listenSaveButtonClick(callback) {
     this.saveButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
         this.removeEventListener("popuphidden", this.cancelOnPopupHidden);
-        callback(
-          this.settings.uuid,
-          this.urlInput.getValue(),
-          this.faviconURLInput.getValue(),
-          this.pinnedMenuList.getValue(),
-          this.containerMenuList.getValue(),
-          this.mobileToggle.getPressed(),
-          this.loadOnStartupToggle.getPressed(),
-          this.unloadOnCloseToggle.getPressed(),
-          this.hideToolbarToggle.getPressed(),
-          this.zoom,
-        );
+        callback(this.settings.uuid);
       }
     });
   }

@@ -8,6 +8,6 @@ export const OPEN_URL_IN = {
  * @param {string} url
  * @param {OPEN_URL_IN} where
  */
-export const openTrustedLinkIn = (url, where) => {
+export const openTrustedLinkInWrapper = (url, where) => {
   openTrustedLinkIn(url, where);
 };

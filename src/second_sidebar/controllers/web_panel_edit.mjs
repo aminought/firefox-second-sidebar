@@ -1,15 +1,11 @@
 /* eslint-disable no-unused-vars */
+import { WebPanelEvents, sendEvents } from "./events.mjs";
+
 import { SidebarController } from "./sidebar.mjs";
 import { WebPanelController } from "./web_panel.mjs";
 import { WebPanelPopupEdit } from "../xul/web_panel_popup_edit.mjs";
 import { WebPanelsController } from "./web_panels.mjs";
-import { WindowManagerWrapper } from "../wrappers/window_manager.mjs";
-import { WindowWatcherWrapper } from "../wrappers/window_watcher.mjs";
 /* eslint-enable no-unused-vars */
-
-const Events = {
-  EDIT_WEB_PANEL: "edit_web_panel",
-};
 
 export class WebPanelEditController {
   /**
@@ -34,152 +30,85 @@ export class WebPanelEditController {
   #setupListeners() {
     this.webPanelPopupEdit.listenChanges({
       url: (uuid, url, timeout = 0) => {
-        const webPanelController = this.webPanelsController.get(uuid);
-        const oldUrl = webPanelController.getURL();
-        webPanelController.setURL(url);
-
-        clearTimeout(this.urlTimeout);
-        this.urlTimeout = setTimeout(() => {
-          if (!webPanelController.isUnloaded() && oldUrl !== url) {
-            webPanelController.go(url);
-          }
-        }, timeout);
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_URL, {
+          uuid,
+          url,
+          timeout,
+        });
       },
       faviconURL: (uuid, faviconURL, timeout = 0) => {
-        const webPanelController = this.webPanelsController.get(uuid);
-        const oldFaviconURL = webPanelController.getFaviconURL();
-        webPanelController.setWebPanelFaviconURL(faviconURL);
-
-        clearTimeout(this.faviconURLTimeout);
-        this.faviconURLTimeout = setTimeout(() => {
-          if (oldFaviconURL !== faviconURL) {
-            webPanelController.setWebPanelButtonFaviconURL(faviconURL);
-          }
-        }, timeout);
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_FAVICON_URL, {
+          uuid,
+          faviconURL,
+          timeout,
+        });
       },
       pinned: (uuid, pinned) => {
-        const webPanelController = this.webPanelsController.get(uuid);
-        pinned ? webPanelController.pin() : webPanelController.unpin();
-        if (webPanelController.isActive()) {
-          pinned
-            ? this.sidebarController.pin()
-            : this.sidebarController.unpin();
-        }
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_PINNED, {
+          uuid,
+          pinned,
+        });
       },
       userContextId: (uuid, userContextId) => {
-        const webPanelController = this.webPanelsController.get(uuid);
-        webPanelController.setUserContextId(userContextId);
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_USER_CONTEXT_ID, {
+          uuid,
+          userContextId,
+        });
       },
       mobile: (uuid, mobile) => {
-        const webPanelController = this.webPanelsController.get(uuid);
-        webPanelController.setMobile(mobile);
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_MOBILE, {
+          uuid,
+          mobile,
+        });
       },
       loadOnStartup: (uuid, loadOnStartup) => {
-        const webPanelController = this.webPanelsController.get(uuid);
-        webPanelController.setLoadOnStartup(loadOnStartup);
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_LOAD_ON_STARTUP, {
+          uuid,
+          loadOnStartup,
+        });
       },
       unloadOnClose: (uuid, unloadOnClose) => {
-        const webPanelController = this.webPanelsController.get(uuid);
-        webPanelController.setUnloadOnClose(unloadOnClose);
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_UNLOAD_ON_CLOSE, {
+          uuid,
+          unloadOnClose,
+        });
       },
       hideToolbar: (uuid, hideToolbar) => {
-        const webPanelController = this.webPanelsController.get(uuid);
-        webPanelController.setHideToolbar(hideToolbar);
-        this.sidebarController.setHideToolbar(hideToolbar);
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_HIDE_TOOLBAR, {
+          uuid,
+          hideToolbar,
+        });
       },
-      zoom: (uuid, zoomIn = false, zoomOut = false, value = null) => {
+      zoomOut: (uuid) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_ZOOM_OUT, {
+          uuid,
+        });
         const webPanelController = this.webPanelsController.get(uuid);
-        if (zoomIn) {
-          webPanelController.zoomIn();
-        } else if (zoomOut) {
-          webPanelController.zoomOut();
-        } else {
-          webPanelController.setZoom(value);
-        }
+        return webPanelController.getZoom();
+      },
+      zoomIn: (uuid) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_ZOOM_IN, {
+          uuid,
+        });
+        const webPanelController = this.webPanelsController.get(uuid);
+        return webPanelController.getZoom();
+      },
+      zoom: (uuid, value) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_ZOOM, {
+          uuid,
+          value,
+        });
+        const webPanelController = this.webPanelsController.get(uuid);
         return webPanelController.getZoom();
       },
     });
 
     this.webPanelPopupEdit.listenCancelButtonClick(() => this.hidePopup());
 
-    window.addEventListener(Events.EDIT_WEB_PANEL, async (event) => {
-      console.log(`Got event ${event.type}:`, event.detail);
-      const webPanelController = this.webPanelsController.get(
-        event.detail.uuid,
-      );
-
-      if (event.detail.isWindowActive) {
-        this.webPanelsController.saveSettings();
-        this.hidePopup();
-      } else {
-        webPanelController.setURL(event.detail.url);
-        if (!webPanelController.isUnloaded()) {
-          webPanelController.go(event.detail.url);
-        }
-
-        webPanelController.setWebPanelFaviconURL(event.detail.faviconURL);
-        webPanelController.setWebPanelButtonFaviconURL(event.detail.faviconURL);
-
-        event.detail.pinned === "true"
-          ? webPanelController.pin()
-          : webPanelController.unpin();
-        if (webPanelController.isActive()) {
-          event.detail.pinned === "true"
-            ? this.sidebarController.pin()
-            : this.sidebarController.unpin();
-        }
-
-        webPanelController.setUserContextId(event.detail.userContextId);
-        webPanelController.setMobile(event.detail.mobile);
-        webPanelController.setLoadOnStartup(event.detail.loadOnStartup);
-        webPanelController.setUnloadOnClose(event.detail.unloadOnClose);
-        webPanelController.setHideToolbar(event.detail.hideToolbar);
-        this.sidebarController.setHideToolbar(event.detail.hideToolbar);
-        webPanelController.setZoom(event.detail.zoomValue);
-      }
-
-      if (
-        webPanelController.getUnloadOnClose() &&
-        !webPanelController.isActive()
-      ) {
-        webPanelController.unload();
-      }
+    this.webPanelPopupEdit.listenSaveButtonClick(() => {
+      sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
+      this.hidePopup();
     });
-
-    this.webPanelPopupEdit.listenSaveButtonClick(
-      (
-        uuid,
-        url,
-        faviconURL,
-        pinned,
-        userContextId,
-        mobile,
-        loadOnStartup,
-        unloadOnClose,
-        hideToolbar,
-        zoomValue,
-      ) => {
-        const lastWindow = WindowManagerWrapper.getMostRecentBrowserWindow();
-        for (const window of WindowWatcherWrapper.getWindowEnumerator()) {
-          const customEvent = new CustomEvent(Events.EDIT_WEB_PANEL, {
-            detail: {
-              uuid,
-              url,
-              faviconURL,
-              pinned,
-              userContextId,
-              mobile,
-              loadOnStartup,
-              unloadOnClose,
-              hideToolbar,
-              zoomValue,
-              isWindowActive: window === lastWindow,
-            },
-          });
-          window.dispatchEvent(customEvent);
-        }
-      },
-    );
   }
 
   /**

@@ -1,4 +1,6 @@
 /* eslint-disable no-unused-vars */
+import { WebPanelEvents, sendEvents } from "./events.mjs";
+
 import { Sidebar } from "../xul/sidebar.mjs";
 import { SidebarBox } from "../xul/sidebar_box.mjs";
 import { SidebarMainController } from "./sidebar_main.mjs";
@@ -13,6 +15,7 @@ import { WebPanelsController } from "./web_panels.mjs";
 import { XULElement } from "../xul/base/xul_element.mjs";
 import { changeContainerBorder } from "../utils/containers.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
+
 /* eslint-enable no-unused-vars */
 
 export class SidebarController {
@@ -107,14 +110,11 @@ export class SidebarController {
 
     this.sidebarToolbar.listenPinButtonClick(() => {
       const webPanelController = this.webPanelsController.getActive();
-      if (webPanelController.pinned()) {
-        webPanelController.unpin();
-        this.unpin();
-      } else {
-        webPanelController.pin();
-        this.pin();
-      }
-      this.webPanelsController.saveSettings();
+      sendEvents(WebPanelEvents.EDIT_WEB_PANEL_PINNED, {
+        uuid: webPanelController.getUUID(),
+        pinned: !webPanelController.pinned(),
+      });
+      sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
     });
 
     this.sidebarToolbar.listenCloseButtonClick(() => {
