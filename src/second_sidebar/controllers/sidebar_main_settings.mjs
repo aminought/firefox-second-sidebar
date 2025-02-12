@@ -1,10 +1,8 @@
 /* eslint-disable no-unused-vars */
 import { SidebarEvents, sendEvents } from "./events.mjs";
 
-import { SidebarController } from "./sidebar.mjs";
-import { SidebarMainController } from "./sidebar_main.mjs";
+import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarMainPopupSettings } from "../xul/sidebar_main_popup_settings.mjs";
-import { WebPanelNewController } from "./web_panel_new.mjs";
 
 /* eslint-enable no-unused-vars */
 
@@ -17,22 +15,6 @@ export class SidebarMainSettingsController {
     this.sidebarMainPopupSettings = sidebarMainPopupSettings;
 
     this.#setupListeners();
-  }
-
-  /**
-   *
-   * @param {SidebarMainController} sidebarMainController
-   * @param {SidebarController} sidebarController
-   * @param {WebPanelNewController} webPanelNewController
-   */
-  setupDependencies(
-    sidebarMainController,
-    sidebarController,
-    webPanelNewController,
-  ) {
-    this.sidebarMainController = sidebarMainController;
-    this.sidebarController = sidebarController;
-    this.webPanelNewController = webPanelNewController;
   }
 
   #setupListeners() {
@@ -78,7 +60,7 @@ export class SidebarMainSettingsController {
     this.sidebarMainPopupSettings.openPopupAtScreen(
       screenX,
       screenY,
-      this.sidebarController.dumpSettings(),
+      SidebarControllers.sidebarController.dumpSettings(),
     );
   }
 }

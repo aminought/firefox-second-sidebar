@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
 import { WebPanelEvents, sendEvents } from "./events.mjs";
 
-import { SidebarController } from "./sidebar.mjs";
+import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { WebPanelController } from "./web_panel.mjs";
 import { WebPanelPopupEdit } from "../xul/web_panel_popup_edit.mjs";
-import { WebPanelsController } from "./web_panels.mjs";
+
 /* eslint-enable no-unused-vars */
 
 export class WebPanelEditController {
@@ -15,16 +15,6 @@ export class WebPanelEditController {
   constructor(webPanelPopupEdit) {
     this.webPanelPopupEdit = webPanelPopupEdit;
     this.#setupListeners();
-  }
-
-  /**
-   *
-   * @param {WebPanelsController} webPanelsController
-   * @param {SidebarController} sidebarController
-   */
-  setupDependencies(webPanelsController, sidebarController) {
-    this.webPanelsController = webPanelsController;
-    this.sidebarController = sidebarController;
   }
 
   #setupListeners() {
@@ -83,14 +73,16 @@ export class WebPanelEditController {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_ZOOM_OUT, {
           uuid,
         });
-        const webPanelController = this.webPanelsController.get(uuid);
+        const webPanelController =
+          SidebarControllers.webPanelsController.get(uuid);
         return webPanelController.getZoom();
       },
       zoomIn: (uuid) => {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_ZOOM_IN, {
           uuid,
         });
-        const webPanelController = this.webPanelsController.get(uuid);
+        const webPanelController =
+          SidebarControllers.webPanelsController.get(uuid);
         return webPanelController.getZoom();
       },
       zoom: (uuid, value) => {
@@ -98,7 +90,8 @@ export class WebPanelEditController {
           uuid,
           value,
         });
-        const webPanelController = this.webPanelsController.get(uuid);
+        const webPanelController =
+          SidebarControllers.webPanelsController.get(uuid);
         return webPanelController.getZoom();
       },
     });

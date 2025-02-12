@@ -3,13 +3,11 @@ import { WebPanelEvents, listenEvent } from "./events.mjs";
 import { isLeftMouseButton, isMiddleMouseButton } from "../utils/buttons.mjs";
 
 import { NetUtilWrapper } from "../wrappers/net_utils.mjs";
-import { SidebarController } from "./sidebar.mjs";
+import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarMain } from "../xul/sidebar_main.mjs";
 import { WebPanel } from "../xul/web_panel.mjs";
 import { WebPanelButton } from "../xul/web_panel_button.mjs";
 import { WebPanelController } from "./web_panel.mjs";
-import { WebPanelDeleteController } from "./web_panel_delete.mjs";
-import { WebPanelEditController } from "./web_panel_edit.mjs";
 import { WebPanelMenuPopup } from "../xul/web_panel_menupopup.mjs";
 import { WebPanelTab } from "../xul/web_panel_tab.mjs";
 import { WebPanelTabs } from "../xul/web_panel_tabs.mjs";
@@ -40,22 +38,6 @@ export class WebPanelsController {
     this.#setupListeners();
   }
 
-  /**
-   *
-   * @param {SidebarController} sidebarController
-   * @param {WebPanelEditController} webPanelEditController
-   * @param {WebPanelDeleteController} webPanelDeleteController
-   */
-  setupDependencies(
-    sidebarController,
-    webPanelEditController,
-    webPanelDeleteController,
-  ) {
-    this.sidebarController = sidebarController;
-    this.webPanelEditController = webPanelEditController;
-    this.webPanelDeleteController = webPanelDeleteController;
-  }
-
   #setupListeners() {
     this.webPanelMenuPopup.setWebPanelsController(this);
 
@@ -64,11 +46,11 @@ export class WebPanelsController {
     });
 
     this.webPanelMenuPopup.listenEditItemClick((webPanelController) => {
-      this.webPanelEditController.openPopup(webPanelController);
+      SidebarControllers.webPanelEditController.openPopup(webPanelController);
     });
 
     this.webPanelMenuPopup.listenDeleteItemClick((webPanelController) => {
-      this.webPanelDeleteController.openPopup(webPanelController);
+      SidebarControllers.webPanelDeleteController.openPopup(webPanelController);
     });
 
     this.webPanelMenuPopup.listenCustomizeItemClick(() => {
@@ -135,7 +117,9 @@ export class WebPanelsController {
       const webPanelController = this.get(uuid);
       pinned ? webPanelController.pin() : webPanelController.unpin();
       if (webPanelController.isActive()) {
-        pinned ? this.sidebarController.pin() : this.sidebarController.unpin();
+        pinned
+          ? SidebarControllers.sidebarController.pin()
+          : SidebarControllers.sidebarController.unpin();
       }
     });
 
@@ -177,7 +161,7 @@ export class WebPanelsController {
 
       const webPanelController = this.get(uuid);
       webPanelController.setHideToolbar(hideToolbar);
-      this.sidebarController.setHideToolbar(hideToolbar);
+      SidebarControllers.sidebarController.setHideToolbar(hideToolbar);
     });
 
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_ZOOM_OUT, (event) => {
@@ -226,7 +210,7 @@ export class WebPanelsController {
 
       const webPanelController = this.get(uuid);
       if (webPanelController.isActive()) {
-        this.sidebarController.close();
+        SidebarControllers.sidebarController.close();
       }
       webPanelController.remove();
       this.delete(uuid);
@@ -276,11 +260,6 @@ export class WebPanelsController {
       webPanel,
       webPanelButton,
       webPanelTab,
-    );
-    webPanelController.setupDependencies(
-      this,
-      this.sidebarController,
-      this.webPanelEditController,
     );
     this.add(webPanelController);
 
@@ -370,12 +349,10 @@ export class WebPanelsController {
    * @param {WebPanelsSettings} webPanelsSettings
    */
   loadSettings(webPanelsSettings) {
-    console.log("Loading web panels");
+    console.log("Loading web panels...");
     for (const webPanelSettings of webPanelsSettings.webPanels) {
       const webPanelController =
         WebPanelController.fromSettings(webPanelSettings);
-      webPanelController.setupDependencies(this, this.sidebarController);
-
       if (webPanelSettings.loadOnStartup) {
         this.injectWebPanelTab(webPanelController.webPanelTab);
         this.injectWebPanel(webPanelController.webPanel);

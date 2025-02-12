@@ -6,17 +6,8 @@ import {
   sendEvents,
 } from "./events.mjs";
 
-import { NetUtilWrapper } from "../wrappers/net_utils.mjs";
-import { SidebarController } from "./sidebar.mjs";
-import { WebPanel } from "../xul/web_panel.mjs";
-import { WebPanelButton } from "../xul/web_panel_button.mjs";
-import { WebPanelController } from "./web_panel.mjs";
-import { WebPanelEditController } from "./web_panel_edit.mjs";
 import { WebPanelNewButton } from "../xul/web_panel_new_button.mjs";
 import { WebPanelPopupNew } from "../xul/web_panel_popup_new.mjs";
-import { WebPanelTab } from "../xul/web_panel_tab.mjs";
-import { WebPanelsController } from "./web_panels.mjs";
-import { fetchIconURL } from "../utils/icons.mjs";
 import { gBrowserWrapper } from "../wrappers/g_browser.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
 
@@ -56,22 +47,6 @@ export class WebPanelNewController {
     this.webPanelPopupNew.listenCancelButtonClick(() => {
       this.hidePopup();
     });
-  }
-
-  /**
-   *
-   * @param {SidebarController} sidebarController
-   * @param {WebPanelsController} webPanelsController
-   * @param {WebPanelEditController} webPanelEditController
-   */
-  setupDependencies(
-    sidebarController,
-    webPanelsController,
-    webPanelEditController,
-  ) {
-    this.sidebarController = sidebarController;
-    this.webPanelsController = webPanelsController;
-    this.webPanelEditController = webPanelEditController;
   }
 
   openPopup() {

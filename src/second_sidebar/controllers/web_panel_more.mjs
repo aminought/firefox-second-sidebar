@@ -3,9 +3,8 @@ import { OPEN_URL_IN, openTrustedLinkInWrapper } from "../wrappers/global.mjs";
 import { WebPanelEvents, sendEvents } from "./events.mjs";
 
 import { ClipboardHelperWrapper } from "../wrappers/clipboard_helper.mjs";
-import { SidebarController } from "./sidebar.mjs";
+import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { WebPanelPopupMore } from "../xul/web_panel_popup_more.mjs";
-import { WebPanelsController } from "./web_panels.mjs";
 
 /* eslint-enable no-unused-vars */
 
@@ -19,24 +18,16 @@ export class WebPanelMoreController {
     this.#setupListeners();
   }
 
-  /**
-   *
-   * @param {WebPanelsController} webPanelsController
-   * @param {SidebarController} sidebarController
-   */
-  setupDependencies(webPanelsController, sidebarController) {
-    this.webPanelsController = webPanelsController;
-    this.sidebarController = sidebarController;
-  }
-
   #setupListeners() {
     this.webPanelPopupMore.listenPopupShowing(() => {
-      const webPanelController = this.webPanelsController.getActive();
+      const webPanelController =
+        SidebarControllers.webPanelsController.getActive();
       this.webPanelPopupMore.setDefaults(webPanelController.dumpSettings());
     });
 
     this.webPanelPopupMore.listenOpenInNewTabButtonClick((event, uuid) => {
-      const webPanelController = this.webPanelsController.get(uuid);
+      const webPanelController =
+        SidebarControllers.webPanelsController.get(uuid);
       openTrustedLinkInWrapper(
         webPanelController.getCurrentUrl(),
         event.ctrlKey ? OPEN_URL_IN.BACKGROUND_TAB : OPEN_URL_IN.TAB,
@@ -44,7 +35,8 @@ export class WebPanelMoreController {
     });
 
     this.webPanelPopupMore.listenCopyPageUrlButtonClick((uuid) => {
-      const webPanelController = this.webPanelsController.get(uuid);
+      const webPanelController =
+        SidebarControllers.webPanelsController.get(uuid);
       ClipboardHelperWrapper.copyString(webPanelController.getCurrentUrl());
     });
 
@@ -62,7 +54,8 @@ export class WebPanelMoreController {
       });
       sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
 
-      const webPanelController = this.webPanelsController.get(uuid);
+      const webPanelController =
+        SidebarControllers.webPanelsController.get(uuid);
       return webPanelController.getZoom();
     });
 
@@ -72,7 +65,8 @@ export class WebPanelMoreController {
       });
       sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
 
-      const webPanelController = this.webPanelsController.get(uuid);
+      const webPanelController =
+        SidebarControllers.webPanelsController.get(uuid);
       return webPanelController.getZoom();
     });
 
@@ -83,7 +77,8 @@ export class WebPanelMoreController {
       });
       sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
 
-      const webPanelController = this.webPanelsController.get(uuid);
+      const webPanelController =
+        SidebarControllers.webPanelsController.get(uuid);
       return webPanelController.getZoom();
     });
   }
