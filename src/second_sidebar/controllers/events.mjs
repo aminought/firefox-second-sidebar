@@ -16,6 +16,19 @@ export const WebPanelEvents = {
   SAVE_WEB_PANELS: "save_web_panels",
 };
 
+export const SidebarEvents = {
+  EDIT_SIDEBAR_POSITION: "edit_sidebar_position",
+  EDIT_SIDEBAR_PADDING: "edit_sidebar_padding",
+  EDIT_SIDEBAR_NEW_WEB_PANEL_POSITION: "edit_sidebar_new_web_panel_position",
+  EDIT_SIDEBAR_UNPINNED_PADDING: "edit_sidebar_unpinned_padding",
+  EDIT_SIDEBAR_HIDE_IN_POPUP_WINDOWS: "edit_sidebar_hide_in_popup_windows",
+  EDIT_SIDEBAR_AUTO_HIDE_BACK_BUTTON: "edit_sidebar_auto_hide_back_button",
+  EDIT_SIDEBAR_AUTO_HIDE_FORWARD_BUTTON:
+    "edit_sidebar_auto_hide_forward_button",
+  EDIT_SIDEBAR_CONTAINER_BORDER: "edit_sidebar_container_border",
+  SAVE_SIDEBAR: "save_sidebar",
+};
+
 /**
  *
  * @param {string} type

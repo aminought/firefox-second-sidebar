@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { WebPanelEvents, sendEvents } from "./events.mjs";
+import { SidebarEvents, WebPanelEvents, sendEvents } from "./events.mjs";
 
 import { Sidebar } from "../xul/sidebar.mjs";
 import { SidebarBox } from "../xul/sidebar_box.mjs";
@@ -121,6 +121,83 @@ export class SidebarController {
       const webPanelController = this.webPanelsController.getActive();
       webPanelController.unload();
       this.close();
+    });
+
+    window.addEventListener(SidebarEvents.EDIT_SIDEBAR_POSITION, (event) => {
+      console.log(`Got event ${event.type}:`, event.detail);
+      const value = event.detail.value;
+      this.setPosition(value);
+    });
+
+    window.addEventListener(SidebarEvents.EDIT_SIDEBAR_PADDING, (event) => {
+      console.log(`Got event ${event.type}:`, event.detail);
+      const value = event.detail.value;
+      this.sidebarMainController.setPadding(value);
+    });
+
+    window.addEventListener(
+      SidebarEvents.EDIT_SIDEBAR_NEW_WEB_PANEL_POSITION,
+      (event) => {
+        console.log(`Got event ${event.type}:`, event.detail);
+        const value = event.detail.value;
+        this.webPanelNewController.setNewWebPanelPosition(value);
+      },
+    );
+
+    window.addEventListener(
+      SidebarEvents.EDIT_SIDEBAR_UNPINNED_PADDING,
+      (event) => {
+        console.log(`Got event ${event.type}:`, event.detail);
+        const value = event.detail.value;
+        this.setUnpinnedPadding(value);
+      },
+    );
+
+    window.addEventListener(
+      SidebarEvents.EDIT_SIDEBAR_HIDE_IN_POPUP_WINDOWS,
+      (event) => {
+        console.log(`Got event ${event.type}:`, event.detail);
+        const value = event.detail.value;
+        this.hideInPopupWindows = value;
+      },
+    );
+
+    window.addEventListener(
+      SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_BACK_BUTTON,
+      (event) => {
+        console.log(`Got event ${event.type}:`, event.detail);
+        const value = event.detail.value;
+        this.autoHideBackButton = value;
+        this.autoHideButton(this.sidebarToolbar.backButton, value);
+      },
+    );
+
+    window.addEventListener(
+      SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_FORWARD_BUTTON,
+      (event) => {
+        console.log(`Got event ${event.type}:`, event.detail);
+        const value = event.detail.value;
+        this.autoHideForwardButton = value;
+        this.autoHideButton(this.sidebarToolbar.forwardButton, value);
+      },
+    );
+
+    window.addEventListener(
+      SidebarEvents.EDIT_SIDEBAR_CONTAINER_BORDER,
+      (event) => {
+        console.log(`Got event ${event.type}:`, event.detail);
+        const value = event.detail.value;
+        this.autoHideForwardButton = value;
+        this.setContainerBorder(value);
+      },
+    );
+
+    window.addEventListener(SidebarEvents.SAVE_SIDEBAR, (event) => {
+      console.log(`Got event ${event.type}:`, event.detail);
+      const isWindowActive = event.detail.isWindowActive;
+      if (isWindowActive) {
+        this.saveSettings();
+      }
     });
   }
 
