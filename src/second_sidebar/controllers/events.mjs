@@ -13,7 +13,11 @@ export const WebPanelEvents = {
   EDIT_WEB_PANEL_ZOOM_OUT: "edit_web_panel_zoom_out",
   EDIT_WEB_PANEL_ZOOM_IN: "edit_web_panel_zoom_in",
   EDIT_WEB_PANEL_ZOOM: "edit_web_panel_zoom",
+  CREATE_WEB_PANEL: "create_web_panel",
+  OPEN_WEB_PANEL: "open_web_panel",
+  DELETE_WEB_PANEL: "delete_web_panel",
   SAVE_WEB_PANELS: "save_web_panels",
+  OPEN_NEW_WEB_PANEL_POPUP: "open_new_web_panel_popup",
 };
 
 export const SidebarEvents = {
@@ -34,6 +38,22 @@ export const SidebarEvents = {
  * @param {string} type
  * @param {object} detail
  */
+export const sendEvent = (type, detail = {}) => {
+  const lastWindow = WindowManagerWrapper.getMostRecentBrowserWindow();
+  const customEvent = new CustomEvent(type, {
+    detail: {
+      ...detail,
+      isWindowActive: window === lastWindow,
+    },
+  });
+  lastWindow.dispatchEvent(customEvent);
+};
+
+/**
+ *
+ * @param {string} type
+ * @param {object} detail
+ */
 export const sendEvents = (type, detail = {}) => {
   const lastWindow = WindowManagerWrapper.getMostRecentBrowserWindow();
   for (const window of WindowWatcherWrapper.getWindowEnumerator()) {
@@ -45,4 +65,16 @@ export const sendEvents = (type, detail = {}) => {
     });
     window.dispatchEvent(customEvent);
   }
+};
+
+/**
+ *
+ * @param {string} type
+ * @param {function(Event):void} callback
+ */
+export const listenEvent = (type, callback) => {
+  window.addEventListener(type, (event) => {
+    console.log(`Got event ${event.type}:`, event.detail);
+    callback(event);
+  });
 };

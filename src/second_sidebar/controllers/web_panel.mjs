@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
-import { isLeftMouseButton, isMiddleMouseButton } from "../utils/buttons.mjs";
+
+import { WebPanelEvents, sendEvent } from "./events.mjs";
 
 import { SidebarController } from "./sidebar.mjs";
 import { WebPanel } from "../xul/web_panel.mjs";
@@ -168,43 +169,50 @@ export class WebPanelController {
   }
 
   initWebPanelButton() {
-    const switchWebPanel = () => {
-      if (this.webPanel.isActive()) {
-        this.sidebarController.close();
-      } else {
-        this.webPanelsController.hideActive();
-        if (
-          this.webPanelsController.injectWebPanelTab(this.webPanelTab) &&
-          this.webPanelsController.injectWebPanel(this.webPanel)
-        ) {
-          this.initWebPanel();
-        }
-        this.sidebarController.open(
-          this.webPanel.pinned,
-          this.webPanel.width,
-          this.webPanel.canGoBack(),
-          this.webPanel.canGoForward(),
-          this.webPanel.getTitle(),
-          this.webPanel.getZoom(),
-          this.webPanel.hideToolbar,
-        );
-        this.show();
-      }
-    };
-
-    window.addEventListener(this.webPanel.id, (customEvent) => {
-      if (isLeftMouseButton(customEvent.detail)) {
-        switchWebPanel();
-      } else if (isMiddleMouseButton(customEvent.detail)) {
-        this.unload();
-      }
-    });
-
     this.webPanelButton.listenClick((event) => {
-      const lastWindow = WindowManagerWrapper.getMostRecentBrowserWindow();
-      const customEvent = new CustomEvent(this.webPanel.id, { detail: event });
-      lastWindow.dispatchEvent(customEvent);
+      sendEvent(WebPanelEvents.OPEN_WEB_PANEL, {
+        uuid: this.webPanel.uuid,
+        event,
+      });
     });
+  }
+
+  openWebPanel() {
+    this.sidebarController.close();
+    this.sidebarController.open(
+      this.webPanel.pinned,
+      this.webPanel.width,
+      this.webPanel.canGoBack(),
+      this.webPanel.canGoForward(),
+      this.webPanel.getTitle(),
+      this.webPanel.getZoom(),
+      this.webPanel.hideToolbar,
+    );
+    this.show();
+  }
+
+  switchWebPanel() {
+    if (this.webPanel.isActive()) {
+      this.sidebarController.close();
+    } else {
+      this.webPanelsController.hideActive();
+      if (
+        this.webPanelsController.injectWebPanelTab(this.webPanelTab) &&
+        this.webPanelsController.injectWebPanel(this.webPanel)
+      ) {
+        this.initWebPanel();
+      }
+      this.sidebarController.open(
+        this.webPanel.pinned,
+        this.webPanel.width,
+        this.webPanel.canGoBack(),
+        this.webPanel.canGoForward(),
+        this.webPanel.getTitle(),
+        this.webPanel.getZoom(),
+        this.webPanel.hideToolbar,
+      );
+      this.show();
+    }
   }
 
   show() {

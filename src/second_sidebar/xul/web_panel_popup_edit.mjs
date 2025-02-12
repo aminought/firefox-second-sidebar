@@ -348,6 +348,6 @@ export class WebPanelPopupEdit extends Panel {
     if (this.hideToolbarToggle.getPressed() !== this.settings.hideToolbar) {
       this.onHideToolbar(this.settings.uuid, this.settings.hideToolbar);
     }
-    this.onZoom(this.settings.uuid, false, false, this.settings.zoom);
+    this.onZoom(this.settings.uuid, this.settings.zoom);
   }
 }

@@ -1,5 +1,10 @@
 /* eslint-disable no-unused-vars */
-import { SidebarEvents, WebPanelEvents, sendEvents } from "./events.mjs";
+import {
+  SidebarEvents,
+  WebPanelEvents,
+  listenEvent,
+  sendEvents,
+} from "./events.mjs";
 
 import { Sidebar } from "../xul/sidebar.mjs";
 import { SidebarBox } from "../xul/sidebar_box.mjs";
@@ -123,77 +128,53 @@ export class SidebarController {
       this.close();
     });
 
-    window.addEventListener(SidebarEvents.EDIT_SIDEBAR_POSITION, (event) => {
-      console.log(`Got event ${event.type}:`, event.detail);
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_POSITION, (event) => {
       const value = event.detail.value;
       this.setPosition(value);
     });
 
-    window.addEventListener(SidebarEvents.EDIT_SIDEBAR_PADDING, (event) => {
-      console.log(`Got event ${event.type}:`, event.detail);
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_PADDING, (event) => {
       const value = event.detail.value;
       this.sidebarMainController.setPadding(value);
     });
 
-    window.addEventListener(
-      SidebarEvents.EDIT_SIDEBAR_NEW_WEB_PANEL_POSITION,
-      (event) => {
-        console.log(`Got event ${event.type}:`, event.detail);
-        const value = event.detail.value;
-        this.webPanelNewController.setNewWebPanelPosition(value);
-      },
-    );
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_NEW_WEB_PANEL_POSITION, (event) => {
+      const value = event.detail.value;
+      this.webPanelNewController.setNewWebPanelPosition(value);
+    });
 
-    window.addEventListener(
-      SidebarEvents.EDIT_SIDEBAR_UNPINNED_PADDING,
-      (event) => {
-        console.log(`Got event ${event.type}:`, event.detail);
-        const value = event.detail.value;
-        this.setUnpinnedPadding(value);
-      },
-    );
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_UNPINNED_PADDING, (event) => {
+      const value = event.detail.value;
+      this.setUnpinnedPadding(value);
+    });
 
-    window.addEventListener(
-      SidebarEvents.EDIT_SIDEBAR_HIDE_IN_POPUP_WINDOWS,
-      (event) => {
-        console.log(`Got event ${event.type}:`, event.detail);
-        const value = event.detail.value;
-        this.hideInPopupWindows = value;
-      },
-    );
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_HIDE_IN_POPUP_WINDOWS, (event) => {
+      const value = event.detail.value;
+      this.hideInPopupWindows = value;
+    });
 
-    window.addEventListener(
-      SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_BACK_BUTTON,
-      (event) => {
-        console.log(`Got event ${event.type}:`, event.detail);
-        const value = event.detail.value;
-        this.autoHideBackButton = value;
-        this.autoHideButton(this.sidebarToolbar.backButton, value);
-      },
-    );
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_BACK_BUTTON, (event) => {
+      const value = event.detail.value;
+      this.autoHideBackButton = value;
+      this.autoHideButton(this.sidebarToolbar.backButton, value);
+    });
 
-    window.addEventListener(
+    listenEvent(
       SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_FORWARD_BUTTON,
       (event) => {
-        console.log(`Got event ${event.type}:`, event.detail);
         const value = event.detail.value;
         this.autoHideForwardButton = value;
         this.autoHideButton(this.sidebarToolbar.forwardButton, value);
       },
     );
 
-    window.addEventListener(
-      SidebarEvents.EDIT_SIDEBAR_CONTAINER_BORDER,
-      (event) => {
-        console.log(`Got event ${event.type}:`, event.detail);
-        const value = event.detail.value;
-        this.autoHideForwardButton = value;
-        this.setContainerBorder(value);
-      },
-    );
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_CONTAINER_BORDER, (event) => {
+      const value = event.detail.value;
+      this.autoHideForwardButton = value;
+      this.setContainerBorder(value);
+    });
 
-    window.addEventListener(SidebarEvents.SAVE_SIDEBAR, (event) => {
-      console.log(`Got event ${event.type}:`, event.detail);
+    listenEvent(SidebarEvents.SAVE_SIDEBAR, (event) => {
       const isWindowActive = event.detail.isWindowActive;
       if (isWindowActive) {
         this.saveSettings();

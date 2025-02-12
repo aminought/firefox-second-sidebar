@@ -1,17 +1,23 @@
 /* eslint-disable no-unused-vars */
+import { WebPanelEvents, listenEvent } from "./events.mjs";
+import { isLeftMouseButton, isMiddleMouseButton } from "../utils/buttons.mjs";
+
+import { NetUtilWrapper } from "../wrappers/net_utils.mjs";
 import { SidebarController } from "./sidebar.mjs";
 import { SidebarMain } from "../xul/sidebar_main.mjs";
 import { WebPanel } from "../xul/web_panel.mjs";
+import { WebPanelButton } from "../xul/web_panel_button.mjs";
 import { WebPanelController } from "./web_panel.mjs";
 import { WebPanelDeleteController } from "./web_panel_delete.mjs";
 import { WebPanelEditController } from "./web_panel_edit.mjs";
-import { WebPanelEvents } from "./events.mjs";
 import { WebPanelMenuPopup } from "../xul/web_panel_menupopup.mjs";
 import { WebPanelTab } from "../xul/web_panel_tab.mjs";
 import { WebPanelTabs } from "../xul/web_panel_tabs.mjs";
 import { WebPanels } from "../xul/web_panels.mjs";
 import { WebPanelsSettings } from "../settings/web_panels_settings.mjs";
+import { fetchIconURL } from "../utils/icons.mjs";
 import { gCustomizeModeWrapper } from "../wrappers/g_customize_mode.mjs";
+
 /* eslint-enable no-unused-vars */
 
 export class WebPanelsController {
@@ -69,8 +75,26 @@ export class WebPanelsController {
       gCustomizeModeWrapper.enter();
     });
 
-    window.addEventListener(WebPanelEvents.EDIT_WEB_PANEL_URL, (event) => {
-      console.log(`Got event ${event.type}:`, event.detail);
+    listenEvent(WebPanelEvents.CREATE_WEB_PANEL, async (event) => {
+      const uuid = event.detail.uuid;
+      const url = event.detail.url;
+      const userContextId = event.detail.userContextId;
+      const newWebPanelPosition = event.detail.newWebPanelPosition;
+      const isWindowActive = event.detail.isWindowActive;
+
+      const webPanelController = await this.createWebPanelController(
+        uuid,
+        url,
+        userContextId,
+        newWebPanelPosition,
+        isWindowActive,
+      );
+      if (isWindowActive) {
+        webPanelController.openWebPanel();
+      }
+    });
+
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_URL, (event) => {
       const uuid = event.detail.uuid;
       const url = event.detail.url;
       const timeout = event.detail.timeout;
@@ -87,29 +111,24 @@ export class WebPanelsController {
       }, timeout);
     });
 
-    window.addEventListener(
-      WebPanelEvents.EDIT_WEB_PANEL_FAVICON_URL,
-      (event) => {
-        console.log(`Got event ${event.type}:`, event.detail);
-        const uuid = event.detail.uuid;
-        const faviconURL = event.detail.faviconURL;
-        const timeout = event.detail.timeout;
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_FAVICON_URL, (event) => {
+      const uuid = event.detail.uuid;
+      const faviconURL = event.detail.faviconURL;
+      const timeout = event.detail.timeout;
 
-        const webPanelController = this.get(uuid);
-        const oldFaviconURL = webPanelController.getFaviconURL();
-        webPanelController.setWebPanelFaviconURL(faviconURL);
+      const webPanelController = this.get(uuid);
+      const oldFaviconURL = webPanelController.getFaviconURL();
+      webPanelController.setWebPanelFaviconURL(faviconURL);
 
-        clearTimeout(this.faviconURLTimeout);
-        this.faviconURLTimeout = setTimeout(() => {
-          if (oldFaviconURL !== faviconURL) {
-            webPanelController.setWebPanelButtonFaviconURL(faviconURL);
-          }
-        }, timeout);
-      },
-    );
+      clearTimeout(this.faviconURLTimeout);
+      this.faviconURLTimeout = setTimeout(() => {
+        if (oldFaviconURL !== faviconURL) {
+          webPanelController.setWebPanelButtonFaviconURL(faviconURL);
+        }
+      }, timeout);
+    });
 
-    window.addEventListener(WebPanelEvents.EDIT_WEB_PANEL_PINNED, (event) => {
-      console.log(`Got event ${event.type}:`, event.detail);
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_PINNED, (event) => {
       const uuid = event.detail.uuid;
       const pinned = event.detail.pinned;
 
@@ -120,20 +139,15 @@ export class WebPanelsController {
       }
     });
 
-    window.addEventListener(
-      WebPanelEvents.EDIT_WEB_PANEL_USER_CONTEXT_ID,
-      (event) => {
-        console.log(`Got event ${event.type}:`, event.detail);
-        const uuid = event.detail.uuid;
-        const userContextId = event.detail.userContextId;
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_USER_CONTEXT_ID, (event) => {
+      const uuid = event.detail.uuid;
+      const userContextId = event.detail.userContextId;
 
-        const webPanelController = this.get(uuid);
-        webPanelController.setUserContextId(userContextId);
-      },
-    );
+      const webPanelController = this.get(uuid);
+      webPanelController.setUserContextId(userContextId);
+    });
 
-    window.addEventListener(WebPanelEvents.EDIT_WEB_PANEL_MOBILE, (event) => {
-      console.log(`Got event ${event.type}:`, event.detail);
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_MOBILE, (event) => {
       const uuid = event.detail.uuid;
       const mobile = event.detail.mobile;
 
@@ -141,61 +155,46 @@ export class WebPanelsController {
       webPanelController.setMobile(mobile);
     });
 
-    window.addEventListener(
-      WebPanelEvents.EDIT_WEB_PANEL_LOAD_ON_STARTUP,
-      (event) => {
-        console.log(`Got event ${event.type}:`, event.detail);
-        const uuid = event.detail.uuid;
-        const loadOnStartup = event.detail.loadOnStartup;
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_LOAD_ON_STARTUP, (event) => {
+      const uuid = event.detail.uuid;
+      const loadOnStartup = event.detail.loadOnStartup;
 
-        const webPanelController = this.get(uuid);
-        webPanelController.setLoadOnStartup(loadOnStartup);
-      },
-    );
+      const webPanelController = this.get(uuid);
+      webPanelController.setLoadOnStartup(loadOnStartup);
+    });
 
-    window.addEventListener(
-      WebPanelEvents.EDIT_WEB_PANEL_UNLOAD_ON_CLOSE,
-      (event) => {
-        console.log(`Got event ${event.type}:`, event.detail);
-        const uuid = event.detail.uuid;
-        const unloadOnClose = event.detail.unloadOnClose;
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_UNLOAD_ON_CLOSE, (event) => {
+      const uuid = event.detail.uuid;
+      const unloadOnClose = event.detail.unloadOnClose;
 
-        const webPanelController = this.get(uuid);
-        webPanelController.setUnloadOnClose(unloadOnClose);
-      },
-    );
+      const webPanelController = this.get(uuid);
+      webPanelController.setUnloadOnClose(unloadOnClose);
+    });
 
-    window.addEventListener(
-      WebPanelEvents.EDIT_WEB_PANEL_HIDE_TOOLBAR,
-      (event) => {
-        console.log(`Got event ${event.type}:`, event.detail);
-        const uuid = event.detail.uuid;
-        const hideToolbar = event.detail.hideToolbar;
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_HIDE_TOOLBAR, (event) => {
+      const uuid = event.detail.uuid;
+      const hideToolbar = event.detail.hideToolbar;
 
-        const webPanelController = this.get(uuid);
-        webPanelController.setHideToolbar(hideToolbar);
-        this.sidebarController.setHideToolbar(hideToolbar);
-      },
-    );
+      const webPanelController = this.get(uuid);
+      webPanelController.setHideToolbar(hideToolbar);
+      this.sidebarController.setHideToolbar(hideToolbar);
+    });
 
-    window.addEventListener(WebPanelEvents.EDIT_WEB_PANEL_ZOOM_OUT, (event) => {
-      console.log(`Got event ${event.type}:`, event.detail);
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_ZOOM_OUT, (event) => {
       const uuid = event.detail.uuid;
 
       const webPanelController = this.get(uuid);
       webPanelController.zoomOut();
     });
 
-    window.addEventListener(WebPanelEvents.EDIT_WEB_PANEL_ZOOM_IN, (event) => {
-      console.log(`Got event ${event.type}:`, event.detail);
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_ZOOM_IN, (event) => {
       const uuid = event.detail.uuid;
 
       const webPanelController = this.get(uuid);
       webPanelController.zoomIn();
     });
 
-    window.addEventListener(WebPanelEvents.EDIT_WEB_PANEL_ZOOM, (event) => {
-      console.log(`Got event ${event.type}:`, event.detail);
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_ZOOM, (event) => {
       const uuid = event.detail.uuid;
       const value = event.detail.value;
 
@@ -203,13 +202,97 @@ export class WebPanelsController {
       webPanelController.setZoom(value);
     });
 
-    window.addEventListener(WebPanelEvents.SAVE_WEB_PANELS, (event) => {
-      console.log(`Got event ${event.type}:`, event.detail);
+    listenEvent(WebPanelEvents.SAVE_WEB_PANELS, (event) => {
       const isWindowActive = event.detail.isWindowActive;
       if (isWindowActive) {
         this.saveSettings();
       }
     });
+
+    listenEvent(WebPanelEvents.OPEN_WEB_PANEL, (event) => {
+      const uuid = event.detail.uuid;
+      const mouseEvent = event.detail.event;
+
+      const webPanelController = this.get(uuid);
+      if (isLeftMouseButton(mouseEvent)) {
+        webPanelController.switchWebPanel();
+      } else if (isMiddleMouseButton(mouseEvent)) {
+        webPanelController.unload();
+      }
+    });
+
+    listenEvent(WebPanelEvents.DELETE_WEB_PANEL, async (event) => {
+      const uuid = event.detail.uuid;
+
+      const webPanelController = this.get(uuid);
+      if (webPanelController.isActive()) {
+        this.sidebarController.close();
+      }
+      webPanelController.remove();
+      this.delete(uuid);
+
+      if (event.detail.isWindowActive) {
+        this.saveSettings();
+      }
+    });
+  }
+
+  /**
+   *
+   * @param {string} uuid
+   * @param {string} url
+   * @param {string} userContextId
+   * @param {string} newWebPanelPosition
+   * @param {boolean} isWindowActive
+   * @returns {WebPanelController}
+   */
+  async createWebPanelController(
+    uuid,
+    url,
+    userContextId,
+    newWebPanelPosition,
+    isWindowActive,
+  ) {
+    try {
+      NetUtilWrapper.newURI(url);
+    } catch (error) {
+      console.log("Invalid url:", error);
+      return;
+    }
+    const faviconURL = await fetchIconURL(url);
+
+    const webPanelTab = new WebPanelTab(uuid, userContextId);
+    const webPanel = new WebPanel(webPanelTab, uuid, url, faviconURL).hide();
+    const webPanelButton = new WebPanelButton(
+      webPanel.uuid,
+      newWebPanelPosition,
+    )
+      .setUserContextId(userContextId)
+      .setIcon(faviconURL)
+      .setLabel(url)
+      .setTooltipText(url);
+
+    const webPanelController = new WebPanelController(
+      webPanel,
+      webPanelButton,
+      webPanelTab,
+    );
+    webPanelController.setupDependencies(
+      this,
+      this.sidebarController,
+      this.webPanelEditController,
+    );
+    this.add(webPanelController);
+
+    if (isWindowActive) {
+      this.saveSettings();
+      this.injectWebPanelTab(webPanelTab);
+      this.injectWebPanel(webPanel);
+      webPanelController.initWebPanel();
+    }
+    webPanelController.initWebPanelButton();
+
+    return webPanelController;
   }
 
   /**
