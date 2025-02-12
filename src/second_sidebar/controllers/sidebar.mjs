@@ -174,6 +174,17 @@ export class SidebarController {
       this.setContainerBorder(value);
     });
 
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_WIDTH, (event) => {
+      const uuid = event.detail.uuid;
+      const width = event.detail.width;
+
+      const webPanelController = this.webPanelsController.get(uuid);
+      webPanelController.setWidth(width);
+      if (webPanelController.isActive()) {
+        this.setWidth(width);
+      }
+    });
+
     listenEvent(SidebarEvents.SAVE_SIDEBAR, (event) => {
       const isWindowActive = event.detail.isWindowActive;
       if (isWindowActive) {
