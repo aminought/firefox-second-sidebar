@@ -22,12 +22,16 @@ export class SidebarElements {
   static create() {
     console.log("Sidebar creation...");
     this.#createSidebar();
+
     console.log("Sidebar registration...");
     this.#registerSidebar();
+
     console.log("Widgets creation...");
     this.#createWidgets();
+
     console.log("Web panel tabs creation...");
     this.#createWebPanelTabs();
+
     console.log("Popups creation...");
     this.#createPopups();
   }
