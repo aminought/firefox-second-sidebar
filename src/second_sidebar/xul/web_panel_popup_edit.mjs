@@ -71,6 +71,8 @@ export class WebPanelPopupEdit extends Panel {
     this.saveButton = createSaveButton();
     this.#setupListeners();
     this.#compose();
+
+    this.zoom = 1;
   }
 
   #setupListeners() {
@@ -193,17 +195,20 @@ export class WebPanelPopupEdit extends Panel {
     });
     this.zoomInButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
-        this.#updateZoomButtons(zoom(this.settings.uuid, true, false));
+        this.zoom = zoom(this.settings.uuid, true, false);
+        this.#updateZoomButtons(this.zoom);
       }
     });
     this.zoomOutButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
-        this.#updateZoomButtons(zoom(this.settings.uuid, false, true));
+        this.zoom = zoom(this.settings.uuid, false, true);
+        this.#updateZoomButtons(this.zoom);
       }
     });
     this.resetZoomButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
-        this.#updateZoomButtons(zoom(this.settings.uuid, false, false, 1));
+        this.zoom = zoom(this.settings.uuid, false, false, 1);
+        this.#updateZoomButtons(this.zoom);
       }
     });
   }
@@ -241,7 +246,18 @@ export class WebPanelPopupEdit extends Panel {
     this.saveButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
         this.removeEventListener("popuphidden", this.cancelOnPopupHidden);
-        callback(this.settings.uuid);
+        callback(
+          this.settings.uuid,
+          this.urlInput.getValue(),
+          this.faviconURLInput.getValue(),
+          this.pinnedMenuList.getValue(),
+          this.containerMenuList.getValue(),
+          this.mobileToggle.getPressed(),
+          this.loadOnStartupToggle.getPressed(),
+          this.unloadOnCloseToggle.getPressed(),
+          this.hideToolbarToggle.getPressed(),
+          this.zoom,
+        );
       }
     });
   }
@@ -270,6 +286,7 @@ export class WebPanelPopupEdit extends Panel {
     this.unloadOnCloseToggle.setPressed(settings.unloadOnClose);
     this.hideToolbarToggle.setPressed(settings.hideToolbar);
     this.#updateZoomButtons(settings.zoom);
+    this.zoom = settings.zoom;
 
     this.settings = settings;
     this.insertedBeforeXUL = webPanelController.getInsertedBeforeXUL();
