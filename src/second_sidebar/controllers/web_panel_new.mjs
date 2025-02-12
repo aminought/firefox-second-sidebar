@@ -18,7 +18,7 @@ import { isLeftMouseButton } from "../utils/buttons.mjs";
 
 const Events = {
   OPEN_NEW_WEB_PANEL_POPUP: "open_new_web_panel_popup",
-  CREATE_NEW_WEB_PANEL: "create_new_web_panel",
+  CREATE_WEB_PANEL: "create_web_panel",
 };
 
 export class WebPanelNewController {
@@ -31,11 +31,13 @@ export class WebPanelNewController {
     this.webPanelNewButton = webPanelNewButton;
     this.webPanelPopupNew = webPanelPopupNew;
 
-    window.addEventListener(Events.OPEN_NEW_WEB_PANEL_POPUP, () => {
+    window.addEventListener(Events.OPEN_NEW_WEB_PANEL_POPUP, (event) => {
+      console.log(`Got event ${event.type}:`, event.detail);
       this.openPopup();
     });
 
-    window.addEventListener(Events.CREATE_NEW_WEB_PANEL, async (event) => {
+    window.addEventListener(Events.CREATE_WEB_PANEL, async (event) => {
+      console.log(`Got event ${event.type}:`, event.detail);
       const webPanelController = await this.createWebPanelController(
         event.detail.uuid,
         event.detail.url,
@@ -59,7 +61,7 @@ export class WebPanelNewController {
       const uuid = crypto.randomUUID();
       const lastWindow = WindowManagerWrapper.getMostRecentBrowserWindow();
       for (const window of WindowWatcherWrapper.getWindowEnumerator()) {
-        const customEvent = new CustomEvent(Events.CREATE_NEW_WEB_PANEL, {
+        const customEvent = new CustomEvent(Events.CREATE_WEB_PANEL, {
           detail: {
             uuid,
             url,

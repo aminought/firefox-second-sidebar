@@ -68,7 +68,13 @@ export class Widget {
    */
   get button() {
     const widget = CustomizableUIWrapper.getWidget(this.id);
+    if (!widget) {
+      return null;
+    }
     const instance = widget.forWindow(window);
+    if (!instance) {
+      return null;
+    }
     return new ToolbarButton({
       element: instance.node,
       classList: this.classList,
