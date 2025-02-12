@@ -89,7 +89,7 @@ export class SidebarInjector {
     this.#setupDependencies();
 
     gNavToolboxWrapper.addEventListener("customizationready", () => {
-      browser.hidden = false;
+      browser.show();
     });
     gNavToolboxWrapper.addEventListener("aftercustomization", () => {
       const springs = document.querySelectorAll("#sb2-main toolbarspring");
