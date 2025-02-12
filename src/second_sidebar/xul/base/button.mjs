@@ -8,11 +8,7 @@ export class Button extends XULElement {
    * @param {Array<string>} params.classList
    */
   constructor({ id = null, classList = [] } = {}) {
-    super("button", {
-      id,
-      classList,
-      create: (tag) => document.createElement(tag),
-    });
+    super({ tag: "button", id, classList, isXUL: false });
   }
 
   /**

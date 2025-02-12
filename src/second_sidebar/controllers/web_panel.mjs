@@ -7,6 +7,7 @@ import { WebPanelButton } from "../xul/web_panel_button.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { WebPanelTab } from "../xul/web_panel_tab.mjs";
 import { WebPanelsController } from "./web_panels.mjs";
+import { WindowManagerWrapper } from "../wrappers/window_manager.mjs";
 
 /* eslint-enable no-unused-vars */
 
@@ -191,12 +192,18 @@ export class WebPanelController {
       }
     };
 
-    this.webPanelButton.listenClick((event) => {
-      if (isLeftMouseButton(event)) {
+    window.addEventListener(this.webPanel.id, (customEvent) => {
+      if (isLeftMouseButton(customEvent.detail)) {
         switchWebPanel();
-      } else if (isMiddleMouseButton(event)) {
+      } else if (isMiddleMouseButton(customEvent.detail)) {
         this.unload();
       }
+    });
+
+    this.webPanelButton.listenClick((event) => {
+      const lastWindow = WindowManagerWrapper.getMostRecentBrowserWindow();
+      const customEvent = new CustomEvent(this.webPanel.id, { detail: event });
+      lastWindow.dispatchEvent(customEvent);
     });
   }
 

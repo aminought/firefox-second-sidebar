@@ -1,3 +1,6 @@
+import { FaviconsWrapper } from "../wrappers/favicons.mjs";
+import { NetUtilWrapper } from "../wrappers/net_utils.mjs";
+
 const PREDEFINED_ICONS = {
   "about:newtab": "chrome://browser/skin/tab.svg",
   "about:debugging": "chrome://global/skin/icons/developer.svg",
@@ -21,15 +24,15 @@ const PREDEFINED_ICONS = {
 };
 
 export function fetchIconURL(url) {
-  const uri = NetUtil.newURI(url);
+  const uri = NetUtilWrapper.newURI(url);
   if (uri.specIgnoringRef in PREDEFINED_ICONS) {
     return PREDEFINED_ICONS[uri.specIgnoringRef];
   }
 
-  Favicons.setDefaultIconURIPreferredSize(32);
+  FaviconsWrapper.setDefaultIconURIPreferredSize(32);
 
   return new Promise((resolve) => {
-    Favicons.getFaviconURLForPage(uri, async (faviconURI) => {
+    FaviconsWrapper.getFaviconURLForPage(uri, async (faviconURI) => {
       let provider = "browser";
       let faviconURL = faviconURI?.spec;
       try {

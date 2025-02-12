@@ -69,7 +69,7 @@ export class SidebarController {
   #setupListeners() {
     /** @param {MouseEvent} event */
     this.onClickOutsideWhileUnpinned = (event) => {
-      const target = new XULElement(null, { element: event.target });
+      const target = new XULElement({ element: event.target });
       if (
         isLeftMouseButton(event) &&
         !this.sidebar.contains(target) &&

@@ -8,6 +8,6 @@ export class HBox extends XULElement {
    * @param {Array<string>} params.classList
    */
   constructor({ id = null, classList = [] } = {}) {
-    super("hbox", { id, classList });
+    super({ tag: "hbox", id, classList });
   }
 }

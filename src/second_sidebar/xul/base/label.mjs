@@ -8,7 +8,7 @@ export class Label extends XULElement {
    * @param {Array<string>} params.classList
    */
   constructor({ id = null, classList = [] } = {}) {
-    super("label", { id, classList });
+    super({ tag: "label", id, classList });
   }
 
   /**

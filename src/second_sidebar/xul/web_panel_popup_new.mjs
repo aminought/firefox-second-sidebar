@@ -1,5 +1,4 @@
 import {
-  DEFAULT_USER_CONTEXT_ID,
   applyContainerColor,
   fillContainerMenuList,
 } from "../utils/containers.mjs";
@@ -15,6 +14,7 @@ import { HBox } from "./base/hbox.mjs";
 import { MenuList } from "./base/menulist.mjs";
 import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";
+import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manager.mjs";
 import { ToolbarSeparator } from "./base/toolbar_separator.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
 
@@ -45,9 +45,6 @@ export class WebPanelPopupNew extends Panel {
         new ToolbarSeparator(),
         this.input,
         createPopupGroup("Multi-Account Container", this.containerMenuList),
-        new HBox({
-          id: "sb2-web-panel-new-buttons",
-        }).appendChildren(this.cancelButton, this.saveButton),
         new HBox({
           id: "sb2-web-panel-new-buttons",
         }).appendChildren(this.cancelButton, this.saveButton),
@@ -105,9 +102,11 @@ export class WebPanelPopupNew extends Panel {
     this.input.setValue(suggest);
 
     fillContainerMenuList(this.containerMenuList);
-    this.containerMenuList.setValue(DEFAULT_USER_CONTEXT_ID);
+    this.containerMenuList.setValue(
+      ScriptSecurityManagerWrapper.DEFAULT_USER_CONTEXT_ID,
+    );
     applyContainerColor(
-      DEFAULT_USER_CONTEXT_ID,
+      ScriptSecurityManagerWrapper.DEFAULT_USER_CONTEXT_ID,
       this.containerMenuList.getXUL(),
     );
 

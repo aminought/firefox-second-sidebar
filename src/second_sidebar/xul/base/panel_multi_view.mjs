@@ -8,6 +8,6 @@ export class PanelMultiView extends XULElement {
    * @param {Array<string>} params.classList
    */
   constructor({ id = null, classList = [] } = {}) {
-    super("panelmultiview", { id, classList });
+    super({ tag: "panelmultiview", id, classList });
   }
 }

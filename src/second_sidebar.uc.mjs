@@ -5,12 +5,13 @@
 // @homepageURL     https://github.com/aminought/firefox-second-sidebar
 // ==/UserScript==
 
+import { ContextualIdentityServiceWrapper } from "./second_sidebar/wrappers/contextual_identity_service.mjs";
 import { CustomizeModePatcher } from "./second_sidebar/customize_mode_patcher.mjs";
 import { SidebarDecorator } from "./second_sidebar/sidebar_decorator.mjs";
 import { SidebarInjector } from "./second_sidebar/sidebar_injector.mjs";
 
 const run = () => {
-  ContextualIdentityService.ensureDataReady();
+  ContextualIdentityServiceWrapper.ensureDataReady();
   if (SidebarInjector.inject()) {
     SidebarDecorator.decorate();
     CustomizeModePatcher.patch();

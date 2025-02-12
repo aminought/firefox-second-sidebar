@@ -9,11 +9,7 @@ export class Header extends XULElement {
    * @param {Array<string>} params.classList
    */
   constructor(level, { id = null, classList = [] } = {}) {
-    super(`h${level}`, {
-      id,
-      classList,
-      create: (tag) => document.createElement(tag),
-    });
+    super({ tag: `h${level}`, id, classList, isXUL: false });
   }
 
   /**

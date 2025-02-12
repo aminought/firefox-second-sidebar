@@ -1,4 +1,8 @@
+import { FullZoomWrapper } from "../../wrappers/full_zoom.mjs";
+import { NetUtilWrapper } from "../../wrappers/net_utils.mjs";
+import { ScriptSecurityManagerWrapper } from "../../wrappers/script_security_manager.mjs";
 import { XULElement } from "./xul_element.mjs";
+import { ZoomManagerWrapper } from "../../wrappers/zoom_manager.mjs";
 
 export class Browser extends XULElement {
   /**
@@ -9,7 +13,7 @@ export class Browser extends XULElement {
    * @param {HTMLElement?} params.element
    */
   constructor({ id = null, classList = [], element } = {}) {
-    super("browser", { id, classList, element });
+    super({ tag: "browser", id, classList, element });
     this.ZOOM_DELTA = 0.1;
   }
 
@@ -111,8 +115,8 @@ export class Browser extends XULElement {
    * @returns {Browser}
    */
   go(url) {
-    this.element.loadURI(NetUtil.newURI(url), {
-      triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal(),
+    this.element.loadURI(NetUtilWrapper.newURI(url), {
+      triggeringPrincipal: ScriptSecurityManagerWrapper.getSystemPrincipal(),
     });
 
     return this;
@@ -123,7 +127,7 @@ export class Browser extends XULElement {
    * @returns {number}
    */
   getZoom() {
-    return ZoomManager.getZoomForBrowser(this.element);
+    return ZoomManagerWrapper.getZoomForBrowser(this.element);
   }
 
   /**
@@ -131,7 +135,7 @@ export class Browser extends XULElement {
    * @returns {Browser}
    */
   zoomIn() {
-    FullZoom.changeZoomBy(this.element, this.ZOOM_DELTA);
+    FullZoomWrapper.changeZoomBy(this.element, this.ZOOM_DELTA);
     return this;
   }
 
@@ -140,7 +144,7 @@ export class Browser extends XULElement {
    * @returns {Browser}
    */
   zoomOut() {
-    FullZoom.changeZoomBy(this.element, -this.ZOOM_DELTA);
+    FullZoomWrapper.changeZoomBy(this.element, -this.ZOOM_DELTA);
     return this;
   }
 
@@ -149,7 +153,7 @@ export class Browser extends XULElement {
    * @returns {Browser}
    */
   setZoom(value) {
-    FullZoom.setZoom(value, this.element);
+    FullZoomWrapper.setZoom(value, this.element);
     return this;
   }
 

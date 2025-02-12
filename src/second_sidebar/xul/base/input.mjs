@@ -8,11 +8,7 @@ export class Input extends XULElement {
    * @param {Array<string>} params.classList
    */
   constructor({ id = null, classList = [] } = {}) {
-    super("input", {
-      id,
-      classList,
-      create: (tag) => document.createElement(tag),
-    });
+    super({ tag: "input", id, classList, isXUL: false });
   }
 
   /**

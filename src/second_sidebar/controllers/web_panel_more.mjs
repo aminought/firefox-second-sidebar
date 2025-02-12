@@ -1,7 +1,11 @@
 /* eslint-disable no-unused-vars */
+import { OPEN_URL_IN, openTrustedLinkIn } from "../wrappers/global.mjs";
+
+import { ClipboardHelperWrapper } from "../wrappers/clipboard_helper.mjs";
 import { SidebarController } from "./sidebar.mjs";
 import { WebPanelPopupMore } from "../xul/web_panel_popup_more.mjs";
 import { WebPanelsController } from "./web_panels.mjs";
+
 /* eslint-enable no-unused-vars */
 
 export class WebPanelMoreController {
@@ -34,15 +38,13 @@ export class WebPanelMoreController {
       const webPanelController = this.webPanelsController.get(uuid);
       openTrustedLinkIn(
         webPanelController.getCurrentUrl(),
-        event.ctrlKey ? "tabshifted" : "tab",
+        event.ctrlKey ? OPEN_URL_IN.BACKGROUND_TAB : OPEN_URL_IN.TAB,
       );
     });
 
     this.webPanelPopupMore.listenCopyPageUrlButtonClick((uuid) => {
       const webPanelController = this.webPanelsController.get(uuid);
-      Cc["@mozilla.org/widget/clipboardhelper;1"]
-        .getService(Ci.nsIClipboardHelper)
-        .copyString(webPanelController.getCurrentUrl());
+      ClipboardHelperWrapper.copyString(webPanelController.getCurrentUrl());
     });
 
     this.webPanelPopupMore.listenMobileButtonClick((uuid, mobile) => {

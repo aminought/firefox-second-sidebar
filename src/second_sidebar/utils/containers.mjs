@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
+import { ContextualIdentityServiceWrapper } from "../wrappers/contextual_identity_service.mjs";
 import { MenuList } from "../xul/base/menulist.mjs";
+import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manager.mjs";
 /* eslint-enable no-unused-vars */
 
-export const DEFAULT_USER_CONTEXT_ID =
-  Services.scriptSecurityManager.DEFAULT_USER_CONTEXT_ID;
 const CONTAINER_CLASS = "sb2-container";
 
 /**
@@ -13,7 +13,7 @@ const CONTAINER_CLASS = "sb2-container";
  */
 export function getContainerColor(userContextId) {
   const identity =
-    ContextualIdentityService.getPublicIdentityFromId(userContextId);
+    ContextualIdentityServiceWrapper.getPublicIdentityFromId(userContextId);
   return identity ? identity.color : "transparent";
 }
 
@@ -23,7 +23,10 @@ export function getContainerColor(userContextId) {
  * @param {HTMLElement} element
  */
 export function applyContainerColor(userContextId, element) {
-  if (String(userContextId) === String(DEFAULT_USER_CONTEXT_ID)) {
+  if (
+    String(userContextId) ===
+    String(ScriptSecurityManagerWrapper.DEFAULT_USER_CONTEXT_ID)
+  ) {
     element.classList.remove(CONTAINER_CLASS);
   } else {
     element.classList.add(CONTAINER_CLASS);
@@ -40,11 +43,16 @@ export function applyContainerColor(userContextId, element) {
  */
 export function fillContainerMenuList(containerMenuList) {
   containerMenuList.removeAllItems();
-  containerMenuList.appendItem("No Container", DEFAULT_USER_CONTEXT_ID);
+  containerMenuList.appendItem(
+    "No Container",
+    ScriptSecurityManagerWrapper.DEFAULT_USER_CONTEXT_ID,
+  );
 
-  const userContextIds = ContextualIdentityService.getPublicUserContextIds();
+  const userContextIds =
+    ContextualIdentityServiceWrapper.getPublicUserContextIds();
   for (const userContextId of userContextIds) {
-    const label = ContextualIdentityService.getUserContextLabel(userContextId);
+    const label =
+      ContextualIdentityServiceWrapper.getUserContextLabel(userContextId);
     containerMenuList.appendItem(label, userContextId);
 
     const lastMenuItem = containerMenuList.getLastMenuItemXUL();

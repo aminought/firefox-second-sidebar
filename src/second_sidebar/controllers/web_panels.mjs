@@ -2,14 +2,15 @@
 import { SidebarController } from "./sidebar.mjs";
 import { SidebarMain } from "../xul/sidebar_main.mjs";
 import { WebPanel } from "../xul/web_panel.mjs";
-import { WebPanelButtonMenuPopup } from "../xul/web_panel_button_menupopup.mjs";
 import { WebPanelController } from "./web_panel.mjs";
 import { WebPanelDeleteController } from "./web_panel_delete.mjs";
 import { WebPanelEditController } from "./web_panel_edit.mjs";
+import { WebPanelMenuPopup } from "../xul/web_panel_menupopup.mjs";
 import { WebPanelTab } from "../xul/web_panel_tab.mjs";
 import { WebPanelTabs } from "../xul/web_panel_tabs.mjs";
 import { WebPanels } from "../xul/web_panels.mjs";
 import { WebPanelsSettings } from "../settings/web_panels_settings.mjs";
+import { gCustomizeModeWrapper } from "../wrappers/g_customize_mode.mjs";
 /* eslint-enable no-unused-vars */
 
 export class WebPanelsController {
@@ -18,13 +19,13 @@ export class WebPanelsController {
    * @param {WebPanels} webPanels
    * @param {SidebarMain} sidebarMain
    * @param {WebPanelTabs} webPanelTabs
-   * @param {WebPanelButtonMenuPopup} webPanelButtonMenuPopup
+   * @param {WebPanelMenuPopup} webPanelMenuPopup
    */
-  constructor(webPanels, sidebarMain, webPanelTabs, webPanelButtonMenuPopup) {
+  constructor(webPanels, sidebarMain, webPanelTabs, webPanelMenuPopup) {
     this.webPanels = webPanels;
     this.sidebarMain = sidebarMain;
     this.webPanelTabs = webPanelTabs;
-    this.webPanelButtonMenuPopup = webPanelButtonMenuPopup;
+    this.webPanelMenuPopup = webPanelMenuPopup;
 
     /**@type {Object<string, WebPanelController>} */
     this.webPanelControllers = {};
@@ -49,22 +50,22 @@ export class WebPanelsController {
   }
 
   #setupListeners() {
-    this.webPanelButtonMenuPopup.setWebPanelsController(this);
+    this.webPanelMenuPopup.setWebPanelsController(this);
 
-    this.webPanelButtonMenuPopup.listenUnloadItemClick((webPanelController) => {
+    this.webPanelMenuPopup.listenUnloadItemClick((webPanelController) => {
       webPanelController.unload();
     });
 
-    this.webPanelButtonMenuPopup.listenEditItemClick((webPanelController) => {
+    this.webPanelMenuPopup.listenEditItemClick((webPanelController) => {
       this.webPanelEditController.openPopup(webPanelController);
     });
 
-    this.webPanelButtonMenuPopup.listenDeleteItemClick((webPanelController) => {
+    this.webPanelMenuPopup.listenDeleteItemClick((webPanelController) => {
       this.webPanelDeleteController.openPopup(webPanelController);
     });
 
-    this.webPanelButtonMenuPopup.listenCustomizeItemClick(() => {
-      gCustomizeMode.enter();
+    this.webPanelMenuPopup.listenCustomizeItemClick(() => {
+      gCustomizeModeWrapper.enter();
     });
   }
 
@@ -158,18 +159,6 @@ export class WebPanelsController {
 
       this.add(webPanelController);
     }
-
-    console.log("Registering area sb2-main");
-    const uuids = Object.keys(this.webPanelControllers);
-    CustomizableUI.registerArea("sb2-main", {
-      type: window.CustomizableUI.TYPE_TOOLBAR,
-      defaultCollapsed: false,
-      overflowable: false,
-      defaultPlacements: uuids.concat(["new-web-panel"]),
-    });
-
-    console.log("Registering toolbar node sb2-main");
-    CustomizableUI.registerToolbarNode(document.getElementById("sb2-main"));
   }
 
   /**

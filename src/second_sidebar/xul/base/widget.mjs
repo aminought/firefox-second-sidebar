@@ -1,3 +1,4 @@
+import { CustomizableUIWrapper } from "../../wrappers/customizable_ui.mjs";
 import { ToolbarButton } from "./toolbar_button.mjs";
 
 export class Widget {
@@ -32,40 +33,54 @@ export class Widget {
     this.tooltipText = tooltipText;
     this.open = open;
     this.unloaded = unloaded;
-    this.widget = CustomizableUI.createWidget({
-      id,
-      type: "button",
-      localized: false,
-      onCreated: (element) => {
-        this.button = new ToolbarButton({ element, classList });
-        this.button.setOpen(this.open);
-        this.button.setUnloaded(this.unloaded);
-        if (this.iconURL) {
-          this.button.setIcon(this.iconURL);
-        }
-        if (this.label) {
-          this.button.setLabel(this.label);
-        }
-        if (this.tooltipText) {
-          this.button.setTooltipText(this.tooltipText);
-        }
-        if (context) {
-          this.button.setContext(context);
-        }
-      },
-      onClick: (event) => {
-        if (this.onClick) {
-          this.onClick(event);
-        }
-      },
-    });
+    this.context = context;
+    try {
+      this.widget = CustomizableUIWrapper.createWidget({
+        id,
+        onCreated: (element) => {
+          this.button = new ToolbarButton({ element, classList });
+          this.#setup();
+        },
+        onClick: (event) => {
+          if (this.onClick) {
+            this.onClick(event);
+          }
+        },
+      });
+      console.log(`Widget ${id} was created`);
+    } catch (error) {
+      console.log(`Widget ${id} is already created:`, error);
+      const widget = CustomizableUIWrapper.getWidget(id);
+      for (const instance of widget.instances) {
+        this.button = new ToolbarButton({ element: instance.node, classList });
+        this.#setup();
+      }
+    }
     if (position) {
-      const placement = CustomizableUI.getPlacementOfWidget("new-web-panel");
-      CustomizableUI.addWidgetToArea(
+      const placement =
+        CustomizableUIWrapper.getPlacementOfWidget("new-web-panel");
+      CustomizableUIWrapper.addWidgetToArea(
         id,
         placement.area,
         placement.position + (position === "before" ? 0 : 1),
       );
+    }
+  }
+
+  #setup() {
+    this.button.setOpen(this.open);
+    this.button.setUnloaded(this.unloaded);
+    if (this.iconURL) {
+      this.button.setIcon(this.iconURL);
+    }
+    if (this.label) {
+      this.button.setLabel(this.label);
+    }
+    if (this.tooltipText) {
+      this.button.setTooltipText(this.tooltipText);
+    }
+    if (this.context) {
+      this.button.setContext(this.context);
     }
   }
 
@@ -186,7 +201,7 @@ export class Widget {
    * @returns {Widget}
    */
   remove() {
-    CustomizableUI.destroyWidget(this.button.id);
+    CustomizableUIWrapper.destroyWidget(this.button.id);
     return this;
   }
 

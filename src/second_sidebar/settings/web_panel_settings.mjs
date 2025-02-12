@@ -1,4 +1,4 @@
-import { DEFAULT_USER_CONTEXT_ID } from "../utils/containers.mjs";
+import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manager.mjs";
 
 export class WebPanelSettings {
   /**@type {string} */
@@ -61,7 +61,8 @@ export class WebPanelSettings {
     this.#loadOnStartup = loadOnStartup ?? false;
     this.#unloadOnClose = unloadOnClose ?? false;
     this.#hideToolbar = hideToolbar ?? false;
-    this.#userContextId = userContextId ?? DEFAULT_USER_CONTEXT_ID;
+    this.#userContextId =
+      userContextId ?? ScriptSecurityManagerWrapper.DEFAULT_USER_CONTEXT_ID;
   }
 
   get uuid() {

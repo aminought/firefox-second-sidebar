@@ -4,6 +4,7 @@ import { SidebarMain } from "../xul/sidebar_main.mjs";
 import { SidebarMainMenuPopup } from "../xul/sidebar_main_menupopup.mjs";
 import { SidebarMainSettingsController } from "./sidebar_main_settings.mjs";
 import { XULElement } from "../xul/base/xul_element.mjs";
+import { gCustomizeModeWrapper } from "../wrappers/g_customize_mode.mjs";
 import { isRightMouseButton } from "../utils/buttons.mjs";
 /* eslint-enable no-unused-vars */
 
@@ -45,7 +46,7 @@ export class SidebarMainController {
     });
 
     this.sidebarMainMenuPopup.listenCustomizeItemClick(() => {
-      gCustomizeMode.enter();
+      gCustomizeModeWrapper.enter();
     });
   }
 

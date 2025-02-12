@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import { NetUtilWrapper } from "../wrappers/net_utils.mjs";
 import { SidebarController } from "./sidebar.mjs";
 import { WebPanel } from "../xul/web_panel.mjs";
 import { WebPanelButton } from "../xul/web_panel_button.mjs";
@@ -8,7 +9,9 @@ import { WebPanelNewButton } from "../xul/web_panel_new_button.mjs";
 import { WebPanelPopupNew } from "../xul/web_panel_popup_new.mjs";
 import { WebPanelTab } from "../xul/web_panel_tab.mjs";
 import { WebPanelsController } from "./web_panels.mjs";
+import { WindowManagerWrapper } from "../wrappers/window_manager.mjs";
 import { fetchIconURL } from "../utils/icons.mjs";
+import { gBrowserWrapper } from "../wrappers/g_browser.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
 /* eslint-enable no-unused-vars */
 
@@ -22,9 +25,15 @@ export class WebPanelNewController {
     this.webPanelNewButton = webPanelNewButton;
     this.webPanelPopupNew = webPanelPopupNew;
 
+    window.addEventListener("web-panel-new", () => {
+      this.openPopup();
+    });
+
     this.webPanelNewButton.listenClick((event) => {
       if (isLeftMouseButton(event)) {
-        this.openPopup();
+        const lastWindow = WindowManagerWrapper.getMostRecentBrowserWindow();
+        const customEvent = new CustomEvent("web-panel-new", {});
+        lastWindow.dispatchEvent(customEvent);
       }
     });
 
@@ -59,7 +68,7 @@ export class WebPanelNewController {
 
   openPopup() {
     let suggest = "https://";
-    const currentURI = gBrowser.currentURI;
+    const currentURI = gBrowserWrapper.currentURI;
 
     if (["http", "https"].includes(currentURI.scheme)) {
       suggest = currentURI.spec;
@@ -75,7 +84,7 @@ export class WebPanelNewController {
    */
   async createWebPanelAndOpen(url, userContextId) {
     try {
-      NetUtil.newURI(url);
+      NetUtilWrapper.newURI(url);
     } catch (error) {
       console.log("Invalid url:", error);
       return;

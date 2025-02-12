@@ -8,11 +8,7 @@ export class Img extends XULElement {
    * @param {Array<string>} params.classList
    */
   constructor({ id = null, classList = [] } = {}) {
-    super("img", {
-      id,
-      classList,
-      create: (tag) => document.createElement(tag),
-    });
+    super({ tag: "img", id, classList, isXUL: false });
   }
 
   /**

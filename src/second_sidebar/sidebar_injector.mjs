@@ -1,4 +1,5 @@
 import { ContextItemController } from "./controllers/context_item.mjs";
+import { CustomizableUIWrapper } from "./wrappers/customizable_ui.mjs";
 import { Sidebar } from "./xul/sidebar.mjs";
 import { SidebarBox } from "./xul/sidebar_box.mjs";
 import { SidebarBoxFiller } from "./xul/sidebar_box_filler.mjs";
@@ -13,9 +14,9 @@ import { SidebarSplitterPinned } from "./xul/sidebar_splitter_pinned.mjs";
 import { SidebarSplitterUnpinned } from "./xul/sidebar_splitter_unpinned.mjs";
 import { SidebarSplittersController } from "./controllers/sidebar_splitters.mjs";
 import { SidebarToolbar } from "./xul/sidebar_toolbar.mjs";
-import { WebPanelButtonMenuPopup } from "./xul/web_panel_button_menupopup.mjs";
 import { WebPanelDeleteController } from "./controllers/web_panel_delete.mjs";
 import { WebPanelEditController } from "./controllers/web_panel_edit.mjs";
+import { WebPanelMenuPopup } from "./xul/web_panel_menupopup.mjs";
 import { WebPanelMoreController } from "./controllers/web_panel_more.mjs";
 import { WebPanelNewButton } from "./xul/web_panel_new_button.mjs";
 import { WebPanelNewController } from "./controllers/web_panel_new.mjs";
@@ -28,6 +29,7 @@ import { WebPanels } from "./xul/web_panels.mjs";
 import { WebPanelsController } from "./controllers/web_panels.mjs";
 import { WebPanelsSettings } from "./settings/web_panels_settings.mjs";
 import { XULElement } from "./xul/base/xul_element.mjs";
+import { gNavToolboxWrapper } from "./wrappers/g_nav_toolbox.mjs";
 
 export class SidebarInjector {
   /**
@@ -42,17 +44,54 @@ export class SidebarInjector {
 
     this.webPanelsSettings = WebPanelsSettings.load();
 
-    const elements = this.#createElements();
-    this.#injectElements(elements);
-    this.#buildControllers(elements);
-    this.#setupDependencies();
+    console.log("Sidebar creation...");
 
-    gNavToolbox.addEventListener("customizationready", () => {
-      const browser = document.querySelector("#browser");
-      browser.hidden = false;
+    this.sidebarMain = new SidebarMain();
+    this.sidebarBox = new SidebarBox();
+    this.sidebarBoxFiller = new SidebarBoxFiller();
+    this.sidebarSplitterPinned = new SidebarSplitterPinned();
+    this.sidebarSplitterUnpinned = new SidebarSplitterUnpinned();
+    this.sidebar = new Sidebar();
+    this.sidebarToolbar = new SidebarToolbar();
+
+    this.sidebarBox.appendChildren(
+      this.sidebarBoxFiller,
+      this.sidebarSplitterUnpinned,
+      this.sidebar,
+    );
+
+    const browser = new XULElement({
+      element: document.getElementById("browser"),
+    });
+    browser.appendChildren(
+      this.sidebarSplitterPinned,
+      this.sidebarBox,
+      this.sidebarMain,
+    );
+
+    console.log("Registering area sb2-main");
+    CustomizableUIWrapper.registerArea(this.sidebarMain.id, {
+      defaultPlacements: ["new-web-panel"],
     });
 
-    gNavToolbox.addEventListener("aftercustomization", () => {
+    console.log("Registering toolbar node sb2-main");
+    CustomizableUIWrapper.registerToolbarNode(
+      document.getElementById(this.sidebarMain.id),
+    );
+
+    console.log("Elements creation...");
+    const elements = this.#createElements();
+    console.log("Elements injection...");
+    this.#injectElements(elements);
+    console.log("Building controllers...");
+    this.#buildControllers(elements);
+    console.log("Setup dependencies...");
+    this.#setupDependencies();
+
+    gNavToolboxWrapper.addEventListener("customizationready", () => {
+      browser.hidden = false;
+    });
+    gNavToolboxWrapper.addEventListener("aftercustomization", () => {
       const springs = document.querySelectorAll("#sb2-main toolbarspring");
       for (const spring of springs) {
         spring.removeAttribute("context");
@@ -70,9 +109,7 @@ export class SidebarInjector {
    * @returns {boolean}
    */
   static #isPopupWindow() {
-    const mainWindow = new XULElement(null, {
-      element: document.querySelector("#main-window"),
-    });
+    const mainWindow = new XULElement({ id: "main-window", exists: true });
     return (
       mainWindow.hasAttribute("chromehidden") &&
       mainWindow.getAttribute("chromehidden").includes("extrachrome")
@@ -85,24 +122,15 @@ export class SidebarInjector {
    */
   static #createElements() {
     return {
-      root: new XULElement(null, {
-        element: document.documentElement,
-      }),
-      sidebarMain: new SidebarMain(),
-      webPanelTabs: new WebPanelTabs(),
-      webPanelButtonMenuPopup: new WebPanelButtonMenuPopup(),
+      root: new XULElement({ element: document.documentElement }),
       webPanelNewButton: new WebPanelNewButton(),
+      webPanelTabs: new WebPanelTabs(),
+      webPanelMenuPopup: new WebPanelMenuPopup(),
       webPanelPopupNew: new WebPanelPopupNew(),
       webPanelPopupEdit: new WebPanelPopupEdit(),
       webPanelPopupMore: new WebPanelPopupMore(),
       webPanelPopupDelete: new WebPanelPopupDelete(),
-      sidebarBox: new SidebarBox(),
-      sidebar: new Sidebar(),
-      sidebarToolbar: new SidebarToolbar(),
       webPanels: new WebPanels(),
-      sidebarSplitterPinned: new SidebarSplitterPinned(),
-      sidebarSplitterUnpinned: new SidebarSplitterUnpinned(),
-      sidebarBoxFiller: new SidebarBoxFiller(),
       sidebarMainPopupSettings: new SidebarMainPopupSettings(),
       sidebarMainMenuPopup: new SidebarMainMenuPopup(),
     };
@@ -113,31 +141,14 @@ export class SidebarInjector {
    * @param {Object<string, XULElement>} elements
    */
   static #injectElements(elements) {
-    elements.sidebarToolbar.moreButton.appendChild(elements.webPanelPopupMore);
-    elements.sidebar.appendChildren(
-      elements.sidebarToolbar,
-      elements.webPanels,
-    );
-    elements.sidebarBox.appendChildren(
-      elements.sidebarBoxFiller,
-      elements.sidebarSplitterUnpinned,
-      elements.sidebar,
-    );
+    this.sidebarToolbar.moreButton.appendChild(elements.webPanelPopupMore);
+    this.sidebar.appendChildren(this.sidebarToolbar, elements.webPanels);
 
-    const browser = new XULElement(null, {
-      element: document.querySelector("#browser"),
-    });
-    browser.appendChildren(
-      elements.sidebarSplitterPinned,
-      elements.sidebarBox,
-      elements.sidebarMain,
-    );
-
-    const mainPopupSet = new XULElement(null, {
-      element: document.querySelector("#mainPopupSet"),
+    const mainPopupSet = new XULElement({
+      element: document.getElementById("mainPopupSet"),
     });
     mainPopupSet.appendChildren(
-      elements.webPanelButtonMenuPopup,
+      elements.webPanelMenuPopup,
       elements.webPanelPopupNew,
       elements.webPanelPopupEdit,
       elements.webPanelPopupDelete,
@@ -145,7 +156,7 @@ export class SidebarInjector {
       elements.sidebarMainPopupSettings,
     );
 
-    const body = new XULElement(null, { element: document.body });
+    const body = new XULElement({ element: document.body });
     body.appendChild(elements.webPanelTabs);
   }
 
@@ -155,7 +166,7 @@ export class SidebarInjector {
    */
   static #buildControllers(elements) {
     this.sidebarMainController = new SidebarMainController(
-      elements.sidebarMain,
+      this.sidebarMain,
       elements.sidebarMainMenuPopup,
       elements.root,
     );
@@ -163,23 +174,23 @@ export class SidebarInjector {
       elements.sidebarMainPopupSettings,
     );
     this.sidebarController = new SidebarController(
-      elements.sidebarBox,
-      elements.sidebar,
-      elements.sidebarToolbar,
-      elements.sidebarSplitterUnpinned,
+      this.sidebarBox,
+      this.sidebar,
+      this.sidebarToolbar,
+      this.sidebarSplitterUnpinned,
       elements.webPanelPopupEdit,
       elements.sidebarMainPopupSettings,
       elements.root,
     );
     this.sidebarSplittersController = new SidebarSplittersController(
-      elements.sidebarSplitterUnpinned,
-      elements.sidebarSplitterPinned,
+      this.sidebarSplitterUnpinned,
+      this.sidebarSplitterPinned,
     );
     this.webPanelsController = new WebPanelsController(
       elements.webPanels,
-      elements.sidebarMain,
+      this.sidebarMain,
       elements.webPanelTabs,
-      elements.webPanelButtonMenuPopup,
+      elements.webPanelMenuPopup,
     );
     this.webPanelNewController = new WebPanelNewController(
       elements.webPanelNewButton,

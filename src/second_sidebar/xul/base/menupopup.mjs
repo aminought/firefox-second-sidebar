@@ -8,6 +8,6 @@ export class MenuPopup extends XULElement {
    * @param {Array<string>} params.classList
    */
   constructor({ id = null, classList = [] } = {}) {
-    super("menupopup", { id, classList });
+    super({ tag: "menupopup", id, classList });
   }
 }

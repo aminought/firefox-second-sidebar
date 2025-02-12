@@ -1,23 +1,27 @@
 export class XULElement {
   /**
    *
-   * @param {string?} tag
    * @param {object} params
+   * @param {string?} params.tag
    * @param {string?} params.id
    * @param {Array<string>} params.classList
-   * @param {function(string):HTMLElement} params.create
+   * @param {boolean} params.isXUL
    * @param {HTMLElement?} params.element
    */
-  constructor(
-    tag,
-    {
-      id = null,
-      classList = [],
-      create = (tag) => document.createXULElement(tag),
-      element,
-    } = {},
-  ) {
-    this.element = element ?? create(tag);
+  constructor({
+    tag = null,
+    id = null,
+    classList = [],
+    isXUL = true,
+    element = null,
+  } = {}) {
+    if (element !== null) {
+      this.element = element;
+    } else {
+      this.element = isXUL
+        ? document.createXULElement(tag)
+        : document.createElement(tag);
+    }
     if (id !== null) {
       this.element.id = id;
     }
@@ -26,10 +30,17 @@ export class XULElement {
     }
   }
 
+  /**
+   * @returns {string?}
+   */
   get id() {
     return this.element.id;
   }
 
+  /**
+   *
+   * @returns {HTMLelement}
+   */
   getXUL() {
     return this.element;
   }

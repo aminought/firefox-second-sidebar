@@ -8,10 +8,7 @@ export class Toolbar extends XULElement {
    * @param {Array<string>} params.classList
    */
   constructor({ id = null, classList = [] } = {}) {
-    super("toolbar", {
-      id,
-      classList,
-    });
+    super({ tag: "toolbar", id, classList });
   }
 
   /**

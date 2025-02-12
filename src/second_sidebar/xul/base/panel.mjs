@@ -11,7 +11,7 @@ export class Panel extends XULElement {
    * @param {Array<string>} params.classList
    */
   constructor({ id = null, classList = [] } = {}) {
-    super("panel", { id, classList: [...classList, "panel-no-padding"] });
+    super({ tag: "panel", id, classList: [...classList, "panel-no-padding"] });
   }
 
   /**
