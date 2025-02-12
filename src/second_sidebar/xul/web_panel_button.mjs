@@ -41,7 +41,7 @@ export class WebPanelButton extends Widget {
    * @returns {WebPanelButton}
    */
   showPlayingIcon() {
-    this.doWhenButtonReady(() => {
+    return this.doWhenButtonReady(() => {
       if (this.playingIcon === null) {
         this.playingIcon = new Img({ classList: ["tab-icon-overlay"] })
           .setAttribute("role", "presentation")
@@ -51,7 +51,6 @@ export class WebPanelButton extends Widget {
       }
       this.playingIcon.removeAttribute("hidden");
     });
-    return this;
   }
 
   /**

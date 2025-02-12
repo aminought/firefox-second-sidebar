@@ -6,6 +6,7 @@
 /**
  * @typedef {Object} Widget
  * @property {Array<WidgetInstance>} instances
+ * @property {function(Window):WidgetInstance} forWindow
  */
 
 export class CustomizableUIWrapper {

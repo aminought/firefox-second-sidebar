@@ -26,35 +26,31 @@ export class Widget {
     context = null,
     position = null,
   }) {
-    this.button = null;
-    this.onClick = null;
-    this.iconURL = iconURL;
+    this.id = id;
+    this.classList = classList;
     this.label = label;
     this.tooltipText = tooltipText;
+    this.iconURL = iconURL;
     this.open = open;
     this.unloaded = unloaded;
     this.context = context;
+    this.onClick = null;
     try {
       this.widget = CustomizableUIWrapper.createWidget({
         id,
-        onCreated: (element) => {
-          this.button = new ToolbarButton({ element, classList });
-          this.#setup();
+        onCreated: async (element) => {
+          console.log(`Widget ${id} was created`);
+          this.#setup(new ToolbarButton({ element, classList }));
         },
-        onClick: (event) => {
+        onClick: async (event) => {
           if (this.onClick) {
             this.onClick(event);
           }
         },
       });
-      console.log(`Widget ${id} was created`);
-    } catch (error) {
-      console.log(`Widget ${id} is already created:`, error);
-      const widget = CustomizableUIWrapper.getWidget(id);
-      for (const instance of widget.instances) {
-        this.button = new ToolbarButton({ element: instance.node, classList });
-        this.#setup();
-      }
+    } catch {
+      console.log(`Widget ${id} is already created`);
+      this.#setup(this.button);
     }
     if (position) {
       const placement =
@@ -67,20 +63,36 @@ export class Widget {
     }
   }
 
-  #setup() {
-    this.button.setOpen(this.open);
-    this.button.setUnloaded(this.unloaded);
+  /**
+   * @returns {ToolbarButton?}
+   */
+  get button() {
+    const widget = CustomizableUIWrapper.getWidget(this.id);
+    const instance = widget.forWindow(window);
+    return new ToolbarButton({
+      element: instance.node,
+      classList: this.classList,
+    });
+  }
+
+  /**
+   *
+   * @param {HTMLElement} button
+   */
+  #setup(button) {
+    button.setOpen(this.open);
+    button.setUnloaded(this.unloaded);
     if (this.iconURL) {
-      this.button.setIcon(this.iconURL);
+      button.setIcon(this.iconURL);
     }
     if (this.label) {
-      this.button.setLabel(this.label);
+      button.setLabel(this.label);
     }
     if (this.tooltipText) {
-      this.button.setTooltipText(this.tooltipText);
+      button.setTooltipText(this.tooltipText);
     }
     if (this.context) {
-      this.button.setContext(this.context);
+      button.setContext(this.context);
     }
   }
 
@@ -101,8 +113,9 @@ export class Widget {
    */
   setIcon(iconURL) {
     this.iconURL = iconURL;
-    if (this.button) {
-      this.button.setIcon(this.iconURL);
+    const button = this.button;
+    if (button) {
+      button.setIcon(this.iconURL);
     }
     return this;
   }
@@ -114,8 +127,9 @@ export class Widget {
    */
   setLabel(text) {
     this.label = text;
-    if (this.button) {
-      this.button.setLabel(this.label);
+    const button = this.button;
+    if (button) {
+      button.setLabel(this.label);
     }
     return this;
   }
@@ -127,8 +141,9 @@ export class Widget {
    */
   setTooltipText(text) {
     this.tooltipText = text;
-    if (this.button) {
-      this.button.setTooltipText(this.tooltipText);
+    const button = this.button;
+    if (button) {
+      button.setTooltipText(this.tooltipText);
     }
     return this;
   }
@@ -148,8 +163,9 @@ export class Widget {
    */
   setUnloaded(value) {
     this.unloaded = value;
-    if (this.button) {
-      this.button.setUnloaded(value);
+    const button = this.button;
+    if (button) {
+      button.setUnloaded(value);
     }
     return this;
   }
@@ -169,8 +185,9 @@ export class Widget {
    */
   setOpen(value) {
     this.open = value;
-    if (this.button) {
-      this.button.setOpen(value);
+    const button = this.button;
+    if (button) {
+      button.setOpen(value);
     }
     return this;
   }
@@ -182,8 +199,9 @@ export class Widget {
    * @returns {Widget}
    */
   setAttribute(name, value) {
-    if (this.button) {
-      this.button.setAttribute(name, value);
+    const button = this.button;
+    if (button) {
+      button.setAttribute(name, value);
     }
     return this;
   }
@@ -201,7 +219,7 @@ export class Widget {
    * @returns {Widget}
    */
   remove() {
-    CustomizableUIWrapper.destroyWidget(this.button.id);
+    CustomizableUIWrapper.destroyWidget(this.id);
     return this;
   }
 
