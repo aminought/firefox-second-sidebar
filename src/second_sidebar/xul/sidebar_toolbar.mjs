@@ -1,12 +1,10 @@
-/* eslint-disable no-unused-vars */
 import { Div } from "./base/div.mjs";
 import { HBox } from "./base/hbox.mjs";
 import { Label } from "./base/label.mjs";
-import { MenuPopup } from "./base/menupopup.mjs";
 import { Toolbar } from "./base/toolbar.mjs";
 import { ToolbarButton } from "./base/toolbar_button.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
-/* eslint-enable no-unused-vars */
+import { useAvailableIcon } from "../utils/icons.mjs";
 
 const ICONS = {
   BACK: "chrome://browser/skin/back.svg",
@@ -16,8 +14,10 @@ const ICONS = {
   MORE: "chrome://global/skin/icons/more.svg",
   PINNED:
     "chrome://activity-stream/content/data/content/assets/glyph-unpin-16.svg",
+  PINNED_ALT: "chrome://newtab/content/data/content/assets/glyph-unpin-16.svg",
   UNPINNED:
     "chrome://activity-stream/content/data/content/assets/glyph-pin-16.svg",
+  UNPINNED_ALT: "chrome://newtab/content/data/content/assets/glyph-pin-16.svg",
   CLOSE: "chrome://global/skin/icons/close.svg",
 };
 
@@ -140,9 +140,13 @@ export class SidebarToolbar extends Toolbar {
    * @param {boolean} pinned
    * @returns {SidebarToolbar}
    */
-  changePinButton(pinned) {
+  async changePinButton(pinned) {
     this.pinButton
-      .setIcon(pinned ? ICONS.PINNED : ICONS.UNPINNED)
+      .setIcon(
+        pinned
+          ? await useAvailableIcon(ICONS.PINNED, ICONS.PINNED_ALT)
+          : await useAvailableIcon(ICONS.UNPINNED, ICONS.UNPINNED_ALT),
+      )
       .setTooltipText(pinned ? "Unpin" : "Pin");
     return this;
   }

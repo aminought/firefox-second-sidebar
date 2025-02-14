@@ -11,18 +11,20 @@ const PREDEFINED_ICONS = {
   "about:preferences": "chrome://global/skin/icons/settings.svg",
   "chrome://browser/content/preferences/preferences.xhtml":
     "chrome://global/skin/icons/settings.svg",
-
   "chrome://browser/content/places/bookmarksSidebar.xhtml":
     "chrome://browser/skin/bookmark.svg",
-
   "about:downloads": "chrome://browser/skin/downloads/downloads.svg",
   "chrome://browser/content/downloads/contentAreaDownloadsView.xhtml":
     "chrome://browser/skin/downloads/downloads.svg",
-
   "chrome://browser/content/places/places.xhtml":
     "chrome://browser/skin/library.svg",
 };
 
+/**
+ *
+ * @param {string} url
+ * @returns {string}
+ */
 export function fetchIconURL(url) {
   const uri = NetUtilWrapper.newURI(url);
   if (uri.specIgnoringRef in PREDEFINED_ICONS) {
@@ -53,4 +55,29 @@ export function fetchIconURL(url) {
       resolve(faviconURL);
     });
   });
+}
+
+/**
+ *
+ * @param {string} url
+ * @returns {boolean}
+ */
+export async function isIconAvailable(url) {
+  try {
+    const response = await fetch(url);
+    return response.status === 200;
+  } catch (error) {
+    console.log(`Failed to fetch icon ${url}:`, error);
+    return false;
+  }
+}
+
+/**
+ *
+ * @param {string} url
+ * @param {string} urlAlt
+ * @returns {string}
+ */
+export async function useAvailableIcon(url, urlAlt) {
+  return (await isIconAvailable(url)) ? url : urlAlt;
 }

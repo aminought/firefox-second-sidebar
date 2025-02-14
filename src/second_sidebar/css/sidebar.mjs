@@ -29,10 +29,6 @@ export const SIDEBAR_CSS = `
         white-space: nowrap;
         margin: 0;
       }
-
-      #sb2-pin-button {
-        transform: scale(-1, 1);
-      }
     }
 
     #sb2-web-panels {
