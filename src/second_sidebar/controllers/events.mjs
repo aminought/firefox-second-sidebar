@@ -1,5 +1,6 @@
 import { WindowManagerWrapper } from "../wrappers/window_manager.mjs";
 import { WindowWatcherWrapper } from "../wrappers/window_watcher.mjs";
+import { WindowWrapper } from "../wrappers/window.mjs";
 
 export const WebPanelEvents = {
   EDIT_WEB_PANEL_URL: "edit_web_panel_url",
@@ -61,7 +62,7 @@ export const sendEvents = (type, detail = {}) => {
     const customEvent = new CustomEvent(type, {
       detail: {
         ...detail,
-        isWindowActive: window === lastWindow,
+        isWindowActive: WindowWrapper.isEqual(window, lastWindow),
       },
     });
     window.dispatchEvent(customEvent);
@@ -74,7 +75,7 @@ export const sendEvents = (type, detail = {}) => {
  * @param {function(Event):void} callback
  */
 export const listenEvent = (type, callback) => {
-  window.addEventListener(type, (event) => {
+  new WindowWrapper().addEventListener(type, (event) => {
     console.log(`Got event ${event.type}:`, event.detail);
     callback(event);
   });

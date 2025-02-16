@@ -1,32 +1,22 @@
-import { XULElement } from "./xul_element.mjs";
+import { Browser } from "./browser.mjs";
 
-export class Tab extends XULElement {
+export class Tab extends Browser {
   /**
    *
-   * @param {string} userContextId
    * @param {object} params
    * @param {string?} params.id
    * @param {Array<string>} params.classList
    * @param {HTMLElement?} params.element
    */
-  constructor(userContextId, { id = null, classList = [], element } = {}) {
+  constructor({ id = null, classList = [], element } = {}) {
     super({ tag: "tab", id, classList, element });
-    this.element.userContextId = userContextId;
   }
 
   /**
    *
-   * @returns {HTMLElement}
+   * @returns {boolean}
    */
-  getBrowserXUL() {
-    return this.element.linkedBrowser;
-  }
-
-  /**
-   *
-   * @returns {string}
-   */
-  getUserContextId() {
-    return this.element.userContextId;
+  isActive() {
+    return this.getAttribute("selected") === "true";
   }
 }

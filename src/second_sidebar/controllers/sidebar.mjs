@@ -200,8 +200,6 @@ export class SidebarController {
 
   close() {
     this.sidebarBox.hide();
-    this.unpin();
-    SidebarControllers.webPanelsController.hideActive();
   }
 
   /**

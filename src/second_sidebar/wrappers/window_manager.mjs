@@ -1,9 +1,11 @@
+import { WindowWrapper } from "./window.mjs";
+
 export class WindowManagerWrapper {
   /**
    *
-   * @returns {Window}
+   * @returns {WindowWrapper}
    */
   static getMostRecentBrowserWindow() {
-    return Services.wm.getMostRecentBrowserWindow();
+    return new WindowWrapper(Services.wm.getMostRecentBrowserWindow());
   }
 }

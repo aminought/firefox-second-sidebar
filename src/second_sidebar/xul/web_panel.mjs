@@ -1,28 +1,17 @@
 /* eslint-disable no-unused-vars */
 import { Browser } from "./base/browser.mjs";
 import { ChromeUtilsWrapper } from "../wrappers/chrome_utils.mjs";
+import { TabBrowserWrapper } from "../wrappers/tab_browser.mjs";
 import { WebPanelTab } from "./web_panel_tab.mjs";
 import { ZoomManagerWrapper } from "../wrappers/zoom_manager.mjs";
-import { gBrowserWrapper } from "../wrappers/g_browser.mjs";
 /* eslint-enable no-unused-vars */
 
 const MOBILE_USER_AGENT =
   "Mozilla/5.0 (Linux; Android 11; SAMSUNG SM-G973U) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/14.2 Chrome/87.0.4280.141 Mobile Safari/537.36";
 
-/**
- *
- * @param {WebPanelTab} webPanelTab
- * @returns {HTMLElement}
- */
-const createBrowserForTab = (webPanelTab) => {
-  const result = gBrowserWrapper.createBrowserForTab(webPanelTab.getXUL(), {});
-  return result.browser;
-};
-
 export class WebPanel extends Browser {
   /**
    *
-   * @param {WebPanelTab} webPanelTab
    * @param {string} uuid
    * @param {string} url
    * @param {string} faviconURL
@@ -57,9 +46,9 @@ export class WebPanel extends Browser {
       element: createBrowserForTab(webPanelTab),
     });
     this.setUUID(uuid)
-      .setDisableGlobalHistory("true")
-      .setType("content")
-      .setRemote("true");
+      .setAttribute("disableglobalhistory", "true")
+      .setAttribute("type", "content")
+      .setAttribute("remote", "true");
 
     this.uuid = uuid;
     this.url = url;
@@ -109,26 +98,6 @@ export class WebPanel extends Browser {
     mediaController.onplaybackstatechange = () => {
       callback(mediaController.isPlaying);
     };
-    return this;
-  }
-
-  /**
-   *
-   * @param {function():void} callback
-   * @returns {WebPanel}
-   */
-  listenBrowserProgressListener(callback) {
-    this.listener = {
-      QueryInterface: ChromeUtilsWrapper.generateQI([
-        "nsIWebProgressListener",
-        "nsISupportsWeakReference",
-      ]),
-      onLocationChange: callback,
-      onStateChange: callback,
-      onProgressChange: callback,
-      onStatusChange: callback,
-    };
-    this.addProgressListener(this.listener);
     return this;
   }
 

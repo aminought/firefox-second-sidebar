@@ -4,6 +4,7 @@ import { isLeftMouseButton, isMiddleMouseButton } from "../utils/buttons.mjs";
 
 import { NetUtilWrapper } from "../wrappers/net_utils.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
+import { SidebarElements } from "../sidebar_elements.mjs";
 import { SidebarMain } from "../xul/sidebar_main.mjs";
 import { WebPanel } from "../xul/web_panel.mjs";
 import { WebPanelButton } from "../xul/web_panel_button.mjs";
@@ -124,11 +125,10 @@ export class WebPanelsController {
     });
 
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_USER_CONTEXT_ID, (event) => {
-      const uuid = event.detail.uuid;
-      const userContextId = event.detail.userContextId;
-
-      const webPanelController = this.get(uuid);
-      webPanelController.setUserContextId(userContextId);
+      // const uuid = event.detail.uuid;
+      // const userContextId = event.detail.userContextId;
+      // const webPanelController = this.get(uuid);
+      // webPanelController.setUserContextId(userContextId);
     });
 
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_MOBILE, (event) => {
@@ -245,12 +245,9 @@ export class WebPanelsController {
     }
     const faviconURL = await fetchIconURL(url);
 
-    const webPanelTab = new WebPanelTab(uuid, userContextId);
-    const webPanel = new WebPanel(webPanelTab, uuid, url, faviconURL).hide();
-    const webPanelButton = new WebPanelButton(
-      webPanel.uuid,
-      newWebPanelPosition,
-    )
+    // const webPanelTab = new WebPanelTab(uuid, userContextId);
+    // const webPanel = new WebPanel(webPanelTab, uuid, url, faviconURL).hide();
+    const webPanelButton = new WebPanelButton(uuid, newWebPanelPosition)
       .setUserContextId(userContextId)
       .setIcon(faviconURL)
       .setLabel(url)
@@ -265,11 +262,11 @@ export class WebPanelsController {
 
     if (isWindowActive) {
       this.saveSettings();
-      this.injectWebPanelTab(webPanelTab);
-      this.injectWebPanel(webPanel);
-      webPanelController.initWebPanel();
+      // this.injectWebPanelTab(webPanelTab);
+      // this.injectWebPanel(webPanel);
+      // webPanelController.initWebPanel();
     }
-    webPanelController.initWebPanelButton();
+    // webPanelController.initWebPanelButton();
 
     return webPanelController;
   }
@@ -298,35 +295,9 @@ export class WebPanelsController {
   getActive() {
     return (
       Object.values(this.webPanelControllers).find((webPanelController) =>
-        webPanelController.webPanel.isActive(),
+        webPanelController.isActive(),
       ) ?? null
     );
-  }
-
-  /**
-   *
-   * @param {WebPanel} webPanel
-   * @returns {boolean}
-   */
-  injectWebPanel(webPanel) {
-    if (this.webPanels.contains(webPanel)) {
-      return false;
-    }
-    this.webPanels.appendChild(webPanel);
-    return true;
-  }
-
-  /**
-   *
-   * @param {WebPanelTab} webPanelTab
-   * @returns {boolean}
-   */
-  injectWebPanelTab(webPanelTab) {
-    if (this.webPanelTabs.contains(webPanelTab)) {
-      return false;
-    }
-    this.webPanelTabs.appendChild(webPanelTab);
-    return true;
   }
 
   hideActive() {
@@ -350,16 +321,18 @@ export class WebPanelsController {
    */
   loadSettings(webPanelsSettings) {
     console.log("Loading web panels...");
+    SidebarElements.sidebarBox.showInvisible();
+    SidebarElements.webPanelsBrowser.init();
+    SidebarElements.webPanelsBrowser.waitInitialized(() => {
+      SidebarElements.sidebarBox.hideInvisible();
+    });
+
     for (const webPanelSettings of webPanelsSettings.webPanels) {
-      const webPanelController =
-        WebPanelController.fromSettings(webPanelSettings);
+      const webPanelController = new WebPanelController(webPanelSettings);
       if (webPanelSettings.loadOnStartup) {
-        this.injectWebPanelTab(webPanelController.webPanelTab);
-        this.injectWebPanel(webPanelController.webPanel);
-        webPanelController.initWebPanel();
+        SidebarElements.webPanelsBrowser.addWebPanel(webPanelSettings);
       }
       webPanelController.initWebPanelButton();
-
       this.add(webPanelController);
     }
   }

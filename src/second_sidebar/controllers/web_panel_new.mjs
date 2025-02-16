@@ -6,9 +6,10 @@ import {
   sendEvents,
 } from "./events.mjs";
 
+import { TabBrowserWrapper } from "../wrappers/tab_browser.mjs";
 import { WebPanelNewButton } from "../xul/web_panel_new_button.mjs";
 import { WebPanelPopupNew } from "../xul/web_panel_popup_new.mjs";
-import { gBrowserWrapper } from "../wrappers/g_browser.mjs";
+import { WindowWrapper } from "../wrappers/window.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
 
 /* eslint-enable no-unused-vars */
@@ -51,7 +52,7 @@ export class WebPanelNewController {
 
   openPopup() {
     let suggest = "https://";
-    const currentURI = gBrowserWrapper.currentURI;
+    const currentURI = new WindowWrapper().gBrowser.currentURI;
 
     if (["http", "https"].includes(currentURI.scheme)) {
       suggest = currentURI.spec;

@@ -6,6 +6,7 @@ import { POPUPS_CSS } from "./css/popups.mjs";
 import { SIDEBAR_BOX_CSS } from "./css/sidebar_box.mjs";
 import { SIDEBAR_CSS } from "./css/sidebar.mjs";
 import { SIDEBAR_MAIN_CSS } from "./css/sidebar_main.mjs";
+import { WEB_PANELS_BROWSER_CSS } from "./css/web_panels_browser.mjs";
 import { WEB_PANEL_CSS } from "./css/web_panel.mjs";
 
 const STYLE =
@@ -13,6 +14,7 @@ const STYLE =
   SIDEBAR_MAIN_CSS +
   SIDEBAR_BOX_CSS +
   SIDEBAR_CSS +
+  WEB_PANELS_BROWSER_CSS +
   WEB_PANEL_CSS +
   POPUPS_CSS +
   CONTEXT_ITEM_CSS +

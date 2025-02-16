@@ -1,29 +1,6 @@
 import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manager.mjs";
 
 export class WebPanelSettings {
-  /**@type {string} */
-  #uuid;
-  /**@type {string} */
-  #url;
-  /**@type {string} */
-  #faviconURL;
-  /**@type {boolean} */
-  #pinned;
-  /**@type {string} */
-  #width;
-  /**@type {boolean} */
-  #mobile;
-  /**@type {number} */
-  #zoom;
-  /**@type {boolean} */
-  #loadOnStartup;
-  /**@type {boolean} */
-  #unloadOnClose;
-  /**@type {boolean} */
-  #hideToolbar;
-  /**@type {string} */
-  #userContextId;
-
   /**
    *
    * @param {string} uuid
@@ -51,62 +28,29 @@ export class WebPanelSettings {
     hideToolbar,
     userContextId,
   ) {
-    this.#uuid = uuid ?? crypto.randomUUID();
-    this.#url = url;
-    this.#faviconURL = faviconURL;
-    this.#pinned = pinned ?? true;
-    this.#width = width ?? "400";
-    this.#mobile = mobile ?? false;
-    this.#zoom = zoom ?? 1;
-    this.#loadOnStartup = loadOnStartup ?? false;
-    this.#unloadOnClose = unloadOnClose ?? false;
-    this.#hideToolbar = hideToolbar ?? false;
-    this.#userContextId =
+    /**@type {string} */
+    this.uuid = uuid ?? crypto.randomUUID();
+    /**@type {string} */
+    this.url = url;
+    /**@type {string} */
+    this.faviconURL = faviconURL;
+    /**@type {boolean} */
+    this.pinned = pinned ?? true;
+    /**@type {string} */
+    this.width = width ?? "400";
+    /**@type {boolean} */
+    this.mobile = mobile ?? false;
+    /**@type {number} */
+    this.zoom = zoom ?? 1;
+    /**@type {boolean} */
+    this.loadOnStartup = loadOnStartup ?? false;
+    /**@type {boolean} */
+    this.unloadOnClose = unloadOnClose ?? false;
+    /**@type {boolean} */
+    this.hideToolbar = hideToolbar ?? false;
+    /**@type {number} */
+    this.userContextId =
       userContextId ?? ScriptSecurityManagerWrapper.DEFAULT_USER_CONTEXT_ID;
-  }
-
-  get uuid() {
-    return this.#uuid;
-  }
-
-  get url() {
-    return this.#url;
-  }
-
-  get faviconURL() {
-    return this.#faviconURL;
-  }
-
-  get pinned() {
-    return this.#pinned;
-  }
-
-  get width() {
-    return this.#width;
-  }
-
-  get mobile() {
-    return this.#mobile;
-  }
-
-  get zoom() {
-    return this.#zoom;
-  }
-
-  get loadOnStartup() {
-    return this.#loadOnStartup;
-  }
-
-  get unloadOnClose() {
-    return this.#unloadOnClose;
-  }
-
-  get hideToolbar() {
-    return this.#hideToolbar;
-  }
-
-  get userContextId() {
-    return this.#userContextId;
   }
 
   /**
@@ -115,17 +59,17 @@ export class WebPanelSettings {
    */
   toObject() {
     return {
-      uuid: this.#uuid,
-      url: this.#url,
-      faviconURL: this.#faviconURL,
-      pinned: this.#pinned,
-      width: this.#width,
-      mobile: this.#mobile,
-      zoom: this.#zoom,
-      loadOnStartup: this.#loadOnStartup,
-      unloadOnClose: this.#unloadOnClose,
-      hideToolbar: this.#hideToolbar,
-      userContextId: this.#userContextId,
+      uuid: this.uuid,
+      url: this.url,
+      faviconURL: this.faviconURL,
+      pinned: this.pinned,
+      width: this.width,
+      mobile: this.mobile,
+      zoom: this.zoom,
+      loadOnStartup: this.loadOnStartup,
+      unloadOnClose: this.unloadOnClose,
+      hideToolbar: this.hideToolbar,
+      userContextId: this.userContextId,
     };
   }
 }

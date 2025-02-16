@@ -16,6 +16,7 @@ import { WebPanelPopupMore } from "./xul/web_panel_popup_more.mjs";
 import { WebPanelPopupNew } from "./xul/web_panel_popup_new.mjs";
 import { WebPanelTabs } from "./xul/web_panel_tabs.mjs";
 import { WebPanels } from "./xul/web_panels.mjs";
+import { WebPanelsBrowser } from "./xul/web_panels_browser.mjs";
 import { XULElement } from "./xul/base/xul_element.mjs";
 
 export class SidebarElements {
@@ -45,6 +46,7 @@ export class SidebarElements {
     this.sidebar = new Sidebar();
     this.sidebarToolbar = new SidebarToolbar();
     this.webPanels = new WebPanels();
+    this.webPanelsBrowser = new WebPanelsBrowser();
 
     const browser = new XULElement({
       element: document.getElementById("browser"),
@@ -58,6 +60,7 @@ export class SidebarElements {
       ),
       this.sidebarMain,
     );
+    this.webPanels.appendChild(this.webPanelsBrowser);
   }
 
   static #registerSidebar() {

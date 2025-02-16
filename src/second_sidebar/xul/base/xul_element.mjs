@@ -15,6 +15,8 @@ export class XULElement {
     isXUL = true,
     element = null,
   } = {}) {
+    /**@type {HTMLElement} */
+    this.element = null;
     if (element !== null) {
       this.element = element;
     } else {
@@ -67,6 +69,19 @@ export class XULElement {
    */
   hidden() {
     return this.getAttribute("hidden") === "true";
+  }
+
+  /**
+   *
+   * @param {string} selector
+   * @returns {XULElement?}
+   */
+  querySelector(selector) {
+    const element = this.element.querySelector(selector);
+    if (element) {
+      return new XULElement({ element });
+    }
+    return null;
   }
 
   /**
@@ -212,6 +227,16 @@ export class XULElement {
    */
   setProperty(property, value) {
     this.element.style.setProperty(property, value);
+    return this;
+  }
+
+  /**
+   *
+   * @param {string} text
+   * @returns {XULElement}
+   */
+  setInnerText(text) {
+    this.element.innerText = text;
     return this;
   }
 
