@@ -30,10 +30,10 @@ export class WebPanelController {
   }
 
   /**
-   * @returns {Tab?}
+   * @returns {WebPanelButton}
    */
-  get #webPanelTab() {
-    return SidebarElements.webPanelsBrowser.getWebPanelTab(this.getUUID());
+  get webPanelButton() {
+    return this.#webPanelButton;
   }
 
   /**
@@ -337,10 +337,8 @@ export class WebPanelController {
   }
 
   remove() {
-    this.unhackAsyncTabSwitcher();
-    this.webPanel.remove();
-    this.webPanelTab.remove();
-    this.webPanelButton.remove();
+    SidebarElements.webPanelsBrowser.removeWebPanelTab(this.getUUID());
+    this.#webPanelButton.remove();
   }
 
   /**
@@ -348,18 +346,6 @@ export class WebPanelController {
    * @returns {WebPanelSettings}
    */
   dumpSettings() {
-    return new WebPanelSettings(
-      this.webPanel.uuid,
-      this.webPanel.url,
-      this.webPanel.faviconURL,
-      this.webPanel.pinned,
-      this.webPanel.width,
-      this.webPanel.mobile,
-      this.webPanel.zoom,
-      this.webPanel.loadOnStartup,
-      this.webPanel.unloadOnClose,
-      this.webPanel.hideToolbar,
-      this.webPanelTab.getUserContextId(),
-    );
+    return this.#webPanelSettings;
   }
 }

@@ -128,7 +128,7 @@ export class WebPanelsBrowser extends Browser {
   getWebPanelTab(uuid) {
     const tabIndex = this.findTabIndex(uuid);
     if (tabIndex === -1) {
-      console.log(`Cannot select tab: panel ${uuid} is not loaded`);
+      console.log(`Cannot get tab: panel ${uuid} is not loaded`);
       return null;
     }
     return this.window.gBrowser.tabs[tabIndex];
