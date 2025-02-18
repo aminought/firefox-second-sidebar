@@ -3,6 +3,7 @@ import { Browser } from "./base/browser.mjs";
 import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manager.mjs";
 import { SessionStoreWrapper } from "../wrappers/session_store.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
+import { Style } from "./base/style.mjs";
 import { Tab } from "./base/tab.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { WindowWatcherWrapper } from "../wrappers/window_watcher.mjs";
@@ -69,10 +70,27 @@ export class WebPanelsBrowser extends Browser {
     const windowRoot = new XULElement({
       element: this.window.document.documentElement,
     });
-    windowRoot.querySelector("#PersonalToolbar").setProperty("display", "none");
-    // windowRoot
-    //   .querySelector("#navigator-toolbox")
-    //   .setProperty("display", "none");
+    const selectors = [
+      "#PersonalToolbar",
+      "#navigator-toolbox",
+      "#context-bookmarkpage",
+      "#context-viewsource",
+    ];
+
+    // Hide elements right after initialization
+    for (const selector of selectors) {
+      windowRoot.querySelector(selector).hide();
+    }
+
+    // Constantly hide elements
+    const style = new Style(`
+      ${selectors.join(", ")} {
+        display: none;
+      }
+    `);
+    windowRoot.appendChild(style);
+
+    // Disable key bindings
     windowRoot.querySelector("#tabbrowser-tabbox").element.handleCtrlTab =
       false;
   }

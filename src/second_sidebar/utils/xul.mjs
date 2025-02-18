@@ -4,6 +4,7 @@ import { Header } from "../xul/base/header.mjs";
 import { Input } from "../xul/base/input.mjs";
 import { Label } from "../xul/base/label.mjs";
 import { ToolbarButton } from "../xul/base/toolbar_button.mjs";
+import { XULElement } from "../xul/base/xul_element.mjs";
 import { ZoomManagerWrapper } from "../wrappers/zoom_manager.mjs";
 
 /**
