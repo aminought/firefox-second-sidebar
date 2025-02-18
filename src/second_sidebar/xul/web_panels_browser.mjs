@@ -72,7 +72,7 @@ export class WebPanelsBrowser extends Browser {
     });
     const selectors = [
       "#PersonalToolbar",
-      "#navigator-toolbox",
+      // "#navigator-toolbox",
       "#context-bookmarkpage",
       "#context-viewsource",
     ];
@@ -89,6 +89,9 @@ export class WebPanelsBrowser extends Browser {
       }
     `);
     windowRoot.appendChild(style);
+
+    // Shrink to fit
+    windowRoot.setProperty("min-width", "0px");
 
     // Disable key bindings
     windowRoot.querySelector("#tabbrowser-tabbox").element.handleCtrlTab =
@@ -116,32 +119,17 @@ export class WebPanelsBrowser extends Browser {
   /**
    *
    * @param {WebPanelSettings} webPanelSettings
+   * @param {object} progressListener
    */
-  addWebPanel(webPanelSettings) {
+  addWebPanel(webPanelSettings, progressListener) {
     this.waitInitialized(() => {
       const tab = this.window.gBrowser.addTab(webPanelSettings.url, {
         triggeringPrincipal: ScriptSecurityManagerWrapper.getSystemPrincipal(),
         userContextId: webPanelSettings.userContextId,
       });
       tab.setAttribute("uuid", webPanelSettings.uuid);
-
       const browser = this.window.gBrowser.getBrowserForTab(tab);
-
-      browser.addProgressListener(() => {
-        browser.setZoom(webPanelSettings.zoom);
-        if (tab.isActive()) {
-          const canGoBack = browser.canGoBack();
-          const canGoForward = browser.canGoForward();
-          const title = browser.getTitle();
-          SidebarControllers.sidebarController.setToolbarBackButtonDisabled(
-            !canGoBack,
-          );
-          SidebarControllers.sidebarController.setToolbarForwardButtonDisabled(
-            !canGoForward,
-          );
-          SidebarControllers.sidebarController.setToolbarTitle(title);
-        }
-      });
+      browser.addProgressListener(progressListener);
     });
   }
 

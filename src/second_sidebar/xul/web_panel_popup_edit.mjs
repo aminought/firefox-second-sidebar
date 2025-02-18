@@ -300,14 +300,14 @@ export class WebPanelPopupEdit extends Panel {
       if (event.target.id !== this.id) {
         return;
       }
-      webPanelController.webPanelButton.setOpen(webPanelController.isActive());
+      webPanelController.button.setOpen(webPanelController.isActive());
       this.removeEventListener("popuphidden", this.restoreWebPanelButtonState);
     };
     this.addEventListener("popuphidden", this.restoreWebPanelButtonState);
 
     return Panel.prototype.openPopup.call(
       this,
-      webPanelController.webPanelButton,
+      webPanelController.button,
     );
   }
 

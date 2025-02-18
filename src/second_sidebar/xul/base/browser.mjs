@@ -32,21 +32,14 @@ export class Browser extends XULElement {
 
   /**
    *
-   * @param {function():void} callback
+   * @param {object} progressListener
    * @returns {Browser}
    */
-  addProgressListener(callback) {
-    this.listener = {
-      QueryInterface: ChromeUtilsWrapper.generateQI([
-        "nsIWebProgressListener",
-        "nsISupportsWeakReference",
-      ]),
-      onLocationChange: callback,
-      onStateChange: callback,
-      onProgressChange: callback,
-      onStatusChange: callback,
-    };
-    this.element.addProgressListener(this.listener);
+  addProgressListener(progressListener) {
+    this.element.addProgressListener(
+      progressListener,
+      Ci.nsIWebProgress.NOTIFY_ALL,
+    );
     return this;
   }
 

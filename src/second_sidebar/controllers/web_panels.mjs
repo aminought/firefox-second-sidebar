@@ -248,8 +248,8 @@ export class WebPanelsController {
       userContextId,
     });
     const webPanelController = new WebPanelController(webPanelSettings, {
-      loadWebPanel: true,
-      newWebPanelPosition,
+      loaded: true,
+      position: newWebPanelPosition,
     });
     this.add(webPanelController);
 
@@ -325,7 +325,7 @@ export class WebPanelsController {
         `Web panel ${webPanelSettings.uuid} settings loadOnStartup: ${webPanelSettings.loadOnStartup}`,
       );
       const webPanelController = new WebPanelController(webPanelSettings, {
-        loadWebPanel: webPanelSettings.loadOnStartup,
+        loaded: webPanelSettings.loadOnStartup,
       });
       this.add(webPanelController);
     }

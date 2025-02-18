@@ -77,21 +77,21 @@ export class SidebarController {
       if (isLeftMouseButton(event)) {
         const webPanelController =
           SidebarControllers.webPanelsController.getActive();
-        return callback(webPanelController.webPanel);
+        return callback(webPanelController);
       }
     };
 
     this.sidebarToolbar.listenBackButtonClick((event) => {
-      addWebPanelButtonListener(event, (webPanel) => webPanel.goBack());
+      addWebPanelButtonListener(event, (webPanelController) => webPanelController.goBack());
     });
     this.sidebarToolbar.listenForwardButtonClick((event) => {
-      addWebPanelButtonListener(event, (webPanel) => webPanel.goForward());
+      addWebPanelButtonListener(event, (webPanelController) => webPanelController.goForward());
     });
     this.sidebarToolbar.listenReloadButtonClick((event) => {
-      addWebPanelButtonListener(event, (webPanel) => webPanel.reload());
+      addWebPanelButtonListener(event, (webPanelController) => webPanelController.reload());
     });
     this.sidebarToolbar.listenHomeButtonClick((event) => {
-      addWebPanelButtonListener(event, (webPanel) => webPanel.goHome());
+      addWebPanelButtonListener(event, (webPanelController) => webPanelController.goHome());
     });
 
     this.sidebarToolbar.listenPinButtonClick(() => {
