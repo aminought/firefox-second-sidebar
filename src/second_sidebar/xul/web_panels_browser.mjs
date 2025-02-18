@@ -1,6 +1,7 @@
 import { AppConstantsWrapper } from "../wrappers/app_constants.mjs";
 import { Browser } from "./base/browser.mjs";
 import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manager.mjs";
+import { SessionStoreWrapper } from "../wrappers/session_store.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { Tab } from "./base/tab.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
@@ -10,6 +11,7 @@ import { XULElement } from "./base/xul_element.mjs";
 
 const BEFORE_SHOW_EVENT = "browser-window-before-show";
 const INITIALIZED_EVENT = "browser-delayed-startup-finished";
+const BROWSER_QUIT_EVENT = "quit-application-granted";
 
 const FIRST_TAB_INDEX = 0;
 
@@ -45,6 +47,7 @@ export class WebPanelsBrowser extends Browser {
     console.log("Initializing web panels browser...");
     Services.obs.addObserver(this, BEFORE_SHOW_EVENT);
     Services.obs.addObserver(this, INITIALIZED_EVENT);
+    Services.obs.addObserver(this, BROWSER_QUIT_EVENT);
     this.setAttribute("src", AppConstantsWrapper.BROWSER_CHROME_URL);
   }
 
@@ -55,6 +58,10 @@ export class WebPanelsBrowser extends Browser {
     } else if (topic === INITIALIZED_EVENT) {
       this.initialized = true;
       console.log("Web panels browser initialized");
+    } else if (topic === BROWSER_QUIT_EVENT) {
+      SessionStoreWrapper.maybeDontRestoreTabs(this.window);
+      this.remove();
+      console.log("Web panels browser removed");
     }
   }
 
@@ -66,9 +73,8 @@ export class WebPanelsBrowser extends Browser {
     windowRoot
       .querySelector("#navigator-toolbox")
       .setProperty("display", "none");
-    windowRoot
-      .querySelector("#tabbrowser-tabbox")
-      .element.handleCtrlTab = false;
+    windowRoot.querySelector("#tabbrowser-tabbox").element.handleCtrlTab =
+      false;
   }
 
   /**

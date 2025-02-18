@@ -2,20 +2,35 @@ import { TabBrowserWrapper } from "./tab_browser.mjs";
 
 export class WindowWrapper {
   #window;
+  #gBrowser;
   /**
    *
    * @param {Window} chromeWindow
    */
   constructor(chromeWindow = null) {
     this.#window = chromeWindow ?? window;
-    this.gBrowser = new TabBrowserWrapper(this.#window.gBrowser);
+    this.#gBrowser = new TabBrowserWrapper(this.raw.gBrowser);
+  }
+
+  /**
+   * @returns {Window}
+   */
+  get raw() {
+    return this.#window;
+  }
+
+  /**
+   * @returns {TabBrowserWrapper}
+   */
+  get gBrowser() {
+    return this.#gBrowser;
   }
 
   /**
    * @returns {Document}
    */
   get document() {
-    return this.#window.document;
+    return this.raw.document;
   }
 
   /**
@@ -24,7 +39,7 @@ export class WindowWrapper {
    * @returns {boolean}
    */
   dispatchEvent(event) {
-    return this.#window.dispatchEvent(event);
+    return this.raw.dispatchEvent(event);
   }
 
   /**
@@ -33,7 +48,7 @@ export class WindowWrapper {
    * @param {function(Event):any} listener
    */
   addEventListener(type, listener) {
-    this.#window.addEventListener(type, listener);
+    this.raw.addEventListener(type, listener);
   }
 
   /**

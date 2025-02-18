@@ -48,6 +48,7 @@ export default [
         PlacesToolbarHelper: "readonly",
         PlacesUtils: "readonly",
         Services: "readonly",
+        SessionStore: "readonly",
         SidebarController: "readonly",
         ShoppingSidebarParent: "readonly",
         UC_API: "readonly",

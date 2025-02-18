@@ -15,22 +15,28 @@ import { Tab } from "../xul/base/tab.mjs";
  */
 
 export class TabBrowserWrapper {
+  #gBrowser;
+
   constructor(gBrowser) {
-    this.gBrowser = gBrowser;
+    this.#gBrowser = gBrowser;
+  }
+
+  get raw() {
+    return this.#gBrowser;
   }
 
   /**
    * @returns {URI}
    */
   get currentURI() {
-    return this.gBrowser.currentURI;
+    return this.raw.currentURI;
   }
 
   /**
    * @returns {Array<Tab>}
    */
   get tabs() {
-    return this.gBrowser.tabs.map((tab) => new Tab({ element: tab }));
+    return this.raw.tabs.map((tab) => new Tab({ element: tab }));
   }
 
   /**
@@ -40,7 +46,7 @@ export class TabBrowserWrapper {
    */
   getBrowserForTab(tab) {
     return new Browser({
-      element: this.gBrowser.getBrowserForTab(tab.getXUL()),
+      element: this.raw.getBrowserForTab(tab.getXUL()),
     });
   }
 
@@ -52,7 +58,7 @@ export class TabBrowserWrapper {
    * @returns {Tab}
    */
   addTab(url, options) {
-    return new Tab({ element: this.gBrowser.addTab(url, options) });
+    return new Tab({ element: this.raw.addTab(url, options) });
   }
 
   /**
@@ -60,7 +66,7 @@ export class TabBrowserWrapper {
    * @param {Tab} tab
    */
   removeTab(tab) {
-    this.gBrowser.removeTab(tab.getXUL());
+    this.raw.removeTab(tab.getXUL());
   }
 
   /**
@@ -69,7 +75,7 @@ export class TabBrowserWrapper {
    * @param {boolean} force
    */
   discardBrowser(tab, force = false) {
-    this.gBrowser.discardBrowser(tab.getXUL(), force);
+    this.raw.discardBrowser(tab.getXUL(), force);
   }
 
   /**
@@ -77,6 +83,6 @@ export class TabBrowserWrapper {
    * @param {number} index
    */
   selectTabAtIndex(index) {
-    this.gBrowser.selectTabAtIndex(index);
+    this.raw.selectTabAtIndex(index);
   }
 }

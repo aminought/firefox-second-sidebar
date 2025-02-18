@@ -6,7 +6,7 @@ export class WindowWatcherWrapper {
    * @returns {Array<WindowWrapper>}
    */
   static getWindowEnumerator() {
-    return Array.from(Services.ww.getWindowEnumerator()).map(
+    return Array.from(this.raw.getWindowEnumerator()).map(
       (window) => new WindowWrapper(window),
     );
   }
@@ -17,6 +17,10 @@ export class WindowWatcherWrapper {
    * @returns {WindowWrapper}
    */
   static getWindowByName(name) {
-    return new WindowWrapper(Services.ww.getWindowByName(name));
+    return new WindowWrapper(this.raw.getWindowByName(name));
+  }
+
+  static get raw() {
+    return Services.ww;
   }
 }
