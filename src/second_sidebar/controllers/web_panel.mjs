@@ -4,29 +4,42 @@ import { ChromeUtilsWrapper } from "../wrappers/chrome_utils.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { Tab } from "../xul/base/tab.mjs";
-import { WebPanel } from "../xul/web_panel.mjs";
 import { WebPanelButton } from "../xul/web_panel_button.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
-import { WebPanelTab } from "../xul/web_panel_tab.mjs";
 import { WindowWrapper } from "../wrappers/window.mjs";
 
 export class WebPanelController {
+  /**@type {WebPanelSettings} */
   #webPanelSettings;
   /**@type {WebPanelButton} */
   #webPanelButton;
   /**
    *
    * @param {WebPanelSettings} webPanelSettings
+   * @param {object?} params
+   * @param {boolean?} params.loadWebPanel
+   * @param {string?} params.newWebPanelPosition
    */
-  constructor(webPanelSettings) {
+  constructor(
+    webPanelSettings,
+    { loadWebPanel = false, newWebPanelPosition = null } = {},
+  ) {
     this.#webPanelSettings = webPanelSettings;
-    this.#webPanelButton = new WebPanelButton(webPanelSettings.uuid);
+    this.#webPanelButton = new WebPanelButton(
+      webPanelSettings.uuid,
+      newWebPanelPosition,
+    );
+    this.initWebPanelButton();
+    console.log(`Load web panel ${webPanelSettings.uuid}: ${loadWebPanel}`);
+    if (loadWebPanel) {
+      SidebarElements.webPanelsBrowser.addWebPanel(webPanelSettings);
+    }
     this.#webPanelButton
       .setUserContextId(webPanelSettings.userContextId)
       .setIcon(webPanelSettings.faviconURL)
       .setLabel(webPanelSettings.url)
       .setTooltipText(webPanelSettings.url)
-      .setUnloaded(!webPanelSettings.loadOnStartup);
+      .setUnloaded(!loadWebPanel);
   }
 
   /**

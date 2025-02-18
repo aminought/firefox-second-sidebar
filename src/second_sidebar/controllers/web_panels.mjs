@@ -10,6 +10,7 @@ import { WebPanel } from "../xul/web_panel.mjs";
 import { WebPanelButton } from "../xul/web_panel_button.mjs";
 import { WebPanelController } from "./web_panel.mjs";
 import { WebPanelMenuPopup } from "../xul/web_panel_menupopup.mjs";
+import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { WebPanelTab } from "../xul/web_panel_tab.mjs";
 import { WebPanelTabs } from "../xul/web_panel_tabs.mjs";
 import { WebPanels } from "../xul/web_panels.mjs";
@@ -72,9 +73,7 @@ export class WebPanelsController {
         newWebPanelPosition,
         isWindowActive,
       );
-      if (isWindowActive) {
-        webPanelController.openWebPanel();
-      }
+      webPanelController.switchWebPanel();
     });
 
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_URL, (event) => {
@@ -245,19 +244,13 @@ export class WebPanelsController {
     }
     const faviconURL = await fetchIconURL(url);
 
-    // const webPanelTab = new WebPanelTab(uuid, userContextId);
-    // const webPanel = new WebPanel(webPanelTab, uuid, url, faviconURL).hide();
-    const webPanelButton = new WebPanelButton(uuid, newWebPanelPosition)
-      .setUserContextId(userContextId)
-      .setIcon(faviconURL)
-      .setLabel(url)
-      .setTooltipText(url);
-
-    const webPanelController = new WebPanelController(
-      webPanel,
-      webPanelButton,
-      webPanelTab,
-    );
+    const webPanelSettings = new WebPanelSettings(uuid, url, faviconURL, {
+      userContextId,
+    });
+    const webPanelController = new WebPanelController(webPanelSettings, {
+      loadWebPanel: true,
+      newWebPanelPosition,
+    });
     this.add(webPanelController);
 
     if (isWindowActive) {
@@ -328,11 +321,12 @@ export class WebPanelsController {
     });
 
     for (const webPanelSettings of webPanelsSettings.webPanels) {
-      const webPanelController = new WebPanelController(webPanelSettings);
-      if (webPanelSettings.loadOnStartup) {
-        SidebarElements.webPanelsBrowser.addWebPanel(webPanelSettings);
-      }
-      webPanelController.initWebPanelButton();
+      console.log(
+        `Web panel ${webPanelSettings.uuid} settings loadOnStartup: ${webPanelSettings.loadOnStartup}`,
+      );
+      const webPanelController = new WebPanelController(webPanelSettings, {
+        loadWebPanel: webPanelSettings.loadOnStartup,
+      });
       this.add(webPanelController);
     }
   }

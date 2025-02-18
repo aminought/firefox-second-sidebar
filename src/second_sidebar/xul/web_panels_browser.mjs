@@ -70,9 +70,9 @@ export class WebPanelsBrowser extends Browser {
       element: this.window.document.documentElement,
     });
     windowRoot.querySelector("#PersonalToolbar").setProperty("display", "none");
-    windowRoot
-      .querySelector("#navigator-toolbox")
-      .setProperty("display", "none");
+    // windowRoot
+    //   .querySelector("#navigator-toolbox")
+    //   .setProperty("display", "none");
     windowRoot.querySelector("#tabbrowser-tabbox").element.handleCtrlTab =
       false;
   }
@@ -103,6 +103,7 @@ export class WebPanelsBrowser extends Browser {
     this.waitInitialized(() => {
       const tab = this.window.gBrowser.addTab(webPanelSettings.url, {
         triggeringPrincipal: ScriptSecurityManagerWrapper.getSystemPrincipal(),
+        userContextId: webPanelSettings.userContextId,
       });
       tab.setAttribute("uuid", webPanelSettings.uuid);
 

@@ -6,27 +6,30 @@ export class WebPanelSettings {
    * @param {string} uuid
    * @param {string} url
    * @param {string} faviconURL
-   * @param {boolean} pinned
-   * @param {string} width
-   * @param {boolean} mobile
-   * @param {number} zoom
-   * @param {boolean} loadOnStartup
-   * @param {boolean} unloadOnClose
-   * @param {boolean} hideToolbar
-   * @param {string} userContextId
+   * @param {object?} params
+   * @param {boolean?} params.pinned
+   * @param {string?} params.width
+   * @param {boolean?} params.mobile
+   * @param {number?} params.zoom
+   * @param {boolean?} params.loadOnStartup
+   * @param {boolean?} params.unloadOnClose
+   * @param {boolean?} params.hideToolbar
+   * @param {string?} params.userContextId
    */
   constructor(
     uuid,
     url,
     faviconURL,
-    pinned,
-    width,
-    mobile,
-    zoom,
-    loadOnStartup,
-    unloadOnClose,
-    hideToolbar,
-    userContextId,
+    {
+      pinned,
+      width,
+      mobile,
+      zoom,
+      loadOnStartup,
+      unloadOnClose,
+      hideToolbar,
+      userContextId,
+    } = {},
   ) {
     /**@type {string} */
     this.uuid = uuid ?? crypto.randomUUID();
