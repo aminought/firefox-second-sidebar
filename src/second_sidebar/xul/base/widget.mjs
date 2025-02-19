@@ -165,7 +165,7 @@ export class Widget {
   /**
    *
    * @param {boolean} value
-   * @returns {WebPanelButton}
+   * @returns {Widget}
    */
   setUnloaded(value) {
     this.unloaded = value;
@@ -187,7 +187,7 @@ export class Widget {
   /**
    *
    * @param {boolean} value
-   * @returns {WebPanelButton}
+   * @returns {Widget}
    */
   setOpen(value) {
     this.open = value;

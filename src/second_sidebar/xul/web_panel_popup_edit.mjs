@@ -284,8 +284,6 @@ export class WebPanelPopupEdit extends Panel {
     this.zoom = settings.zoom;
 
     this.settings = settings;
-    this.insertedBeforeXUL = webPanelController.getInsertedBeforeXUL();
-    this.currentInsertedBeforeXUL = this.insertedBeforeXUL;
 
     this.cancelOnPopupHidden = () => {
       if (this.getState() !== "closed") {

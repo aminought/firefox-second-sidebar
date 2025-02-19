@@ -137,7 +137,7 @@ export class WebPanelsBrowser extends Browser {
    * @param {WebPanelSettings} webPanelSettings
    * @param {object} progressListener
    */
-  addWebPanel(webPanelSettings, progressListener) {
+  addWebPanelTab(webPanelSettings, progressListener) {
     this.waitInitialization(() => {
       const tab = this.window.gBrowser.addTab(webPanelSettings.url, {
         triggeringPrincipal: ScriptSecurityManagerWrapper.getSystemPrincipal(),
@@ -148,6 +148,16 @@ export class WebPanelsBrowser extends Browser {
       const browser = this.window.gBrowser.getBrowserForTab(tab);
       browser.addProgressListener(progressListener);
     });
+  }
+
+  /**
+   *
+   * @param {string} uuid
+   * @param {object} progressListener
+   */
+  addWebPanelProgressListener(uuid, progressListener) {
+    const webPanelTab = this.getWebPanelTab(uuid);
+    webPanelTab.linkedBrowser.addProgressListener(progressListener);
   }
 
   /**
@@ -185,6 +195,10 @@ export class WebPanelsBrowser extends Browser {
     this.window.gBrowser.selectTabAtIndex(tabIndex);
   }
 
+  deselectWebPanelTab() {
+    this.window.gBrowser.selectTabAtIndex(FIRST_TAB_INDEX);
+  }
+
   /**
    *
    * @param {string} uuid
@@ -207,7 +221,6 @@ export class WebPanelsBrowser extends Browser {
   unloadWebPanelTab(uuid) {
     const tab = this.getWebPanelTab(uuid);
     if (tab) {
-      this.window.gBrowser.selectTabAtIndex(FIRST_TAB_INDEX);
       this.window.gBrowser.discardBrowser(tab, true);
       return true;
     }

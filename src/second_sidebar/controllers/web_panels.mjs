@@ -134,10 +134,10 @@ export class WebPanelsController {
     });
 
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_USER_CONTEXT_ID, (event) => {
-      // const uuid = event.detail.uuid;
-      // const userContextId = event.detail.userContextId;
-      // const webPanelController = this.get(uuid);
-      // webPanelController.setUserContextId(userContextId);
+      const uuid = event.detail.uuid;
+      const userContextId = event.detail.userContextId;
+      const webPanelController = this.get(uuid);
+      webPanelController.setUserContextId(userContextId);
     });
 
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_MOBILE, (event) => {
@@ -303,7 +303,7 @@ export class WebPanelsController {
   hideActive() {
     const webPanelController = this.getActive();
     if (webPanelController !== null) {
-      webPanelController.hide();
+      webPanelController.close();
     }
   }
 

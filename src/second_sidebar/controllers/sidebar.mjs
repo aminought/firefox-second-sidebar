@@ -9,6 +9,7 @@ import {
 import { Sidebar } from "../xul/sidebar.mjs";
 import { SidebarBox } from "../xul/sidebar_box.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
+import { SidebarElements } from "../sidebar_elements.mjs";
 import { SidebarMainPopupSettings } from "../xul/sidebar_main_popup_settings.mjs";
 import { SidebarSettings } from "../settings/sidebar_settings.mjs";
 import { SidebarSplitterUnpinned } from "../xul/sidebar_splitter_unpinned.mjs";
@@ -82,16 +83,24 @@ export class SidebarController {
     };
 
     this.sidebarToolbar.listenBackButtonClick((event) => {
-      addWebPanelButtonListener(event, (webPanelController) => webPanelController.goBack());
+      addWebPanelButtonListener(event, (webPanelController) =>
+        webPanelController.goBack(),
+      );
     });
     this.sidebarToolbar.listenForwardButtonClick((event) => {
-      addWebPanelButtonListener(event, (webPanelController) => webPanelController.goForward());
+      addWebPanelButtonListener(event, (webPanelController) =>
+        webPanelController.goForward(),
+      );
     });
     this.sidebarToolbar.listenReloadButtonClick((event) => {
-      addWebPanelButtonListener(event, (webPanelController) => webPanelController.reload());
+      addWebPanelButtonListener(event, (webPanelController) =>
+        webPanelController.reload(),
+      );
     });
     this.sidebarToolbar.listenHomeButtonClick((event) => {
-      addWebPanelButtonListener(event, (webPanelController) => webPanelController.goHome());
+      addWebPanelButtonListener(event, (webPanelController) =>
+        webPanelController.goHome(),
+      );
     });
 
     this.sidebarToolbar.listenPinButtonClick(() => {
@@ -105,10 +114,10 @@ export class SidebarController {
     });
 
     this.sidebarToolbar.listenCloseButtonClick(() => {
+      this.close();
       const webPanelController =
         SidebarControllers.webPanelsController.getActive();
       webPanelController.unload();
-      this.close();
     });
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_POSITION, (event) => {
