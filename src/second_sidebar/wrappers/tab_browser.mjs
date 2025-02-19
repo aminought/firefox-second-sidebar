@@ -40,6 +40,20 @@ export class TabBrowserWrapper {
   }
 
   /**
+   * @returns {Tab}
+   */
+  get selectedTab() {
+    return new Tab({ element: this.raw.selectedTab });
+  }
+
+  /**
+   * @returns {Browser}
+   */
+  get selectedBrowser() {
+    return new Browser({ element: this.raw.selectedBrowser });
+  }
+
+  /**
    *
    * @param {Tab} tab
    * @returns {Browser}
@@ -47,6 +61,17 @@ export class TabBrowserWrapper {
   getBrowserForTab(tab) {
     return new Browser({
       element: this.raw.getBrowserForTab(tab.getXUL()),
+    });
+  }
+
+  /**
+   *
+   * @param {Browser} browser
+   * @returns {Tab}
+   */
+  getTabForBrowser(browser) {
+    return new Tab({
+      element: this.raw.getTabForBrowser(browser.getXUL()),
     });
   }
 
@@ -84,5 +109,14 @@ export class TabBrowserWrapper {
    */
   selectTabAtIndex(index) {
     this.raw.selectTabAtIndex(index);
+  }
+
+  /**
+   *
+   * @param {string} type
+   * @param {function(Event):void} callback
+   */
+  addEventListener(type, callback) {
+    this.raw.addEventListener(type, callback);
   }
 }

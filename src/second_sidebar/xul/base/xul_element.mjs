@@ -149,7 +149,7 @@ export class XULElement {
   /**
    *
    * @param {string} name
-   * @returns {string|number}
+   * @returns {string?}
    */
   getAttribute(name) {
     return this.element.getAttribute(name);

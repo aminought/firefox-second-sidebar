@@ -6,6 +6,7 @@ import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { Style } from "./base/style.mjs";
 import { Tab } from "./base/tab.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
+import { WebPanelTab } from "./web_panel_tab.mjs";
 import { WindowWatcherWrapper } from "../wrappers/window_watcher.mjs";
 import { WindowWrapper } from "../wrappers/window.mjs";
 import { XULElement } from "./base/xul_element.mjs";
@@ -99,6 +100,21 @@ export class WebPanelsBrowser extends Browser {
   }
 
   /**
+   *
+   * @param {string} type
+   * @param {function(WebPanelTab):void} callback
+   */
+  addTabBrowserEventListener(type, callback) {
+    this.waitInitialization(() => {
+      this.window.gBrowser.addEventListener(type, (event) => {
+        const browser = new Browser({ element: event.target });
+        const tab = this.window.gBrowser.getTabForBrowser(browser);
+        callback(WebPanelTab.fromTab(tab));
+      });
+    });
+  }
+
+  /**
    * @returns {WindowWrapper}
    */
   get window() {
@@ -110,9 +126,9 @@ export class WebPanelsBrowser extends Browser {
    * @param {string} uuid
    * @returns {number}
    */
-  findTabIndex(uuid) {
+  findWebPanelTabIndex(uuid) {
     return this.window.gBrowser.tabs.findIndex(
-      (tab) => tab.getAttribute("uuid") === uuid,
+      (tab) => WebPanelTab.fromTab(tab).uuid === uuid,
     );
   }
 
@@ -122,12 +138,13 @@ export class WebPanelsBrowser extends Browser {
    * @param {object} progressListener
    */
   addWebPanel(webPanelSettings, progressListener) {
-    this.waitInitialized(() => {
+    this.waitInitialization(() => {
       const tab = this.window.gBrowser.addTab(webPanelSettings.url, {
         triggeringPrincipal: ScriptSecurityManagerWrapper.getSystemPrincipal(),
         userContextId: webPanelSettings.userContextId,
       });
-      tab.setAttribute("uuid", webPanelSettings.uuid);
+      const webPanelTab = WebPanelTab.fromTab(tab);
+      webPanelTab.uuid = webPanelSettings.uuid;
       const browser = this.window.gBrowser.getBrowserForTab(tab);
       browser.addProgressListener(progressListener);
     });
@@ -136,28 +153,23 @@ export class WebPanelsBrowser extends Browser {
   /**
    *
    * @param {string} uuid
-   * @returns {Tab?}
+   * @returns {WebPanelTab?}
    */
   getWebPanelTab(uuid) {
-    const tabIndex = this.findTabIndex(uuid);
+    const tabIndex = this.findWebPanelTabIndex(uuid);
     if (tabIndex === -1) {
       console.log(`Cannot get tab: panel ${uuid} is not loaded`);
       return null;
     }
-    return this.window.gBrowser.tabs[tabIndex];
+    return WebPanelTab.fromTab(this.window.gBrowser.tabs[tabIndex]);
   }
 
   /**
    *
-   * @param {Tab} tab
-   * @returns {Browser?}
+   * @returns {WebPanelTab}
    */
-  getWebPanelBrowserForTab(tab) {
-    const browser = this.window.gBrowser.getBrowserForTab(tab);
-    if (browser) {
-      return browser;
-    }
-    return null;
+  getActiveWebPanelTab() {
+    return WebPanelTab.fromTab(this.window.gBrowser.selectedTab);
   }
 
   /**
@@ -165,7 +177,7 @@ export class WebPanelsBrowser extends Browser {
    * @param {string} uuid
    */
   selectWebPanelTab(uuid) {
-    const tabIndex = this.findTabIndex(uuid);
+    const tabIndex = this.findWebPanelTabIndex(uuid);
     if (tabIndex === -1) {
       console.log(`Cannot select tab: panel ${uuid} is not loaded`);
       return;
@@ -202,7 +214,7 @@ export class WebPanelsBrowser extends Browser {
     return false;
   }
 
-  waitInitialized(callback) {
+  waitInitialization(callback) {
     this.waitUntil(() => this.initialized, callback);
   }
 

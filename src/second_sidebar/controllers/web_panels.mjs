@@ -36,11 +36,21 @@ export class WebPanelsController {
 
     /**@type {Object<string, WebPanelController>} */
     this.webPanelControllers = {};
-
     this.#setupListeners();
   }
 
   #setupListeners() {
+    SidebarElements.webPanelsBrowser.addTabBrowserEventListener(
+      "pagetitlechanged",
+      (tab) => {
+        if (tab.selected) {
+          SidebarControllers.sidebarController.setToolbarTitle(
+            tab.linkedBrowser.getTitle(),
+          );
+        }
+      },
+    );
+
     this.webPanelMenuPopup.setWebPanelsController(this);
 
     this.webPanelMenuPopup.listenUnloadItemClick((webPanelController) => {
@@ -286,11 +296,8 @@ export class WebPanelsController {
    * @returns {WebPanelController?}
    */
   getActive() {
-    return (
-      Object.values(this.webPanelControllers).find((webPanelController) =>
-        webPanelController.isActive(),
-      ) ?? null
-    );
+    const tab = SidebarElements.webPanelsBrowser.getActiveWebPanelTab();
+    return this.get(tab.uuid);
   }
 
   hideActive() {
@@ -314,21 +321,23 @@ export class WebPanelsController {
    */
   loadSettings(webPanelsSettings) {
     console.log("Loading web panels...");
+
+    // We need to display web panels window for a while to initialize it and
+    // load startup web panels, but don't want to see it
     SidebarElements.sidebarBox.showInvisible();
     SidebarElements.webPanelsBrowser.init();
-    SidebarElements.webPanelsBrowser.waitInitialized(() => {
-      SidebarElements.sidebarBox.hideInvisible();
-    });
 
     for (const webPanelSettings of webPanelsSettings.webPanels) {
-      console.log(
-        `Web panel ${webPanelSettings.uuid} settings loadOnStartup: ${webPanelSettings.loadOnStartup}`,
-      );
       const webPanelController = new WebPanelController(webPanelSettings, {
         loaded: webPanelSettings.loadOnStartup,
       });
       this.add(webPanelController);
     }
+
+    // Hide web panels window after initialization
+    SidebarElements.webPanelsBrowser.waitInitialization(() => {
+      SidebarElements.sidebarBox.hideInvisible();
+    });
   }
 
   /**

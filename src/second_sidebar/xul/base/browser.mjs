@@ -1,5 +1,3 @@
-import { ChromeUtilsWrapper } from "../../wrappers/chrome_utils.mjs";
-import { FullZoomWrapper } from "../../wrappers/full_zoom.mjs";
 import { NetUtilWrapper } from "../../wrappers/net_utils.mjs";
 import { ScriptSecurityManagerWrapper } from "../../wrappers/script_security_manager.mjs";
 import { XULElement } from "./xul_element.mjs";
@@ -114,25 +112,7 @@ export class Browser extends XULElement {
    * @returns {number}
    */
   getZoom() {
-    return ZoomManagerWrapper.getZoomForBrowser(this.element);
-  }
-
-  /**
-   *
-   * @returns {Browser}
-   */
-  zoomIn() {
-    FullZoomWrapper.changeZoomBy(this.element, this.ZOOM_DELTA);
-    return this;
-  }
-
-  /**
-   *
-   * @returns {Browser}
-   */
-  zoomOut() {
-    FullZoomWrapper.changeZoomBy(this.element, -this.ZOOM_DELTA);
-    return this;
+    return ZoomManagerWrapper.getZoomForBrowser(this);
   }
 
   /**
@@ -141,7 +121,7 @@ export class Browser extends XULElement {
    * @returns {Browser}
    */
   setZoom(value) {
-    FullZoomWrapper.setZoom(value, this.element);
+    ZoomManagerWrapper.setZoomForBrowser(this, value);
     return this;
   }
 

@@ -1,6 +1,7 @@
 import { Browser } from "./browser.mjs";
+import { XULElement } from "./xul_element.mjs";
 
-export class Tab extends Browser {
+export class Tab extends XULElement {
   /**
    *
    * @param {object} params
@@ -13,10 +14,17 @@ export class Tab extends Browser {
   }
 
   /**
+   * @returns {Browser?}
+   */
+  get linkedBrowser() {
+    return new Browser({ element: this.element.linkedBrowser });
+  }
+
+  /**
    *
    * @returns {boolean}
    */
-  isActive() {
-    return this.getAttribute("selected") === "true";
+  get selected() {
+    return this.element.selected ?? false;
   }
 }
