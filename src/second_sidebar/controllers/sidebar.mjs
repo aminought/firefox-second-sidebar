@@ -71,6 +71,7 @@ export class SidebarController {
             "chrome://browser/content/webext-panels.xhtml")
       ) {
         this.close();
+        SidebarControllers.webPanelsController.getActive()?.close();
       }
     };
 
