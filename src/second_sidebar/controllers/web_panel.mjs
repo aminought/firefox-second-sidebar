@@ -209,12 +209,12 @@ export class WebPanelController {
     SidebarElements.webPanelsBrowser.selectWebPanelTab(this.getUUID());
 
     // Restore progress listener after browser discard
-    // if (this.#settings.unloadOnClose) {
-    //   SidebarElements.webPanelsBrowser.addWebPanelProgressListener(
-    //     this.getUUID(),
-    //     this.#progressListener,
-    //   );
-    // }
+    if (this.#settings.unloadOnClose) {
+      SidebarElements.webPanelsBrowser.addWebPanelProgressListener(
+        this.getUUID(),
+        this.#progressListener,
+      );
+    }
 
     // Open sidebar if it was closed and configure
     SidebarControllers.sidebarController.open(

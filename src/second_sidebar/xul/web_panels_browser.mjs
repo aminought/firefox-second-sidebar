@@ -139,14 +139,20 @@ export class WebPanelsBrowser extends Browser {
    */
   addWebPanelTab(webPanelSettings, progressListener) {
     this.waitInitialization(() => {
-      const tab = this.window.gBrowser.addTab(webPanelSettings.url, {
-        triggeringPrincipal: ScriptSecurityManagerWrapper.getSystemPrincipal(),
-        userContextId: webPanelSettings.userContextId,
+      const tab = WebPanelTab.fromTab(
+        this.window.gBrowser.addTab(webPanelSettings.url, {
+          triggeringPrincipal:
+            ScriptSecurityManagerWrapper.getSystemPrincipal(),
+          userContextId: webPanelSettings.userContextId,
+        }),
+      );
+      tab.uuid = webPanelSettings.uuid;
+      tab.linkedBrowser.addProgressListener(progressListener);
+
+      // We need to add progress listener when loading unloaded tab
+      tab.addEventListener("TabBrowserInserted", () => {
+        tab.linkedBrowser.addProgressListener(progressListener);
       });
-      const webPanelTab = WebPanelTab.fromTab(tab);
-      webPanelTab.uuid = webPanelSettings.uuid;
-      const browser = this.window.gBrowser.getBrowserForTab(tab);
-      browser.addProgressListener(progressListener);
     });
   }
 
