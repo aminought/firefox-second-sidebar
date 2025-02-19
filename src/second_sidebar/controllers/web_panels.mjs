@@ -53,9 +53,15 @@ export class WebPanelsController {
 
     this.webPanelMenuPopup.setWebPanelsController(this);
 
-    this.webPanelMenuPopup.listenUnloadItemClick((webPanelController) => {
-      webPanelController.unload();
-    });
+    this.webPanelMenuPopup.listenUnloadItemClick(
+      /**@param {WebPanelController} webPanelController */
+      (webPanelController) => {
+        if (webPanelController.isActive()) {
+          SidebarControllers.sidebarController.close();
+        }
+        webPanelController.unload();
+      },
+    );
 
     this.webPanelMenuPopup.listenEditItemClick((webPanelController) => {
       SidebarControllers.webPanelEditController.openPopup(webPanelController);
@@ -210,6 +216,9 @@ export class WebPanelsController {
       if (isLeftMouseButton(mouseEvent)) {
         webPanelController.switchWebPanel();
       } else if (isMiddleMouseButton(mouseEvent)) {
+        if (webPanelController.isActive()) {
+          SidebarControllers.sidebarController.close();
+        }
         webPanelController.unload();
       }
     });
