@@ -140,7 +140,7 @@ export class WebPanelController {
       this.#settings,
       this.#progressListener,
     );
-    this.#button.setUserContextId(userContextId);
+    this.button.setUserContextId(userContextId);
 
     if (isActive) {
       this.webPanelsBrowser.selectWebPanelTab(this.getUUID());
@@ -217,7 +217,7 @@ export class WebPanelController {
     }
 
     // Configure web panel and button
-    this.#button.setOpen(true).setUnloaded(false);
+    this.button.setOpen(true).setUnloaded(false);
     this.setZoom(this.#settings.zoom);
 
     // Open sidebar if it was closed and configure
@@ -232,7 +232,7 @@ export class WebPanelController {
   }
 
   close() {
-    this.#button.setOpen(false);
+    this.button.setOpen(false);
     this.webPanelsBrowser.deselectWebPanelTab();
     if (this.#settings.unloadOnClose) {
       this.unload();
@@ -246,7 +246,7 @@ export class WebPanelController {
       this.webPanelsBrowser.deselectWebPanelTab();
     }
     this.webPanelsBrowser.unloadWebPanelTab(this.getUUID());
-    this.#button.setOpen(false).setUnloaded(true).hidePlayingIcon();
+    this.button.setOpen(false).setUnloaded(true).hidePlayingIcon();
   }
 
   /**
@@ -401,7 +401,7 @@ export class WebPanelController {
 
   remove() {
     this.webPanelsBrowser.removeWebPanelTab(this.getUUID());
-    this.#button.remove();
+    this.button.remove();
   }
 
   /**
