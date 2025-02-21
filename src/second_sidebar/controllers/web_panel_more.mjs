@@ -1,20 +1,13 @@
-/* eslint-disable no-unused-vars */
 import { OPEN_URL_IN, openTrustedLinkInWrapper } from "../wrappers/global.mjs";
 import { WebPanelEvents, sendEvents } from "./events.mjs";
 
 import { ClipboardHelperWrapper } from "../wrappers/clipboard_helper.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
-import { WebPanelPopupMore } from "../xul/web_panel_popup_more.mjs";
-
-/* eslint-enable no-unused-vars */
+import { SidebarElements } from "../sidebar_elements.mjs";
 
 export class WebPanelMoreController {
-  /**
-   *
-   * @param {WebPanelPopupMore} webPanelPopupMore
-   */
-  constructor(webPanelPopupMore) {
-    this.webPanelPopupMore = webPanelPopupMore;
+  constructor() {
+    this.webPanelPopupMore = SidebarElements.webPanelPopupMore;
     this.#setupListeners();
   }
 

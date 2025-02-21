@@ -1,8 +1,10 @@
+/* eslint-disable no-unused-vars */
 import { Img } from "./base/img.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { Widget } from "./base/widget.mjs";
 import { applyContainerColor } from "../utils/containers.mjs";
 import { ellipsis } from "../utils/string.mjs";
+/* eslint-enable no-unused-vars */
 
 const URL_LABEL_LIMIT = 24;
 const URL_TOOLTIP_LIMIT = 64;

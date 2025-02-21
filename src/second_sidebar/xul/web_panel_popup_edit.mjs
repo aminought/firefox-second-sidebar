@@ -303,10 +303,7 @@ export class WebPanelPopupEdit extends Panel {
     };
     this.addEventListener("popuphidden", this.restoreWebPanelButtonState);
 
-    return Panel.prototype.openPopup.call(
-      this,
-      webPanelController.button,
-    );
+    return Panel.prototype.openPopup.call(this, webPanelController.button);
   }
 
   #cancelChanges() {

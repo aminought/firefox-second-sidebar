@@ -2,18 +2,14 @@
 import { WebPanelEvents, sendEvents } from "./events.mjs";
 
 import { SidebarControllers } from "../sidebar_controllers.mjs";
+import { SidebarElements } from "../sidebar_elements.mjs";
 import { WebPanelController } from "./web_panel.mjs";
-import { WebPanelPopupEdit } from "../xul/web_panel_popup_edit.mjs";
 
 /* eslint-enable no-unused-vars */
 
 export class WebPanelEditController {
-  /**
-   *
-   * @param {WebPanelPopupEdit} webPanelPopupEdit
-   */
-  constructor(webPanelPopupEdit) {
-    this.webPanelPopupEdit = webPanelPopupEdit;
+  constructor() {
+    this.webPanelPopupEdit = SidebarElements.webPanelPopupEdit;
     this.#setupListeners();
   }
 

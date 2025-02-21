@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
   WebPanelEvents,
   listenEvent,
@@ -6,23 +5,14 @@ import {
   sendEvents,
 } from "./events.mjs";
 
-import { TabBrowserWrapper } from "../wrappers/tab_browser.mjs";
-import { WebPanelNewButton } from "../xul/web_panel_new_button.mjs";
-import { WebPanelPopupNew } from "../xul/web_panel_popup_new.mjs";
+import { SidebarElements } from "../sidebar_elements.mjs";
 import { WindowWrapper } from "../wrappers/window.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
 
-/* eslint-enable no-unused-vars */
-
 export class WebPanelNewController {
-  /**
-   *
-   * @param {WebPanelNewButton} webPanelNewButton
-   * @param {WebPanelPopupNew} webPanelPopupNew
-   */
-  constructor(webPanelNewButton, webPanelPopupNew) {
-    this.webPanelNewButton = webPanelNewButton;
-    this.webPanelPopupNew = webPanelPopupNew;
+  constructor() {
+    this.webPanelNewButton = SidebarElements.webPanelNewButton;
+    this.webPanelPopupNew = SidebarElements.webPanelPopupNew;
 
     listenEvent(WebPanelEvents.OPEN_NEW_WEB_PANEL_POPUP, () => {
       this.openPopup();

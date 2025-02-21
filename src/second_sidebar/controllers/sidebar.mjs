@@ -6,16 +6,10 @@ import {
   sendEvents,
 } from "./events.mjs";
 
-import { Sidebar } from "../xul/sidebar.mjs";
-import { SidebarBox } from "../xul/sidebar_box.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
-import { SidebarMainPopupSettings } from "../xul/sidebar_main_popup_settings.mjs";
 import { SidebarSettings } from "../settings/sidebar_settings.mjs";
-import { SidebarSplitterUnpinned } from "../xul/sidebar_splitter_unpinned.mjs";
-import { SidebarToolbar } from "../xul/sidebar_toolbar.mjs";
 import { ToolbarButton } from "../xul/base/toolbar_button.mjs";
-import { WebPanelPopupEdit } from "../xul/web_panel_popup_edit.mjs";
 import { XULElement } from "../xul/base/xul_element.mjs";
 import { changeContainerBorder } from "../utils/containers.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
@@ -23,30 +17,15 @@ import { isLeftMouseButton } from "../utils/buttons.mjs";
 /* eslint-enable no-unused-vars */
 
 export class SidebarController {
-  /**
-   *
-   * @param {SidebarBox} sidebarBox
-   * @param {Sidebar} sidebar
-   * @param {SidebarToolbar} sidebarToolbar
-   * @param {SidebarSplitterUnpinned} sidebarSplitterUnpinned
-   * @param {WebPanelPopupEdit} webPanelPopupEdit
-   * @param {SidebarMainPopupSettings} sidebarMainPopupSettings
-   */
-  constructor(
-    sidebarBox,
-    sidebar,
-    sidebarToolbar,
-    sidebarSplitterUnpinned,
-    webPanelPopupEdit,
-    sidebarMainPopupSettings,
-  ) {
-    this.sidebarBox = sidebarBox;
-    this.sidebar = sidebar;
-    this.sidebarToolbar = sidebarToolbar;
-    this.sidebarSplitterUnpinned = sidebarSplitterUnpinned;
-    this.webPanelPopupEdit = webPanelPopupEdit;
-    this.sidebarMainPopupSettings = sidebarMainPopupSettings;
+  constructor() {
+    this.sidebarBox = SidebarElements.sidebarBox;
+    this.sidebar = SidebarElements.sidebar;
+    this.sidebarToolbar = SidebarElements.sidebarToolbar;
+    this.sidebarSplitterUnpinned = SidebarElements.sidebarSplitterUnpinned;
+    this.webPanelPopupEdit = SidebarElements.webPanelPopupEdit;
+    this.sidebarMainPopupSettings = SidebarElements.sidebarMainPopupSettings;
     this.root = new XULElement({ element: document.documentElement });
+
     this.#setupListeners();
 
     this.hideInPopupWindows = false;

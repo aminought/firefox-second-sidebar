@@ -1,19 +1,11 @@
-/* eslint-disable no-unused-vars */
 import { SidebarEvents, sendEvents } from "./events.mjs";
 
 import { SidebarControllers } from "../sidebar_controllers.mjs";
-import { SidebarMainPopupSettings } from "../xul/sidebar_main_popup_settings.mjs";
-
-/* eslint-enable no-unused-vars */
+import { SidebarElements } from "../sidebar_elements.mjs";
 
 export class SidebarMainSettingsController {
-  /**
-   *
-   * @param {SidebarMainPopupSettings} sidebarMainPopupSettings
-   */
-  constructor(sidebarMainPopupSettings) {
-    this.sidebarMainPopupSettings = sidebarMainPopupSettings;
-
+  constructor() {
+    this.sidebarMainPopupSettings = SidebarElements.sidebarMainPopupSettings;
     this.#setupListeners();
   }
 

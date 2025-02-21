@@ -1,24 +1,15 @@
-/* eslint-disable no-unused-vars */
 import { SidebarControllers } from "../sidebar_controllers.mjs";
-import { SidebarMain } from "../xul/sidebar_main.mjs";
-import { SidebarMainMenuPopup } from "../xul/sidebar_main_menupopup.mjs";
+import { SidebarElements } from "../sidebar_elements.mjs";
 import { XULElement } from "../xul/base/xul_element.mjs";
 import { gCustomizeModeWrapper } from "../wrappers/g_customize_mode.mjs";
 import { gNavToolboxWrapper } from "../wrappers/g_nav_toolbox.mjs";
 import { isRightMouseButton } from "../utils/buttons.mjs";
-/* eslint-enable no-unused-vars */
 
 export class SidebarMainController {
-  /**
-   *
-   * @param {SidebarMain} sidebarMain
-   * @param {SidebarMainMenuPopup} sidebarMainMenuPopup
-   */
-  constructor(sidebarMain, sidebarMainMenuPopup) {
-    this.sidebarMain = sidebarMain;
-    this.sidebarMainMenuPopup = sidebarMainMenuPopup;
+  constructor() {
+    this.sidebarMain = SidebarElements.sidebarMain;
+    this.sidebarMainMenuPopup = SidebarElements.sidebarMainMenuPopup;
     this.root = new XULElement({ element: document.documentElement });
-
     this.#setupListeners();
   }
 

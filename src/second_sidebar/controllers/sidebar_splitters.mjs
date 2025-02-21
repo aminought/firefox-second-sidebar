@@ -1,21 +1,12 @@
-/* eslint-disable no-unused-vars */
 import { SidebarEvents, sendEvents } from "./events.mjs";
 
 import { SidebarControllers } from "../sidebar_controllers.mjs";
-import { SidebarSplitterPinned } from "../xul/sidebar_splitter_pinned.mjs";
-import { SidebarSplitterUnpinned } from "../xul/sidebar_splitter_unpinned.mjs";
-
-/* eslint-enable no-unused-vars */
+import { SidebarElements } from "../sidebar_elements.mjs";
 
 export class SidebarSplittersController {
-  /**
-   *
-   * @param {SidebarSplitterUnpinned} sidebarSplitterUnpinned
-   * @param {SidebarSplitterPinned} sidebarSplitterPinned
-   */
-  constructor(sidebarSplitterUnpinned, sidebarSplitterPinned) {
-    this.sidebarSplitterUnpinned = sidebarSplitterUnpinned;
-    this.sidebarSplitterPinned = sidebarSplitterPinned;
+  constructor() {
+    this.sidebarSplitterUnpinned = SidebarElements.sidebarSplitterUnpinned;
+    this.sidebarSplitterPinned = SidebarElements.sidebarSplitterPinned;
 
     this.#setupListeners();
   }

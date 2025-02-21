@@ -22,6 +22,7 @@ export default [
         gURLBar: "readonly",
         openTrustedLinkIn: "readonly",
         AboutReaderParent: "readonly",
+        AppConstants: "readonly",
         BookmarkingUI: "readonly",
         BookmarksEventHandler: "readonly",
         BrowserCommands: "readonly",

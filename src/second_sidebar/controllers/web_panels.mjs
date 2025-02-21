@@ -1,38 +1,21 @@
-/* eslint-disable no-unused-vars */
 import { WebPanelEvents, listenEvent } from "./events.mjs";
 import { isLeftMouseButton, isMiddleMouseButton } from "../utils/buttons.mjs";
 
 import { NetUtilWrapper } from "../wrappers/net_utils.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
-import { SidebarMain } from "../xul/sidebar_main.mjs";
-import { WebPanel } from "../xul/web_panel.mjs";
-import { WebPanelButton } from "../xul/web_panel_button.mjs";
 import { WebPanelController } from "./web_panel.mjs";
-import { WebPanelMenuPopup } from "../xul/web_panel_menupopup.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
-import { WebPanelTab } from "../xul/web_panel_tab.mjs";
-import { WebPanelTabs } from "../xul/web_panel_tabs.mjs";
-import { WebPanels } from "../xul/web_panels.mjs";
 import { WebPanelsSettings } from "../settings/web_panels_settings.mjs";
 import { fetchIconURL } from "../utils/icons.mjs";
 import { gCustomizeModeWrapper } from "../wrappers/g_customize_mode.mjs";
 
-/* eslint-enable no-unused-vars */
-
 export class WebPanelsController {
-  /**
-   *
-   * @param {WebPanels} webPanels
-   * @param {SidebarMain} sidebarMain
-   * @param {WebPanelTabs} webPanelTabs
-   * @param {WebPanelMenuPopup} webPanelMenuPopup
-   */
-  constructor(webPanels, sidebarMain, webPanelTabs, webPanelMenuPopup) {
-    this.webPanels = webPanels;
-    this.sidebarMain = sidebarMain;
-    this.webPanelTabs = webPanelTabs;
-    this.webPanelMenuPopup = webPanelMenuPopup;
+  constructor() {
+    this.sidebarMain = SidebarElements.sidebarMain;
+    this.sidebarBox = SidebarElements.sidebarBox;
+    this.webPanelsBrowser = SidebarElements.webPanelsBrowser;
+    this.webPanelMenuPopup = SidebarElements.webPanelMenuPopup;
 
     /**@type {Object<string, WebPanelController>} */
     this.webPanelControllers = {};
@@ -40,7 +23,7 @@ export class WebPanelsController {
   }
 
   #setupListeners() {
-    SidebarElements.webPanelsBrowser.addTabBrowserEventListener(
+    this.webPanelsBrowser.addTabBrowserEventListener(
       "pagetitlechanged",
       (tab) => {
         if (tab.selected) {
@@ -307,7 +290,7 @@ export class WebPanelsController {
    * @returns {WebPanelController?}
    */
   getActive() {
-    const tab = SidebarElements.webPanelsBrowser.getActiveWebPanelTab();
+    const tab = this.webPanelsBrowser.getActiveWebPanelTab();
     return this.get(tab.uuid);
   }
 
@@ -335,8 +318,8 @@ export class WebPanelsController {
 
     // We need to display web panels window for a while to initialize it and
     // load startup web panels, but don't want to see it
-    SidebarElements.sidebarBox.showInvisible();
-    SidebarElements.webPanelsBrowser.init();
+    this.sidebarBox.showInvisible();
+    this.webPanelsBrowser.init();
 
     for (const webPanelSettings of webPanelsSettings.webPanels) {
       const webPanelController = new WebPanelController(webPanelSettings, {
@@ -346,8 +329,8 @@ export class WebPanelsController {
     }
 
     // Hide web panels window after initialization
-    SidebarElements.webPanelsBrowser.waitInitialization(() => {
-      SidebarElements.sidebarBox.hideInvisible();
+    this.webPanelsBrowser.waitInitialization(() => {
+      this.sidebarBox.hideInvisible();
     });
   }
 

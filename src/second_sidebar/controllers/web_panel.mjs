@@ -1,15 +1,15 @@
+/* eslint-disable no-unused-vars */
 import { WebPanelEvents, sendEvent } from "./events.mjs";
 
-import { Browser } from "../xul/base/browser.mjs";
 import { ChromeUtilsWrapper } from "../wrappers/chrome_utils.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
-import { Tab } from "../xul/base/tab.mjs";
 import { WebPanelButton } from "../xul/web_panel_button.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { WebPanelTab } from "../xul/web_panel_tab.mjs";
-import { WindowWrapper } from "../wrappers/window.mjs";
 import { ZoomManagerWrapper } from "../wrappers/zoom_manager.mjs";
+
+/* eslint-enable no-unused-vars */
 
 const MOBILE_USER_AGENT =
   "Mozilla/5.0 (Linux; Android 11; SAMSUNG SM-G973U) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/14.2 Chrome/87.0.4280.141 Mobile Safari/537.36";
@@ -30,14 +30,13 @@ export class WebPanelController {
    * @param {string?} params.position
    */
   constructor(settings, { loaded = false, position = null } = {}) {
+    this.webPanelsBrowser = SidebarElements.webPanelsBrowser;
+
     this.#settings = settings;
     this.#progressListener = this.#createProgressListener();
     this.#button = this.#createWebPanelButton(settings, loaded, position);
     if (loaded) {
-      SidebarElements.webPanelsBrowser.addWebPanelTab(
-        settings,
-        this.#progressListener,
-      );
+      this.webPanelsBrowser.addWebPanelTab(settings, this.#progressListener);
     }
   }
 
@@ -99,7 +98,7 @@ export class WebPanelController {
    * @returns {WebPanelTab?}
    */
   get tab() {
-    return SidebarElements.webPanelsBrowser.getWebPanelTab(this.getUUID());
+    return this.webPanelsBrowser.getWebPanelTab(this.getUUID());
   }
 
   /**
@@ -136,15 +135,15 @@ export class WebPanelController {
 
     const isActive = this.isActive();
 
-    SidebarElements.webPanelsBrowser.removeWebPanelTab(this.getUUID());
-    SidebarElements.webPanelsBrowser.addWebPanelTab(
+    this.webPanelsBrowser.removeWebPanelTab(this.getUUID());
+    this.webPanelsBrowser.addWebPanelTab(
       this.#settings,
       this.#progressListener,
     );
     this.#button.setUserContextId(userContextId);
 
     if (isActive) {
-      SidebarElements.webPanelsBrowser.selectWebPanelTab(this.getUUID());
+      this.webPanelsBrowser.selectWebPanelTab(this.getUUID());
     }
     if (this.#settings.unloadOnClose) {
       this.unload();
@@ -201,16 +200,16 @@ export class WebPanelController {
 
     // Create web panel tab if it was not loaded yet and select
     if (!this.tab) {
-      SidebarElements.webPanelsBrowser.addWebPanelTab(
+      this.webPanelsBrowser.addWebPanelTab(
         this.#settings,
         this.#progressListener,
       );
     }
-    SidebarElements.webPanelsBrowser.selectWebPanelTab(this.getUUID());
+    this.webPanelsBrowser.selectWebPanelTab(this.getUUID());
 
     // Restore progress listener after browser discard
     if (this.#settings.unloadOnClose) {
-      SidebarElements.webPanelsBrowser.addWebPanelProgressListener(
+      this.webPanelsBrowser.addWebPanelProgressListener(
         this.getUUID(),
         this.#progressListener,
       );
@@ -231,7 +230,7 @@ export class WebPanelController {
   close() {
     this.#button.setOpen(false);
     SidebarControllers.sidebarController.close();
-    SidebarElements.webPanelsBrowser.deselectWebPanelTab();
+    this.webPanelsBrowser.deselectWebPanelTab();
     if (this.#settings.unloadOnClose) {
       this.unload();
     }
@@ -241,9 +240,9 @@ export class WebPanelController {
     const activeWebPanelController =
       SidebarControllers.webPanelsController.getActive();
     if (activeWebPanelController?.getUUID() === this.getUUID()) {
-      SidebarElements.webPanelsBrowser.deselectWebPanelTab();
+      this.webPanelsBrowser.deselectWebPanelTab();
     }
-    SidebarElements.webPanelsBrowser.unloadWebPanelTab(this.getUUID());
+    this.webPanelsBrowser.unloadWebPanelTab(this.getUUID());
     this.#button.setOpen(false).setUnloaded(true).hidePlayingIcon();
   }
 
@@ -389,12 +388,12 @@ export class WebPanelController {
    * @returns {boolean}
    */
   isActive() {
-    const tab = SidebarElements.webPanelsBrowser.getWebPanelTab(this.getUUID());
+    const tab = this.webPanelsBrowser.getWebPanelTab(this.getUUID());
     return tab && tab.selected;
   }
 
   remove() {
-    SidebarElements.webPanelsBrowser.removeWebPanelTab(this.getUUID());
+    this.webPanelsBrowser.removeWebPanelTab(this.getUUID());
     this.#button.remove();
   }
 

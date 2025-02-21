@@ -1,18 +1,14 @@
 /* eslint-disable no-unused-vars */
 import { WebPanelEvents, sendEvents } from "./events.mjs";
 
+import { SidebarElements } from "../sidebar_elements.mjs";
 import { WebPanelController } from "./web_panel.mjs";
-import { WebPanelPopupDelete } from "../xul/web_panel_popup_delete.mjs";
 
 /* eslint-enable no-unused-vars */
 
 export class WebPanelDeleteController {
-  /**
-   *
-   * @param {WebPanelPopupDelete} webPanelPopupDelete
-   */
-  constructor(webPanelPopupDelete) {
-    this.webPanelPopupDelete = webPanelPopupDelete;
+  constructor() {
+    this.webPanelPopupDelete = SidebarElements.webPanelPopupDelete;
     this.#setupListeners();
   }
 

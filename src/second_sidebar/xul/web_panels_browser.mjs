@@ -1,15 +1,17 @@
+/* eslint-disable no-unused-vars */
+
 import { AppConstantsWrapper } from "../wrappers/app_constants.mjs";
 import { Browser } from "./base/browser.mjs";
 import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manager.mjs";
 import { SessionStoreWrapper } from "../wrappers/session_store.mjs";
-import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { Style } from "./base/style.mjs";
-import { Tab } from "./base/tab.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { WebPanelTab } from "./web_panel_tab.mjs";
 import { WindowWatcherWrapper } from "../wrappers/window_watcher.mjs";
 import { WindowWrapper } from "../wrappers/window.mjs";
 import { XULElement } from "./base/xul_element.mjs";
+
+/* eslint-enable no-unused-vars */
 
 const BEFORE_SHOW_EVENT = "browser-window-before-show";
 const INITIALIZED_EVENT = "browser-delayed-startup-finished";
@@ -84,7 +86,7 @@ export class WebPanelsBrowser extends Browser {
     });
     const selectors = [
       "#PersonalToolbar",
-      // "#navigator-toolbox",
+      "#navigator-toolbox",
       "#context-bookmarkpage",
       "#context-viewsource",
     ];
