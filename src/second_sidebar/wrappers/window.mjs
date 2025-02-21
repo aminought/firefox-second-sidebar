@@ -19,8 +19,18 @@ export class WindowWrapper {
     return this.#window;
   }
 
+  /**
+   * @returns {string}
+   */
   get id() {
     return this.raw.__SSi;
+  }
+
+  /**
+   * @returns {string}
+   */
+  get name() {
+    return this.raw.name;
   }
 
   /**

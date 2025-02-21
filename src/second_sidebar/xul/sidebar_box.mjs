@@ -11,10 +11,12 @@ export class SidebarBox extends HBox {
    * @returns {SidebarBox}
    */
   showInvisible() {
-    return this.setProperty("z-index", "-1").show();
+    return this.setProperty("position", "absolute")
+      .setProperty("z-index", "-2147483647")
+      .show();
   }
 
   hideInvisible() {
-    this.setProperty("z-index", "10").hide();
+    this.hide().removeProperty("position").removeProperty("z-index");
   }
 }

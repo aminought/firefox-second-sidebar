@@ -53,17 +53,28 @@ export class WebPanelsBrowser extends Browser {
     this.setAttribute("src", AppConstantsWrapper.BROWSER_CHROME_URL);
   }
 
-  observe(subj, topic, data) {
-    console.log(`Got event ${topic}`);
+  /**
+   *
+   * @param {Window} subj
+   * @param {string} topic
+   */
+  observe(subj, topic) {
+    if (this.window.name !== subj.name) {
+      return;
+    }
+    console.log(`${this.window.name}: got event ${topic}`);
     if (topic === BEFORE_SHOW_EVENT) {
+      Services.obs.removeObserver(this, BEFORE_SHOW_EVENT);
       this.initWindow();
     } else if (topic === INITIALIZED_EVENT) {
+      Services.obs.removeObserver(this, INITIALIZED_EVENT);
       this.initialized = true;
       SessionStoreWrapper.maybeDontRestoreTabs(this.window);
-      console.log("Web panels browser initialized");
+      console.log(`${this.window.name}: web panels browser initialized`);
     } else if (topic === BROWSER_QUIT_EVENT) {
+      Services.obs.removeObserver(this, BROWSER_QUIT_EVENT);
       this.remove();
-      console.log("Web panels browser removed");
+      console.log(`${this.window.name}: web panels browser removed`);
     }
   }
 

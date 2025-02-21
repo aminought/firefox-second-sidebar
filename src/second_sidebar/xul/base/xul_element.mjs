@@ -232,6 +232,16 @@ export class XULElement {
 
   /**
    *
+   * @param {string} property
+   * @returns {XULElement}
+   */
+  removeProperty(property) {
+    this.element.style.removeProperty(property);
+    return this;
+  }
+
+  /**
+   *
    * @param {string} text
    * @returns {XULElement}
    */
