@@ -411,6 +411,7 @@ export class WebPanelController {
         pinned: this.#settings.pinned,
         width: this.#settings.width,
         mobile: this.#settings.mobile,
+        zoom: this.#settings.zoom,
         loadOnStartup: this.#settings.loadOnStartup,
         unloadOnClose: this.#settings.unload,
         hideToolbar: this.#settings.hideToolbar,
