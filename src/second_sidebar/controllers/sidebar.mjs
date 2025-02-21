@@ -173,10 +173,9 @@ export class SidebarController {
    * @param {boolean} canGoBack
    * @param {boolean} canGoForward
    * @param {string} title
-   * @param {number} zoom
    * @param {boolean} hideToolbar
    */
-  open(pinned, width, canGoBack, canGoForward, title, zoom, hideToolbar) {
+  open(pinned, width, canGoBack, canGoForward, title, hideToolbar) {
     this.sidebarBox.show();
     this.setWidth(width);
     this.setToolbarBackButtonDisabled(!canGoBack);

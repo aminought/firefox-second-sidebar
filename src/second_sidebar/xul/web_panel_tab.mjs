@@ -1,4 +1,5 @@
 import { Tab } from "./base/tab.mjs";
+import { WebPanelBrowser } from "./web_panel_browser.mjs";
 
 export class WebPanelTab extends Tab {
   /**
@@ -16,6 +17,13 @@ export class WebPanelTab extends Tab {
    */
   static fromTab(tab) {
     return new WebPanelTab(tab.getXUL());
+  }
+
+  /**
+   * @returns {WebPanelBrowser}
+   */
+  get linkedBrowser() {
+    return new WebPanelBrowser(this.element.linkedBrowser);
   }
 
   /**

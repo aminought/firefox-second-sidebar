@@ -166,6 +166,17 @@ export class WebPanelsBrowser extends Browser {
       tab.addEventListener("TabBrowserInserted", () => {
         tab.linkedBrowser.addProgressListener(progressListener);
       });
+
+      // Set user agent and reload
+      if (webPanelSettings.mobile) {
+        tab.linkedBrowser.setMobileUserAgent();
+      } else {
+        tab.linkedBrowser.unsetMobileUserAgent();
+      }
+      tab.linkedBrowser.go(webPanelSettings.url);
+
+      // Set zoom
+      tab.linkedBrowser.setZoom(webPanelSettings.zoom);
     });
   }
 

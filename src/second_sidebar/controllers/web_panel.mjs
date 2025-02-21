@@ -11,8 +11,6 @@ import { ZoomManagerWrapper } from "../wrappers/zoom_manager.mjs";
 
 /* eslint-enable no-unused-vars */
 
-const MOBILE_USER_AGENT =
-  "Mozilla/5.0 (Linux; Android 11; SAMSUNG SM-G973U) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/14.2 Chrome/87.0.4280.141 Mobile Safari/537.36";
 const DEFAULT_ZOOM = 1;
 const ZOOM_DELTA = 0.1;
 
@@ -188,7 +186,10 @@ export class WebPanelController {
     const activeWebPanelController =
       SidebarControllers.webPanelsController.getActive();
 
-    // Close active web panel and sidebar
+    // Close sidebar and active web panel
+    if (activeWebPanelController?.getUUID() === this.getUUID()) {
+      SidebarControllers.sidebarController.close();
+    }
     activeWebPanelController?.close();
 
     // Reopen sidebar and open web panel if web panel was not active
@@ -198,8 +199,6 @@ export class WebPanelController {
   }
 
   open() {
-    this.#button.setOpen(true).setUnloaded(false);
-
     // Create web panel tab if it was not loaded yet and select
     if (!this.tab) {
       this.webPanelsBrowser.addWebPanelTab(
@@ -217,6 +216,10 @@ export class WebPanelController {
       );
     }
 
+    // Configure web panel and button
+    this.#button.setOpen(true).setUnloaded(false);
+    this.setZoom(this.#settings.zoom);
+
     // Open sidebar if it was closed and configure
     SidebarControllers.sidebarController.open(
       this.#settings.pinned,
@@ -224,14 +227,12 @@ export class WebPanelController {
       this.tab.linkedBrowser.canGoBack(),
       this.tab.linkedBrowser.canGoForward(),
       this.tab.linkedBrowser.getTitle(),
-      this.tab.linkedBrowser.getZoom(),
       this.#settings.hideToolbar,
     );
   }
 
   close() {
     this.#button.setOpen(false);
-    SidebarControllers.sidebarController.close();
     this.webPanelsBrowser.deselectWebPanelTab();
     if (this.#settings.unloadOnClose) {
       this.unload();
@@ -278,7 +279,11 @@ export class WebPanelController {
    */
   setMobile(value) {
     this.#settings.mobile = value;
-    this.tab.linkedBrowser.setCustomUserAgent(value ? MOBILE_USER_AGENT : "");
+    if (value) {
+      this.tab.linkedBrowser.setMobileUserAgent();
+    } else {
+      this.tab.linkedBrowser.unsetMobileUserAgent();
+    }
     if (!this.isUnloaded()) {
       this.goHome();
     }
@@ -314,7 +319,7 @@ export class WebPanelController {
    */
   setZoom(zoom) {
     this.#settings.zoom = zoom;
-    this.tab.linkedBrowser.setZoom(zoom);
+    this.tab?.linkedBrowser?.setZoom(zoom);
   }
 
   resetZoom() {
