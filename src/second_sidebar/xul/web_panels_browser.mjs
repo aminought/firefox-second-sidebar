@@ -88,6 +88,7 @@ export class WebPanelsBrowser extends Browser {
     const selectors = [
       "#PersonalToolbar",
       "#navigator-toolbox",
+      "#sidebar-wrapper",
       "#context-bookmarkpage",
       "#context-viewsource",
     ];
@@ -107,6 +108,11 @@ export class WebPanelsBrowser extends Browser {
 
     // Shrink to fit
     windowRoot.setProperty("min-width", "0px");
+
+    // Full height for content
+    windowRoot
+      .querySelector("#tabbrowser-tabbox")
+      .setProperty("height", "100%");
 
     // Disable key bindings
     windowRoot.querySelector("#tabbrowser-tabbox").element.handleCtrlTab =
