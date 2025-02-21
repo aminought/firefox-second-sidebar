@@ -2,6 +2,7 @@
 
 import { AppConstantsWrapper } from "../wrappers/app_constants.mjs";
 import { Browser } from "./base/browser.mjs";
+import { ObserversWrapper } from "../wrappers/observers.mjs";
 import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manager.mjs";
 import { SessionStoreWrapper } from "../wrappers/session_store.mjs";
 import { Style } from "./base/style.mjs";
@@ -49,9 +50,9 @@ export class WebPanelsBrowser extends Browser {
       return;
     }
     console.log("Initializing web panels browser...");
-    Services.obs.addObserver(this, BEFORE_SHOW_EVENT);
-    Services.obs.addObserver(this, INITIALIZED_EVENT);
-    Services.obs.addObserver(this, BROWSER_QUIT_EVENT);
+    ObserversWrapper.addObserver(this, BEFORE_SHOW_EVENT);
+    ObserversWrapper.addObserver(this, INITIALIZED_EVENT);
+    ObserversWrapper.addObserver(this, BROWSER_QUIT_EVENT);
     this.setAttribute("src", AppConstantsWrapper.BROWSER_CHROME_URL);
   }
 
@@ -66,15 +67,15 @@ export class WebPanelsBrowser extends Browser {
     }
     console.log(`${this.window.name}: got event ${topic}`);
     if (topic === BEFORE_SHOW_EVENT) {
-      Services.obs.removeObserver(this, BEFORE_SHOW_EVENT);
+      ObserversWrapper.removeObserver(this, BEFORE_SHOW_EVENT);
       this.initWindow();
     } else if (topic === INITIALIZED_EVENT) {
-      Services.obs.removeObserver(this, INITIALIZED_EVENT);
+      ObserversWrapper.removeObserver(this, INITIALIZED_EVENT);
       this.initialized = true;
       SessionStoreWrapper.maybeDontRestoreTabs(this.window);
       console.log(`${this.window.name}: web panels browser initialized`);
     } else if (topic === BROWSER_QUIT_EVENT) {
-      Services.obs.removeObserver(this, BROWSER_QUIT_EVENT);
+      ObserversWrapper.removeObserver(this, BROWSER_QUIT_EVENT);
       this.remove();
       console.log(`${this.window.name}: web panels browser removed`);
     }

@@ -256,11 +256,7 @@ export class WebPanelsController {
 
     if (isActiveWindow) {
       this.saveSettings();
-      // this.injectWebPanelTab(webPanelTab);
-      // this.injectWebPanel(webPanel);
-      // webPanelController.initWebPanel();
     }
-    // webPanelController.initWebPanelButton();
 
     return webPanelController;
   }
