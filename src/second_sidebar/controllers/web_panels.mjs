@@ -80,16 +80,18 @@ export class WebPanelsController {
       const url = event.detail.url;
       const userContextId = event.detail.userContextId;
       const newWebPanelPosition = event.detail.newWebPanelPosition;
-      const isWindowActive = event.detail.isWindowActive;
+      const isActiveWindow = event.detail.isActiveWindow;
 
       const webPanelController = await this.createWebPanelController(
         uuid,
         url,
         userContextId,
         newWebPanelPosition,
-        isWindowActive,
+        isActiveWindow,
       );
-      webPanelController.switchWebPanel();
+      if (isActiveWindow) {
+        webPanelController.switchWebPanel();
+      }
     });
 
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_URL, (event) => {
@@ -202,8 +204,8 @@ export class WebPanelsController {
     });
 
     listenEvent(WebPanelEvents.SAVE_WEB_PANELS, (event) => {
-      const isWindowActive = event.detail.isWindowActive;
-      if (isWindowActive) {
+      const isActiveWindow = event.detail.isActiveWindow;
+      if (isActiveWindow) {
         this.saveSettings();
       }
     });
@@ -233,7 +235,7 @@ export class WebPanelsController {
       webPanelController.remove();
       this.delete(uuid);
 
-      if (event.detail.isWindowActive) {
+      if (event.detail.isActiveWindow) {
         this.saveSettings();
       }
     });
@@ -245,7 +247,7 @@ export class WebPanelsController {
    * @param {string} url
    * @param {string} userContextId
    * @param {string} newWebPanelPosition
-   * @param {boolean} isWindowActive
+   * @param {boolean} isActiveWindow
    * @returns {WebPanelController}
    */
   async createWebPanelController(
@@ -253,7 +255,7 @@ export class WebPanelsController {
     url,
     userContextId,
     newWebPanelPosition,
-    isWindowActive,
+    isActiveWindow,
   ) {
     try {
       NetUtilWrapper.newURI(url);
@@ -267,12 +269,12 @@ export class WebPanelsController {
       userContextId,
     });
     const webPanelController = new WebPanelController(webPanelSettings, {
-      loaded: true,
+      loaded: isActiveWindow,
       position: newWebPanelPosition,
     });
     this.add(webPanelController);
 
-    if (isWindowActive) {
+    if (isActiveWindow) {
       this.saveSettings();
       // this.injectWebPanelTab(webPanelTab);
       // this.injectWebPanel(webPanel);

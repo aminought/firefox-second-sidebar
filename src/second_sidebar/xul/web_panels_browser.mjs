@@ -59,9 +59,9 @@ export class WebPanelsBrowser extends Browser {
       this.initWindow();
     } else if (topic === INITIALIZED_EVENT) {
       this.initialized = true;
+      SessionStoreWrapper.maybeDontRestoreTabs(this.window);
       console.log("Web panels browser initialized");
     } else if (topic === BROWSER_QUIT_EVENT) {
-      SessionStoreWrapper.maybeDontRestoreTabs(this.window);
       this.remove();
       console.log("Web panels browser removed");
     }

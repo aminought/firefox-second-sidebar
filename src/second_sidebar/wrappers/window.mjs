@@ -19,6 +19,10 @@ export class WindowWrapper {
     return this.#window;
   }
 
+  get id() {
+    return this.raw.__SSi;
+  }
+
   /**
    * @returns {TabBrowserWrapper}
    */

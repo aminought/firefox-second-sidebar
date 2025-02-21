@@ -45,7 +45,7 @@ export const sendEvent = (type, detail = {}) => {
   const customEvent = new CustomEvent(type, {
     detail: {
       ...detail,
-      isWindowActive: window === lastWindow,
+      isActiveWindow: window === lastWindow,
     },
   });
   lastWindow.dispatchEvent(customEvent);
@@ -62,7 +62,7 @@ export const sendEvents = (type, detail = {}) => {
     const customEvent = new CustomEvent(type, {
       detail: {
         ...detail,
-        isWindowActive: WindowWrapper.isEqual(window, lastWindow),
+        isActiveWindow: WindowWrapper.isEqual(window, lastWindow),
       },
     });
     window.dispatchEvent(customEvent);

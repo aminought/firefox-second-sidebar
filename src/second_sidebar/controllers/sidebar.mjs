@@ -180,8 +180,8 @@ export class SidebarController {
     });
 
     listenEvent(SidebarEvents.SAVE_SIDEBAR, (event) => {
-      const isWindowActive = event.detail.isWindowActive;
-      if (isWindowActive) {
+      const isActiveWindow = event.detail.isActiveWindow;
+      if (isActiveWindow) {
         this.saveSettings();
       }
     });
