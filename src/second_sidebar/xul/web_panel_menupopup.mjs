@@ -2,7 +2,8 @@
 import { MenuItem } from "./base/menuitem.mjs";
 import { MenuPopup } from "./base/menupopup.mjs";
 import { MenuSeparator } from "./base/menuseparator.mjs";
-import { WebPanelsController } from "../controllers/web_panels.mjs";
+import { SidebarControllers } from "../sidebar_controllers.mjs";
+import { WebPanelController } from "../controllers/web_panel.mjs";
 /* eslint-enable no-unused-vars */
 
 export class WebPanelMenuPopup extends MenuPopup {
@@ -19,7 +20,7 @@ export class WebPanelMenuPopup extends MenuPopup {
     this.#compose();
 
     this.addEventListener("popupshowing", () => {
-      this.webPanelController = this.webPanelsController.get(
+      this.webPanelController = SidebarControllers.webPanelsController.get(
         this.element.triggerNode.id,
       );
     });
@@ -38,15 +39,7 @@ export class WebPanelMenuPopup extends MenuPopup {
 
   /**
    *
-   * @param {WebPanelsController} webPanelsController
-   */
-  setWebPanelsController(webPanelsController) {
-    this.webPanelsController = webPanelsController;
-  }
-
-  /**
-   *
-   * @param {WebPanelsController} webPanelsController
+   * @param {function(WebPanelController):void} callback
    */
   listenUnloadItemClick(callback) {
     this.unloadItem.addEventListener("command", () => {
@@ -56,7 +49,7 @@ export class WebPanelMenuPopup extends MenuPopup {
 
   /**
    *
-   * @param {WebPanelsController} webPanelsController
+   * @param {function(WebPanelController):void} callback
    */
   listenEditItemClick(callback) {
     this.editItem.addEventListener("command", () => {
@@ -66,7 +59,7 @@ export class WebPanelMenuPopup extends MenuPopup {
 
   /**
    *
-   * @param {WebPanelsController} webPanelsController
+   * @param {function(WebPanelController):void} callback
    */
   listenDeleteItemClick(callback) {
     this.deleteItem.addEventListener("command", () => {
@@ -76,7 +69,7 @@ export class WebPanelMenuPopup extends MenuPopup {
 
   /**
    *
-   * @param {function(MouseEvent):void} callback
+   * @param {function(WebPanelController):void} callback
    */
   listenCustomizeItemClick(callback) {
     this.customizeItem.addEventListener("command", (event) => {

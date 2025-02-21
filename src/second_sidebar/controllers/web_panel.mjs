@@ -43,8 +43,10 @@ export class WebPanelController {
   #createProgressListener() {
     const callback = () => {
       if (this.tab.selected) {
+        const title = this.tab.linkedBrowser.getTitle();
         const canGoBack = this.tab.linkedBrowser.canGoBack();
         const canGoForward = this.tab.linkedBrowser.canGoForward();
+        SidebarControllers.sidebarController.setToolbarTitle(title);
         SidebarControllers.sidebarController.setToolbarBackButtonDisabled(
           !canGoBack,
         );

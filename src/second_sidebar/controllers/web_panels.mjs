@@ -23,28 +23,25 @@ export class WebPanelsController {
   }
 
   #setupListeners() {
-    this.webPanelsBrowser.addTabBrowserEventListener(
-      "pagetitlechanged",
-      (tab) => {
-        if (tab.selected) {
-          SidebarControllers.sidebarController.setToolbarTitle(
-            tab.linkedBrowser.getTitle(),
-          );
-        }
-      },
-    );
+    this.webPanelsBrowser.waitInitialization(() => {
+      this.webPanelsBrowser.addTabBrowserEventListener(
+        "pagetitlechanged",
+        (tab) => {
+          if (tab.selected) {
+            SidebarControllers.sidebarController.setToolbarTitle(
+              tab.linkedBrowser.getTitle(),
+            );
+          }
+        },
+      );
+    });
 
-    this.webPanelMenuPopup.setWebPanelsController(this);
-
-    this.webPanelMenuPopup.listenUnloadItemClick(
-      /**@param {WebPanelController} webPanelController */
-      (webPanelController) => {
-        if (webPanelController.isActive()) {
-          SidebarControllers.sidebarController.close();
-        }
-        webPanelController.unload();
-      },
-    );
+    this.webPanelMenuPopup.listenUnloadItemClick((webPanelController) => {
+      if (webPanelController.isActive()) {
+        SidebarControllers.sidebarController.close();
+      }
+      webPanelController.unload();
+    });
 
     this.webPanelMenuPopup.listenEditItemClick((webPanelController) => {
       SidebarControllers.webPanelEditController.openPopup(webPanelController);
