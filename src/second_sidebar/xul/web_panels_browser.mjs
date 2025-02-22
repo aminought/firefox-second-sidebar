@@ -88,6 +88,7 @@ export class WebPanelsBrowser extends Browser {
     const selectors = [
       "#PersonalToolbar",
       "#navigator-toolbox",
+      "#sidebar-main",
       "#sidebar-wrapper",
       "#context-bookmarkpage",
       "#context-viewsource",
