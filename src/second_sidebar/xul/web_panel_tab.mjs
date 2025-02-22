@@ -47,4 +47,12 @@ export class WebPanelTab extends Tab {
   isEmpty() {
     return !this.uuid;
   }
+
+  /**
+   *
+   * @param {function():void} callback
+   */
+  addTabCloseListener(callback) {
+    this.addEventListener("TabClose", () => callback());
+  }
 }

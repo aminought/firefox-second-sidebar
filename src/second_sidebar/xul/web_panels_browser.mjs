@@ -120,12 +120,10 @@ export class WebPanelsBrowser extends Browser {
 
   /**
    *
-   * @param {string} type
    * @param {function(WebPanelTab):void} callback
    */
-  addTabBrowserEventListener(type, callback) {
-    console.log(`Adding tabbrowser ${type} listener`);
-    this.window.gBrowser.addEventListener(type, (event) => {
+  addPageTitleChangeListener(callback) {
+    this.window.gBrowser.addEventListener("pagetitlechanged", (event) => {
       const browser = new Browser({ element: event.target });
       const tab = this.window.gBrowser.getTabForBrowser(browser);
       callback(WebPanelTab.fromTab(tab));
@@ -134,14 +132,10 @@ export class WebPanelsBrowser extends Browser {
 
   /**
    *
-   * @param {string} type
    * @param {function():void} callback
    */
-  addTabPanelsEventListener(type, callback) {
-    console.log(`Adding tabpanels ${type} listener`);
-    this.window.gBrowser.tabpanels.addEventListener(type, () => {
-      callback();
-    });
+  addTabSelectListener(callback) {
+    this.window.gBrowser.tabpanels.addEventListener("select", () => callback());
   }
 
   /**

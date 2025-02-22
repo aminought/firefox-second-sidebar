@@ -24,17 +24,14 @@ export class WebPanelsController {
 
   #setupListeners() {
     this.webPanelsBrowser.waitInitialization(() => {
-      this.webPanelsBrowser.addTabBrowserEventListener(
-        "pagetitlechanged",
-        (tab) => {
-          if (tab.selected) {
-            SidebarControllers.sidebarController.setToolbarTitle(
-              tab.linkedBrowser.getTitle(),
-            );
-          }
-        },
-      );
-      this.webPanelsBrowser.addTabPanelsEventListener("select", () => {
+      this.webPanelsBrowser.addPageTitleChangeListener((tab) => {
+        if (tab.selected) {
+          SidebarControllers.sidebarController.setToolbarTitle(
+            tab.linkedBrowser.getTitle(),
+          );
+        }
+      });
+      this.webPanelsBrowser.addTabSelectListener(() => {
         const activeWebPanelTab = this.webPanelsBrowser.getActiveWebPanelTab();
         if (activeWebPanelTab.isEmpty()) {
           SidebarControllers.sidebarController.close();

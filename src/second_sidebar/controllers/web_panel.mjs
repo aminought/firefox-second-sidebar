@@ -216,19 +216,29 @@ export class WebPanelController {
         this.#settings,
         this.#progressListener,
       );
-      this.#tab.addEventListener("TabClose", () => {
-        this.unload();
-      });
+      this.#tab.addTabCloseListener(() => this.unload(false));
+      this.#tab.linkedBrowser.addPlaybackStateListener((isPlaying) =>
+        this.#button.setPlaying(isPlaying),
+      );
       this.#button.setUnloaded(false);
     });
   }
 
-  unload() {
+  /**
+   *
+   * @param {boolean} force
+   */
+  unload(force = true) {
     const activeWebPanelController =
       SidebarControllers.webPanelsController.getActive();
     if (activeWebPanelController?.getUUID() === this.getUUID()) {
       this.webPanelsBrowser.deselectWebPanelTab();
     }
+
+    if (this.#tab && force) {
+      this.webPanelsBrowser.removeWebPanelTab(this.#tab);
+    }
+
     this.#button.setOpen(false).setUnloaded(true).hidePlayingIcon();
     this.#tab = null;
   }
