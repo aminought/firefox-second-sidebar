@@ -25,4 +25,20 @@ export class ZoomManagerWrapper {
   static setZoomForBrowser(browser, value) {
     return ZoomManager.setZoomForBrowser(browser.getXUL(), value);
   }
+
+  /**
+   * @returns {Array<number>}
+   */
+  static get zoomValues() {
+    return ZoomManager.zoomValues;
+  }
+
+  /**
+   *
+   * @param {number} value
+   * @returns {number}
+   */
+  static snap(value) {
+    return ZoomManager.snap(value);
+  }
 }

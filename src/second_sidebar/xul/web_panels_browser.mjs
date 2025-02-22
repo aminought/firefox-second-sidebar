@@ -95,7 +95,10 @@ export class WebPanelsBrowser extends Browser {
 
     // Hide elements right after initialization
     for (const selector of selectors) {
-      windowRoot.querySelector(selector).hide();
+      const element = windowRoot.querySelector(selector);
+      if (element) {
+        element.hide();
+      }
     }
 
     // Constantly hide elements
@@ -113,10 +116,6 @@ export class WebPanelsBrowser extends Browser {
     windowRoot
       .querySelector("#tabbrowser-tabbox")
       .setProperty("height", "100%");
-
-    // Disable key bindings
-    windowRoot.querySelector("#tabbrowser-tabbox").element.handleCtrlTab =
-      false;
   }
 
   /**
@@ -125,12 +124,23 @@ export class WebPanelsBrowser extends Browser {
    * @param {function(WebPanelTab):void} callback
    */
   addTabBrowserEventListener(type, callback) {
-    this.waitInitialization(() => {
-      this.window.gBrowser.addEventListener(type, (event) => {
-        const browser = new Browser({ element: event.target });
-        const tab = this.window.gBrowser.getTabForBrowser(browser);
-        callback(WebPanelTab.fromTab(tab));
-      });
+    console.log(`Adding tabbrowser ${type} listener`);
+    this.window.gBrowser.addEventListener(type, (event) => {
+      const browser = new Browser({ element: event.target });
+      const tab = this.window.gBrowser.getTabForBrowser(browser);
+      callback(WebPanelTab.fromTab(tab));
+    });
+  }
+
+  /**
+   *
+   * @param {string} type
+   * @param {function():void} callback
+   */
+  addTabPanelsEventListener(type, callback) {
+    console.log(`Adding tabpanels ${type} listener`);
+    this.window.gBrowser.tabpanels.addEventListener(type, () => {
+      callback();
     });
   }
 
@@ -143,62 +153,37 @@ export class WebPanelsBrowser extends Browser {
 
   /**
    *
-   * @param {string} uuid
-   * @returns {number}
-   */
-  findWebPanelTabIndex(uuid) {
-    return this.window.gBrowser.tabs.findIndex(
-      (tab) => WebPanelTab.fromTab(tab).uuid === uuid,
-    );
-  }
-
-  /**
-   *
    * @param {WebPanelSettings} webPanelSettings
    * @param {object} progressListener
+   * @returns {WebPanelTab}
    */
   addWebPanelTab(webPanelSettings, progressListener) {
-    this.waitInitialization(() => {
-      const tab = WebPanelTab.fromTab(
-        this.window.gBrowser.addTab(webPanelSettings.url, {
-          triggeringPrincipal:
-            ScriptSecurityManagerWrapper.getSystemPrincipal(),
-          userContextId: webPanelSettings.userContextId,
-        }),
-      );
-      tab.uuid = webPanelSettings.uuid;
+    const tab = WebPanelTab.fromTab(
+      this.window.gBrowser.addTab(webPanelSettings.url, {
+        triggeringPrincipal: ScriptSecurityManagerWrapper.getSystemPrincipal(),
+        userContextId: webPanelSettings.userContextId,
+      }),
+    );
+    tab.uuid = webPanelSettings.uuid;
+    tab.linkedBrowser.addProgressListener(progressListener);
+
+    // We need to add progress listener when loading unloaded tab
+    tab.addEventListener("TabBrowserInserted", () => {
       tab.linkedBrowser.addProgressListener(progressListener);
-
-      // We need to add progress listener when loading unloaded tab
-      tab.addEventListener("TabBrowserInserted", () => {
-        tab.linkedBrowser.addProgressListener(progressListener);
-      });
-
-      // Set user agent and reload
-      if (webPanelSettings.mobile) {
-        tab.linkedBrowser.setMobileUserAgent();
-      } else {
-        tab.linkedBrowser.unsetMobileUserAgent();
-      }
-      tab.linkedBrowser.go(webPanelSettings.url);
-
-      // Set zoom
-      tab.linkedBrowser.setZoom(webPanelSettings.zoom);
     });
-  }
 
-  /**
-   *
-   * @param {string} uuid
-   * @returns {WebPanelTab?}
-   */
-  getWebPanelTab(uuid) {
-    const tabIndex = this.findWebPanelTabIndex(uuid);
-    if (tabIndex === -1) {
-      console.log(`Cannot get tab: panel ${uuid} is not loaded`);
-      return null;
+    // Set user agent and reload
+    if (webPanelSettings.mobile) {
+      tab.linkedBrowser.setMobileUserAgent();
+    } else {
+      tab.linkedBrowser.unsetMobileUserAgent();
     }
-    return WebPanelTab.fromTab(this.window.gBrowser.tabs[tabIndex]);
+    tab.linkedBrowser.go(webPanelSettings.url);
+
+    // Set zoom
+    tab.linkedBrowser.setZoom(webPanelSettings.zoom);
+
+    return tab;
   }
 
   /**
@@ -211,15 +196,10 @@ export class WebPanelsBrowser extends Browser {
 
   /**
    *
-   * @param {string} uuid
+   * @param {WebPanelTab} tab
    */
-  selectWebPanelTab(uuid) {
-    const tabIndex = this.findWebPanelTabIndex(uuid);
-    if (tabIndex === -1) {
-      console.log(`Cannot select tab: panel ${uuid} is not loaded`);
-      return;
-    }
-    this.window.gBrowser.selectTabAtIndex(tabIndex);
+  selectWebPanelTab(tab) {
+    this.window.gBrowser.selectedTab = tab;
   }
 
   deselectWebPanelTab() {
@@ -228,16 +208,10 @@ export class WebPanelsBrowser extends Browser {
 
   /**
    *
-   * @param {string} uuid
-   * @returns {boolean}
+   * @param {WebPanelTab} tab
    */
-  removeWebPanelTab(uuid) {
-    const tab = this.getWebPanelTab(uuid);
-    if (tab) {
-      this.window.gBrowser.removeTab(tab);
-      return true;
-    }
-    return false;
+  removeWebPanelTab(tab) {
+    this.window.gBrowser.removeTab(tab);
   }
 
   waitInitialization(callback) {

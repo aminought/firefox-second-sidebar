@@ -117,7 +117,6 @@ export class Browser extends XULElement {
    * @returns {Browser}
    */
   setZoom(value) {
-    console.log("set zoom for browser", this.getTitle());
     ZoomManagerWrapper.setZoomForBrowser(this, value);
     return this;
   }

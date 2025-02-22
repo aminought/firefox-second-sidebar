@@ -17,8 +17,8 @@ export class WebPanelsController {
     this.webPanelsBrowser = SidebarElements.webPanelsBrowser;
     this.webPanelMenuPopup = SidebarElements.webPanelMenuPopup;
 
-    /**@type {Object<string, WebPanelController>} */
-    this.webPanelControllers = {};
+    /**@type {Map<string, WebPanelController>} */
+    this.webPanelControllers = new Map();
     this.#setupListeners();
   }
 
@@ -34,6 +34,19 @@ export class WebPanelsController {
           }
         },
       );
+      this.webPanelsBrowser.addTabPanelsEventListener("select", () => {
+        const activeWebPanelTab = this.webPanelsBrowser.getActiveWebPanelTab();
+        if (activeWebPanelTab.isEmpty()) {
+          SidebarControllers.sidebarController.close();
+        }
+        for (const [uuid, webPanelController] of this.webPanelControllers) {
+          if (uuid === activeWebPanelTab.uuid) {
+            webPanelController.open();
+          } else {
+            webPanelController.close();
+          }
+        }
+      });
     });
 
     this.webPanelMenuPopup.listenUnloadItemClick((webPanelController) => {
@@ -190,7 +203,7 @@ export class WebPanelsController {
       }
     });
 
-    listenEvent(WebPanelEvents.OPEN_WEB_PANEL, (event) => {
+    listenEvent(WebPanelEvents.SWITCH_WEB_PANEL, (event) => {
       const uuid = event.detail.uuid;
       const mouseEvent = event.detail.event;
 
@@ -266,7 +279,10 @@ export class WebPanelsController {
    * @param {WebPanelController} webPanelController
    */
   add(webPanelController) {
-    this.webPanelControllers[webPanelController.getUUID()] = webPanelController;
+    this.webPanelControllers.set(
+      webPanelController.getUUID(),
+      webPanelController,
+    );
   }
 
   /**
@@ -275,7 +291,7 @@ export class WebPanelsController {
    * @returns {WebPanelController?}
    */
   get(uuid) {
-    return this.webPanelControllers[uuid] ?? null;
+    return this.webPanelControllers.get(uuid) ?? null;
   }
 
   /**
@@ -284,7 +300,7 @@ export class WebPanelsController {
    */
   getActive() {
     const tab = this.webPanelsBrowser.getActiveWebPanelTab();
-    return this.get(tab.uuid);
+    return tab.isEmpty() ? null : this.get(tab.uuid);
   }
 
   hideActive() {
@@ -299,7 +315,7 @@ export class WebPanelsController {
    * @param {string} uuid
    */
   delete(uuid) {
-    delete this.webPanelControllers[uuid];
+    this.webPanelControllers.delete(uuid);
   }
 
   /**
@@ -333,7 +349,7 @@ export class WebPanelsController {
    */
   dumpSettings() {
     return new WebPanelsSettings(
-      Object.values(this.webPanelControllers).map((webPanelController) =>
+      Array.from(this.webPanelControllers.values(), (webPanelController) =>
         webPanelController.dumpSettings(),
       ),
     );

@@ -1,5 +1,6 @@
 import { Browser } from "../xul/base/browser.mjs";
 import { Tab } from "../xul/base/tab.mjs";
+import { TabPanelsWrapper } from "./tab_panels.mjs";
 
 /**
  * @typedef {Object} URI
@@ -47,10 +48,24 @@ export class TabBrowserWrapper {
   }
 
   /**
+   * @param {Tab} tab
+   */
+  set selectedTab(tab) {
+    this.raw.selectedTab = tab.getXUL();
+  }
+
+  /**
    * @returns {Browser}
    */
   get selectedBrowser() {
     return new Browser({ element: this.raw.selectedBrowser });
+  }
+
+  /**
+   * @returns {TabPanelsWrapper}
+   */
+  get tabpanels() {
+    return new TabPanelsWrapper(this.raw.tabpanels);
   }
 
   /**
@@ -92,15 +107,6 @@ export class TabBrowserWrapper {
    */
   removeTab(tab) {
     this.raw.removeTab(tab.getXUL());
-  }
-
-  /**
-   *
-   * @param {Tab} tab
-   * @param {boolean} force
-   */
-  discardBrowser(tab, force = false) {
-    this.raw.discardBrowser(tab.getXUL(), force);
   }
 
   /**

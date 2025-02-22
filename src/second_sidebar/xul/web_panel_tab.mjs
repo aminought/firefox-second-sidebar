@@ -39,4 +39,12 @@ export class WebPanelTab extends Tab {
   set uuid(uuid) {
     this.setAttribute("uuid", uuid);
   }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  isEmpty() {
+    return !this.uuid;
+  }
 }
