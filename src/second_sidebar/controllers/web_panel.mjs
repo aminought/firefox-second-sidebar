@@ -34,7 +34,7 @@ export class WebPanelController {
     this.#progressListener = this.#createProgressListener();
     this.#button = this.#createWebPanelButton(settings, loaded, position);
     if (loaded) {
-      this.webPanelsBrowser.addWebPanelTab(settings, this.#progressListener);
+      this.load();
     }
   }
 
@@ -136,10 +136,7 @@ export class WebPanelController {
     const isActive = this.isActive();
 
     this.webPanelsBrowser.removeWebPanelTab(this.getUUID());
-    this.webPanelsBrowser.addWebPanelTab(
-      this.#settings,
-      this.#progressListener,
-    );
+    this.load();
     this.button.setUserContextId(userContextId);
 
     if (isActive) {
@@ -199,22 +196,13 @@ export class WebPanelController {
   }
 
   open() {
-    // Create web panel tab if it was not loaded yet and select
-    if (!this.tab) {
-      this.webPanelsBrowser.addWebPanelTab(
-        this.#settings,
-        this.#progressListener,
-      );
+    // Create web panel tab if it was not loaded yet
+    if (this.isUnloaded()) {
+      this.load();
     }
-    this.webPanelsBrowser.selectWebPanelTab(this.getUUID());
 
-    // Restore progress listener after browser discard
-    if (this.#settings.unloadOnClose) {
-      this.webPanelsBrowser.addWebPanelProgressListener(
-        this.getUUID(),
-        this.#progressListener,
-      );
-    }
+    // Select web panel tab
+    this.webPanelsBrowser.selectWebPanelTab(this.getUUID());
 
     // Configure web panel and button
     this.button.setOpen(true).setUnloaded(false);
@@ -239,13 +227,20 @@ export class WebPanelController {
     }
   }
 
+  load() {
+    this.webPanelsBrowser.addWebPanelTab(
+      this.#settings,
+      this.#progressListener,
+    );
+  }
+
   unload() {
     const activeWebPanelController =
       SidebarControllers.webPanelsController.getActive();
     if (activeWebPanelController?.getUUID() === this.getUUID()) {
       this.webPanelsBrowser.deselectWebPanelTab();
     }
-    this.webPanelsBrowser.unloadWebPanelTab(this.getUUID());
+    this.webPanelsBrowser.removeWebPanelTab(this.getUUID());
     this.button.setOpen(false).setUnloaded(true).hidePlayingIcon();
   }
 
@@ -254,7 +249,7 @@ export class WebPanelController {
    * @returns {boolean}
    */
   isUnloaded() {
-    return this.button.isUnloaded();
+    return this.tab === null;
   }
 
   reload() {
@@ -279,12 +274,12 @@ export class WebPanelController {
    */
   setMobile(value) {
     this.#settings.mobile = value;
-    if (value) {
-      this.tab.linkedBrowser.setMobileUserAgent();
-    } else {
-      this.tab.linkedBrowser.unsetMobileUserAgent();
-    }
     if (!this.isUnloaded()) {
+      if (value) {
+        this.tab.linkedBrowser.setMobileUserAgent();
+      } else {
+        this.tab.linkedBrowser.unsetMobileUserAgent();
+      }
       this.goHome();
     }
   }
@@ -395,7 +390,7 @@ export class WebPanelController {
    * @returns {boolean}
    */
   isActive() {
-    const tab = this.webPanelsBrowser.getWebPanelTab(this.getUUID());
+    const tab = this.tab;
     return tab && tab.selected;
   }
 

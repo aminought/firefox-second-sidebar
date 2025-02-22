@@ -190,16 +190,6 @@ export class WebPanelsBrowser extends Browser {
   /**
    *
    * @param {string} uuid
-   * @param {object} progressListener
-   */
-  addWebPanelProgressListener(uuid, progressListener) {
-    const webPanelTab = this.getWebPanelTab(uuid);
-    webPanelTab.linkedBrowser.addProgressListener(progressListener);
-  }
-
-  /**
-   *
-   * @param {string} uuid
    * @returns {WebPanelTab?}
    */
   getWebPanelTab(uuid) {
@@ -245,20 +235,6 @@ export class WebPanelsBrowser extends Browser {
     const tab = this.getWebPanelTab(uuid);
     if (tab) {
       this.window.gBrowser.removeTab(tab);
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   *
-   * @param {string} uuid
-   * @returns {boolean}
-   */
-  unloadWebPanelTab(uuid) {
-    const tab = this.getWebPanelTab(uuid);
-    if (tab) {
-      this.window.gBrowser.discardBrowser(tab, true);
       return true;
     }
     return false;
