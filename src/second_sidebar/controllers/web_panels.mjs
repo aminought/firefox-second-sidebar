@@ -300,19 +300,16 @@ export class WebPanelsController {
     return tab.isEmpty() ? null : this.get(tab.uuid);
   }
 
-  hideActive() {
-    const webPanelController = this.getActive();
-    if (webPanelController !== null) {
-      webPanelController.close();
-    }
-  }
-
   /**
    *
    * @param {string} uuid
    */
   delete(uuid) {
     this.webPanelControllers.delete(uuid);
+  }
+
+  close() {
+    this.webPanelsBrowser.deselectWebPanelTab();
   }
 
   /**
