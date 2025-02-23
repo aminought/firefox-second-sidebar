@@ -6,6 +6,7 @@ import {
   sendEvents,
 } from "./events.mjs";
 
+import { SidebarControllerWrapper } from "../wrappers/sidebar_controller.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { SidebarSettings } from "../settings/sidebar_settings.mjs";
@@ -279,6 +280,12 @@ export class SidebarController {
    */
   setPosition(position) {
     this.sidebar.setPosition(position);
+    if (
+      (position === "right" && !SidebarControllerWrapper._positionStart) ||
+      (position === "left" && SidebarControllerWrapper._positionStart)
+    ) {
+      SidebarControllerWrapper.reversePosition();
+    }
     this.updateAbsolutePosition();
   }
 
