@@ -29,6 +29,10 @@ export const SIDEBAR_MAIN_CSS = `
     transition: 0.8s margin-right ease-out, 0.8s margin-left ease-out;
   }
 
+  #sb2-main[shouldAnimate] {
+    transition: 0.2s margin-right ease-out, 0.4s margin-left ease-out;
+  }
+
   :root[customizing] {
     #sb2-main {
       min-width: unset !important;

@@ -55,6 +55,13 @@ export class WindowWrapper {
   }
 
   /**
+   * @returns {number}
+   */
+  get mozInnerScreenX() {
+    return this.raw.mozInnerScreenX;
+  }
+
+  /**
    *
    * @param {Event} event
    * @returns {boolean}
