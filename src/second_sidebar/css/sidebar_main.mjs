@@ -25,6 +25,10 @@ export const SIDEBAR_MAIN_CSS = `
     }
   }
 
+  #sb2-main[fullscreenShouldAnimate] {
+    transition: 0.8s margin-right ease-out;
+  }
+
   :root[customizing] {
     #sb2-main {
       min-width: unset !important;

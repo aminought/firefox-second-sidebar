@@ -1,4 +1,5 @@
 import { ContextItemController } from "./controllers/context_item.mjs";
+import { FullScreenController } from "./controllers/fullscreen.mjs";
 import { SidebarController } from "./controllers/sidebar.mjs";
 import { SidebarMainController } from "./controllers/sidebar_main.mjs";
 import { SidebarMainSettingsController } from "./controllers/sidebar_main_settings.mjs";
@@ -21,5 +22,6 @@ export class SidebarControllers {
     this.webPanelMoreController = new WebPanelMoreController();
     this.webPanelDeleteController = new WebPanelDeleteController();
     this.contextItemController = new ContextItemController();
+    this.fullScreenController = new FullScreenController();
   }
 }

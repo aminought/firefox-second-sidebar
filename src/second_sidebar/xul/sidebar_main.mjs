@@ -6,6 +6,7 @@ export class SidebarMain extends Toolbar {
     this.setMode("icons")
       .setContext("sb2-main-menupopup")
       .setAttribute("customizable", "true")
+      .setAttribute("fullscreentoolbar", "true")
       .addEventListener("popupshowing", onPopupShowing)
       .addEventListener("command", onCommand)
       .addEventListener("mousedown", onMouseDown)

@@ -48,6 +48,13 @@ export class WindowWrapper {
   }
 
   /**
+   * @returns {boolean}
+   */
+  get fullScreen() {
+    return this.raw.fullScreen;
+  }
+
+  /**
    *
    * @param {Event} event
    * @returns {boolean}

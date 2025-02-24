@@ -167,6 +167,17 @@ export class XULElement {
 
   /**
    *
+   * @param {string} name
+   * @param {boolean} force
+   * @returns {XULElement}
+   */
+  toggleAttribute(name, force) {
+    this.element.toggleAttribute(name, force);
+    return this;
+  }
+
+  /**
+   *
    * @returns {string}
    */
   getWidth() {
