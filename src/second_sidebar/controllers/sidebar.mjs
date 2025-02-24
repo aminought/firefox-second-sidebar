@@ -33,6 +33,8 @@ export class SidebarController {
     this.autoHideBackButton = false;
     this.autoHideForwardButton = false;
     this.containerBorder = "left";
+    this.autoHideSidebar = false;
+    this.autoHideSidebarAnimated = false;
   }
 
   #setupListeners() {
@@ -144,6 +146,16 @@ export class SidebarController {
       const value = event.detail.value;
       this.autoHideForwardButton = value;
       this.setContainerBorder(value);
+    });
+
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE, (event) => {
+      const value = event.detail.value;
+      this.autoHideSidebar = value;
+    });
+
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_ANIMATED, (event) => {
+      const value = event.detail.value;
+      this.autoHideSidebarAnimated = value;
     });
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_WIDTH, (event) => {
@@ -384,6 +396,8 @@ export class SidebarController {
     this.autoHideBackButton = settings.autoHideBackButton;
     this.autoHideForwardButton = settings.autoHideForwardButton;
     this.setContainerBorder(settings.containerBorder);
+    this.autoHideSidebar = settings.autoHideSidebar;
+    this.autoHideSidebarAnimated = settings.autoHideSidebarAnimated;
   }
 
   /**
@@ -400,6 +414,8 @@ export class SidebarController {
       this.autoHideBackButton,
       this.autoHideForwardButton,
       this.containerBorder,
+      this.autoHideSidebar,
+      this.autoHideSidebarAnimated,
     );
   }
 

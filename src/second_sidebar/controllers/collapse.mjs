@@ -9,8 +9,11 @@ const ANIMATE_ATTRIBUTE = "shouldAnimate";
 
 export class CollapseController {
   constructor() {
+    // elements
     this.sidebarMain = SidebarElements.sidebarMain;
     this.sidebarBox = SidebarElements.sidebarBox;
+    // controllers
+    this.sidebarController = SidebarControllers.sidebarController;
 
     this.#setupListeners();
   }
@@ -23,12 +26,21 @@ export class CollapseController {
 
     window.addEventListener("fullscreen", () => {
       if (window.fullScreen) {
+        // Show sidebar and then immediately hide with fullscreen animation
         this.uncollapse();
         setTimeout(() => {
           this.collapse(false, true);
         }, 0);
       } else {
-        this.uncollapse(true);
+        if (this.sidebarController.autoHideSidebar) {
+          // Show sidebar and then immediately hide with fullscreen animation
+          this.uncollapse();
+          setTimeout(() => {
+            this.collapse(false, true);
+          });
+        } else {
+          this.uncollapse(this.sidebarController.autoHideSidebarAnimated);
+        }
       }
     });
   }
@@ -55,7 +67,10 @@ export class CollapseController {
    */
   handleEvent(event) {
     const window = new WindowWrapper();
-    if (event.type !== "mousemove") {
+    if (
+      event.type !== "mousemove" ||
+      (!window.fullScreen && !this.sidebarController.autoHideSidebar)
+    ) {
       return;
     }
     if (gCustomizeModeWrapper._customizing) {
@@ -64,7 +79,7 @@ export class CollapseController {
       }
       return;
     }
-    const position = SidebarControllers.sidebarController.getPosition();
+    const position = this.sidebarController.getPosition();
     const root = new XULElement({ element: window.document.documentElement });
     const rootRect = root.getBoundingClientRect();
     const sidebarRect = this.sidebarMain.getBoundingClientRect();
@@ -76,7 +91,7 @@ export class CollapseController {
         event.screenX > rightEdge - sidebarRect.width) ||
         (position === "left" && event.screenX < leftEdge + sidebarRect.width))
     ) {
-      this.uncollapse(true);
+      this.uncollapse(this.sidebarController.autoHideSidebarAnimated);
     } else if (
       !this.collapsed() &&
       this.sidebarBox.hidden() &&
@@ -85,7 +100,7 @@ export class CollapseController {
         (position === "left" &&
           event.screenX > leftEdge + 2 * sidebarRect.width))
     ) {
-      this.collapse(true);
+      this.collapse(this.sidebarController.autoHideSidebarAnimated);
     }
   }
 
@@ -109,7 +124,7 @@ export class CollapseController {
     this.shouldAnimate(animate);
     this.fullScreenShouldAnimate(fullScreenAnimate);
 
-    const position = SidebarControllers.sidebarController.getPosition();
+    const position = this.sidebarController.getPosition();
     this.sidebarMain.setProperty(
       position === "right" ? "margin-right" : "margin-left",
       -this.sidebarMain.getBoundingClientRect().width + "px",

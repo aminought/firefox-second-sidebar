@@ -31,6 +31,10 @@ export class SidebarMainSettingsController {
         }),
       containerBorder: (value) =>
         sendEvents(SidebarEvents.EDIT_SIDEBAR_CONTAINER_BORDER, { value }),
+      autoHideSidebar: (value) =>
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE, { value }),
+      autoHideSidebarAnimated: (value) =>
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_ANIMATED, { value }),
     });
 
     this.sidebarMainPopupSettings.listenCancelButtonClick(() =>
