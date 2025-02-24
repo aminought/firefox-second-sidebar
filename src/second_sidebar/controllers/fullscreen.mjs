@@ -1,3 +1,4 @@
+import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { WindowWrapper } from "../wrappers/window.mjs";
 import { XULElement } from "../xul/base/xul_element.mjs";
@@ -37,13 +38,21 @@ export class FullScreenController {
     }
     const root = new XULElement({ element: window.document.documentElement });
     const rootRect = root.getBoundingClientRect();
-    const sidebarRect = SidebarElements.sidebarMain.getBoundingClientRect();
-    if (this.hidden() && event.screenX > rootRect.width - sidebarRect.width) {
+    const sidebarRect = this.sidebarMain.getBoundingClientRect();
+    const position = SidebarControllers.sidebarController.getPosition();
+    if (
+      this.hidden() &&
+      ((position === "right" &&
+        event.screenX > rootRect.width - sidebarRect.width) ||
+        (position === "left" && event.screenX < sidebarRect.width))
+    ) {
       this.show();
     } else if (
       !this.hidden() &&
-      SidebarElements.sidebarBox.hidden() &&
-      event.screenX < rootRect.width - 2 * sidebarRect.width
+      this.sidebarBox.hidden() &&
+      ((position === "right" &&
+        event.screenX < rootRect.width - 2 * sidebarRect.width) ||
+        (position === "left" && event.screenX > 2 * sidebarRect.width))
     ) {
       this.hide();
     }
@@ -54,7 +63,10 @@ export class FullScreenController {
    * @returns {boolean}
    */
   hidden() {
-    return this.sidebarMain.getProperty("margin-right") !== "";
+    return (
+      this.sidebarMain.getProperty("margin-right") !== "" ||
+      this.sidebarMain.getProperty("margin-left") !== ""
+    );
   }
 
   /**
@@ -62,9 +74,10 @@ export class FullScreenController {
    * @param {boolean} animate
    */
   hide(animate = false) {
+    const position = SidebarControllers.sidebarController.getPosition();
     this.sidebarMain.toggleAttribute(SHOULD_ANIMATE_ATTRIBUTE, animate);
     this.sidebarMain.setProperty(
-      "margin-right",
+      position === "right" ? "margin-right" : "margin-left",
       -this.sidebarMain.getBoundingClientRect().width + "px",
     );
   }
@@ -76,5 +89,6 @@ export class FullScreenController {
   show(animate = false) {
     this.sidebarMain.toggleAttribute(SHOULD_ANIMATE_ATTRIBUTE, animate);
     this.sidebarMain.setProperty("margin-right", "");
+    this.sidebarMain.setProperty("margin-left", "");
   }
 }

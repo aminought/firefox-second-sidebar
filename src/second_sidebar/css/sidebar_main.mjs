@@ -26,7 +26,7 @@ export const SIDEBAR_MAIN_CSS = `
   }
 
   #sb2-main[fullscreenShouldAnimate] {
-    transition: 0.8s margin-right ease-out;
+    transition: 0.8s margin-right ease-out, 0.8s margin-left ease-out;
   }
 
   :root[customizing] {
