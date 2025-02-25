@@ -33,7 +33,7 @@ export class SidebarMainSettingsController {
         sendEvents(SidebarEvents.EDIT_SIDEBAR_CONTAINER_BORDER, { value }),
       autoHideSidebar: (value) =>
         sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE, { value }),
-      autoHideSidebarAnimated: (value) =>
+      hideSidebarAnimated: (value) =>
         sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_ANIMATED, { value }),
     });
 

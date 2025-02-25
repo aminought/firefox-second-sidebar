@@ -3,6 +3,7 @@ import { OpenLinkInSidebarMenuItem } from "./xul/open_link_in_sidebar_menuitem.m
 import { Sidebar } from "./xul/sidebar.mjs";
 import { SidebarBox } from "./xul/sidebar_box.mjs";
 import { SidebarBoxFiller } from "./xul/sidebar_box_filler.mjs";
+import { SidebarCollapseButton } from "./xul/sidebar_collapse_button.mjs";
 import { SidebarMain } from "./xul/sidebar_main.mjs";
 import { SidebarMainMenuPopup } from "./xul/sidebar_main_menupopup.mjs";
 import { SidebarMainPopupSettings } from "./xul/sidebar_main_popup_settings.mjs";
@@ -72,6 +73,7 @@ export class SidebarElements {
 
   static #createWidgets() {
     this.webPanelNewButton = new WebPanelNewButton();
+    this.sidebarCollapseButton = new SidebarCollapseButton();
   }
 
   static #createPopups() {

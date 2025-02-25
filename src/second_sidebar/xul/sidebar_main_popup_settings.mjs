@@ -35,7 +35,7 @@ export class SidebarMainPopupSettings extends Panel {
     this.unpinnedPaddingMenuList = this.#createPaddingMenuList();
     this.containerBorderMenuList = this.#createContainerBorderMenuList();
     this.autoHideSidebarToggle = new Toggle();
-    this.autoHideSidebarAnimatedToggle = new Toggle();
+    this.hideSidebarAnimatedToggle = new Toggle();
     this.saveButton = createSaveButton();
     this.cancelButton = createCancelButton();
     this.#compose();
@@ -101,8 +101,8 @@ export class SidebarMainPopupSettings extends Panel {
         createPopupGroup("Sidebar position", this.positionMenuList),
         createPopupGroup("Auto-hide sidebar", this.autoHideSidebarToggle),
         createPopupGroup(
-          "Animate sidebar auto-hiding",
-          this.autoHideSidebarAnimatedToggle,
+          "Animate sidebar hiding",
+          this.hideSidebarAnimatedToggle,
         ),
         new ToolbarSeparator(),
         createPopupGroup("Sidebar width", this.paddingMenuList),
@@ -147,7 +147,7 @@ export class SidebarMainPopupSettings extends Panel {
    * @param {function(boolean):void} callbacks.autoHideForwardButton
    * @param {function(boolean):void} callbacks.containerBorder
    * @param {function(boolean):void} callbacks.autoHideSidebar
-   * @param {function(boolean):void} callbacks.autoHideSidebarAnimated
+   * @param {function(boolean):void} callbacks.hideSidebarAnimated
    */
   listenChanges({
     position,
@@ -159,7 +159,7 @@ export class SidebarMainPopupSettings extends Panel {
     autoHideForwardButton,
     containerBorder,
     autoHideSidebar,
-    autoHideSidebarAnimated,
+    hideSidebarAnimated,
   }) {
     this.onPositionChange = position;
     this.onPaddingChange = padding;
@@ -170,7 +170,7 @@ export class SidebarMainPopupSettings extends Panel {
     this.onAutoHideForwardButtonChange = autoHideForwardButton;
     this.onContainerBorderChange = containerBorder;
     this.onAutoHideSidebarChange = autoHideSidebar;
-    this.onAutoHideSidebarAnimatedChange = autoHideSidebarAnimated;
+    this.onAutoHideSidebarAnimatedChange = hideSidebarAnimated;
 
     this.positionMenuList.addEventListener("command", () =>
       position(this.positionMenuList.getValue()),
@@ -199,8 +199,8 @@ export class SidebarMainPopupSettings extends Panel {
     this.autoHideSidebarToggle.addEventListener("toggle", () =>
       autoHideSidebar(this.autoHideSidebarToggle.getPressed()),
     );
-    this.autoHideSidebarAnimatedToggle.addEventListener("toggle", () =>
-      autoHideSidebarAnimated(this.autoHideSidebarAnimatedToggle.getPressed()),
+    this.hideSidebarAnimatedToggle.addEventListener("toggle", () =>
+      hideSidebarAnimated(this.hideSidebarAnimatedToggle.getPressed()),
     );
   }
 
@@ -245,9 +245,7 @@ export class SidebarMainPopupSettings extends Panel {
     this.autoHideForwardToggle.setPressed(settings.autoHideForwardButton);
     this.containerBorderMenuList.setValue(settings.containerBorder);
     this.autoHideSidebarToggle.setPressed(settings.autoHideSidebar);
-    this.autoHideSidebarAnimatedToggle.setPressed(
-      settings.autoHideSidebarAnimated,
-    );
+    this.hideSidebarAnimatedToggle.setPressed(settings.hideSidebarAnimated);
 
     this.settings = settings;
 
@@ -309,12 +307,10 @@ export class SidebarMainPopupSettings extends Panel {
       this.onAutoHideSidebarChange(this.settings.autoHideSidebar);
     }
     if (
-      this.autoHideSidebarAnimatedToggle.getPressed() !==
-      this.settings.autoHideSidebarAnimated
+      this.hideSidebarAnimatedToggle.getPressed() !==
+      this.settings.hideSidebarAnimated
     ) {
-      this.onAutoHideSidebarAnimatedChange(
-        this.settings.autoHideSidebarAnimated,
-      );
+      this.onAutoHideSidebarAnimatedChange(this.settings.hideSidebarAnimated);
     }
   }
 }

@@ -22,7 +22,7 @@ export class SidebarSettings {
   /**@type {boolean} */
   #autoHideSidebar;
   /**@type {boolean} */
-  #autoHideSidebarAnimated;
+  #hideSidebarAnimated;
 
   /**
    *
@@ -35,7 +35,7 @@ export class SidebarSettings {
    * @param {boolean} autoHideForwardButton
    * @param {string} containerBorder
    * @param {boolean} autoHideSidebar
-   * @param {boolean} autoHideSidebarAnimated
+   * @param {boolean} hideSidebarAnimated
    */
   constructor(
     position,
@@ -47,7 +47,7 @@ export class SidebarSettings {
     autoHideForwardButton,
     containerBorder,
     autoHideSidebar,
-    autoHideSidebarAnimated,
+    hideSidebarAnimated,
   ) {
     this.#position = position;
     this.#padding = padding;
@@ -58,7 +58,7 @@ export class SidebarSettings {
     this.#autoHideForwardButton = autoHideForwardButton;
     this.#containerBorder = containerBorder;
     this.#autoHideSidebar = autoHideSidebar;
-    this.#autoHideSidebarAnimated = autoHideSidebarAnimated;
+    this.#hideSidebarAnimated = hideSidebarAnimated;
   }
 
   get position() {
@@ -97,8 +97,8 @@ export class SidebarSettings {
     return this.#autoHideSidebar;
   }
 
-  get autoHideSidebarAnimated() {
-    return this.#autoHideSidebarAnimated;
+  get hideSidebarAnimated() {
+    return this.#hideSidebarAnimated;
   }
 
   /**
@@ -117,7 +117,7 @@ export class SidebarSettings {
       pref.autoHideForwardButton ?? false,
       pref.containerBorder ?? "left",
       pref.autoHideSidebar ?? false,
-      pref.autoHideSidebarAnimated ?? false,
+      pref.hideSidebarAnimated ?? false,
     );
   }
 
@@ -132,7 +132,7 @@ export class SidebarSettings {
       autoHideForwardButton: this.#autoHideForwardButton,
       containerBorder: this.#containerBorder,
       autoHideSidebar: this.#autoHideSidebar,
-      autoHideSidebarAnimated: this.#autoHideSidebarAnimated,
+      hideSidebarAnimated: this.#hideSidebarAnimated,
     });
   }
 }

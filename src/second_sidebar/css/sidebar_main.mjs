@@ -88,4 +88,12 @@ export const SIDEBAR_MAIN_CSS = `
   #widget-overflow-fixed-list .sb2-main-button {
     padding: var(--arrowpanel-menuitem-padding);
   }
+
+  #sb2-collapse-button[position="left"] {
+    list-style-image: url("chrome://userscripts/content/second_sidebar/icons/sidebar-left.svg");
+  }
+
+  #sb2-collapse-button[position="right"] {
+    list-style-image: url("chrome://userscripts/content/second_sidebar/icons/sidebar-right.svg");
+  }
 `;

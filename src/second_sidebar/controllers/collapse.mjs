@@ -11,7 +11,9 @@ export class CollapseController {
     // elements
     this.sidebarMain = SidebarElements.sidebarMain;
     this.sidebarSettings = SidebarElements.sidebarMainPopupSettings;
+    this.sidebarCollapseButton = SidebarElements.sidebarCollapseButton;
     // controllers
+    this.sidebarMainController = SidebarControllers.sidebarMainController;
     this.sidebarController = SidebarControllers.sidebarController;
 
     this.#setupListeners();
@@ -38,8 +40,21 @@ export class CollapseController {
             this.collapse(false, true);
           });
         } else {
-          this.uncollapse(this.sidebarController.autoHideSidebarAnimated);
+          this.uncollapse(this.sidebarController.hideSidebarAnimated);
         }
+      }
+    });
+
+    this.sidebarCollapseButton.listenClick(() => {
+      if (this.sidebarController.autoHideSidebar) {
+        return;
+      }
+      if (this.collapsed()) {
+        this.uncollapse(this.sidebarController.hideSidebarAnimated);
+        this.sidebarCollapseButton.setOpen(true);
+      } else {
+        this.collapse(this.sidebarController.hideSidebarAnimated);
+        this.sidebarCollapseButton.setOpen(false);
       }
     });
   }
@@ -81,7 +96,7 @@ export class CollapseController {
         event.screenX > rightEdge - sidebarRect.width) ||
         (position === "left" && event.screenX < leftEdge + sidebarRect.width))
     ) {
-      this.uncollapse(this.sidebarController.autoHideSidebarAnimated);
+      this.uncollapse(this.sidebarController.hideSidebarAnimated);
     } else if (
       !this.collapsed() &&
       ((position === "right" &&
@@ -89,7 +104,7 @@ export class CollapseController {
         (position === "left" &&
           event.screenX > leftEdge + 2 * sidebarRect.width))
     ) {
-      this.collapse(this.sidebarController.autoHideSidebarAnimated);
+      this.collapse(this.sidebarController.hideSidebarAnimated);
     }
   }
 
@@ -98,10 +113,7 @@ export class CollapseController {
    * @returns {boolean}
    */
   collapsed() {
-    return (
-      this.sidebarMain.getProperty("margin-right") !== "0px" ||
-      this.sidebarMain.getProperty("margin-left") !== "0px"
-    );
+    return this.sidebarMainController.collapsed();
   }
 
   /**
@@ -112,12 +124,7 @@ export class CollapseController {
   collapse(animate = false, fullScreenAnimate = false) {
     this.shouldAnimate(animate);
     this.fullScreenShouldAnimate(fullScreenAnimate);
-
-    const position = this.sidebarController.getPosition();
-    this.sidebarMain.setProperty(
-      position === "right" ? "margin-right" : "margin-left",
-      -this.sidebarMain.getBoundingClientRect().width + "px",
-    );
+    this.sidebarMainController.collapse();
   }
 
   /**
@@ -128,8 +135,6 @@ export class CollapseController {
   uncollapse(animate = false, fullScreenAnimate = false) {
     this.shouldAnimate(animate);
     this.fullScreenShouldAnimate(fullScreenAnimate);
-
-    this.sidebarMain.setProperty("margin-right", "0px");
-    this.sidebarMain.setProperty("margin-left", "0px");
+    this.sidebarMainController.uncollapse();
   }
 }

@@ -8,6 +8,7 @@ import { isRightMouseButton } from "../utils/buttons.mjs";
 export class SidebarMainController {
   constructor() {
     this.sidebarMain = SidebarElements.sidebarMain;
+    this.sidebarCollapseButton = SidebarElements.sidebarCollapseButton;
     this.sidebarMainMenuPopup = SidebarElements.sidebarMainMenuPopup;
     this.root = new XULElement({ element: document.documentElement });
     this.#setupListeners();
@@ -70,5 +71,31 @@ export class SidebarMainController {
    */
   getWidth() {
     return Math.round(this.sidebarMain.getBoundingClientRect().width) + "px";
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  collapsed() {
+    const zeros = ["0px", ""];
+    const marginRight = this.sidebarMain.getProperty("margin-right");
+    const marginLeft = this.sidebarMain.getProperty("margin-left");
+    return !zeros.includes(marginRight) || !zeros.includes(marginLeft);
+  }
+
+  collapse() {
+    const position = SidebarControllers.sidebarController.getPosition();
+    this.sidebarMain.setProperty(
+      position === "right" ? "margin-right" : "margin-left",
+      -this.sidebarMain.getBoundingClientRect().width + "px",
+    );
+    this.sidebarCollapseButton.setOpen(false);
+  }
+
+  uncollapse() {
+    this.sidebarMain.setProperty("margin-right", "0px");
+    this.sidebarMain.setProperty("margin-left", "0px");
+    this.sidebarCollapseButton.setOpen(true);
   }
 }

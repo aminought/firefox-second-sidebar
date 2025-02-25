@@ -25,6 +25,7 @@ export class SidebarController {
     this.sidebarSplitterUnpinned = SidebarElements.sidebarSplitterUnpinned;
     this.webPanelPopupEdit = SidebarElements.webPanelPopupEdit;
     this.sidebarMainPopupSettings = SidebarElements.sidebarMainPopupSettings;
+    this.sidebarCollapseButton = SidebarElements.sidebarCollapseButton;
     this.root = new XULElement({ element: document.documentElement });
 
     this.#setupListeners();
@@ -34,7 +35,7 @@ export class SidebarController {
     this.autoHideForwardButton = false;
     this.containerBorder = "left";
     this.autoHideSidebar = false;
-    this.autoHideSidebarAnimated = false;
+    this.hideSidebarAnimated = false;
   }
 
   #setupListeners() {
@@ -150,12 +151,12 @@ export class SidebarController {
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE, (event) => {
       const value = event.detail.value;
-      this.autoHideSidebar = value;
+      this.setAutoHideSidebar(value);
     });
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_ANIMATED, (event) => {
       const value = event.detail.value;
-      this.autoHideSidebarAnimated = value;
+      this.hideSidebarAnimated = value;
     });
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_WIDTH, (event) => {
@@ -299,6 +300,7 @@ export class SidebarController {
       SidebarControllerWrapper.reversePosition();
     }
     this.updateAbsolutePosition();
+    this.sidebarCollapseButton.setAttribute("position", position);
   }
 
   /**
@@ -383,6 +385,18 @@ export class SidebarController {
 
   /**
    *
+   * @param {boolean} value
+   */
+  setAutoHideSidebar(value) {
+    this.autoHideSidebar = value;
+    this.sidebarCollapseButton.setDisabled(value);
+    this.sidebarCollapseButton.setOpen(
+      !SidebarControllers.collapseController.collapsed(),
+    );
+  }
+
+  /**
+   *
    * @param {SidebarSettings} settings
    */
   loadSettings(settings) {
@@ -396,8 +410,8 @@ export class SidebarController {
     this.autoHideBackButton = settings.autoHideBackButton;
     this.autoHideForwardButton = settings.autoHideForwardButton;
     this.setContainerBorder(settings.containerBorder);
-    this.autoHideSidebar = settings.autoHideSidebar;
-    this.autoHideSidebarAnimated = settings.autoHideSidebarAnimated;
+    this.setAutoHideSidebar(settings.autoHideSidebar);
+    this.hideSidebarAnimated = settings.hideSidebarAnimated;
   }
 
   /**
@@ -415,7 +429,7 @@ export class SidebarController {
       this.autoHideForwardButton,
       this.containerBorder,
       this.autoHideSidebar,
-      this.autoHideSidebarAnimated,
+      this.hideSidebarAnimated,
     );
   }
 

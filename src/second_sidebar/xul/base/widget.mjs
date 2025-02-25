@@ -200,6 +200,20 @@ export class Widget {
 
   /**
    *
+   * @param {boolean} value
+   * @returns {Widget}
+   */
+  setDisabled(value) {
+    this.open = value;
+    const button = this.button;
+    if (button) {
+      button.setDisabled(value);
+    }
+    return this;
+  }
+
+  /**
+   *
    * @param {string} name
    * @param {string} value
    * @returns {Widget}
