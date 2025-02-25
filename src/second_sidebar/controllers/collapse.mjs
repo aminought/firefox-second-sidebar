@@ -1,3 +1,5 @@
+import { SidebarEvents, listenEvent, sendEvents } from "./events.mjs";
+
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { WindowWrapper } from "../wrappers/window.mjs";
@@ -46,6 +48,16 @@ export class CollapseController {
     });
 
     this.sidebarCollapseButton.listenClick(() => {
+      sendEvents(SidebarEvents.COLLAPSE_SIDEBAR);
+    });
+
+    listenEvent(SidebarEvents.COLLAPSE_SIDEBAR, (event) => {
+      const isActiveWindow = event.detail.isActiveWindow;
+
+      if (!isActiveWindow) {
+        return;
+      }
+
       if (this.sidebarController.autoHideSidebar) {
         return;
       }
