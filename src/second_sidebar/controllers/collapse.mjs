@@ -2,7 +2,6 @@ import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { WindowWrapper } from "../wrappers/window.mjs";
 import { XULElement } from "../xul/base/xul_element.mjs";
-import { gCustomizeModeWrapper } from "../wrappers/g_customize_mode.mjs";
 
 const FULLSCREEN_ANIMATE_ATTRIBUTE = "fullscreenShouldAnimate";
 const ANIMATE_ATTRIBUTE = "shouldAnimate";
@@ -11,7 +10,7 @@ export class CollapseController {
   constructor() {
     // elements
     this.sidebarMain = SidebarElements.sidebarMain;
-    this.sidebarBox = SidebarElements.sidebarBox;
+    this.sidebarSettings = SidebarElements.sidebarMainPopupSettings;
     // controllers
     this.sidebarController = SidebarControllers.sidebarController;
 
@@ -67,16 +66,7 @@ export class CollapseController {
    */
   handleEvent(event) {
     const window = new WindowWrapper();
-    if (
-      event.type !== "mousemove" ||
-      (!window.fullScreen && !this.sidebarController.autoHideSidebar)
-    ) {
-      return;
-    }
-    if (gCustomizeModeWrapper._customizing) {
-      if (this.collapsed()) {
-        this.uncollapse(true);
-      }
+    if (!window.fullScreen && !this.sidebarController.autoHideSidebar) {
       return;
     }
     const position = this.sidebarController.getPosition();
@@ -94,7 +84,6 @@ export class CollapseController {
       this.uncollapse(this.sidebarController.autoHideSidebarAnimated);
     } else if (
       !this.collapsed() &&
-      this.sidebarBox.hidden() &&
       ((position === "right" &&
         event.screenX < rightEdge - 2 * sidebarRect.width) ||
         (position === "left" &&
@@ -110,8 +99,8 @@ export class CollapseController {
    */
   collapsed() {
     return (
-      this.sidebarMain.getProperty("margin-right") !== "" ||
-      this.sidebarMain.getProperty("margin-left") !== ""
+      this.sidebarMain.getProperty("margin-right") !== "0px" ||
+      this.sidebarMain.getProperty("margin-left") !== "0px"
     );
   }
 
@@ -140,7 +129,7 @@ export class CollapseController {
     this.shouldAnimate(animate);
     this.fullScreenShouldAnimate(fullScreenAnimate);
 
-    this.sidebarMain.setProperty("margin-right", "");
-    this.sidebarMain.setProperty("margin-left", "");
+    this.sidebarMain.setProperty("margin-right", "0px");
+    this.sidebarMain.setProperty("margin-left", "0px");
   }
 }

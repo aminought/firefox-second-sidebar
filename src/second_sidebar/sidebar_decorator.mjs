@@ -6,6 +6,7 @@ import { POPUPS_CSS } from "./css/popups.mjs";
 import { SIDEBAR_BOX_CSS } from "./css/sidebar_box.mjs";
 import { SIDEBAR_CSS } from "./css/sidebar.mjs";
 import { SIDEBAR_MAIN_CSS } from "./css/sidebar_main.mjs";
+import { SidebarControllers } from "./sidebar_controllers.mjs";
 import { WEB_PANELS_BROWSER_CSS } from "./css/web_panels_browser.mjs";
 import { WEB_PANEL_CSS } from "./css/web_panel.mjs";
 
@@ -26,5 +27,14 @@ export class SidebarDecorator {
     const style = document.createElement("style");
     style.innerHTML = STYLE;
     document.querySelector("head").appendChild(style);
+    this.#collapse();
+  }
+
+  static #collapse() {
+    setTimeout(() => {
+      if (SidebarControllers.sidebarController.autoHideSidebar) {
+        SidebarControllers.collapseController.collapse(false, true);
+      }
+    }, 100);
   }
 }
