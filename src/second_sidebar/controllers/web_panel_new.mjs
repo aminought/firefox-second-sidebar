@@ -25,18 +25,27 @@ export class WebPanelNewController {
     });
 
     this.webPanelPopupNew.listenSaveButtonClick(async (url, userContextId) => {
-      const uuid = crypto.randomUUID();
-      sendEvents(WebPanelEvents.CREATE_WEB_PANEL, {
-        uuid,
-        url,
-        userContextId,
-        newWebPanelPosition: this.newWebPanelPosition,
-      });
+      this.createWebPanel(url, userContextId);
       this.hidePopup();
     });
 
     this.webPanelPopupNew.listenCancelButtonClick(() => {
       this.hidePopup();
+    });
+  }
+
+  /**
+   *
+   * @param {string} url
+   * @param {number} userContextId
+   */
+  createWebPanel(url, userContextId) {
+    const uuid = crypto.randomUUID();
+    sendEvents(WebPanelEvents.CREATE_WEB_PANEL, {
+      uuid,
+      url,
+      userContextId,
+      newWebPanelPosition: this.newWebPanelPosition,
     });
   }
 

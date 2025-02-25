@@ -31,9 +31,6 @@ export class SidebarInjector {
     SidebarControllers.sidebarController.loadSettings(sidebarSettings);
     SidebarControllers.webPanelsController.loadSettings(webPanelsSettings);
 
-    console.log("Context item injection...");
-    SidebarControllers.contextItemController.injectContextItem();
-
     console.log("Second Sidebar loaded");
     return true;
   }
