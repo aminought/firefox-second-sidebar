@@ -1,4 +1,5 @@
 import { CustomizableUIWrapper } from "./wrappers/customizable_ui.mjs";
+import { OpenLinkInSidebarMenuItem } from "./xul/open_link_in_sidebar_menuitem.mjs";
 import { Sidebar } from "./xul/sidebar.mjs";
 import { SidebarBox } from "./xul/sidebar_box.mjs";
 import { SidebarBoxFiller } from "./xul/sidebar_box_filler.mjs";
@@ -31,6 +32,9 @@ export class SidebarElements {
 
     console.log("Popups creation...");
     this.#createPopups();
+
+    console.log("Context menu items creation...");
+    this.#createContextMenuItems();
   }
 
   static #createSidebar() {
@@ -91,5 +95,20 @@ export class SidebarElements {
       this.sidebarMainPopupSettings,
     );
     this.sidebarToolbar.moreButton.appendChild(this.webPanelPopupMore);
+  }
+
+  static #createContextMenuItems() {
+    this.openLinkInSidebarMenuItem = new OpenLinkInSidebarMenuItem();
+
+    const contentAreaContextMenu = new XULElement({
+      element: document.getElementById("contentAreaContextMenu"),
+    });
+    const separator = new XULElement({
+      element: document.getElementById("context-sep-open"),
+    });
+    contentAreaContextMenu.insertBefore(
+      this.openLinkInSidebarMenuItem,
+      separator,
+    );
   }
 }
