@@ -66,8 +66,6 @@ export const SIDEBAR_MAIN_CSS = `
 
     .tab-icon-overlay {
       position: absolute !important;
-      width: var(--sb2-main-button-icon-overlay-size) !important;
-      height: var(--sb2-main-button-icon-overlay-size) !important;
       padding: 0px !important;
       margin: 0px !important;
       top: 0 !important;

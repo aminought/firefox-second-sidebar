@@ -2,7 +2,6 @@ export const COMMON_CSS = `
   @import url("chrome://global/content/elements/moz-toggle.css");
 
   :root {
-    --sb2-main-button-icon-overlay-size: 12px;
     --sb2-main-padding: var(--space-small);
     --sb2-main-web-panel-buttons-position: start;
 

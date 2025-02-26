@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { Img } from "./base/img.mjs";
+import { WebPanelPlayingIcon } from "./web_panel_playing_icon.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { Widget } from "./base/widget.mjs";
 import { applyContainerColor } from "../utils/containers.mjs";
@@ -23,7 +24,12 @@ export class WebPanelButton extends Widget {
       position,
     });
 
-    this.playingIcon = null;
+    /**@type {WebPanelPlayingIcon} */
+    this.playingIcon = new WebPanelPlayingIcon();
+    this.doWhenButtonReady(() => {
+      this.button.appendChild(this.playingIcon);
+    });
+
     this.setUserContextId(webPanelSettings.userContextId)
       .setIcon(webPanelSettings.faviconURL)
       .setLabel(webPanelSettings.url)
@@ -45,43 +51,24 @@ export class WebPanelButton extends Widget {
 
   /**
    *
+   * @param {boolean} isSoundPlaying
+   * @param {boolean} isMuted
    * @returns {WebPanelButton}
    */
-  showPlayingIcon() {
+  setPlayingIcon(isSoundPlaying, isMuted) {
     return this.doWhenButtonReady(() => {
-      if (this.playingIcon === null) {
-        this.playingIcon = new Img({ classList: ["tab-icon-overlay"] })
-          .setAttribute("role", "presentation")
-          .setAttribute("soundplaying", "")
-          .setAttribute("pinned", "");
-        this.button.appendChild(this.playingIcon);
-      }
-      this.playingIcon.removeAttribute("hidden");
+      this.playingIcon.setSoundPlaying(isSoundPlaying).setMuted(isMuted);
     });
   }
 
   /**
    *
+   * @param {boolean} isSoundPlaying
+   * @param {boolean} isMuted
    * @returns {WebPanelButton}
    */
-  hidePlayingIcon() {
-    return this.doWhenButtonReady(() => {
-      if (this.playingIcon !== null) {
-        this.playingIcon.setAttribute("hidden", "true");
-      }
-    });
-  }
-
-  /**
-   *
-   * @param {boolean} value
-   * @returns {WebPanelButton}
-   */
-  setPlaying(value) {
-    if (value) {
-      return this.showPlayingIcon();
-    }
-    return this.hidePlayingIcon();
+  setPlaying(isSoundPlaying, isMuted) {
+    return this.setPlayingIcon(isSoundPlaying, isMuted);
   }
 
   /**

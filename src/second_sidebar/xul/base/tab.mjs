@@ -27,4 +27,18 @@ export class Tab extends XULElement {
   get selected() {
     return this.element.selected ?? false;
   }
+
+  /**
+   * @returns {boolean}
+   */
+  get soundPlaying() {
+    return this.element.soundPlaying;
+  }
+
+  /**
+   * @returns {boolean}
+   */
+  get muted() {
+    return this.element.muted;
+  }
 }

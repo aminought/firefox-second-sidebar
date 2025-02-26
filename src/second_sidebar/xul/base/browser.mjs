@@ -39,17 +39,6 @@ export class Browser extends XULElement {
 
   /**
    *
-   * @param {function(boolean):void} callback
-   */
-  addPlaybackStateListener(callback) {
-    const mediaController = this.element.browsingContext.mediaController;
-    mediaController.addEventListener("playbackstatechange", () => {
-      callback(mediaController.isPlaying);
-    });
-  }
-
-  /**
-   *
    * @returns {boolean}
    */
   canGoBack() {
