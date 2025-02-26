@@ -42,6 +42,7 @@ export class WebPanelsSettings {
               unloadOnClose: webPanelPref.unloadOnClose,
               hideToolbar: webPanelPref.hideToolbar,
               userContextId: webPanelPref.userContextId,
+              periodicReload: webPanelPref.periodicReload,
             },
           ),
       ),

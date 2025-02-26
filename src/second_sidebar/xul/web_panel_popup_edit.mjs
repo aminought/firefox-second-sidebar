@@ -37,6 +37,9 @@ const ICONS = {
   PLUS: "chrome://global/skin/icons/plus.svg",
 };
 
+const SECOND = 1000;
+const MINUTE = 60 * SECOND;
+
 export class WebPanelPopupEdit extends Panel {
   constructor() {
     super({
@@ -57,6 +60,7 @@ export class WebPanelPopupEdit extends Panel {
     this.loadOnStartupToggle = new Toggle();
     this.unloadOnCloseToggle = new Toggle();
     this.hideToolbarToggle = new Toggle();
+    this.periodicReloadMenuList = this.#createPeriodicReloadMenuList();
     this.zoomOutButton = createSubviewIconicButton(ICONS.MINUS, {
       tooltipText: "Zoom Out",
     });
@@ -97,6 +101,26 @@ export class WebPanelPopupEdit extends Panel {
     return pinTypeMenuList;
   }
 
+  /**
+   *
+   * @returns {MenuList}
+   */
+  #createPeriodicReloadMenuList() {
+    const menuList = new MenuList();
+    menuList.appendItem("Never", 0);
+    menuList.appendItem("5 seconds", 5 * SECOND);
+    menuList.appendItem("10 seconds", 10 * SECOND);
+    menuList.appendItem("30 seconds", 30 * SECOND);
+    menuList.appendItem("1 minute", MINUTE);
+    menuList.appendItem("2 minutes", 2 * MINUTE);
+    menuList.appendItem("5 minutes", 5 * MINUTE);
+    menuList.appendItem("10 minutes", 10 * MINUTE);
+    menuList.appendItem("30 minutes", 30 * MINUTE);
+    menuList.appendItem("60 minutes", 60 * MINUTE);
+    menuList.appendItem("90 minutes", 90 * MINUTE);
+    return menuList;
+  }
+
   #compose() {
     this.appendChild(
       new PanelMultiView().appendChildren(
@@ -119,6 +143,8 @@ export class WebPanelPopupEdit extends Panel {
           this.unloadOnCloseToggle,
         ),
         createPopupGroup("Hide toolbar", this.hideToolbarToggle),
+        new ToolbarSeparator(),
+        createPopupGroup("Periodic reload", this.periodicReloadMenuList),
         new ToolbarSeparator(),
         createPopupGroup(
           "Zoom",
@@ -146,6 +172,7 @@ export class WebPanelPopupEdit extends Panel {
    * @param {function(string, boolean):void} callbacks.loadOnStartup
    * @param {function(string, boolean):void} callbacks.unloadOnClose
    * @param {function(string, boolean):void} callbacks.hideToolbar
+   * @param {function(string, number):void} callbacks.periodicReload
    * @param {function(string):number} callbacks.zoomOut
    * @param {function(string):number} callbacks.zoomIn
    * @param {function(string, number):number} callbacks.zoom
@@ -159,6 +186,7 @@ export class WebPanelPopupEdit extends Panel {
     loadOnStartup,
     unloadOnClose,
     hideToolbar,
+    periodicReload,
     zoomOut,
     zoomIn,
     zoom,
@@ -171,6 +199,7 @@ export class WebPanelPopupEdit extends Panel {
     this.onLoadOnStartupChange = loadOnStartup;
     this.onUnloadOnCloseChange = unloadOnClose;
     this.onHideToolbar = hideToolbar;
+    this.onPeriodicReload = periodicReload;
     this.onZoomOut = zoomOut;
     this.onZoomIn = zoomIn;
     this.onZoom = zoom;
@@ -198,6 +227,12 @@ export class WebPanelPopupEdit extends Panel {
     });
     this.hideToolbarToggle.addEventListener("toggle", () => {
       hideToolbar(this.settings.uuid, this.hideToolbarToggle.getPressed());
+    });
+    this.periodicReloadMenuList.addEventListener("command", () => {
+      periodicReload(
+        this.settings.uuid,
+        this.periodicReloadMenuList.getValue(),
+      );
     });
     this.zoomOutButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
@@ -280,6 +315,7 @@ export class WebPanelPopupEdit extends Panel {
     this.loadOnStartupToggle.setPressed(settings.loadOnStartup);
     this.unloadOnCloseToggle.setPressed(settings.unloadOnClose);
     this.hideToolbarToggle.setPressed(settings.hideToolbar);
+    this.periodicReloadMenuList.setValue(settings.periodicReload);
     this.#updateZoomButtons(settings.zoom);
     this.zoom = settings.zoom;
 
@@ -342,6 +378,11 @@ export class WebPanelPopupEdit extends Panel {
     }
     if (this.hideToolbarToggle.getPressed() !== this.settings.hideToolbar) {
       this.onHideToolbar(this.settings.uuid, this.settings.hideToolbar);
+    }
+    if (
+      this.periodicReloadMenuList.getValue() !== this.settings.periodicReload
+    ) {
+      this.onPeriodicReload(this.settings.uuid, this.settings.periodicReload);
     }
     this.onZoom(this.settings.uuid, this.settings.zoom);
   }

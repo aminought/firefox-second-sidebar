@@ -11,6 +11,7 @@ export const WebPanelEvents = {
   EDIT_WEB_PANEL_LOAD_ON_STARTUP: "edit_web_panel_load_on_startup",
   EDIT_WEB_PANEL_UNLOAD_ON_CLOSE: "edit_web_panel_unload_on_close",
   EDIT_WEB_PANEL_HIDE_TOOLBAR: "edit_web_panel_hide_toolbar",
+  EDIT_WEB_PANEL_PERIODIC_RELOAD: "edit_web_panel_periodic_reload",
   EDIT_WEB_PANEL_ZOOM_OUT: "edit_web_panel_zoom_out",
   EDIT_WEB_PANEL_ZOOM_IN: "edit_web_panel_zoom_in",
   EDIT_WEB_PANEL_ZOOM: "edit_web_panel_zoom",

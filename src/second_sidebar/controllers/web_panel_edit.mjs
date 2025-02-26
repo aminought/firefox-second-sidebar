@@ -65,6 +65,12 @@ export class WebPanelEditController {
           hideToolbar,
         });
       },
+      periodicReload: (uuid, periodicReload) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_PERIODIC_RELOAD, {
+          uuid,
+          periodicReload: Number(periodicReload),
+        });
+      },
       zoomOut: (uuid) => {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_ZOOM_OUT, {
           uuid,

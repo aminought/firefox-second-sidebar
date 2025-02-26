@@ -21,6 +21,8 @@ export class WebPanelController {
   #button;
   /**@type {WebPanelTab?} */
   #tab = null;
+  /**@type {number} */
+  #interval = null;
 
   /**
    *
@@ -34,6 +36,7 @@ export class WebPanelController {
 
     this.#settings = settings;
     this.#button = this.#createWebPanelButton(settings, loaded, position);
+
     if (loaded) {
       this.load();
     }
@@ -221,6 +224,7 @@ export class WebPanelController {
         this.#button.setPlaying(isPlaying),
       );
       this.#button.setUnloaded(false);
+      this.#startTimer();
     });
   }
 
@@ -229,6 +233,7 @@ export class WebPanelController {
    * @param {boolean} force
    */
   unload(force = true) {
+    this.#stopTimer();
     const activeWebPanelController =
       SidebarControllers.webPanelsController.getActive();
     if (activeWebPanelController?.getUUID() === this.getUUID()) {
@@ -241,6 +246,25 @@ export class WebPanelController {
 
     this.#button.setOpen(false).setUnloaded(true).hidePlayingIcon();
     this.#tab = null;
+  }
+
+  #startTimer() {
+    this.#stopTimer();
+    if (this.#settings.periodicReload == 0) {
+      return;
+    }
+    this.#log("start timer", this.#settings.periodicReload);
+    this.#interval = setInterval(() => {
+      this.#log("periodic reload");
+      this.reload();
+    }, this.#settings.periodicReload);
+  }
+
+  #stopTimer() {
+    if (this.#interval) {
+      this.#log("stop timer");
+      clearInterval(this.#interval);
+    }
   }
 
   /**
@@ -360,6 +384,17 @@ export class WebPanelController {
 
   /**
    *
+   * @param {number} value
+   */
+  setPeriodicReload(value) {
+    this.#settings.periodicReload = value;
+    if (!this.isUnloaded()) {
+      this.#startTimer();
+    }
+  }
+
+  /**
+   *
    * @param {number} width
    */
   setWidth(width) {
@@ -423,7 +458,16 @@ export class WebPanelController {
         unloadOnClose: this.#settings.unload,
         hideToolbar: this.#settings.hideToolbar,
         userContextId: this.#settings.userContextId,
+        periodicReload: this.#settings.periodicReload,
       },
     );
+  }
+
+  /**
+   *
+   * @param {string} message
+   */
+  #log(message) {
+    console.log(`Web panel ${this.getUUID()}:`, message);
   }
 }

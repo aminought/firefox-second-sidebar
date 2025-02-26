@@ -171,6 +171,14 @@ export class WebPanelsController {
       SidebarControllers.sidebarController.setHideToolbar(hideToolbar);
     });
 
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_PERIODIC_RELOAD, (event) => {
+      const uuid = event.detail.uuid;
+      const periodicReload = event.detail.periodicReload;
+
+      const webPanelController = this.get(uuid);
+      webPanelController.setPeriodicReload(periodicReload);
+    });
+
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_ZOOM_OUT, (event) => {
       const uuid = event.detail.uuid;
 

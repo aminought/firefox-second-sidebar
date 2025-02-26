@@ -15,6 +15,7 @@ export class WebPanelSettings {
    * @param {boolean?} params.unloadOnClose
    * @param {boolean?} params.hideToolbar
    * @param {string?} params.userContextId
+   * @param {number} params.periodicReload
    */
   constructor(
     uuid,
@@ -29,6 +30,7 @@ export class WebPanelSettings {
       unloadOnClose,
       hideToolbar,
       userContextId,
+      periodicReload,
     } = {},
   ) {
     /**@type {string} */
@@ -54,6 +56,8 @@ export class WebPanelSettings {
     /**@type {number} */
     this.userContextId =
       userContextId ?? ScriptSecurityManagerWrapper.DEFAULT_USER_CONTEXT_ID;
+    /**@type {number?} */
+    this.periodicReload = periodicReload ?? 0;
   }
 
   /**
@@ -73,6 +77,7 @@ export class WebPanelSettings {
       unloadOnClose: this.unloadOnClose,
       hideToolbar: this.hideToolbar,
       userContextId: this.userContextId,
+      periodicReload: this.periodicReload,
     };
   }
 }
