@@ -433,6 +433,18 @@ export class WebPanelController {
     return this.#tab && this.#tab.selected;
   }
 
+  /**
+   *
+   * @returns {boolean}
+   */
+  isMuted() {
+    return this.#tab.muted;
+  }
+
+  toggleMuteAudio() {
+    this.#tab.element.toggleMuteAudio();
+  }
+
   remove() {
     if (this.#tab) {
       this.webPanelsBrowser.removeWebPanelTab(this.#tab);

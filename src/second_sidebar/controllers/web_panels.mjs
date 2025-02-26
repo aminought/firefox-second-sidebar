@@ -53,6 +53,10 @@ export class WebPanelsController {
       webPanelController.unload();
     });
 
+    this.webPanelMenuPopup.listenMuteItemClick((webPanelController) => {
+      webPanelController.toggleMuteAudio();
+    });
+
     this.webPanelMenuPopup.listenEditItemClick((webPanelController) => {
       SidebarControllers.webPanelEditController.openPopup(webPanelController);
     });

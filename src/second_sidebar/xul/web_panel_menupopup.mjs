@@ -14,6 +14,7 @@ export class WebPanelMenuPopup extends MenuPopup {
     });
 
     this.unloadItem = new MenuItem().setLabel("Unload web panel");
+    this.muteItem = new MenuItem();
     this.editItem = new MenuItem().setLabel("Edit web panel");
     this.deleteItem = new MenuItem().setLabel("Delete web panel");
     this.customizeItem = new MenuItem().setLabel("Customize Toolbar...");
@@ -23,12 +24,24 @@ export class WebPanelMenuPopup extends MenuPopup {
       this.webPanelController = SidebarControllers.webPanelsController.get(
         this.element.triggerNode.id,
       );
+      // unloading
+      this.unloadItem.setDisabled(this.webPanelController.isUnloaded());
+      // muting
+      if (this.webPanelController.isUnloaded()) {
+        this.muteItem.hide();
+      } else {
+        this.muteItem.show();
+        this.muteItem.setLabel(
+          `${this.webPanelController.isMuted() ? "Unmute" : "Mute"} web panel`,
+        );
+      }
     });
   }
 
   #compose() {
     this.appendChildren(
       this.unloadItem,
+      this.muteItem,
       new MenuSeparator(),
       this.editItem,
       this.deleteItem,
@@ -43,6 +56,16 @@ export class WebPanelMenuPopup extends MenuPopup {
    */
   listenUnloadItemClick(callback) {
     this.unloadItem.addEventListener("command", () => {
+      callback(this.webPanelController);
+    });
+  }
+
+  /**
+   *
+   * @param {function(WebPanelController):void} callback
+   */
+  listenMuteItemClick(callback) {
+    this.muteItem.addEventListener("command", () => {
       callback(this.webPanelController);
     });
   }
