@@ -97,9 +97,9 @@ export class SidebarController {
     });
 
     this.sidebarToolbar.listenCloseButtonClick(() => {
-      this.close();
       const webPanelController =
         SidebarControllers.webPanelsController.getActive();
+      this.close();
       webPanelController.unload();
     });
 
