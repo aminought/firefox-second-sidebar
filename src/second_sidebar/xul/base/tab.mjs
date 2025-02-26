@@ -41,4 +41,13 @@ export class Tab extends XULElement {
   get muted() {
     return this.element.muted;
   }
+
+  /**
+   *
+   * @returns {Tab}
+   */
+  toggleMuteAudio() {
+    this.element.toggleMuteAudio();
+    return this;
+  }
 }

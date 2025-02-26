@@ -442,7 +442,7 @@ export class WebPanelController {
   }
 
   toggleMuteAudio() {
-    this.#tab.element.toggleMuteAudio();
+    this.#tab.toggleMuteAudio();
   }
 
   remove() {
