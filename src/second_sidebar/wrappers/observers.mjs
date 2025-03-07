@@ -21,4 +21,13 @@ export class ObserversWrapper {
   static removeObserver(observer, topic) {
     Services.obs.removeObserver(observer, topic);
   }
+
+  /**
+   *
+   * @param {Observer} subject
+   * @param {string} topic
+   */
+  static notifyObservers(subject, topic) {
+    Services.obs.notifyObservers(subject, topic);
+  }
 }
