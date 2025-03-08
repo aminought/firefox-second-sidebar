@@ -74,16 +74,16 @@ export function changeContainerBorder(containerBorder) {
   let paddingParts = Array(4).fill("var(--toolbarbutton-inner-padding)");
 
   if (containerBorder === "left") {
-    shadowParts[0] = "2px";
+    shadowParts[0] = "1px";
     paddingParts[1] = "0";
   } else if (containerBorder === "right") {
-    shadowParts[0] = "-2px";
+    shadowParts[0] = "-1px";
     paddingParts[3] = "0";
   } else if (containerBorder === "top") {
-    shadowParts[1] = "2px";
+    shadowParts[1] = "1px";
     paddingParts[2] = "0";
   } else if (containerBorder === "bottom") {
-    shadowParts[1] = "-2px";
+    shadowParts[1] = "-1px";
     paddingParts[0] = "0";
   } else if (containerBorder === "around") {
     shadowParts[3] = "1px";

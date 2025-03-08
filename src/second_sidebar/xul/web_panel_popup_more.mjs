@@ -9,6 +9,7 @@ import {
 import { MenuSeparator } from "./base/menuseparator.mjs";
 import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";
+import { PopupBody } from "./popup_body.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
 
@@ -29,7 +30,7 @@ export class WebPanelPopupMore extends Panel {
 
     this.openInNewTabButton = createSubviewButton("Open in New Tab");
     this.copyPageUrlButton = createSubviewButton("Copy Page URL");
-    this.mobileButton = createSubviewButton("Use mobile User Agent", {
+    this.mobileButton = createSubviewButton("Mobile View", {
       type: "checkbox",
     });
     this.zoomOutButton = createSubviewIconicButton(ICONS.MINUS, "Zoom Out");
@@ -44,14 +45,16 @@ export class WebPanelPopupMore extends Panel {
   #compose() {
     this.appendChild(
       new PanelMultiView().appendChildren(
-        this.openInNewTabButton,
-        this.copyPageUrlButton,
-        this.mobileButton,
-        new MenuSeparator(),
-        createZoomButtons(
-          this.zoomOutButton,
-          this.resetZoomButton,
-          this.zoomInButton,
+        new PopupBody({ compact: true }).appendChildren(
+          this.openInNewTabButton,
+          this.copyPageUrlButton,
+          this.mobileButton,
+          new MenuSeparator(),
+          createZoomButtons(
+            this.zoomOutButton,
+            this.resetZoomButton,
+            this.zoomInButton,
+          ),
         ),
       ),
     );

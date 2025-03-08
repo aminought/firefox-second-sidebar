@@ -9,6 +9,9 @@ import { HBox } from "./base/hbox.mjs";
 import { Label } from "./base/label.mjs";
 import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";
+import { PopupBody } from "./popup_body.mjs";
+import { PopupFooter } from "./popup_footer.mjs";
+import { PopupHeader } from "./popup_header.mjs";
 import { ToolbarSeparator } from "./base/toolbar_separator.mjs";
 import { WebPanelController } from "../controllers/web_panel.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
@@ -31,12 +34,11 @@ export class WebPanelPopupDelete extends Panel {
   #compose() {
     this.appendChild(
       new PanelMultiView().appendChildren(
-        createPopupHeader("Delete Web Panel"),
-        new ToolbarSeparator(),
-        new Label().setText("Are you sure? This action cannot be undone."),
-        new HBox({
-          id: "sb2-web-panel-delete-buttons",
-        }).appendChildren(this.cancelButton, this.deleteButton),
+        new PopupHeader("Delete Web Panel"),
+        new PopupBody().appendChildren(
+          new Label().setText("Are you sure? This action cannot be undone."),
+        ),
+        new PopupFooter().appendChildren(this.cancelButton, this.deleteButton),
       ),
     );
   }

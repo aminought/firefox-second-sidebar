@@ -1,42 +1,33 @@
 export const POPUPS_CSS = `
-  .sb2-popup {
-    panelmultiview {
-      display: flex;
-      flex-direction: column;
-      align-items: unset;
-      gap: var(--space-xsmall);
-      width: 100%;
-      padding: var(--space-xsmall) 0;
-      overflow-y: scroll;
+  .sb2-popup > panelmultiview {
+    display: flex;
+    flex-direction: column;
+    align-items: unset;
+    gap: var(--space-medium);
+    width: 100%;
+    padding: var(--space-xsmall);
 
-      .panel-header {
-        align-self: center;
-      }
-
-      toolbarseparator, input {
-        width: -moz-available;
-      }
-
-      .sb2-button-iconic .toolbarbutton-text {
-        display: none;
-      }
-
-      .subviewbutton[type="checkbox"]:not([checked="true"]) {
-        list-style-image: url(chrome://global/skin/icons/close.svg);
-        -moz-context-properties: fill;
-        fill: currentColor;
-        color: inherit;
-
-        .toolbarbutton-text {
-          padding-inline-start: 8px;
-        }
-      }
+    .panel-header {
+      align-self: center;
     }
-  }
 
-  .sb2-popup-with-header {
-    panelmultiview {
-      padding: 0 var(--space-small) var(--space-small) var(--space-small);
+    toolbarseparator, input {
+      width: -moz-available;
+    }
+
+    .sb2-button-iconic .toolbarbutton-text {
+      display: none;
+    }
+
+    .subviewbutton[type="checkbox"]:not([checked="true"]) {
+      list-style-image: url(chrome://global/skin/icons/close.svg);
+      -moz-context-properties: fill;
+      fill: currentColor;
+      color: inherit;
+
+      .toolbarbutton-text {
+        padding-inline-start: 8px;
+      }
     }
   }
 
@@ -50,13 +41,36 @@ export const POPUPS_CSS = `
     width: 300px;
   }
 
-  #sb2-web-panel-new-buttons,
-  #sb2-web-panel-edit-buttons,
-  #sb2-web-panel-delete-buttons,
-  #sb2-main-popup-settings-buttons {
-    justify-content: end;
+  .sb2-popup-header, .sb2-popup-body, .sb2-popup-footer {
     width: 100%;
-    margin-top: var(--space-small);
+  }
+
+  .sb2-popup-header {
+    align-self: center;
+
+    h1 {
+      align-self: center;
+    }
+  }
+
+  .sb2-popup-body {
+    overflow-y: auto;
+    padding: 0 var(--space-medium);
+    gap: var(--space-xsmall);
+
+    .subviewbutton {
+      margin: unset;
+      padding: var(--space-small) var(--space-medium);
+    }
+  }
+
+  .sb2-popup-body.compact {
+    padding: 0;
+    gap: 0;
+  }
+
+  .sb2-popup-footer {
+    justify-content: end;
   }
 
   .sb2-popup-group {
@@ -76,10 +90,10 @@ export const POPUPS_CSS = `
 
   #sb2-zoom-buttons {
     justify-content: center;
-  }
 
-  #sb2-zoom-button > .toolbarbutton-text {
-    min-width: calc(4ch + 8px);
-    text-align: center;
+    #sb2-zoom-button > .toolbarbutton-text {
+      min-width: calc(4ch + 8px);
+      text-align: center;
+    }
   }
 `;

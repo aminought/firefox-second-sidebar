@@ -41,6 +41,16 @@ export class XULElement {
 
   /**
    *
+   * @param {string} className
+   * @returns {XULElement}
+   */
+  addClass(className) {
+    this.element.classList.add(className);
+    return this;
+  }
+
+  /**
+   *
    * @returns {HTMLelement}
    */
   getXUL() {

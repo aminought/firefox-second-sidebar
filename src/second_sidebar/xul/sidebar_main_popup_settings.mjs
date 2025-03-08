@@ -10,6 +10,9 @@ import { HBox } from "./base/hbox.mjs";
 import { MenuList } from "./base/menulist.mjs";
 import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";
+import { PopupBody } from "./popup_body.mjs";
+import { PopupFooter } from "./popup_footer.mjs";
+import { PopupHeader } from "./popup_header.mjs";
 import { SidebarSettings } from "../settings/sidebar_settings.mjs";
 import { Toggle } from "./base/toggle.mjs";
 import { ToolbarSeparator } from "./base/toolbar_separator.mjs";
@@ -96,41 +99,40 @@ export class SidebarMainPopupSettings extends Panel {
   #compose() {
     this.appendChild(
       new PanelMultiView().appendChildren(
-        createPopupHeader("Sidebar Settings"),
-        new ToolbarSeparator(),
-        createPopupGroup("Sidebar position", this.positionMenuList),
-        createPopupGroup("Auto-hide sidebar", this.autoHideSidebarToggle),
-        createPopupGroup(
-          "Animate sidebar hiding",
-          this.hideSidebarAnimatedToggle,
+        new PopupHeader("Sidebar Settings"),
+        new PopupBody().appendChildren(
+          createPopupGroup("Sidebar position", this.positionMenuList),
+          createPopupGroup("Auto-hide sidebar", this.autoHideSidebarToggle),
+          createPopupGroup(
+            "Animate sidebar hiding",
+            this.hideSidebarAnimatedToggle,
+          ),
+          new ToolbarSeparator(),
+          createPopupGroup("Sidebar width", this.paddingMenuList),
+          createPopupGroup(
+            "Floating web panel offset",
+            this.unpinnedPaddingMenuList,
+          ),
+          createPopupGroup(
+            "New web panel position",
+            this.newWebPanelPositionMenuList,
+          ),
+          createPopupGroup(
+            "Container indicator position",
+            this.containerBorderMenuList,
+          ),
+          new ToolbarSeparator(),
+          createPopupGroup(
+            "Hide sidebar in popup windows",
+            this.hideInPopupWindowsToggle,
+          ),
+          createPopupGroup("Auto hide back button", this.autoHideBackToggle),
+          createPopupGroup(
+            "Auto hide forward button",
+            this.autoHideForwardToggle,
+          ),
         ),
-        new ToolbarSeparator(),
-        createPopupGroup("Sidebar width", this.paddingMenuList),
-        createPopupGroup(
-          "Floating web panel offset",
-          this.unpinnedPaddingMenuList,
-        ),
-        createPopupGroup(
-          "New web panel position",
-          this.newWebPanelPositionMenuList,
-        ),
-        createPopupGroup(
-          "Container indicator position",
-          this.containerBorderMenuList,
-        ),
-        new ToolbarSeparator(),
-        createPopupGroup(
-          "Hide sidebar in popup windows",
-          this.hideInPopupWindowsToggle,
-        ),
-        createPopupGroup("Auto hide back button", this.autoHideBackToggle),
-        createPopupGroup(
-          "Auto hide forward button",
-          this.autoHideForwardToggle,
-        ),
-        new HBox({
-          id: "sb2-main-popup-settings-buttons",
-        }).appendChildren(this.cancelButton, this.saveButton),
+        new PopupFooter().appendChildren(this.cancelButton, this.saveButton),
       ),
     );
   }

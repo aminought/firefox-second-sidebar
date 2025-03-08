@@ -21,8 +21,12 @@ import { Header } from "./base/header.mjs";
 import { MenuList } from "./base/menulist.mjs";
 import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";
+import { PopupBody } from "./popup_body.mjs";
+import { PopupFooter } from "./popup_footer.mjs";
+import { PopupHeader } from "./popup_header.mjs";
 import { Toggle } from "./base/toggle.mjs";
 import { ToolbarSeparator } from "./base/toolbar_separator.mjs";
+import { VBox } from "./base/vbox.mjs";
 import { WebPanelController } from "../controllers/web_panel.mjs";
 import { fetchIconURL } from "../utils/icons.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
@@ -122,41 +126,43 @@ export class WebPanelPopupEdit extends Panel {
   }
 
   #compose() {
-    this.appendChild(
+    this.appendChildren(
       new PanelMultiView().appendChildren(
-        createPopupHeader("Edit Web Panel"),
-        new ToolbarSeparator(),
-        new Header(1).setText("Page web address"),
-        this.urlInput,
-        createPopupGroup("Multi-Account Container", this.containerMenuList),
-        new Header(1).setText("Favicon web address"),
-        createPopupRow(this.faviconURLInput, this.faviconResetButton),
-        new ToolbarSeparator(),
-        createPopupGroup("Web panel type", this.pinnedMenuList),
-        createPopupGroup("Use mobile User Agent", this.mobileToggle),
-        createPopupGroup(
-          "Load into memory at startup",
-          this.loadOnStartupToggle,
-        ),
-        createPopupGroup(
-          "Unload from memory after closing",
-          this.unloadOnCloseToggle,
-        ),
-        createPopupGroup("Hide toolbar", this.hideToolbarToggle),
-        new ToolbarSeparator(),
-        createPopupGroup("Periodic reload", this.periodicReloadMenuList),
-        new ToolbarSeparator(),
-        createPopupGroup(
-          "Zoom",
-          createZoomButtons(
-            this.zoomOutButton,
-            this.resetZoomButton,
-            this.zoomInButton,
-          ),
-        ),
-        new HBox({
-          id: "sb2-web-panel-edit-buttons",
-        }).appendChildren(this.cancelButton, this.saveButton),
+        new PopupHeader("Edit Web Panel"),
+        new PopupBody()
+          .setProperty("padding", "0 var(--space-medium)")
+          .appendChildren(
+            new Header(1).setText("Page web address"),
+            this.urlInput,
+            createPopupGroup("Multi-Account Container", this.containerMenuList),
+            new Header(1).setText("Favicon web address"),
+            createPopupRow(this.faviconURLInput, this.faviconResetButton),
+            new ToolbarSeparator(),
+            createPopupGroup("Web panel type", this.pinnedMenuList),
+            createPopupGroup("Mobile View", this.mobileToggle),
+            createPopupGroup(
+              "Load into memory at startup",
+              this.loadOnStartupToggle,
+            ),
+            createPopupGroup(
+              "Unload from memory after closing",
+              this.unloadOnCloseToggle,
+            ),
+            createPopupGroup("Hide toolbar", this.hideToolbarToggle),
+            new ToolbarSeparator(),
+            createPopupGroup("Periodic reload", this.periodicReloadMenuList),
+            new ToolbarSeparator(),
+            createPopupGroup(
+              "Zoom",
+              createZoomButtons(
+                this.zoomOutButton,
+                this.resetZoomButton,
+                this.zoomInButton,
+              ),
+            ),
+          )
+          .setProperty("overflow-y", "scroll"),
+        new PopupFooter().appendChildren(this.cancelButton, this.saveButton),
       ),
     );
   }

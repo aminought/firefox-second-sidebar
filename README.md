@@ -61,7 +61,7 @@ https://github.com/user-attachments/assets/a92fb9b5-84d5-42a1-99f3-ad718767383f
                <li>Multi-Account Container.</li>
                <li>Favicon address. The same as for the page address.</li>
                <li>Web panel type: floating or pinned.</li>
-               <li>Use mobile User Agent.</li>
+               <li>Mobile View.</li>
                <li>Load into memory at startup: automatic loading of the web panel. </li>
                <li>Unload from memory after closing.</li>
                <li>Hide toolbar: "headless" web panel.</li>

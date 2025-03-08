@@ -14,6 +14,7 @@ export const SIDEBAR_CSS = `
       gap: 4px;
       background-color: var(--toolbar-bgcolor);
       color: var(--toolbar-color);
+      padding: 1px;
 
       #sb2-toolbar-title-wrapper {
         display: flex;
