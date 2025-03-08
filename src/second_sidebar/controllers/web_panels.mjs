@@ -2,7 +2,6 @@ import { WebPanelEvents, listenEvent } from "./events.mjs";
 import { isLeftMouseButton, isMiddleMouseButton } from "../utils/buttons.mjs";
 
 import { NetUtilWrapper } from "../wrappers/net_utils.mjs";
-import { ObserversWrapper } from "../wrappers/observers.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { WebPanelController } from "./web_panel.mjs";
