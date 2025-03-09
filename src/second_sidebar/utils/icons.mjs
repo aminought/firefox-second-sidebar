@@ -20,6 +20,8 @@ const PREDEFINED_ICONS = {
     "chrome://browser/skin/library.svg",
 };
 
+export const FALLBACK_ICON = "chrome://global/skin/icons/info.svg";
+
 /**
  *
  * @param {string} url
@@ -76,7 +78,7 @@ export async function isIconAvailable(url) {
  *
  * @param {string} url
  * @param {string} urlAlt
- * @returns {string}
+ * @returns {Promise<string>}
  */
 export async function useAvailableIcon(url, urlAlt) {
   return (await isIconAvailable(url)) ? url : urlAlt;

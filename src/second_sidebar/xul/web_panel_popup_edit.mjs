@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
   applyContainerColor,
   fillContainerMenuList,
@@ -6,7 +7,6 @@ import {
   createCancelButton,
   createInput,
   createPopupGroup,
-  createPopupHeader,
   createPopupRow,
   createSaveButton,
   createSubviewButton,
@@ -15,8 +15,6 @@ import {
   updateZoomButtons,
 } from "../utils/xul.mjs";
 
-/* eslint-disable no-unused-vars */
-import { HBox } from "./base/hbox.mjs";
 import { Header } from "./base/header.mjs";
 import { MenuList } from "./base/menulist.mjs";
 import { Panel } from "./base/panel.mjs";
@@ -26,7 +24,6 @@ import { PopupFooter } from "./popup_footer.mjs";
 import { PopupHeader } from "./popup_header.mjs";
 import { Toggle } from "./base/toggle.mjs";
 import { ToolbarSeparator } from "./base/toolbar_separator.mjs";
-import { VBox } from "./base/vbox.mjs";
 import { WebPanelController } from "../controllers/web_panel.mjs";
 import { fetchIconURL } from "../utils/icons.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";

@@ -1,10 +1,12 @@
 /* eslint-disable no-unused-vars */
-import { Img } from "./base/img.mjs";
+import { FALLBACK_ICON, useAvailableIcon } from "../utils/icons.mjs";
+
 import { WebPanelPlayingIcon } from "./web_panel_playing_icon.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { Widget } from "./base/widget.mjs";
 import { applyContainerColor } from "../utils/containers.mjs";
 import { ellipsis } from "../utils/string.mjs";
+
 /* eslint-enable no-unused-vars */
 
 const URL_LABEL_LIMIT = 24;
@@ -31,9 +33,12 @@ export class WebPanelButton extends Widget {
     });
 
     this.setUserContextId(webPanelSettings.userContextId)
-      .setIcon(webPanelSettings.faviconURL)
       .setLabel(webPanelSettings.url)
       .setTooltipText(webPanelSettings.url);
+
+    useAvailableIcon(webPanelSettings.faviconURL, FALLBACK_ICON).then(
+      (faviconURL) => this.setIcon(faviconURL),
+    );
   }
 
   /**

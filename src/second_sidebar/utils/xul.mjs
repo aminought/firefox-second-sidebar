@@ -149,17 +149,6 @@ export function createCancelButton() {
 /**
  *
  * @param {string} text
- * @returns {HBox}
- */
-export function createPopupHeader(text) {
-  return new HBox({ classList: ["panel-header"] }).appendChild(
-    new Header(1).setText(text),
-  );
-}
-
-/**
- *
- * @param {string} text
  * @param {XULElement} element
  * @returns {HBox}
  */

@@ -1,12 +1,10 @@
+/* eslint-disable no-unused-vars */
 import {
   createCancelButton,
   createPopupGroup,
-  createPopupHeader,
   createSaveButton,
 } from "../utils/xul.mjs";
 
-/* eslint-disable no-unused-vars */
-import { HBox } from "./base/hbox.mjs";
 import { MenuList } from "./base/menulist.mjs";
 import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";

@@ -1,3 +1,4 @@
+import { FALLBACK_ICON, useAvailableIcon } from "../utils/icons.mjs";
 /* eslint-disable no-unused-vars */
 import { WebPanelEvents, sendEvent } from "./events.mjs";
 
@@ -163,7 +164,9 @@ export class WebPanelController {
    * @param {string} faviconURL
    */
   setWebPanelButtonFaviconURL(faviconURL) {
-    this.#button.setIcon(faviconURL);
+    useAvailableIcon(faviconURL, FALLBACK_ICON).then((url) =>
+      this.#button.setIcon(url),
+    );
   }
 
   /**
@@ -275,6 +278,7 @@ export class WebPanelController {
 
   reload() {
     this.#tab.linkedBrowser.reload();
+    this.setWebPanelButtonFaviconURL(this.#settings.faviconURL);
   }
 
   goBack() {

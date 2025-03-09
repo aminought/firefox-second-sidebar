@@ -108,6 +108,9 @@ export class WebPanelsBrowser extends Browser {
     windowRoot
       .querySelector("#tabbrowser-tabbox")
       .setProperty("height", "100%");
+
+    // Add class for userChrome.css
+    windowRoot.addClass("sb2-webpanels-window");
   }
 
   /**

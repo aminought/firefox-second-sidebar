@@ -1,18 +1,12 @@
-import {
-  createCancelButton,
-  createDeleteButton,
-  createPopupHeader,
-} from "../utils/xul.mjs";
-
 /* eslint-disable no-unused-vars */
-import { HBox } from "./base/hbox.mjs";
+import { createCancelButton, createDeleteButton } from "../utils/xul.mjs";
+
 import { Label } from "./base/label.mjs";
 import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";
 import { PopupBody } from "./popup_body.mjs";
 import { PopupFooter } from "./popup_footer.mjs";
 import { PopupHeader } from "./popup_header.mjs";
-import { ToolbarSeparator } from "./base/toolbar_separator.mjs";
 import { WebPanelController } from "../controllers/web_panel.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
 
