@@ -79,6 +79,13 @@ export class WindowWrapper {
     this.raw.addEventListener(type, listener);
   }
 
+  relinkTreeOwner() {
+    this.raw.docShell.treeOwner
+      .QueryInterface(Ci.nsIInterfaceRequestor)
+      .getInterface(Ci.nsIAppWindow).XULBrowserWindow =
+      this.raw.XULBrowserWindow;
+  }
+
   /**
    * @param {WindowWrapper} lhs
    * @param {WindowWrapper} rhs

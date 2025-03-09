@@ -25,20 +25,17 @@ export class WebPanelsBrowser extends Browser {
       id: `sb2-web-panels-browser_${crypto.randomUUID()}`,
       classList: ["sb2-web-panels-browser"],
     });
-    this.removeAttribute("remote")
-      .removeAttribute("type")
-      .setAttribute(
-        "xmlns",
-        "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
-      )
-      .setAttribute("messagemanagergroup", "browsers")
-      .setAttribute("initialBrowsingContextGroupId", "1")
-      .setAttribute("disableglobalhistory", "true")
-      .setAttribute("disablehistory", "true")
-      .setAttribute("disablefullscreen", "true")
-      .setAttribute("autoscroll", "false")
-      .setAttribute("tooltip", "aHTMLTooltip")
-      .setAttribute("autocompletepopup", "PopupAutoComplete");
+    this.removeAttributes(["remote", "type"]).setAttributes({
+      xmlns: "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
+      messagemanagergroup: "browsers",
+      initialBrowsingContextGroupId: "1",
+      disableglobalhistory: "true",
+      disablehistory: "true",
+      disablefullscreen: "true",
+      autoscroll: "false",
+      tooltip: "aHTMLTooltip",
+      autocompletepopup: "PopupAutoComplete",
+    });
 
     this.initialized = false;
   }

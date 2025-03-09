@@ -139,11 +139,11 @@ export class XULElement {
   /**
    *
    * @param {object} attributes
-   * @returns {MenuItem}
+   * @returns {XULElement}
    */
   setAttributes(attributes = {}) {
     for (const [key, value] of Object.entries(attributes)) {
-      this.element.setAttribute(key, value);
+      this.setAttribute(key, value);
     }
     return this;
   }
@@ -173,6 +173,16 @@ export class XULElement {
    */
   removeAttribute(name) {
     this.element.removeAttribute(name);
+    return this;
+  }
+
+  /**
+   *
+   * @param {Array<string>} names
+   * @returns {XULElement}
+   */
+  removeAttributes(names) {
+    names.forEach((name) => this.removeAttribute(name));
     return this;
   }
 

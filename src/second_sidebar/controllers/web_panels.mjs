@@ -345,6 +345,8 @@ export class WebPanelsController {
     this.webPanelsBrowser.init();
 
     this.webPanelsBrowser.waitInitialization(() => {
+      // Relink docShell.treeOwner to the current window to fix status panel
+      new WindowWrapper().relinkTreeOwner();
       // Setup web panels window listeners
       this.#setupWebPanelsBrowserListeners();
       // Load startup web panels
