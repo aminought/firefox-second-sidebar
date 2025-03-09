@@ -18,6 +18,7 @@ export const SIDEBAR_MAIN_CSS = `
 
     .toolbaritem-combined-buttons {
       justify-content: center;
+      margin-inline: 0;
     }
 
     .toolbarbutton-1 {
