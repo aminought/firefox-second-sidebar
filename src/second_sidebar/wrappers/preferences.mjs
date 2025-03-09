@@ -25,4 +25,22 @@ export class PreferencesWrapper {
   static setStringPref(pref, value) {
     return Services.prefs.setStringPref(pref, value);
   }
+
+  /**
+   *
+   * @param {string} pref
+   * @returns {boolean}
+   */
+  static getBoolPref(pref) {
+    return Services.prefs.getBoolPref(pref);
+  }
+
+  /**
+   *
+   * @param {string} pref
+   * @param {boolean} value
+   */
+  static setBoolPref(pref, value) {
+    return Services.prefs.setBoolPref(pref, value);
+  }
 }
