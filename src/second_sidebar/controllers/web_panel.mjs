@@ -214,18 +214,16 @@ export class WebPanelController {
   }
 
   load() {
-    this.webPanelsBrowser.waitInitialization(() => {
-      this.#tab = this.webPanelsBrowser.addWebPanelTab(
-        this.#settings,
-        this.#progressListener,
-      );
-      this.#tab.addTabCloseListener(() => this.unload(false));
-      this.#tab.addEventListener("TabAttrModified", () => {
-        this.#button.setPlaying(this.#tab.soundPlaying, this.#tab.muted);
-      });
-      this.#button.setUnloaded(false);
-      this.#startTimer();
+    this.#tab = this.webPanelsBrowser.addWebPanelTab(
+      this.#settings,
+      this.#progressListener,
+    );
+    this.#tab.addTabCloseListener(() => this.unload(false));
+    this.#tab.addEventListener("TabAttrModified", () => {
+      this.#button.setPlaying(this.#tab.soundPlaying, this.#tab.muted);
     });
+    this.#button.setUnloaded(false);
+    this.#startTimer();
   }
 
   /**

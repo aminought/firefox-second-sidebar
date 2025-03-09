@@ -16,7 +16,6 @@ import { XULElement } from "./base/xul_element.mjs";
 
 const BEFORE_SHOW_EVENT = "browser-window-before-show";
 const INITIALIZED_EVENT = "browser-delayed-startup-finished";
-const BROWSER_QUIT_EVENT = "quit-application-granted";
 
 const FIRST_TAB_INDEX = 0;
 
@@ -26,20 +25,17 @@ export class WebPanelsBrowser extends Browser {
       id: `sb2-web-panels-browser_${crypto.randomUUID()}`,
       classList: ["sb2-web-panels-browser"],
     });
-    this.removeAttribute("remote")
-      .removeAttribute("type")
-      .setAttribute(
-        "xmlns",
-        "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
-      )
-      .setAttribute("messagemanagergroup", "browsers")
-      .setAttribute("initialBrowsingContextGroupId", "1")
-      .setAttribute("disableglobalhistory", "true")
-      .setAttribute("disablehistory", "true")
-      .setAttribute("disablefullscreen", "true")
-      .setAttribute("autoscroll", "false")
-      .setAttribute("tooltip", "aHTMLTooltip")
-      .setAttribute("autocompletepopup", "PopupAutoComplete");
+    this.removeAttributes(["remote", "type"]).setAttributes({
+      xmlns: "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
+      messagemanagergroup: "browsers",
+      initialBrowsingContextGroupId: "1",
+      disableglobalhistory: "true",
+      disablehistory: "true",
+      disablefullscreen: "true",
+      autoscroll: "false",
+      tooltip: "aHTMLTooltip",
+      autocompletepopup: "PopupAutoComplete",
+    });
 
     this.initialized = false;
   }
@@ -52,7 +48,6 @@ export class WebPanelsBrowser extends Browser {
     console.log("Initializing web panels browser...");
     ObserversWrapper.addObserver(this, BEFORE_SHOW_EVENT);
     ObserversWrapper.addObserver(this, INITIALIZED_EVENT);
-    ObserversWrapper.addObserver(this, BROWSER_QUIT_EVENT);
     this.setAttribute("src", AppConstantsWrapper.BROWSER_CHROME_URL);
   }
 
@@ -71,13 +66,9 @@ export class WebPanelsBrowser extends Browser {
       this.initWindow();
     } else if (topic === INITIALIZED_EVENT) {
       ObserversWrapper.removeObserver(this, INITIALIZED_EVENT);
-      this.initialized = true;
       SessionStoreWrapper.maybeDontRestoreTabs(this.window);
+      this.initialized = true;
       console.log(`${this.window.name}: web panels browser initialized`);
-    } else if (topic === BROWSER_QUIT_EVENT) {
-      ObserversWrapper.removeObserver(this, BROWSER_QUIT_EVENT);
-      this.remove();
-      console.log(`${this.window.name}: web panels browser removed`);
     }
   }
 
@@ -209,10 +200,25 @@ export class WebPanelsBrowser extends Browser {
     this.window.gBrowser.removeTab(tab);
   }
 
+  notifyWindowClosedAndRemove() {
+    ObserversWrapper.notifyObservers(this.window.raw, "domwindowclosed");
+    this.remove();
+  }
+
+  /**
+   *
+   * @param {function():void} callback
+   */
   waitInitialization(callback) {
     this.waitUntil(() => this.initialized, callback);
   }
 
+  /**
+   *
+   * @param {function():boolean} condition
+   * @param {function():void} callback
+   * @param {number} timeout
+   */
   waitUntil(condition, callback, timeout = 10) {
     if (!condition()) {
       setTimeout(() => this.waitUntil(condition, callback, timeout), timeout);

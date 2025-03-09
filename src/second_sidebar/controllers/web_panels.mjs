@@ -7,6 +7,7 @@ import { SidebarElements } from "../sidebar_elements.mjs";
 import { WebPanelController } from "./web_panel.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { WebPanelsSettings } from "../settings/web_panels_settings.mjs";
+import { WindowWrapper } from "../wrappers/window.mjs";
 import { fetchIconURL } from "../utils/icons.mjs";
 import { gCustomizeModeWrapper } from "../wrappers/g_customize_mode.mjs";
 
@@ -23,29 +24,6 @@ export class WebPanelsController {
   }
 
   #setupListeners() {
-    this.webPanelsBrowser.waitInitialization(() => {
-      this.webPanelsBrowser.addPageTitleChangeListener((tab) => {
-        if (tab.selected) {
-          SidebarControllers.sidebarController.setToolbarTitle(
-            tab.linkedBrowser.getTitle(),
-          );
-        }
-      });
-      this.webPanelsBrowser.addTabSelectListener(() => {
-        const activeWebPanelTab = this.webPanelsBrowser.getActiveWebPanelTab();
-        if (activeWebPanelTab.isEmpty()) {
-          SidebarControllers.sidebarController.close();
-        }
-        for (const [uuid, webPanelController] of this.webPanelControllers) {
-          if (uuid === activeWebPanelTab.uuid) {
-            webPanelController.open();
-          } else {
-            webPanelController.close();
-          }
-        }
-      });
-    });
-
     this.webPanelMenuPopup.listenUnloadItemClick((webPanelController) => {
       if (webPanelController.isActive()) {
         SidebarControllers.sidebarController.close();
@@ -243,6 +221,36 @@ export class WebPanelsController {
     });
   }
 
+  #setupWebPanelsBrowserListeners() {
+    // Notify SessionStore about closing web panels window when main window is closed
+    const window = new WindowWrapper();
+    window.addEventListener("unload", () => {
+      this.webPanelsBrowser.notifyWindowClosedAndRemove();
+    });
+    // Change toolbar title when title of selected tab is changed
+    this.webPanelsBrowser.addPageTitleChangeListener((tab) => {
+      if (tab.selected) {
+        SidebarControllers.sidebarController.setToolbarTitle(
+          tab.linkedBrowser.getTitle(),
+        );
+      }
+    });
+    // Open/close corresponding web panel when tab is selected
+    this.webPanelsBrowser.addTabSelectListener(() => {
+      const activeWebPanelTab = this.webPanelsBrowser.getActiveWebPanelTab();
+      if (activeWebPanelTab.isEmpty()) {
+        SidebarControllers.sidebarController.close();
+      }
+      for (const [uuid, webPanelController] of this.webPanelControllers) {
+        if (uuid === activeWebPanelTab.uuid) {
+          webPanelController.open();
+        } else {
+          webPanelController.close();
+        }
+      }
+    });
+  }
+
   /**
    *
    * @param {string} uuid
@@ -332,20 +340,24 @@ export class WebPanelsController {
     console.log("Loading web panels...");
 
     // We need to display web panels window for a while to initialize it and
-    // load startup web panels, but don't want to see it
-    this.sidebarBox.showInvisible();
+    // load startup web panels
+    this.sidebarBox.show();
     this.webPanelsBrowser.init();
 
-    for (const webPanelSettings of webPanelsSettings.webPanels) {
-      const webPanelController = new WebPanelController(webPanelSettings, {
-        loaded: webPanelSettings.loadOnStartup,
-      });
-      this.add(webPanelController);
-    }
-
-    // Hide web panels window after initialization
     this.webPanelsBrowser.waitInitialization(() => {
-      this.sidebarBox.hideInvisible();
+      // Relink docShell.treeOwner to the current window to fix status panel
+      new WindowWrapper().relinkTreeOwner();
+      // Setup web panels window listeners
+      this.#setupWebPanelsBrowserListeners();
+      // Load startup web panels
+      for (const webPanelSettings of webPanelsSettings.webPanels) {
+        const webPanelController = new WebPanelController(webPanelSettings, {
+          loaded: webPanelSettings.loadOnStartup,
+        });
+        this.add(webPanelController);
+      }
+      // Hide web panels window after initialization
+      this.sidebarBox.hide();
     });
   }
 
