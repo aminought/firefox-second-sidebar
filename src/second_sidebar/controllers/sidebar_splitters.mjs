@@ -12,24 +12,21 @@ export class SidebarSplittersController {
   }
 
   #setupListeners() {
-    this.sidebarSplitterUnpinned.listenWidthChange(() => {
+    /**@param {number} width */
+    const changeWidth = (width) => {
       const webPanelController =
         SidebarControllers.webPanelsController.getActive();
       sendEvents(SidebarEvents.EDIT_SIDEBAR_WIDTH, {
         uuid: webPanelController.getUUID(),
-        width: SidebarControllers.sidebarController.getSidebarWidth(),
+        width,
       });
       SidebarControllers.webPanelsController.saveSettings();
-    });
-
-    this.sidebarSplitterPinned.listenWidthChange(() => {
-      const webPanelController =
-        SidebarControllers.webPanelsController.getActive();
-      sendEvents(SidebarEvents.EDIT_SIDEBAR_WIDTH, {
-        uuid: webPanelController.getUUID(),
-        width: SidebarControllers.sidebarController.getSidebarBoxWidth(),
-      });
-      SidebarControllers.webPanelsController.saveSettings();
-    });
+    };
+    this.sidebarSplitterUnpinned.listenWidthChange(() =>
+      changeWidth(SidebarControllers.sidebarController.getSidebarWidth()),
+    );
+    this.sidebarSplitterPinned.listenWidthChange(() =>
+      changeWidth(SidebarControllers.sidebarController.getSidebarBoxWidth()),
+    );
   }
 }

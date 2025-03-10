@@ -22,7 +22,9 @@ export class SidebarController {
     this.sidebarBox = SidebarElements.sidebarBox;
     this.sidebar = SidebarElements.sidebar;
     this.sidebarToolbar = SidebarElements.sidebarToolbar;
+    this.sidebarSplitterPinned = SidebarElements.sidebarSplitterPinned;
     this.sidebarSplitterUnpinned = SidebarElements.sidebarSplitterUnpinned;
+    this.sidebarBoxFiller = SidebarElements.sidebarBoxFiller;
     this.webPanelPopupEdit = SidebarElements.webPanelPopupEdit;
     this.sidebarMainPopupSettings = SidebarElements.sidebarMainPopupSettings;
     this.sidebarCollapseButton = SidebarElements.sidebarCollapseButton;
@@ -201,6 +203,9 @@ export class SidebarController {
 
   close() {
     this.sidebarBox.hide();
+    this.sidebarSplitterPinned.hide();
+    this.sidebarSplitterUnpinned.hide();
+    this.sidebarBoxFiller.hide();
     SidebarControllers.webPanelsController.close();
   }
 
@@ -214,12 +219,18 @@ export class SidebarController {
 
   pin() {
     this.sidebar.pin();
+    this.sidebarSplitterPinned.show();
+    this.sidebarSplitterUnpinned.hide();
+    this.sidebarBoxFiller.hide();
     this.sidebarToolbar.changePinButton(true);
     document.removeEventListener("click", this.onClickOutsideWhileUnpinned);
   }
 
   unpin() {
     this.sidebar.unpin();
+    this.sidebarSplitterPinned.hide();
+    this.sidebarSplitterUnpinned.show();
+    this.sidebarBoxFiller.show();
     this.sidebarToolbar.changePinButton(false);
     document.addEventListener("click", this.onClickOutsideWhileUnpinned);
   }

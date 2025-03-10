@@ -6,20 +6,6 @@ export const SIDEBAR_BOX_CSS = `
     box-sizing: content-box;
   }
 
-  #browser:has(#sb2[pinned="true"]) {
-    #sb2-box-filler {
-      display: none;
-    }
-
-    #sb2-splitter-unpinned {
-      display: none;
-    }
-
-    #sb2-splitter-pinned {
-      display: flex;
-    }
-  }
-
   #browser:has(#sb2[pinned="false"]) {
     #sb2-box {
       position: absolute;
@@ -36,26 +22,21 @@ export const SIDEBAR_BOX_CSS = `
       }
 
       #sb2-splitter-unpinned {
-        display: flex;
         pointer-events: auto;
         border: unset;
       }
-    }
-
-    #sb2-splitter-pinned {
-      display: none;
     }
   }
 
   #browser:has(#sb2[pinned="true"][position="right"]) {
     #sb2-box {
-      order: 6 !important;
+      order: 16;
       padding-inline-start: var(--space-small);
       padding-inline-end: 1px;
     }
 
     #sb2-splitter-pinned {
-      order: 5 !important;
+      order: 15;
       margin-inline-start: unset;
       margin-inline-end: calc(-1 * var(--splitter-width));
     }
@@ -63,13 +44,13 @@ export const SIDEBAR_BOX_CSS = `
 
   #browser:has(#sb2[pinned="true"][position="left"]) {
     #sb2-box {
-      order: -2 !important;
+      order: -2;
       padding-inline-start: 1px;
       padding-inline-end: var(--space-small);
     }
 
     #sb2-splitter-pinned {
-      order: -1 !important;
+      order: -1;
       margin-inline-start: calc(-1 * var(--splitter-width));
       margin-inline-end: unset;
     }
@@ -77,17 +58,17 @@ export const SIDEBAR_BOX_CSS = `
 
   #browser:has(#sb2[pinned="false"][position="right"]) {
     #sb2-box-filler {
-      order: 0 !important;
+      order: 0;
     }
 
     #sb2-splitter-unpinned {
-      order: 1 !important;
+      order: 1;
       margin-inline-start: calc(-1 * var(--splitter-width));
       margin-inline-end: unset;
     }
 
     #sb2 {
-      order: 2 !important;
+      order: 2;
     }
 
     #sb2-box {
@@ -97,17 +78,17 @@ export const SIDEBAR_BOX_CSS = `
 
   #browser:has(#sb2[pinned="false"][position="left"]) {
     #sb2-box-filler {
-      order: 2 !important;
+      order: 2;
     }
 
     #sb2-splitter-unpinned {
-      order: 1 !important;
+      order: 1;
       margin-inline-start: unset;
       margin-inline-end: calc(-1 * var(--splitter-width));
     }
 
     #sb2 {
-      order: 0 !important;
+      order: 0;
     }
 
     #sb2-box {
