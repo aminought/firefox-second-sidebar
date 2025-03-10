@@ -7,7 +7,6 @@ export const SIDEBAR_CSS = `
     height: 100%;
     pointer-events: auto;
     min-width: 200px;
-    outline: 0.01px solid var(--chrome-content-separator-color);
 
     #sb2-toolbar {
       flex-direction: row;
