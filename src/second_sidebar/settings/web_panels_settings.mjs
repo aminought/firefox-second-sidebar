@@ -43,6 +43,8 @@ export class WebPanelsSettings {
               hideToolbar: webPanelPref.hideToolbar,
               userContextId: webPanelPref.userContextId,
               periodicReload: webPanelPref.periodicReload,
+              hideSoundIcon: webPanelPref.hideSoundIcon,
+              hideNotificationBadge: webPanelPref.hideNotificationBadge,
             },
           ),
       ),
