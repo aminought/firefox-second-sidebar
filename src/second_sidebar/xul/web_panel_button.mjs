@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { FALLBACK_ICON, useAvailableIcon } from "../utils/icons.mjs";
 
+import { NotificationBadge } from "./notification_badge.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { WebPanelSoundIcon } from "./web_panel_sound_icon.mjs";
 import { Widget } from "./base/widget.mjs";
@@ -26,15 +27,20 @@ export class WebPanelButton extends Widget {
       position,
     });
 
-    /**@type {WebPanelSoundIcon} */
-    this.playingIcon = new WebPanelSoundIcon();
+    this.soundIcon = new WebPanelSoundIcon();
+    this.notificationBadge = new NotificationBadge();
     this.doWhenButtonReady(() => {
-      this.button.getBadgeStackXUL().appendChild(this.playingIcon.element);
+      const badgeStackXUL = this.button.getBadgeStackXUL();
+      badgeStackXUL.appendChild(this.soundIcon.element);
+      badgeStackXUL.appendChild(this.notificationBadge.element);
     });
 
     this.setUserContextId(webPanelSettings.userContextId)
       .setLabel(webPanelSettings.url)
       .setTooltipText(webPanelSettings.url);
+
+    this.hideSoundIcon(webPanelSettings.hideSoundIcon);
+    this.hideNotificationBadge(webPanelSettings.hideNotificationBadge);
 
     useAvailableIcon(webPanelSettings.faviconURL, FALLBACK_ICON).then(
       (faviconURL) => this.setIcon(faviconURL),
@@ -56,13 +62,16 @@ export class WebPanelButton extends Widget {
 
   /**
    *
-   * @param {boolean} isSoundPlaying
-   * @param {boolean} isMuted
+   * @param {boolean} value
    * @returns {WebPanelButton}
    */
-  setPlayingIcon(isSoundPlaying, isMuted) {
+  hideSoundIcon(value) {
     return this.doWhenButtonReady(() => {
-      this.playingIcon.setSoundPlaying(isSoundPlaying).setMuted(isMuted);
+      if (value) {
+        this.soundIcon.hide();
+      } else {
+        this.soundIcon.show();
+      }
     });
   }
 
@@ -72,8 +81,36 @@ export class WebPanelButton extends Widget {
    * @param {boolean} isMuted
    * @returns {WebPanelButton}
    */
-  setPlaying(isSoundPlaying, isMuted) {
-    return this.setPlayingIcon(isSoundPlaying, isMuted);
+  setSoundIcon(isSoundPlaying, isMuted) {
+    return this.doWhenButtonReady(() => {
+      this.soundIcon.setSoundPlaying(isSoundPlaying).setMuted(isMuted);
+    });
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   * @returns {WebPanelButton}
+   */
+  hideNotificationBadge(value) {
+    return this.doWhenButtonReady(() => {
+      if (value) {
+        this.notificationBadge.hide();
+      } else {
+        this.notificationBadge.show();
+      }
+    });
+  }
+
+  /**
+   *
+   * @param {number?} value
+   * @returns {WebPanelButton}
+   */
+  setNotificationBadge(value) {
+    return this.doWhenButtonReady(() => {
+      this.notificationBadge.setValue(value);
+    });
   }
 
   /**

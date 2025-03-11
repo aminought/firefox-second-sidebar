@@ -223,7 +223,7 @@ export class WebPanelController {
     );
     this.#tab.addTabCloseListener(() => this.unload(false));
     this.#tab.addEventListener("TabAttrModified", () => {
-      this.#button.setPlaying(this.#tab.soundPlaying, this.#tab.muted);
+      this.#button.setSoundIcon(this.#tab.soundPlaying, this.#tab.muted);
     });
     this.#button.setUnloaded(false);
     this.#startTimer();
@@ -245,7 +245,11 @@ export class WebPanelController {
       this.webPanelsBrowser.removeWebPanelTab(this.#tab);
     }
 
-    this.#button.setPlayingIcon(false, false).setOpen(false).setUnloaded(true);
+    this.#button
+      .setSoundIcon(false, false)
+      .setNotificationBadge(0)
+      .setOpen(false)
+      .setUnloaded(true);
     this.#tab = null;
   }
 
@@ -386,6 +390,24 @@ export class WebPanelController {
 
   /**
    *
+   * @param {boolean} value
+   */
+  setHideSoundIcon(value) {
+    this.#settings.hideSoundIcon = value;
+    this.#button.hideSoundIcon(value);
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   */
+  setHideNotificationBadge(value) {
+    this.#settings.hideNotificationBadge = value;
+    this.#button.hideNotificationBadge(value);
+  }
+
+  /**
+   *
    * @param {number} value
    */
   setPeriodicReload(value) {
@@ -473,6 +495,8 @@ export class WebPanelController {
         hideToolbar: this.#settings.hideToolbar,
         userContextId: this.#settings.userContextId,
         periodicReload: this.#settings.periodicReload,
+        hideSoundIcon: this.#settings.hideSoundIcon,
+        hideNotificationBadge: this.#settings.hideNotificationBadge,
       },
     );
   }

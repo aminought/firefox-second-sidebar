@@ -16,6 +16,8 @@ export class WebPanelSettings {
    * @param {boolean?} params.hideToolbar
    * @param {string?} params.userContextId
    * @param {number} params.periodicReload
+   * @param {number} params.hideSoundIcon
+   * @param {number} params.hideNotificationBadge
    */
   constructor(
     uuid,
@@ -31,6 +33,8 @@ export class WebPanelSettings {
       hideToolbar,
       userContextId,
       periodicReload,
+      hideSoundIcon,
+      hideNotificationBadge,
     } = {},
   ) {
     /**@type {string} */
@@ -58,6 +62,10 @@ export class WebPanelSettings {
       userContextId ?? ScriptSecurityManagerWrapper.DEFAULT_USER_CONTEXT_ID;
     /**@type {number?} */
     this.periodicReload = periodicReload ?? 0;
+    /**@type {boolean} */
+    this.hideSoundIcon = hideSoundIcon ?? false;
+    /**@type {boolean} */
+    this.hideNotificationBadge = hideNotificationBadge ?? false;
   }
 
   /**
@@ -78,6 +86,8 @@ export class WebPanelSettings {
       hideToolbar: this.hideToolbar,
       userContextId: this.userContextId,
       periodicReload: this.periodicReload,
+      hideSoundIcon: this.hideSoundIcon,
+      hideNotificationBadge: this.hideNotificationBadge,
     };
   }
 }

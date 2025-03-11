@@ -88,10 +88,35 @@ export const SIDEBAR_MAIN_CSS = `
         display: flex;
         background-image: url("chrome://browser/skin/tabbrowser/tab-audio-muted-small.svg");
       }
+
+      &[hidden] {
+        display: none;
+      }
     }
 
-    .sb2-sound-icon[hidden="true"] {
+    .sb2-notification-badge {
       display: none;
+      position: relative;
+      justify-content: center;
+      align-items: center;
+      width: 16px;
+      height: 16px;
+      top: calc(-1 * var(--toolbarbutton-inner-padding));
+      right: calc(-1 * var(--toolbarbutton-inner-padding));
+      border-radius: var(--border-radius-circle);
+      background-color: color-mix(in srgb, var(--toolbar-bgcolor) 50%, transparent);
+
+      &[value] {
+        display: flex;
+      }
+
+      &[hidden] {
+        display: none;
+      }
+
+      span {
+        color: var(--toolbar-color);
+      }
     }
   }
 

@@ -61,6 +61,8 @@ export class WebPanelPopupEdit extends Panel {
     this.loadOnStartupToggle = new Toggle();
     this.unloadOnCloseToggle = new Toggle();
     this.hideToolbarToggle = new Toggle();
+    this.hideSoundIconToggle = new Toggle();
+    this.hideNotificationBadgeToggle = new Toggle();
     this.periodicReloadMenuList = this.#createPeriodicReloadMenuList();
     this.zoomOutButton = createSubviewIconicButton(ICONS.MINUS, {
       tooltipText: "Zoom Out",
@@ -146,6 +148,11 @@ export class WebPanelPopupEdit extends Panel {
               this.unloadOnCloseToggle,
             ),
             createPopupGroup("Hide toolbar", this.hideToolbarToggle),
+            createPopupGroup("Hide sound icon", this.hideSoundIconToggle),
+            createPopupGroup(
+              "Hide notification badge",
+              this.hideNotificationBadgeToggle,
+            ),
             new ToolbarSeparator(),
             createPopupGroup("Periodic reload", this.periodicReloadMenuList),
             new ToolbarSeparator(),
@@ -175,6 +182,8 @@ export class WebPanelPopupEdit extends Panel {
    * @param {function(string, boolean):void} callbacks.loadOnStartup
    * @param {function(string, boolean):void} callbacks.unloadOnClose
    * @param {function(string, boolean):void} callbacks.hideToolbar
+   * @param {function(string, boolean):void} callbacks.hideSoundIcon
+   * @param {function(string, boolean):void} callbacks.hideNotificationBadge
    * @param {function(string, number):void} callbacks.periodicReload
    * @param {function(string):number} callbacks.zoomOut
    * @param {function(string):number} callbacks.zoomIn
@@ -189,6 +198,8 @@ export class WebPanelPopupEdit extends Panel {
     loadOnStartup,
     unloadOnClose,
     hideToolbar,
+    hideSoundIcon,
+    hideNotificationBadge,
     periodicReload,
     zoomOut,
     zoomIn,
@@ -202,6 +213,8 @@ export class WebPanelPopupEdit extends Panel {
     this.onLoadOnStartupChange = loadOnStartup;
     this.onUnloadOnCloseChange = unloadOnClose;
     this.onHideToolbar = hideToolbar;
+    this.onHideSoundIcon = hideSoundIcon;
+    this.onHideNotificationBadge = hideNotificationBadge;
     this.onPeriodicReload = periodicReload;
     this.onZoomOut = zoomOut;
     this.onZoomIn = zoomIn;
@@ -230,6 +243,15 @@ export class WebPanelPopupEdit extends Panel {
     });
     this.hideToolbarToggle.addEventListener("toggle", () => {
       hideToolbar(this.settings.uuid, this.hideToolbarToggle.getPressed());
+    });
+    this.hideSoundIconToggle.addEventListener("toggle", () => {
+      hideSoundIcon(this.settings.uuid, this.hideSoundIconToggle.getPressed());
+    });
+    this.hideNotificationBadgeToggle.addEventListener("toggle", () => {
+      hideNotificationBadge(
+        this.settings.uuid,
+        this.hideNotificationBadgeToggle.getPressed(),
+      );
     });
     this.periodicReloadMenuList.addEventListener("command", () => {
       periodicReload(
@@ -318,6 +340,8 @@ export class WebPanelPopupEdit extends Panel {
     this.loadOnStartupToggle.setPressed(settings.loadOnStartup);
     this.unloadOnCloseToggle.setPressed(settings.unloadOnClose);
     this.hideToolbarToggle.setPressed(settings.hideToolbar);
+    this.hideSoundIconToggle.setPressed(settings.hideSoundIcon);
+    this.hideNotificationBadgeToggle.setPressed(settings.hideNotificationBadge);
     this.periodicReloadMenuList.setValue(settings.periodicReload);
     this.#updateZoomButtons(settings.zoom);
     this.zoom = settings.zoom;
@@ -381,6 +405,18 @@ export class WebPanelPopupEdit extends Panel {
     }
     if (this.hideToolbarToggle.getPressed() !== this.settings.hideToolbar) {
       this.onHideToolbar(this.settings.uuid, this.settings.hideToolbar);
+    }
+    if (this.hideSoundIconToggle.getPressed() !== this.settings.hideSoundIcon) {
+      this.onHideSoundIcon(this.settings.uuid, this.settings.hideSoundIcon);
+    }
+    if (
+      this.hideNotificationBadgeToggle.getPressed() !==
+      this.settings.hideNotificationBadge
+    ) {
+      this.onHideNotificationBadge(
+        this.settings.uuid,
+        this.settings.hideNotificationBadge,
+      );
     }
     if (
       this.periodicReloadMenuList.getValue() !== this.settings.periodicReload

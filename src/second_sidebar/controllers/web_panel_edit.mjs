@@ -65,6 +65,18 @@ export class WebPanelEditController {
           hideToolbar,
         });
       },
+      hideSoundIcon: (uuid, hideSoundIcon) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_HIDE_SOUND_ICON, {
+          uuid,
+          hideSoundIcon,
+        });
+      },
+      hideNotificationBadge: (uuid, hideNotificationBadge) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_HIDE_NOTIFICATION_BADGE, {
+          uuid,
+          hideNotificationBadge,
+        });
+      },
       periodicReload: (uuid, periodicReload) => {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_PERIODIC_RELOAD, {
           uuid,

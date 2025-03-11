@@ -10,6 +10,7 @@ import { WebPanelsSettings } from "../settings/web_panels_settings.mjs";
 import { WindowWrapper } from "../wrappers/window.mjs";
 import { fetchIconURL } from "../utils/icons.mjs";
 import { gCustomizeModeWrapper } from "../wrappers/g_customize_mode.mjs";
+import { parseNotifications } from "../utils/string.mjs";
 
 export class WebPanelsController {
   constructor() {
@@ -153,6 +154,25 @@ export class WebPanelsController {
       SidebarControllers.sidebarController.setHideToolbar(hideToolbar);
     });
 
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_HIDE_SOUND_ICON, (event) => {
+      const uuid = event.detail.uuid;
+      const hideSoundIcon = event.detail.hideSoundIcon;
+
+      const webPanelController = this.get(uuid);
+      webPanelController.setHideSoundIcon(hideSoundIcon);
+    });
+
+    listenEvent(
+      WebPanelEvents.EDIT_WEB_PANEL_HIDE_NOTIFICATION_BADGE,
+      (event) => {
+        const uuid = event.detail.uuid;
+        const hideNotificationBadge = event.detail.hideNotificationBadge;
+
+        const webPanelController = this.get(uuid);
+        webPanelController.setHideNotificationBadge(hideNotificationBadge);
+      },
+    );
+
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_PERIODIC_RELOAD, (event) => {
       const uuid = event.detail.uuid;
       const periodicReload = event.detail.periodicReload;
@@ -229,11 +249,13 @@ export class WebPanelsController {
     });
     // Change toolbar title when title of selected tab is changed
     this.webPanelsBrowser.addPageTitleChangeListener((tab) => {
+      const title = tab.linkedBrowser.getTitle();
       if (tab.selected) {
-        SidebarControllers.sidebarController.setToolbarTitle(
-          tab.linkedBrowser.getTitle(),
-        );
+        SidebarControllers.sidebarController.setToolbarTitle(title);
       }
+      const webPanelController = this.get(tab.uuid);
+      const notifications = parseNotifications(title);
+      webPanelController.button.setNotificationBadge(notifications);
     });
     // Open/close corresponding web panel when tab is selected
     this.webPanelsBrowser.addTabSelectListener(() => {
