@@ -70,8 +70,8 @@ export const SIDEBAR_MAIN_CSS = `
       display: none;
       height: 16px;
       width: 16px;
-      top: var(--toolbarbutton-inner-padding);
-      right: calc(-1 * var(--toolbarbutton-inner-padding));
+      top: calc(var(--toolbarbutton-inner-padding) + 2px);
+      right: calc(-1 * var(--toolbarbutton-inner-padding) - 2px);
       padding: 2px;
       background-position: center;
       background-repeat: no-repeat;
@@ -101,8 +101,8 @@ export const SIDEBAR_MAIN_CSS = `
       align-items: center;
       width: 16px;
       height: 16px;
-      top: calc(-1 * var(--toolbarbutton-inner-padding));
-      right: calc(-1 * var(--toolbarbutton-inner-padding));
+      top: calc(-1 * var(--toolbarbutton-inner-padding) - 2px);
+      right: calc(-1 * var(--toolbarbutton-inner-padding) - 2px);
       border-radius: var(--border-radius-circle);
       background-color: color-mix(in srgb, var(--toolbar-bgcolor) 50%, transparent);
 
