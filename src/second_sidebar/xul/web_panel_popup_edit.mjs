@@ -147,6 +147,7 @@ export class WebPanelPopupEdit extends Panel {
               "Unload from memory after closing",
               this.unloadOnCloseToggle,
             ),
+            new ToolbarSeparator(),
             createPopupGroup("Hide toolbar", this.hideToolbarToggle),
             createPopupGroup("Hide sound icon", this.hideSoundIconToggle),
             createPopupGroup(
