@@ -54,11 +54,11 @@ export const SIDEBAR_MAIN_CSS = `
   }
 
   #browser:has(#sb2[position="right"]) #sb2-main {
-    order: 17;
+    order: 17 !important;
   }
 
   #browser:has(#sb2[position="left"]) #sb2-main {
-    order: -3;
+    order: -3 !important;
   }
 
   .sb2-main-button {

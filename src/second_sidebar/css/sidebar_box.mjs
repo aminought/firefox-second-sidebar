@@ -30,13 +30,13 @@ export const SIDEBAR_BOX_CSS = `
 
   #browser:has(#sb2[pinned="true"][position="right"]) {
     #sb2-box {
-      order: 16;
+      order: 16 !important;
       padding-inline-start: var(--space-small);
       padding-inline-end: 1px;
     }
 
     #sb2-splitter-pinned {
-      order: 15;
+      order: 15 !important;
       margin-inline-start: unset;
       margin-inline-end: calc(-1 * var(--splitter-width));
     }
@@ -44,13 +44,13 @@ export const SIDEBAR_BOX_CSS = `
 
   #browser:has(#sb2[pinned="true"][position="left"]) {
     #sb2-box {
-      order: -2;
+      order: -2 !important;
       padding-inline-start: 1px;
       padding-inline-end: var(--space-small);
     }
 
     #sb2-splitter-pinned {
-      order: -1;
+      order: -1 !important;
       margin-inline-start: calc(-1 * var(--splitter-width));
       margin-inline-end: unset;
     }
