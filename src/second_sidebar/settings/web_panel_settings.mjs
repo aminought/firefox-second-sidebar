@@ -44,7 +44,7 @@ export class WebPanelSettings {
     /**@type {string} */
     this.faviconURL = faviconURL;
     /**@type {boolean} */
-    this.pinned = pinned ?? true;
+    this.pinned = pinned ?? false;
     /**@type {string} */
     this.width = width ?? "400";
     /**@type {boolean} */
