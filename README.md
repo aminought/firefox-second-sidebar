@@ -2,7 +2,7 @@
 
 A Firefox userChrome.js script for adding a second sidebar with web panels like in Vivaldi/Floorp/Zen but better.
 
-![promo-rounded](https://github.com/user-attachments/assets/5f3c17c9-875f-438a-8668-12af2668768c)
+![promo-rounded](https://github.com/user-attachments/assets/2eb261b0-0942-4c74-a8c9-087d7455bfbd)
 
 ## Motivation
 
