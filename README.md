@@ -15,11 +15,13 @@ https://github.com/user-attachments/assets/6eac0881-649b-4e43-b45a-78451e92a69d
 ## Features
 
 ### Sidebar
+
 - Actions: `Show` • `Hide`
 - Customize via [Customize Toolbar...](https://support.mozilla.org/en-US/kb/customize-firefox-controls-buttons-and-toolbars)
 - Settings: `Position (left / right)` • `Auto-hide` • `Animate hiding / showing` • `Width` • `Floating web panel offset` • `Position of the new web panel button (Before plus button / After plus button)` • `Container indicator position (Left / Right / Top / Bottom / Around)` • `Hide sidebar in popup windows` • `Auto hide back button` • `Auto hide forward button`
 
 ### Web panels
+
 - Actions: `Create` • `Delete` • `Edit` • `Unload` • `Mute` • `Unmute` • `Pin` • `Unpin` • `Change zoom` • `Go back` • `Go forward` • `Reload` • `Go home`
 - Extensions support
 - Sound icon
@@ -27,6 +29,7 @@ https://github.com/user-attachments/assets/6eac0881-649b-4e43-b45a-78451e92a69d
 - Settings: `Web address` • `Multi-Account Container` • `Favicon web address` • `Type of web panel (pinned / floating)` • `Mobile View` • `Loading into memory at startup` • `Unloading from memory after closing` • `Hide toolbar` • `Hide sound icon` • `Hide notification badge` • `Periodic reload` • `Zoom`
 
 ### Widgets
+
 - `Second Sidebar` to show / hide sidebar
 
 ## Install (fx-autoconfig)
