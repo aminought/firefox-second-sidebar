@@ -26,6 +26,7 @@ https://github.com/user-attachments/assets/6eac0881-649b-4e43-b45a-78451e92a69d
 - Extensions support
 - Sound icon
 - Notification badge
+- Periodic reload
 - Settings: `Web address` • `Multi-Account Container` • `Favicon web address` • `Type of web panel (pinned / floating)` • `Mobile View` • `Loading into memory at startup` • `Unloading from memory after closing` • `Hide toolbar` • `Hide sound icon` • `Hide notification badge` • `Periodic reload` • `Zoom`
 
 ### Widgets
