@@ -22,7 +22,7 @@ https://github.com/user-attachments/assets/6eac0881-649b-4e43-b45a-78451e92a69d
 
 ### Web panels
 
-- Actions: `Create` • `Delete` • `Edit` • `Unload` • `Mute` • `Unmute` • `Pin` • `Unpin` • `Change zoom` • `Go back` • `Go forward` • `Reload` • `Go home`
+- Actions: `Create` • `Delete` • `Edit` • `Change width` • `Unload` • `Mute` • `Unmute` • `Pin` • `Unpin` • `Change zoom` • `Go back` • `Go forward` • `Reload` • `Go home`
 - Extensions support
 - Sound icon
 - Notification badge
