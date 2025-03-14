@@ -10,7 +10,7 @@ I've tried various browsers, such as Vivaldi, Edge, Floorp, and Zen, and they al
 
 ## Demo
 
-https://github.com/user-attachments/assets/6eac0881-649b-4e43-b45a-78451e92a69d
+https://github.com/user-attachments/assets/e4a2c01a-0d32-463d-84da-ffa6b090508c
 
 ## Features
 
