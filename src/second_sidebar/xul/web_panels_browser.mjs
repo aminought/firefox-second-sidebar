@@ -81,6 +81,7 @@ export class WebPanelsBrowser extends Browser {
       "#navigator-toolbox",
       "#sidebar-main",
       "#sidebar-wrapper",
+      "#sidebar-box",
       "#context-bookmarkpage",
       "#context-viewsource",
     ];
