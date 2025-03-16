@@ -11,6 +11,7 @@ import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { SidebarSettings } from "../settings/sidebar_settings.mjs";
 import { ToolbarButton } from "../xul/base/toolbar_button.mjs";
+import { WindowWrapper } from "../wrappers/window.mjs";
 import { XULElement } from "../xul/base/xul_element.mjs";
 import { changeContainerBorder } from "../utils/containers.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
@@ -27,6 +28,9 @@ export class SidebarController {
     this.sidebarBoxFiller = SidebarElements.sidebarBoxFiller;
     this.webPanelPopupEdit = SidebarElements.webPanelPopupEdit;
     this.sidebarMainPopupSettings = SidebarElements.sidebarMainPopupSettings;
+    this.sidebarMainMenuPopup = SidebarElements.sidebarMainMenuPopup;
+    this.webPanelMenuPopup = SidebarElements.webPanelMenuPopup;
+    this.webPanelsBrowser = SidebarElements.webPanelsBrowser;
     this.sidebarCollapseButton = SidebarElements.sidebarCollapseButton;
     this.root = new XULElement({ element: document.documentElement });
 
@@ -44,16 +48,26 @@ export class SidebarController {
     /** @param {MouseEvent} event */
     this.onClickOutsideWhileUnpinned = (event) => {
       const target = new XULElement({ element: event.target });
+      const window = new WindowWrapper();
+
+      const sidebarRect = this.sidebar.getBoundingClientRect();
+      const sidebarLeft = window.mozInnerScreenX + sidebarRect.left;
+      const sidebarRight = sidebarLeft + sidebarRect.width;
+      const sidebarTop = window.mozInnerScreenY + sidebarRect.top;
+      const sidebarBottom = sidebarTop + sidebarRect.height;
+
       if (
         isLeftMouseButton(event) &&
+        (event.screenX < sidebarLeft ||
+          event.screenX > sidebarRight ||
+          event.screenY < sidebarTop ||
+          event.screenY > sidebarBottom) &&
         !this.sidebar.contains(target) &&
         !this.sidebarSplitterUnpinned.contains(target) &&
         !this.webPanelPopupEdit.contains(target) &&
         !this.sidebarMainPopupSettings.contains(target) &&
-        !["menuitem", "menupopup"].includes(event.target.tagName) &&
-        (document.contains(event.target) ||
-          event.target.baseURI ===
-            "chrome://browser/content/webext-panels.xhtml")
+        !this.sidebarMainMenuPopup.contains(target) &&
+        !this.webPanelMenuPopup.contains(target)
       ) {
         this.close();
       }
