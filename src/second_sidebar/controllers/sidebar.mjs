@@ -30,7 +30,6 @@ export class SidebarController {
     this.sidebarMainPopupSettings = SidebarElements.sidebarMainPopupSettings;
     this.sidebarMainMenuPopup = SidebarElements.sidebarMainMenuPopup;
     this.webPanelMenuPopup = SidebarElements.webPanelMenuPopup;
-    this.webPanelsBrowser = SidebarElements.webPanelsBrowser;
     this.sidebarCollapseButton = SidebarElements.sidebarCollapseButton;
     this.root = new XULElement({ element: document.documentElement });
 
