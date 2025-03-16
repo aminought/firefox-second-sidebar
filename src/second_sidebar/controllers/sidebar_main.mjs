@@ -4,6 +4,7 @@ import { XULElement } from "../xul/base/xul_element.mjs";
 import { gCustomizeModeWrapper } from "../wrappers/g_customize_mode.mjs";
 import { gNavToolboxWrapper } from "../wrappers/g_nav_toolbox.mjs";
 import { isRightMouseButton } from "../utils/buttons.mjs";
+import { parseFunction } from "../utils/parsers.mjs";
 
 export class SidebarMainController {
   constructor() {
@@ -11,7 +12,24 @@ export class SidebarMainController {
     this.sidebarCollapseButton = SidebarElements.sidebarCollapseButton;
     this.sidebarMainMenuPopup = SidebarElements.sidebarMainMenuPopup;
     this.root = new XULElement({ element: document.documentElement });
+    this.#setupGlobalListeners();
     this.#setupListeners();
+  }
+
+  #setupGlobalListeners() {
+    fetch("chrome://browser/content/navigator-toolbox.js").then((response) => {
+      response.text().then((moduleSource) => {
+        const matches = moduleSource.matchAll(/\s{4}function.*?^\s{4}}/gms);
+        for (const match of matches) {
+          const functionSource = match[0];
+          const parsedFunction = parseFunction(functionSource);
+          const eventName = parsedFunction.name
+            .toLowerCase()
+            .replace(/^on/, "");
+          this.sidebarMain.addEventListener(eventName, parsedFunction.func);
+        }
+      });
+    });
   }
 
   #setupListeners() {
