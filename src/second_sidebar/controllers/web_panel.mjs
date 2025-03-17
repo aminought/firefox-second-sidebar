@@ -56,7 +56,6 @@ export class WebPanelController {
         SidebarControllers.sidebarController.setToolbarForwardButtonDisabled(
           !canGoForward,
         );
-        this.setZoom(this.#settings.zoom);
       }
     };
     return {

@@ -135,6 +135,18 @@ export class WebPanelsBrowser extends Browser {
   }
 
   /**
+   *
+   * @param {function(WebPanelTab):void} callback
+   */
+  addZoomChangeListener(callback) {
+    this.window.addEventListener("FullZoomChange", (event) => {
+      const browser = new Browser({ element: event.target });
+      const tab = this.window.gBrowser.getTabForBrowser(browser);
+      callback(WebPanelTab.fromTab(tab));
+    });
+  }
+
+  /**
    * @returns {WindowWrapper}
    */
   get window() {

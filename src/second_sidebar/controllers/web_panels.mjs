@@ -271,6 +271,14 @@ export class WebPanelsController {
         }
       }
     });
+    // Revert zoom to default when it's changed
+    this.webPanelsBrowser.addZoomChangeListener((tab) => {
+      const webPanelController = this.get(tab.uuid);
+      const zoom = webPanelController.getZoom();
+      if (tab.linkedBrowser.getZoom() != zoom) {
+        webPanelController.setZoom(zoom);
+      }
+    });
   }
 
   /**
