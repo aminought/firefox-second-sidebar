@@ -17,6 +17,13 @@ export class Browser extends XULElement {
   }
 
   /**
+   * @returns {Document?}
+   */
+  get contentDocument() {
+    return this.element.contentDocument;
+  }
+
+  /**
    *
    * @returns {string}
    */

@@ -343,6 +343,14 @@ export class XULElement {
   }
 
   /**
+   *
+   * @returns {Document}
+   */
+  get ownerDocument() {
+    return this.element.ownerDocument;
+  }
+
+  /**
    * @returns {XULElement}
    */
   remove() {

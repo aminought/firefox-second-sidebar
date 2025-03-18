@@ -1,4 +1,5 @@
 import { TabBrowserWrapper } from "./tab_browser.mjs";
+import { XULElement } from "../xul/base/xul_element.mjs";
 
 export class WindowWrapper {
   #window;
@@ -41,10 +42,21 @@ export class WindowWrapper {
   }
 
   /**
-   * @returns {Document}
+   * @returns {Document?}
    */
   get document() {
     return this.raw.document;
+  }
+
+  /**
+   * @returns {XULElement?}
+   */
+  get documentElement() {
+    const documentElement = this.document?.documentElement;
+    if (documentElement) {
+      return new XULElement({ element: documentElement });
+    }
+    return null;
   }
 
   /**

@@ -11,7 +11,6 @@ import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { SidebarSettings } from "../settings/sidebar_settings.mjs";
 import { ToolbarButton } from "../xul/base/toolbar_button.mjs";
-import { WindowWrapper } from "../wrappers/window.mjs";
 import { XULElement } from "../xul/base/xul_element.mjs";
 import { changeContainerBorder } from "../utils/containers.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
@@ -31,6 +30,7 @@ export class SidebarController {
     this.sidebarMainMenuPopup = SidebarElements.sidebarMainMenuPopup;
     this.webPanelMenuPopup = SidebarElements.webPanelMenuPopup;
     this.sidebarCollapseButton = SidebarElements.sidebarCollapseButton;
+    this.webPanelsBrowser = SidebarElements.webPanelsBrowser;
     this.root = new XULElement({ element: document.documentElement });
 
     this.#setupListeners();
@@ -47,20 +47,10 @@ export class SidebarController {
     /** @param {MouseEvent} event */
     this.onClickOutsideWhileUnpinned = (event) => {
       const target = new XULElement({ element: event.target });
-      const window = new WindowWrapper();
-
-      const sidebarRect = this.sidebar.getBoundingClientRect();
-      const sidebarLeft = window.mozInnerScreenX + sidebarRect.left;
-      const sidebarRight = sidebarLeft + sidebarRect.width;
-      const sidebarTop = window.mozInnerScreenY + sidebarRect.top;
-      const sidebarBottom = sidebarTop + sidebarRect.height;
 
       if (
         isLeftMouseButton(event) &&
-        (event.screenX < sidebarLeft ||
-          event.screenX > sidebarRight ||
-          event.screenY < sidebarTop ||
-          event.screenY > sidebarBottom) &&
+        !this.webPanelsBrowser.activeWebPanelContains(target) &&
         !this.sidebar.contains(target) &&
         !this.sidebarSplitterUnpinned.contains(target) &&
         !this.webPanelPopupEdit.contains(target) &&

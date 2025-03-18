@@ -223,6 +223,19 @@ export class WebPanelsBrowser extends Browser {
 
   /**
    *
+   * @param {XULElement} element
+   * @returns {boolean}
+   */
+  activeWebPanelContains(element) {
+    const webPanelTab = this.getActiveWebPanelTab();
+    return (
+      this.window.documentElement?.contains(element) ||
+      webPanelTab.linkedBrowser.contentDocument === element.ownerDocument
+    );
+  }
+
+  /**
+   *
    * @param {function():void} callback
    */
   waitInitialization(callback) {
