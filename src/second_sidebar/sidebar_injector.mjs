@@ -1,4 +1,3 @@
-import { PreferencesWrapper } from "./wrappers/preferences.mjs";
 import { SidebarControllers } from "./sidebar_controllers.mjs";
 import { SidebarElements } from "./sidebar_elements.mjs";
 import { SidebarSettings } from "./settings/sidebar_settings.mjs";
@@ -18,9 +17,6 @@ export class SidebarInjector {
       console.log("Failed to load second sidebar because window is popup");
       return false;
     }
-
-    console.log("Allowing scripts to close windows...");
-    PreferencesWrapper.setBoolPref("dom.allow_scripts_to_close_windows", true);
 
     console.log("Loading web panel settings...");
     const webPanelsSettings = WebPanelsSettings.load();
