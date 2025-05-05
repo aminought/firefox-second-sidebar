@@ -1,4 +1,7 @@
-export const SIDEBAR_MAIN_CSS = `
+const dontHasCustomizationShown = /* css */ `:not(:has(~ #customization-container[hidden="false"]))`;
+const hasFloatingSidebar = /* css */ `:has(#sb2[floating-sidebar="true"])`;
+
+export const SIDEBAR_MAIN_CSS = /* css */ `
   #sb2-main {
     display: flex;
     flex-direction: column;
@@ -7,13 +10,16 @@ export const SIDEBAR_MAIN_CSS = `
     padding: 0 var(--sb2-main-padding) var(--space-small) var(--sb2-main-padding);
     overflow-y: scroll;
     scrollbar-width: none;
+    background-color: transparent;
 
     toolbarpaletteitem[place="panel"][id^="wrapper-customizableui-special-spring"], toolbarspring {
       flex: 1;
-      min-height: 10px;
-      max-height: 112px;
+      min-height: unset;
+      max-height: unset;
       min-width: unset;
       max-width: unset;
+      flex-grow: 1;
+      flex-shrink: 1;
     }
 
     .toolbaritem-combined-buttons {
@@ -59,6 +65,48 @@ export const SIDEBAR_MAIN_CSS = `
 
   #browser:has(#sb2[position="left"]) #sb2-main {
     order: -3 !important;
+  }
+
+  #zen-main-app-wrapper${dontHasCustomizationShown}${hasFloatingSidebar} #sb2-main {
+    position: fixed;
+    top: 32px;
+    bottom: 32px;
+    z-index: 99;
+    background-color: var(--sidebar-background-color);
+    box-shadow: var(--zen-big-shadow);
+    outline: 1px solid var(--zen-colors-border-contrast);
+    outline-offset: -1px;
+    -moz-window-dragging: no-drag;
+    
+    transition: transform 0.2s 0.35s ease-in-out, opacity 0.1s 0.35s linear;
+    opacity: 0;
+    margin: 0;
+    padding-top: var(--space-small);
+    padding-bottom: var(--space-small);
+  }
+
+  #zen-main-app-wrapper${dontHasCustomizationShown}:has(#sb2[position="right"])${hasFloatingSidebar} #sb2-main {
+    right: -1px;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+
+    transform: translateX(calc(100% - 4px));
+  }
+
+  #zen-main-app-wrapper${dontHasCustomizationShown}:has(#sb2[position="left"])${hasFloatingSidebar} #sb2-main {
+    left: -1px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+
+    transform: translateX(calc(-100% + 4px));
+  }
+
+  #zen-main-app-wrapper${dontHasCustomizationShown}:has(#sb2[floating-sidebar="true"]:not([type="split"])):has(#sb2-box:not([hidden="true"])) #sb2-main,
+  #zen-main-app-wrapper${dontHasCustomizationShown}${hasFloatingSidebar} #sb2-main:hover,
+  #zen-main-app-wrapper${dontHasCustomizationShown}${hasFloatingSidebar} #sb2-main:focus-within {
+    transform: translateX(0) !important;
+    transition: transform 0.2s ease-in-out, opacity 0.1s linear;
+    opacity: 1;
   }
 
   .sb2-main-button {

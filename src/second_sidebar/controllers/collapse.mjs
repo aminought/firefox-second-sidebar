@@ -26,6 +26,7 @@ export class CollapseController {
     const root = new XULElement({ element: window.document.documentElement });
 
     root.addEventListener("mousemove", this);
+    root.addEventListener("dragover", this);
 
     window.addEventListener("fullscreen", () => {
       if (window.fullScreen) {

@@ -55,7 +55,8 @@ export class WebPanelPopupEdit extends Panel {
       ICONS.UNDO,
       "Request Favicon",
     );
-    this.pinnedMenuList = this.#createPinTypeMenuList();
+    this.pinnedToggle = new Toggle();
+    this.typeMenuList = this.#createTypeMenuList();
     this.containerMenuList = new MenuList({ id: "sb2-container-menu-list" });
     this.mobileToggle = new Toggle();
     this.loadOnStartupToggle = new Toggle();
@@ -97,11 +98,11 @@ export class WebPanelPopupEdit extends Panel {
    *
    * @returns {MenuList}
    */
-  #createPinTypeMenuList() {
-    const pinTypeMenuList = new MenuList();
-    pinTypeMenuList.appendItem("Pinned", true);
-    pinTypeMenuList.appendItem("Floating", false);
-    return pinTypeMenuList;
+  #createTypeMenuList() {
+    const typeMenuList = new MenuList();
+    typeMenuList.appendItem("Split", "split");
+    typeMenuList.appendItem("Floating", "floating");
+    return typeMenuList;
   }
 
   /**
@@ -137,7 +138,8 @@ export class WebPanelPopupEdit extends Panel {
             new Header(1).setText("Favicon web address"),
             createPopupRow(this.faviconURLInput, this.faviconResetButton),
             new ToolbarSeparator(),
-            createPopupGroup("Web panel type", this.pinnedMenuList),
+            createPopupGroup("Pin", this.pinnedToggle),
+            createPopupGroup("Web panel type", this.typeMenuList),
             createPopupGroup("Mobile View", this.mobileToggle),
             createPopupGroup(
               "Load into memory at startup",
@@ -179,6 +181,7 @@ export class WebPanelPopupEdit extends Panel {
    * @param {function(string, string, number):void} callbacks.faviconURL
    * @param {function(string, boolean):void} callbacks.mobile
    * @param {function(string, boolean):void} callbacks.pinned
+   * @param {function(string, string):void} callbacks.type
    * @param {function(string, string):void} callbacks.userContextId
    * @param {function(string, boolean):void} callbacks.loadOnStartup
    * @param {function(string, boolean):void} callbacks.unloadOnClose
@@ -194,6 +197,7 @@ export class WebPanelPopupEdit extends Panel {
     url,
     faviconURL,
     pinned,
+    type,
     userContextId,
     mobile,
     loadOnStartup,
@@ -210,6 +214,7 @@ export class WebPanelPopupEdit extends Panel {
     this.onFaviconUrlChange = faviconURL;
     this.onMobileChange = mobile;
     this.onPinnedChange = pinned;
+    this.onTypeChange = type;
     this.onUserContextIdChange = userContextId;
     this.onLoadOnStartupChange = loadOnStartup;
     this.onUnloadOnCloseChange = unloadOnClose;
@@ -227,8 +232,11 @@ export class WebPanelPopupEdit extends Panel {
     this.faviconURLInput.addEventListener("input", () => {
       faviconURL(this.settings.uuid, this.faviconURLInput.getValue(), 1000);
     });
-    this.pinnedMenuList.addEventListener("command", () => {
-      pinned(this.settings.uuid, this.pinnedMenuList.getValue() === "true");
+    this.pinnedToggle.addEventListener("toggle", () => {
+      pinned(this.settings.uuid, this.pinnedToggle.getPressed());
+    });
+    this.typeMenuList.addEventListener("command", () => {
+      type(this.settings.uuid, this.typeMenuList.getValue());
     });
     this.containerMenuList.addEventListener("command", () => {
       userContextId(this.settings.uuid, this.containerMenuList.getValue());
@@ -328,7 +336,8 @@ export class WebPanelPopupEdit extends Panel {
     this.uuid = settings.uuid;
     this.urlInput.setValue(settings.url);
     this.faviconURLInput.setValue(settings.faviconURL);
-    this.pinnedMenuList.setValue(settings.pinned);
+    this.pinnedToggle.setPressed(settings.pinned);
+    this.typeMenuList.setValue(settings.type);
 
     fillContainerMenuList(this.containerMenuList);
     this.containerMenuList.setValue(settings.userContextId);
@@ -377,8 +386,11 @@ export class WebPanelPopupEdit extends Panel {
     if (this.faviconURLInput.getValue() !== this.settings.faviconURL) {
       this.onFaviconUrlChange(this.settings.uuid, this.settings.faviconURL);
     }
-    if ((this.pinnedMenuList.getValue() === "true") !== this.settings.pinned) {
+    if (this.pinnedToggle.getPressed() !== this.settings.pinned) {
       this.onPinnedChange(this.settings.uuid, this.settings.pinned);
+    }
+    if (this.typeMenuList.getValue() !== this.settings.type) {
+      this.onTypeChange(this.settings.uuid, this.settings.type);
     }
     if (
       String(this.containerMenuList.getValue()) !==

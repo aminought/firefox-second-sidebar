@@ -1,3 +1,5 @@
+import { emptySvgAsDataUrl } from "../utils/css.mjs";
+
 export const POPUPS_CSS = `
   .sb2-popup > panelmultiview {
     display: flex;
@@ -20,7 +22,7 @@ export const POPUPS_CSS = `
     }
 
     .subviewbutton[type="checkbox"]:not([checked="true"]) {
-      list-style-image: url(chrome://global/skin/icons/close.svg);
+      list-style-image: ${emptySvgAsDataUrl()};
       -moz-context-properties: fill;
       fill: currentColor;
       color: inherit;

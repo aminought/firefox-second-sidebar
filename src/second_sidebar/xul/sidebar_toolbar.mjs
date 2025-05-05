@@ -7,18 +7,18 @@ import { isLeftMouseButton } from "../utils/buttons.mjs";
 import { useAvailableIcon } from "../utils/icons.mjs";
 
 const ICONS = {
-  BACK: "chrome://browser/skin/back.svg",
-  FORWARD: "chrome://browser/skin/forward.svg",
-  RELOAD: "chrome://global/skin/icons/reload.svg",
-  HOME: "chrome://browser/skin/home.svg",
-  MORE: "chrome://global/skin/icons/more.svg",
+  BACK: "chrome://browser/skin/zen-icons/back.svg",
+  FORWARD: "chrome://browser/skin/zen-icons/forward.svg",
+  RELOAD: "chrome://browser/skin/zen-icons/reload.svg",
+  HOME: "chrome://browser/skin/zen-icons/home.svg",
+  MORE: "chrome://browser/skin/zen-icons/menu.svg",
   PINNED:
     "chrome://activity-stream/content/data/content/assets/glyph-unpin-16.svg",
-  PINNED_ALT: "chrome://newtab/content/data/content/assets/glyph-unpin-16.svg",
+  PINNED_ALT: UC_API.FileSystem.getEntry("second_sidebar/icons/pinned.svg").fileURI,
   UNPINNED:
     "chrome://activity-stream/content/data/content/assets/glyph-pin-16.svg",
-  UNPINNED_ALT: "chrome://newtab/content/data/content/assets/glyph-pin-16.svg",
-  CLOSE: "chrome://global/skin/icons/close.svg",
+  UNPINNED_ALT: "chrome://browser/skin/zen-icons/pin.svg",
+  CLOSE: "chrome://browser/skin/zen-icons/close.svg",
 };
 
 export class SidebarToolbar extends Toolbar {

@@ -1,6 +1,6 @@
 import { Settings } from "./settings.mjs";
 
-const PREF = "second-sidebar.settings";
+const PREF = "zen-extra-sidebar.settings";
 
 export class SidebarSettings {
   /**@type {string} */
@@ -23,6 +23,8 @@ export class SidebarSettings {
   #autoHideSidebar;
   /**@type {boolean} */
   #hideSidebarAnimated;
+  /**@type {boolean} */
+  #floatingSidebar;
 
   /**
    *
@@ -36,6 +38,7 @@ export class SidebarSettings {
    * @param {string} containerBorder
    * @param {boolean} autoHideSidebar
    * @param {boolean} hideSidebarAnimated
+   * @param {boolean} floatingSidebar
    */
   constructor(
     position,
@@ -48,6 +51,7 @@ export class SidebarSettings {
     containerBorder,
     autoHideSidebar,
     hideSidebarAnimated,
+    floatingSidebar,
   ) {
     this.#position = position;
     this.#padding = padding;
@@ -59,6 +63,7 @@ export class SidebarSettings {
     this.#containerBorder = containerBorder;
     this.#autoHideSidebar = autoHideSidebar;
     this.#hideSidebarAnimated = hideSidebarAnimated;
+    this.#floatingSidebar = floatingSidebar;
   }
 
   get position() {
@@ -101,6 +106,10 @@ export class SidebarSettings {
     return this.#hideSidebarAnimated;
   }
 
+  get floatingSidebar() {
+    return this.#floatingSidebar;
+  }
+
   /**
    *
    * @returns {SidebarSettings}
@@ -110,7 +119,7 @@ export class SidebarSettings {
     return new SidebarSettings(
       pref.position ?? "right",
       pref.padding ?? "small",
-      pref.newWebPanelPosition ?? "before",
+      pref.newWebPanelPosition ?? "after",
       pref.unpinnedPadding ?? "small",
       pref.hideInPopupWindows ?? false,
       pref.autoHideBackButton ?? false,
@@ -118,6 +127,7 @@ export class SidebarSettings {
       pref.containerBorder ?? "left",
       pref.autoHideSidebar ?? false,
       pref.hideSidebarAnimated ?? false,
+      pref.floatingSidebar ?? false,
     );
   }
 
@@ -133,6 +143,7 @@ export class SidebarSettings {
       containerBorder: this.#containerBorder,
       autoHideSidebar: this.#autoHideSidebar,
       hideSidebarAnimated: this.#hideSidebarAnimated,
+      floatingSidebar: this.#floatingSidebar,
     });
   }
 }

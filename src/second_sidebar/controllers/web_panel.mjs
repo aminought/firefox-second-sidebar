@@ -198,14 +198,15 @@ export class WebPanelController {
     this.setZoom(this.#settings.zoom);
 
     // Open sidebar if it was closed and configure
-    SidebarControllers.sidebarController.open(
-      this.#settings.pinned,
-      this.#settings.width,
-      this.#tab.linkedBrowser.canGoBack(),
-      this.#tab.linkedBrowser.canGoForward(),
-      this.#tab.linkedBrowser.getTitle(),
-      this.#settings.hideToolbar,
-    );
+    SidebarControllers.sidebarController.open({
+      pinned: this.#settings.pinned,
+      type: this.#settings.type,
+      width: this.#settings.width,
+      canGoBack: this.#tab.linkedBrowser.canGoBack(),
+      canGoForward: this.#tab.linkedBrowser.canGoForward(),
+      title: this.#tab.linkedBrowser.getTitle(),
+      hideToolbar: this.#settings.hideToolbar,
+    });
   }
 
   close() {
@@ -442,6 +443,18 @@ export class WebPanelController {
 
   /**
    *
+   * @returns {string}
+   */
+  getType() {
+    return this.#settings.type;
+  }
+
+  setType(type) {
+    this.#settings.type = type;
+  }
+
+  /**
+   *
    * @param {string} url
    */
   go(url) {
@@ -486,6 +499,7 @@ export class WebPanelController {
       this.#settings.faviconURL,
       {
         pinned: this.#settings.pinned,
+        type: this.#settings.type,
         width: this.#settings.width,
         mobile: this.#settings.mobile,
         zoom: this.#settings.zoom,

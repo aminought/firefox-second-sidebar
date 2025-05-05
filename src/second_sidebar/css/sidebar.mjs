@@ -1,8 +1,7 @@
 export const SIDEBAR_CSS = `
   #sb2 {
-    border-radius: var(--border-radius-medium);
-    box-shadow: var(--content-area-shadow);
-    border: 0.5px solid var(--sidebar-border-color);
+    border-radius: var(--zen-native-inner-radius);
+    box-shadow: var(--zen-big-shadow);
     overflow: hidden;
     height: 100%;
     pointer-events: auto;
@@ -15,6 +14,10 @@ export const SIDEBAR_CSS = `
       background-color: var(--toolbar-bgcolor);
       color: var(--toolbar-color);
       padding: 1px;
+
+      #sb2-toolbar-nav-buttons {
+        color-scheme: dark;
+      }
 
       #sb2-toolbar-title-wrapper {
         display: flex;
@@ -39,7 +42,7 @@ export const SIDEBAR_CSS = `
     }
   }
   
-  #sb2[pinned="true"] {
+  #sb2[type="split"] {
     width: 100% !important;
   }
 `;

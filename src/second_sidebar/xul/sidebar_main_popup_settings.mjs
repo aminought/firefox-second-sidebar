@@ -32,6 +32,7 @@ export class SidebarMainPopupSettings extends Panel {
       this.#createNewWebPanelPositionMenuList();
     this.hideInPopupWindowsToggle = new Toggle();
     this.autoHideBackToggle = new Toggle();
+    this.floatingSidebarToggle = new Toggle();
     this.autoHideForwardToggle = new Toggle();
     this.unpinnedPaddingMenuList = this.#createPaddingMenuList();
     this.containerBorderMenuList = this.#createContainerBorderMenuList();
@@ -100,6 +101,7 @@ export class SidebarMainPopupSettings extends Panel {
         new PopupHeader("Sidebar Settings"),
         new PopupBody().appendChildren(
           createPopupGroup("Sidebar position", this.positionMenuList),
+          createPopupGroup("Floating sidebar", this.floatingSidebarToggle),
           createPopupGroup("Auto-hide sidebar", this.autoHideSidebarToggle),
           createPopupGroup(
             "Animate sidebar hiding",
@@ -139,6 +141,7 @@ export class SidebarMainPopupSettings extends Panel {
    *
    * @param {object} callbacks
    * @param {function(string):void} callbacks.position
+   * @param {function(boolean):void} callbacks.floatingSidebar
    * @param {function(string):void} callbacks.padding
    * @param {function(string):void} callbacks.newWebPanelPosition
    * @param {function(string):void} callbacks.unpinnedPadding
@@ -151,6 +154,7 @@ export class SidebarMainPopupSettings extends Panel {
    */
   listenChanges({
     position,
+    floatingSidebar,
     padding,
     newWebPanelPosition,
     unpinnedPadding,
@@ -162,6 +166,7 @@ export class SidebarMainPopupSettings extends Panel {
     hideSidebarAnimated,
   }) {
     this.onPositionChange = position;
+    this.onFloatingSidebarChange = floatingSidebar;
     this.onPaddingChange = padding;
     this.onNewWebPanelPositionChange = newWebPanelPosition;
     this.onUnpinnedPaddingChange = unpinnedPadding;
@@ -174,6 +179,9 @@ export class SidebarMainPopupSettings extends Panel {
 
     this.positionMenuList.addEventListener("command", () =>
       position(this.positionMenuList.getValue()),
+    );
+    this.floatingSidebarToggle.addEventListener("toggle", () =>
+      floatingSidebar(this.floatingSidebarToggle.getPressed()),
     );
     this.paddingMenuList.addEventListener("command", () =>
       padding(this.paddingMenuList.getValue()),
@@ -237,6 +245,7 @@ export class SidebarMainPopupSettings extends Panel {
    */
   openPopupAtScreen(screenX, screenY, settings) {
     this.positionMenuList.setValue(settings.position);
+    this.floatingSidebarToggle.setPressed(settings.floatingSidebar);
     this.paddingMenuList.setValue(settings.padding);
     this.newWebPanelPositionMenuList.setValue(settings.newWebPanelPosition);
     this.unpinnedPaddingMenuList.setValue(settings.unpinnedPadding);
@@ -264,6 +273,9 @@ export class SidebarMainPopupSettings extends Panel {
   #cancelChanges() {
     if (this.positionMenuList.getValue() !== this.settings.position) {
       this.onPositionChange(this.settings.position);
+    }
+    if (this.floatingSidebarToggle.getPressed() !== this.settings.floatingSidebar) {
+      this.onFloatingSidebarChange(this.settings.floatingSidebar);
     }
     if (this.paddingMenuList.getValue() !== this.settings.padding) {
       this.onPaddingChange(this.settings.padding);

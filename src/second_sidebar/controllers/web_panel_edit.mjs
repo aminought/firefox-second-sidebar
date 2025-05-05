@@ -35,6 +35,12 @@ export class WebPanelEditController {
           pinned,
         });
       },
+      type: (uuid, type) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_TYPE, {
+          uuid,
+          type,
+        });
+      },
       userContextId: (uuid, userContextId) => {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_USER_CONTEXT_ID, {
           uuid,

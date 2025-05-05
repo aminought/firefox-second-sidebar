@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name            Second Sidebar for Firefox
-// @description     A Firefox userChrome.js script for adding a second sidebar with web panels like in Vivaldi/Floorp/Zen.
-// @author          aminought
-// @homepageURL     https://github.com/aminought/firefox-second-sidebar
+// @name            Second Sidebar for Zen Browser
+// @description     A Zen Browser userChrome.js script for adding a second sidebar with web panels like in Vivaldi/Floorp/Edge.
+// @author          k00lagin
+// @homepageURL     https://github.com/k00lagin/zen-second-sidebar
 // ==/UserScript==
 
 import { ContextualIdentityServiceWrapper } from "./second_sidebar/wrappers/contextual_identity_service.mjs";

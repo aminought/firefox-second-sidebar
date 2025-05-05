@@ -35,6 +35,7 @@ export class WebPanelsBrowser extends Browser {
       autoscroll: "false",
       tooltip: "aHTMLTooltip",
       autocompletepopup: "PopupAutoComplete",
+      chromehidden: "toolbar, menubar",
     });
 
     this.initialized = false;
@@ -84,6 +85,7 @@ export class WebPanelsBrowser extends Browser {
       "#sidebar-box",
       "#context-bookmarkpage",
       "#context-viewsource",
+      "#zen-appcontent-navbar-container",
     ];
 
     // Hide elements right after initialization
@@ -95,9 +97,16 @@ export class WebPanelsBrowser extends Browser {
     }
 
     // Constantly hide elements
+    // Force content visibility (specificity hack)
     const style = new Style(`
       ${selectors.join(", ")} {
         display: none;
+      }
+      #zen-appcontent-wrapper#zen-appcontent-wrapper {
+        opacity: 1 !important;
+      }
+      #zen-tabbox-wrapper {
+        margin: 0 !important;
       }
     `);
     windowRoot.appendChild(style);
@@ -112,6 +121,7 @@ export class WebPanelsBrowser extends Browser {
 
     // Add class for userChrome.css
     windowRoot.addClass("sb2-webpanels-window");
+    windowRoot.setAttribute("chromehidden", "toolbar, menubar");
   }
 
   /**
@@ -164,6 +174,7 @@ export class WebPanelsBrowser extends Browser {
       this.window.gBrowser.addTab(webPanelSettings.url, {
         triggeringPrincipal: ScriptSecurityManagerWrapper.getSystemPrincipal(),
         userContextId: webPanelSettings.userContextId,
+        _forZenEmptyTab: true,
       }),
     );
     tab.uuid = webPanelSettings.uuid;

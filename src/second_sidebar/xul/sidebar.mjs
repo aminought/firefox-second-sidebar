@@ -4,6 +4,7 @@ export class Sidebar extends VBox {
   constructor() {
     super({ id: "sb2" });
     this.setPosition("right");
+    this.setFloatingSidebar(false);
   }
 
   /**
@@ -21,6 +22,22 @@ export class Sidebar extends VBox {
    */
   getPosition() {
     return this.getAttribute("position");
+  }
+
+  /**
+   *
+   * @returns {Sidebar}
+   */
+  setFloatingSidebar(floatingSidebar) {
+    return this.setAttribute("floating-sidebar", floatingSidebar);
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  getFloatingSidebar() {
+    return this.getAttribute("floating-sidebar") === "true";
   }
 
   /**
@@ -45,5 +62,21 @@ export class Sidebar extends VBox {
    */
   pinned() {
     return this.getAttribute("pinned") === "true";
+  }
+
+  /**
+   *
+   * @returns {Sidebar}
+   */
+  setType(type) {
+    return this.setAttribute("type", type);
+  }
+
+  /**
+   *
+   * @returns {string}
+   */
+  getType() {
+    return this.getAttribute("type");
   }
 }

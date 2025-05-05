@@ -13,6 +13,8 @@ export class SidebarMainSettingsController {
     this.sidebarMainPopupSettings.listenChanges({
       position: (value) =>
         sendEvents(SidebarEvents.EDIT_SIDEBAR_POSITION, { value }),
+      floatingSidebar: (value) =>
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_FLOATING_SIDEBAR, { value }),
       padding: (value) =>
         sendEvents(SidebarEvents.EDIT_SIDEBAR_PADDING, { value }),
       newWebPanelPosition: (value) =>

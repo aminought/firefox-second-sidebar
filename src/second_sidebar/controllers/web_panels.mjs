@@ -114,6 +114,17 @@ export class WebPanelsController {
       }
     });
 
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_TYPE, (event) => {
+      const uuid = event.detail.uuid;
+      const type = event.detail.type;
+
+      const webPanelController = this.get(uuid);
+      webPanelController.setType(type);
+      if (webPanelController.isActive()) {
+        SidebarControllers.sidebarController.setType(type);
+      }
+    });
+
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_USER_CONTEXT_ID, (event) => {
       const uuid = event.detail.uuid;
       const userContextId = event.detail.userContextId;

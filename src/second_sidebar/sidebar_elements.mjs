@@ -49,10 +49,11 @@ export class SidebarElements {
     this.webPanels = new WebPanels();
     this.webPanelsBrowser = new WebPanelsBrowser();
 
-    const browser = new XULElement({
-      element: document.getElementById("browser"),
+    // TODO: add more options for sidebar container placement
+    const sidebarContainer = new XULElement({
+      element: document.getElementById("zen-tabbox-wrapper"),
     });
-    browser.appendChildren(
+    sidebarContainer.appendChildren(
       this.sidebarSplitterPinned,
       this.sidebarBox.appendChildren(
         this.sidebarBoxFiller,
