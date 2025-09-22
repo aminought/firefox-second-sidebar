@@ -1,6 +1,5 @@
 export const SIDEBAR_BOX_CSS = `
   #sb2-box {
-    background-color: var(--toolbar-bgcolor);
     min-width: 200px;
     pointer-events: none;
     box-sizing: content-box;
