@@ -10,7 +10,12 @@ export const CUSTOMIZATION_CSS = `
     bottom: 0;
     right: 0;
     border-radius: var(--arrowpanel-border-radius);
-    box-shadow: 0px 0px 16px 1px var(--arrowpanel-border-color);
+    box-shadow: 0px 0px 8px 1px var(--arrowpanel-border-color);
+
+    @media (-moz-windows-mica) {
+      background-color: var(--arrowpanel-background);
+      color: var(--arrowpanel-color);
+    }
 
     #customization-panel-container {
       flex: unset;

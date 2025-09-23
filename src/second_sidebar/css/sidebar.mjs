@@ -12,8 +12,6 @@ export const SIDEBAR_CSS = `
       flex-direction: row;
       min-height: unset;
       gap: 4px;
-      background-color: var(--toolbar-bgcolor);
-      color: var(--toolbar-color);
       padding: 1px;
 
       #sb2-toolbar-title-wrapper {
@@ -41,5 +39,14 @@ export const SIDEBAR_CSS = `
   
   #sb2[pinned="true"] {
     width: 100% !important;
+  }
+  
+  #sb2:not([pinned="true"]) {
+    #sb2-toolbar {
+      @media (-moz-windows-mica) {
+        background-color: var(--arrowpanel-background);
+        color: var(--arrowpanel-color);
+      }
+    }
   }
 `;
