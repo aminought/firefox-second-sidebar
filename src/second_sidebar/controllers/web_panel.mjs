@@ -490,7 +490,7 @@ export class WebPanelController {
         mobile: this.#settings.mobile,
         zoom: this.#settings.zoom,
         loadOnStartup: this.#settings.loadOnStartup,
-        unloadOnClose: this.#settings.unload,
+        unloadOnClose: this.#settings.unloadOnClose,
         hideToolbar: this.#settings.hideToolbar,
         userContextId: this.#settings.userContextId,
         periodicReload: this.#settings.periodicReload,
