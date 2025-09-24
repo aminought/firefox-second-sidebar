@@ -80,6 +80,7 @@ export class WebPanelsBrowser extends Browser {
       "#PersonalToolbar",
       "#navigator-toolbox",
       "#sidebar-main",
+      "#sidebar-launcher-splitter",
       "#sidebar-wrapper",
       "#sidebar-box",
       "#context-bookmarkpage",
