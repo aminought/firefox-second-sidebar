@@ -93,7 +93,10 @@ export class CollapseController {
    */
   handleEvent(event) {
     const window = new WindowWrapper();
-    if (!window.fullScreen && !this.sidebarController.autoHideSidebar) {
+    if (
+      (!window.fullScreen && !this.sidebarController.autoHideSidebar) ||
+      window.document.fullscreenElement
+    ) {
       return;
     }
     const position = this.sidebarController.getPosition();
