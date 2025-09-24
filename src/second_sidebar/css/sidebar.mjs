@@ -1,5 +1,7 @@
 export const SIDEBAR_CSS = `
   #sb2 {
+    background-color: var(--sidebar-background-color);
+    color: var(--sidebar-text-color);
     border-radius: var(--border-radius-medium);
     box-shadow: var(--content-area-shadow);
     border: 0.5px solid var(--sidebar-border-color);
@@ -9,6 +11,8 @@ export const SIDEBAR_CSS = `
     min-width: 200px;
 
     #sb2-toolbar {
+      background-color: inherit;
+      color: inherit;
       flex-direction: row;
       min-height: unset;
       gap: 4px;
@@ -39,14 +43,5 @@ export const SIDEBAR_CSS = `
   
   #sb2[pinned="true"] {
     width: 100% !important;
-  }
-  
-  #sb2:not([pinned="true"]) {
-    #sb2-toolbar {
-      @media (-moz-windows-mica) {
-        background-color: var(--arrowpanel-background);
-        color: var(--arrowpanel-color);
-      }
-    }
   }
 `;
