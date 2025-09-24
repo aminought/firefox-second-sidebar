@@ -11,6 +11,8 @@ export const SIDEBAR_CSS = `
     min-width: 200px;
 
     #sb2-toolbar {
+      background-color: inherit;
+      color: inherit;
       flex-direction: row;
       min-height: unset;
       gap: 4px;
