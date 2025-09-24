@@ -35,8 +35,8 @@ export class SidebarMainController {
   #setupListeners() {
     this.sidebarMain.addEventListener("mousedown", (event) => {
       if (isRightMouseButton(event)) {
-        this.mouseX = event.clientX;
-        this.mouseY = event.clientY;
+        this.mouseX = event.screenX;
+        this.mouseY = event.screenY;
       }
     });
 
