@@ -16,6 +16,7 @@ import { XULElement } from "./base/xul_element.mjs";
 
 const BEFORE_SHOW_EVENT = "browser-window-before-show";
 const INITIALIZED_EVENT = "browser-delayed-startup-finished";
+const DOM_WINDOW_CLOSED_EVENT = "domwindowclosed";
 
 const FIRST_TAB_INDEX = 0;
 
@@ -67,6 +68,8 @@ export class WebPanelsBrowser extends Browser {
     } else if (topic === INITIALIZED_EVENT) {
       ObserversWrapper.removeObserver(this, INITIALIZED_EVENT);
       SessionStoreWrapper.maybeDontRestoreTabs(this.window);
+      // Hack to prevent SessionStore from restoring this window 
+      ObserversWrapper.notifyObservers(this.window.raw, DOM_WINDOW_CLOSED_EVENT);
       this.initialized = true;
       console.log(`${this.window.name}: web panels browser initialized`);
     }
@@ -215,11 +218,6 @@ export class WebPanelsBrowser extends Browser {
    */
   removeWebPanelTab(tab) {
     this.window.gBrowser.removeTab(tab);
-  }
-
-  notifyWindowClosedAndRemove() {
-    ObserversWrapper.notifyObservers(this.window.raw, "domwindowclosed");
-    this.remove();
   }
 
   /**
