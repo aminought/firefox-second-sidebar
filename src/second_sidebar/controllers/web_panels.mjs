@@ -242,11 +242,6 @@ export class WebPanelsController {
   }
 
   #setupWebPanelsBrowserListeners() {
-    // Notify SessionStore about closing web panels window when main window is closed
-    const window = new WindowWrapper();
-    window.addEventListener("unload", () => {
-      this.webPanelsBrowser.notifyWindowClosedAndRemove();
-    });
     // Change toolbar title when title of selected tab is changed
     this.webPanelsBrowser.addPageTitleChangeListener((tab) => {
       const title = tab.linkedBrowser.getTitle();
