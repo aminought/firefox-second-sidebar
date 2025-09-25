@@ -68,8 +68,11 @@ export class WebPanelsBrowser extends Browser {
     } else if (topic === INITIALIZED_EVENT) {
       ObserversWrapper.removeObserver(this, INITIALIZED_EVENT);
       SessionStoreWrapper.maybeDontRestoreTabs(this.window);
-      // Hack to prevent SessionStore from restoring this window 
-      ObserversWrapper.notifyObservers(this.window.raw, DOM_WINDOW_CLOSED_EVENT);
+      // Hack to prevent SessionStore from restoring this window
+      ObserversWrapper.notifyObservers(
+        this.window.raw,
+        DOM_WINDOW_CLOSED_EVENT,
+      );
       this.initialized = true;
       console.log(`${this.window.name}: web panels browser initialized`);
     }
