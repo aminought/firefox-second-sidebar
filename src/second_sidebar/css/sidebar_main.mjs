@@ -53,14 +53,6 @@ export const SIDEBAR_MAIN_CSS = `
     }
   }
 
-  #browser:has(#sb2[position="right"]) #sb2-main {
-    order: 17 !important;
-  }
-
-  #browser:has(#sb2[position="left"]) #sb2-main {
-    order: -3 !important;
-  }
-
   .sb2-main-button {
     position: relative;
     padding: 0;
@@ -130,13 +122,13 @@ export const SIDEBAR_MAIN_CSS = `
     padding: var(--arrowpanel-menuitem-padding);
   }
 
-  #browser:has(#sb2-wrapper[position="left"]) {
+  :root:has(#sb2-wrapper[position="left"]) {
     #sb2-collapse-button {
       list-style-image: url("chrome://userscripts/content/second_sidebar/icons/sidebar-left.svg");
     }
   }
 
-  #browser:has(#sb2-wrapper[position="right"]) {
+  :root:has(#sb2-wrapper[position="right"]) {
     #sb2-collapse-button {
       list-style-image: url("chrome://userscripts/content/second_sidebar/icons/sidebar-right.svg");
     }
