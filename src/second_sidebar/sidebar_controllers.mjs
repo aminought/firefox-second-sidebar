@@ -3,7 +3,9 @@ import { ContextMenuItemsController } from "./controllers/context_menu_items.mjs
 import { SidebarController } from "./controllers/sidebar.mjs";
 import { SidebarMainController } from "./controllers/sidebar_main.mjs";
 import { SidebarMainSettingsController } from "./controllers/sidebar_main_settings.mjs";
-import { SidebarSplittersController } from "./controllers/sidebar_splitters.mjs";
+import { SidebarMover } from "./controllers/sidebar_mover.mjs";
+import { SidebarResizer } from "./controllers/sidebar_resizer.mjs";
+import { SidebarSplitterController } from "./controllers/sidebar_splitter.mjs";
 import { WebPanelDeleteController } from "./controllers/web_panel_delete.mjs";
 import { WebPanelEditController } from "./controllers/web_panel_edit.mjs";
 import { WebPanelMoreController } from "./controllers/web_panel_more.mjs";
@@ -15,7 +17,9 @@ export class SidebarControllers {
     this.sidebarMainController = new SidebarMainController();
     this.sidebarMainSettingsController = new SidebarMainSettingsController();
     this.sidebarController = new SidebarController();
-    this.sidebarSplittersController = new SidebarSplittersController();
+    this.sidebarMover = new SidebarMover();
+    this.sidebarResizer = new SidebarResizer();
+    this.sidebarSplitterController = new SidebarSplitterController();
     this.webPanelsController = new WebPanelsController();
     this.webPanelNewController = new WebPanelNewController();
     this.webPanelEditController = new WebPanelEditController();

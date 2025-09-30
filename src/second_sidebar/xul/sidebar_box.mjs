@@ -1,8 +1,7 @@
-import { HBox } from "./base/hbox.mjs";
+import { VBox } from "./base/vbox.mjs";
 
-export class SidebarBox extends HBox {
+export class SidebarBox extends VBox {
   constructor() {
     super({ id: "sb2-box" });
-    this.hide();
   }
 }

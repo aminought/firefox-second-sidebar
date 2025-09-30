@@ -9,12 +9,11 @@ import { WebPanelController } from "./web_panel.mjs";
 
 export class WebPanelEditController {
   constructor() {
-    this.webPanelPopupEdit = SidebarElements.webPanelPopupEdit;
     this.#setupListeners();
   }
 
   #setupListeners() {
-    this.webPanelPopupEdit.listenChanges({
+    SidebarElements.webPanelPopupEdit.listenChanges({
       url: (uuid, url, timeout = 0) => {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_URL, {
           uuid,
@@ -110,9 +109,11 @@ export class WebPanelEditController {
       },
     });
 
-    this.webPanelPopupEdit.listenCancelButtonClick(() => this.hidePopup());
+    SidebarElements.webPanelPopupEdit.listenCancelButtonClick(() =>
+      this.hidePopup(),
+    );
 
-    this.webPanelPopupEdit.listenSaveButtonClick(() => {
+    SidebarElements.webPanelPopupEdit.listenSaveButtonClick(() => {
       sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
       this.hidePopup();
     });
@@ -123,10 +124,10 @@ export class WebPanelEditController {
    * @param {WebPanelController} webPanelController
    */
   openPopup(webPanelController) {
-    this.webPanelPopupEdit.openPopup(webPanelController);
+    SidebarElements.webPanelPopupEdit.openPopup(webPanelController);
   }
 
   hidePopup() {
-    this.webPanelPopupEdit.hidePopup();
+    SidebarElements.webPanelPopupEdit.hidePopup();
   }
 }

@@ -1,14 +1,9 @@
 import { Splitter } from "./base/splitter.mjs";
 
 export class SidebarSplitter extends Splitter {
-  /**
-   *
-   * @param {object} params
-   * @param {string} params.id
-   */
-  constructor({ id = null } = {}) {
-    super({ id, classList: ["sidebar-splitter"] });
-    this.setResizeBefore("none").setResizeAfter("sibling");
+  constructor() {
+    super({ id: "sb2-splitter", classList: ["sidebar-splitter"] });
+    this.setResizeBefore("sibling").setResizeAfter("none").hide();
   }
 
   /**

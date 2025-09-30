@@ -70,7 +70,16 @@ export class XULElement {
    * @returns {XULElement}
    */
   hide() {
-    return this.setAttribute("hidden", "true");
+    return this.setHidden(true);
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   * @returns {XULElement}
+   */
+  setHidden(value) {
+    return this.setAttribute("hidden", value);
   }
 
   /**
@@ -209,25 +218,6 @@ export class XULElement {
 
   /**
    *
-   * @returns {string}
-   */
-  getWidth() {
-    return this.getAttribute("width");
-  }
-
-  /**
-   *
-   * @param {string} width
-   * @returns {XULElement}
-   */
-  setWidth(width) {
-    this.setAttribute("width", width);
-    this.element.style.width = width + "px";
-    return this;
-  }
-
-  /**
-   *
    * @returns {DOMRect}
    */
   getBoundingClientRect() {
@@ -340,6 +330,26 @@ export class XULElement {
    */
   containsHTML(element) {
     return this.element.contains(element);
+  }
+
+  /**
+   *
+   * @param {number} pointerId
+   * @returns {XULElement}
+   */
+  setPointerCapture(pointerId) {
+    this.element.setPointerCapture(pointerId);
+    return this;
+  }
+
+  /**
+   *
+   * @param {number} pointerId
+   * @returns {XULElement}
+   */
+  releasePointerCapture(pointerId) {
+    this.element.releasePointerCapture(pointerId);
+    return this;
   }
 
   /**

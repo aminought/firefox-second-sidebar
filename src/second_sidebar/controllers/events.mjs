@@ -37,7 +37,8 @@ export const SidebarEvents = {
   EDIT_SIDEBAR_CONTAINER_BORDER: "edit_sidebar_container_border",
   EDIT_SIDEBAR_AUTO_HIDE: "edit_sidebar_auto_hide",
   EDIT_SIDEBAR_AUTO_HIDE_ANIMATED: "edit_sidebar_auto_hide_animated",
-  EDIT_SIDEBAR_WIDTH: "edit_sidebar_width",
+  EDIT_SIDEBAR_PINNED_WIDTH: "edit_sidebar_pinned_width",
+  EDIT_SIDEBAR_UNPINNED_BOX: "edit_sidebar_unpinned_box",
   SAVE_SIDEBAR: "save_sidebar",
   COLLAPSE_SIDEBAR: "collapse_sidebar",
 };

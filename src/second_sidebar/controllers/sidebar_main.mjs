@@ -8,9 +8,6 @@ import { parseFunction } from "../utils/parsers.mjs";
 
 export class SidebarMainController {
   constructor() {
-    this.sidebarMain = SidebarElements.sidebarMain;
-    this.sidebarCollapseButton = SidebarElements.sidebarCollapseButton;
-    this.sidebarMainMenuPopup = SidebarElements.sidebarMainMenuPopup;
     this.root = new XULElement({ element: document.documentElement });
     this.#setupGlobalListeners();
     this.#setupListeners();
@@ -26,28 +23,31 @@ export class SidebarMainController {
           const eventName = parsedFunction.name
             .toLowerCase()
             .replace(/^on/, "");
-          this.sidebarMain.addEventListener(eventName, parsedFunction.func);
+          SidebarElements.sidebarMain.addEventListener(
+            eventName,
+            parsedFunction.func,
+          );
         }
       });
     });
   }
 
   #setupListeners() {
-    this.sidebarMain.addEventListener("mousedown", (event) => {
+    SidebarElements.sidebarMain.addEventListener("mousedown", (event) => {
       if (isRightMouseButton(event)) {
         this.mouseX = event.clientX;
         this.mouseY = event.clientY;
       }
     });
 
-    this.sidebarMainMenuPopup.listenSettingsItemClick(() => {
+    SidebarElements.sidebarMainMenuPopup.listenSettingsItemClick(() => {
       SidebarControllers.sidebarMainSettingsController.openPopup(
         this.mouseX,
         this.mouseY,
       );
     });
 
-    this.sidebarMainMenuPopup.listenCustomizeItemClick(() => {
+    SidebarElements.sidebarMainMenuPopup.listenCustomizeItemClick(() => {
       gCustomizeModeWrapper.enter();
     });
 
@@ -80,15 +80,6 @@ export class SidebarMainController {
    */
   setPadding(value) {
     this.root.setProperty("--sb2-main-padding", `var(--space-${value})`);
-    SidebarControllers.sidebarController.updateAbsolutePosition();
-  }
-
-  /**
-   *
-   * @returns {string}
-   */
-  getWidth() {
-    return Math.round(this.sidebarMain.getBoundingClientRect().width) + "px";
   }
 
   /**
@@ -97,23 +88,23 @@ export class SidebarMainController {
    */
   collapsed() {
     const zeros = ["0px", ""];
-    const marginRight = this.sidebarMain.getProperty("margin-right");
-    const marginLeft = this.sidebarMain.getProperty("margin-left");
+    const marginRight = SidebarElements.sidebarMain.getProperty("margin-right");
+    const marginLeft = SidebarElements.sidebarMain.getProperty("margin-left");
     return !zeros.includes(marginRight) || !zeros.includes(marginLeft);
   }
 
   collapse() {
-    const position = SidebarControllers.sidebarController.getPosition();
-    this.sidebarMain.setProperty(
+    const position = SidebarElements.sidebarWrapper.getPosition();
+    SidebarElements.sidebarMain.setProperty(
       position === "right" ? "margin-right" : "margin-left",
-      -this.sidebarMain.getBoundingClientRect().width + "px",
+      -SidebarElements.sidebarMain.getBoundingClientRect().width + "px",
     );
-    this.sidebarCollapseButton.setOpen(false);
+    SidebarElements.sidebarCollapseButton.setOpen(false);
   }
 
   uncollapse() {
-    this.sidebarMain.setProperty("margin-right", "0px");
-    this.sidebarMain.setProperty("margin-left", "0px");
-    this.sidebarCollapseButton.setOpen(true);
+    SidebarElements.sidebarMain.setProperty("margin-right", "0px");
+    SidebarElements.sidebarMain.setProperty("margin-left", "0px");
+    SidebarElements.sidebarCollapseButton.setOpen(true);
   }
 }

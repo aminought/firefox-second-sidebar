@@ -14,37 +14,42 @@ import { parseNotifications } from "../utils/string.mjs";
 
 export class WebPanelsController {
   constructor() {
-    this.sidebarMain = SidebarElements.sidebarMain;
-    this.sidebarBox = SidebarElements.sidebarBox;
-    this.webPanelsBrowser = SidebarElements.webPanelsBrowser;
-    this.webPanelMenuPopup = SidebarElements.webPanelMenuPopup;
-
     /**@type {Map<string, WebPanelController>} */
     this.webPanelControllers = new Map();
     this.#setupListeners();
   }
 
   #setupListeners() {
-    this.webPanelMenuPopup.listenUnloadItemClick((webPanelController) => {
-      if (webPanelController.isActive()) {
-        SidebarControllers.sidebarController.close();
-      }
-      webPanelController.unload();
-    });
+    SidebarElements.webPanelMenuPopup.listenUnloadItemClick(
+      (webPanelController) => {
+        if (webPanelController.isActive()) {
+          SidebarControllers.sidebarController.close();
+        }
+        webPanelController.unload();
+      },
+    );
 
-    this.webPanelMenuPopup.listenMuteItemClick((webPanelController) => {
-      webPanelController.toggleMuteAudio();
-    });
+    SidebarElements.webPanelMenuPopup.listenMuteItemClick(
+      (webPanelController) => {
+        webPanelController.toggleMuteAudio();
+      },
+    );
 
-    this.webPanelMenuPopup.listenEditItemClick((webPanelController) => {
-      SidebarControllers.webPanelEditController.openPopup(webPanelController);
-    });
+    SidebarElements.webPanelMenuPopup.listenEditItemClick(
+      (webPanelController) => {
+        SidebarControllers.webPanelEditController.openPopup(webPanelController);
+      },
+    );
 
-    this.webPanelMenuPopup.listenDeleteItemClick((webPanelController) => {
-      SidebarControllers.webPanelDeleteController.openPopup(webPanelController);
-    });
+    SidebarElements.webPanelMenuPopup.listenDeleteItemClick(
+      (webPanelController) => {
+        SidebarControllers.webPanelDeleteController.openPopup(
+          webPanelController,
+        );
+      },
+    );
 
-    this.webPanelMenuPopup.listenCustomizeItemClick(() => {
+    SidebarElements.webPanelMenuPopup.listenCustomizeItemClick(() => {
       gCustomizeModeWrapper.enter();
     });
 
@@ -151,7 +156,7 @@ export class WebPanelsController {
 
       const webPanelController = this.get(uuid);
       webPanelController.setHideToolbar(hideToolbar);
-      SidebarControllers.sidebarController.setHideToolbar(hideToolbar);
+      SidebarElements.sidebarToolbar.setHidden(hideToolbar);
     });
 
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_HIDE_SOUND_ICON, (event) => {
@@ -243,18 +248,19 @@ export class WebPanelsController {
 
   #setupWebPanelsBrowserListeners() {
     // Change toolbar title when title of selected tab is changed
-    this.webPanelsBrowser.addPageTitleChangeListener((tab) => {
+    SidebarElements.webPanelsBrowser.addPageTitleChangeListener((tab) => {
       const title = tab.linkedBrowser.getTitle();
       if (tab.selected) {
-        SidebarControllers.sidebarController.setToolbarTitle(title);
+        SidebarElements.sidebarToolbar.setTitle(title);
       }
       const webPanelController = this.get(tab.uuid);
       const notifications = parseNotifications(title);
       webPanelController.button.setNotificationBadge(notifications);
     });
     // Open/close corresponding web panel when tab is selected
-    this.webPanelsBrowser.addTabSelectListener(() => {
-      const activeWebPanelTab = this.webPanelsBrowser.getActiveWebPanelTab();
+    SidebarElements.webPanelsBrowser.addTabSelectListener(() => {
+      const activeWebPanelTab =
+        SidebarElements.webPanelsBrowser.getActiveWebPanelTab();
       if (activeWebPanelTab.isEmpty()) {
         SidebarControllers.sidebarController.close();
       }
@@ -267,7 +273,7 @@ export class WebPanelsController {
       }
     });
     // Revert zoom to default when it's changed
-    this.webPanelsBrowser.addZoomChangeListener((tab) => {
+    SidebarElements.webPanelsBrowser.addZoomChangeListener((tab) => {
       const webPanelController = this.get(tab.uuid);
       const zoom = webPanelController.getZoom();
       if (tab.linkedBrowser.getZoom() != zoom) {
@@ -341,7 +347,7 @@ export class WebPanelsController {
    * @returns {WebPanelController?}
    */
   getActive() {
-    const tab = this.webPanelsBrowser.getActiveWebPanelTab();
+    const tab = SidebarElements.webPanelsBrowser.getActiveWebPanelTab();
     return tab.isEmpty() ? null : this.get(tab.uuid);
   }
 
@@ -354,7 +360,7 @@ export class WebPanelsController {
   }
 
   close() {
-    this.webPanelsBrowser.deselectWebPanelTab();
+    SidebarElements.webPanelsBrowser.deselectWebPanelTab();
   }
 
   /**
@@ -366,10 +372,10 @@ export class WebPanelsController {
 
     // We need to display web panels window for a while to initialize it and
     // load startup web panels
-    this.sidebarBox.show();
-    this.webPanelsBrowser.init();
+    SidebarElements.sidebarBox.show();
+    SidebarElements.webPanelsBrowser.init();
 
-    this.webPanelsBrowser.waitInitialization(() => {
+    SidebarElements.webPanelsBrowser.waitInitialization(() => {
       // Relink docShell.treeOwner to the current window to fix status panel
       new WindowWrapper().relinkTreeOwner();
       // Setup web panels window listeners
@@ -382,7 +388,7 @@ export class WebPanelsController {
         this.add(webPanelController);
       }
       // Hide web panels window after initialization
-      this.sidebarBox.hide();
+      SidebarElements.sidebarBox.hide();
     });
   }
 

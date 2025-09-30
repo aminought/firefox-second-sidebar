@@ -7,41 +7,46 @@ import { SidebarElements } from "../sidebar_elements.mjs";
 
 export class WebPanelMoreController {
   constructor() {
-    this.webPanelPopupMore = SidebarElements.webPanelPopupMore;
     this.#setupListeners();
   }
 
   #setupListeners() {
-    this.webPanelPopupMore.listenPopupShowing(() => {
+    SidebarElements.webPanelPopupMore.listenPopupShowing(() => {
       const webPanelController =
         SidebarControllers.webPanelsController.getActive();
-      this.webPanelPopupMore.setDefaults(webPanelController.dumpSettings());
-    });
-
-    this.webPanelPopupMore.listenOpenInNewTabButtonClick((event, uuid) => {
-      const webPanelController =
-        SidebarControllers.webPanelsController.get(uuid);
-      openTrustedLinkInWrapper(
-        webPanelController.getCurrentUrl(),
-        event.ctrlKey ? OPEN_URL_IN.BACKGROUND_TAB : OPEN_URL_IN.TAB,
+      SidebarElements.webPanelPopupMore.setDefaults(
+        webPanelController.dumpSettings(),
       );
     });
 
-    this.webPanelPopupMore.listenCopyPageUrlButtonClick((uuid) => {
+    SidebarElements.webPanelPopupMore.listenOpenInNewTabButtonClick(
+      (event, uuid) => {
+        const webPanelController =
+          SidebarControllers.webPanelsController.get(uuid);
+        openTrustedLinkInWrapper(
+          webPanelController.getCurrentUrl(),
+          event.ctrlKey ? OPEN_URL_IN.BACKGROUND_TAB : OPEN_URL_IN.TAB,
+        );
+      },
+    );
+
+    SidebarElements.webPanelPopupMore.listenCopyPageUrlButtonClick((uuid) => {
       const webPanelController =
         SidebarControllers.webPanelsController.get(uuid);
       ClipboardHelperWrapper.copyString(webPanelController.getCurrentUrl());
     });
 
-    this.webPanelPopupMore.listenMobileButtonClick((uuid, mobile) => {
-      sendEvents(WebPanelEvents.EDIT_WEB_PANEL_MOBILE, {
-        uuid,
-        mobile,
-      });
-      sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
-    });
+    SidebarElements.webPanelPopupMore.listenMobileButtonClick(
+      (uuid, mobile) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_MOBILE, {
+          uuid,
+          mobile,
+        });
+        sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
+      },
+    );
 
-    this.webPanelPopupMore.listenZoomOutButtonClick((uuid) => {
+    SidebarElements.webPanelPopupMore.listenZoomOutButtonClick((uuid) => {
       sendEvents(WebPanelEvents.EDIT_WEB_PANEL_ZOOM_OUT, {
         uuid,
       });
@@ -52,7 +57,7 @@ export class WebPanelMoreController {
       return webPanelController.getZoom();
     });
 
-    this.webPanelPopupMore.listenZoomInButtonClick((uuid) => {
+    SidebarElements.webPanelPopupMore.listenZoomInButtonClick((uuid) => {
       sendEvents(WebPanelEvents.EDIT_WEB_PANEL_ZOOM_IN, {
         uuid,
       });
@@ -63,7 +68,7 @@ export class WebPanelMoreController {
       return webPanelController.getZoom();
     });
 
-    this.webPanelPopupMore.listenResetZoomButtonClick((uuid) => {
+    SidebarElements.webPanelPopupMore.listenResetZoomButtonClick((uuid) => {
       sendEvents(WebPanelEvents.EDIT_WEB_PANEL_ZOOM, {
         uuid,
         value: 1,

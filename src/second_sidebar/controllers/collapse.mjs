@@ -10,14 +10,6 @@ const ANIMATE_ATTRIBUTE = "shouldAnimate";
 
 export class CollapseController {
   constructor() {
-    // elements
-    this.sidebarMain = SidebarElements.sidebarMain;
-    this.sidebarSettings = SidebarElements.sidebarMainPopupSettings;
-    this.sidebarCollapseButton = SidebarElements.sidebarCollapseButton;
-    // controllers
-    this.sidebarMainController = SidebarControllers.sidebarMainController;
-    this.sidebarController = SidebarControllers.sidebarController;
-
     this.#setupListeners();
   }
 
@@ -35,19 +27,21 @@ export class CollapseController {
           this.collapse(false, true);
         }, 0);
       } else {
-        if (this.sidebarController.autoHideSidebar) {
+        if (SidebarControllers.sidebarController.autoHideSidebar) {
           // Show sidebar and then immediately hide with fullscreen animation
           this.uncollapse();
           setTimeout(() => {
             this.collapse(false, true);
           });
         } else {
-          this.uncollapse(this.sidebarController.hideSidebarAnimated);
+          this.uncollapse(
+            SidebarControllers.sidebarController.hideSidebarAnimated,
+          );
         }
       }
     });
 
-    this.sidebarCollapseButton.listenClick(() => {
+    SidebarElements.sidebarCollapseButton.listenClick(() => {
       sendEvents(SidebarEvents.COLLAPSE_SIDEBAR);
     });
 
@@ -58,15 +52,17 @@ export class CollapseController {
         return;
       }
 
-      if (this.sidebarController.autoHideSidebar) {
+      if (SidebarControllers.sidebarController.autoHideSidebar) {
         return;
       }
       if (this.collapsed()) {
-        this.uncollapse(this.sidebarController.hideSidebarAnimated);
-        this.sidebarCollapseButton.setOpen(true);
+        this.uncollapse(
+          SidebarControllers.sidebarController.hideSidebarAnimated,
+        );
+        SidebarElements.sidebarCollapseButton.setOpen(true);
       } else {
-        this.collapse(this.sidebarController.hideSidebarAnimated);
-        this.sidebarCollapseButton.setOpen(false);
+        this.collapse(SidebarControllers.sidebarController.hideSidebarAnimated);
+        SidebarElements.sidebarCollapseButton.setOpen(false);
       }
     });
   }
@@ -76,7 +72,7 @@ export class CollapseController {
    * @param {boolean} animate
    */
   shouldAnimate(animate) {
-    this.sidebarMain.toggleAttribute(ANIMATE_ATTRIBUTE, animate);
+    SidebarElements.sidebarMain.toggleAttribute(ANIMATE_ATTRIBUTE, animate);
   }
 
   /**
@@ -84,7 +80,10 @@ export class CollapseController {
    * @param {boolean} animate
    */
   fullScreenShouldAnimate(animate) {
-    this.sidebarMain.toggleAttribute(FULLSCREEN_ANIMATE_ATTRIBUTE, animate);
+    SidebarElements.sidebarMain.toggleAttribute(
+      FULLSCREEN_ANIMATE_ATTRIBUTE,
+      animate,
+    );
   }
 
   /**
@@ -94,15 +93,16 @@ export class CollapseController {
   handleEvent(event) {
     const window = new WindowWrapper();
     if (
-      (!window.fullScreen && !this.sidebarController.autoHideSidebar) ||
+      (!window.fullScreen &&
+        !SidebarControllers.sidebarController.autoHideSidebar) ||
       window.document.fullscreenElement
     ) {
       return;
     }
-    const position = this.sidebarController.getPosition();
+    const position = SidebarElements.sidebarWrapper.getPosition();
     const root = new XULElement({ element: window.document.documentElement });
     const rootRect = root.getBoundingClientRect();
-    const sidebarRect = this.sidebarMain.getBoundingClientRect();
+    const sidebarRect = SidebarElements.sidebarMain.getBoundingClientRect();
     const leftEdge = window.mozInnerScreenX;
     const rightEdge = leftEdge + rootRect.width;
     if (
@@ -111,7 +111,7 @@ export class CollapseController {
         event.screenX > rightEdge - sidebarRect.width) ||
         (position === "left" && event.screenX < leftEdge + sidebarRect.width))
     ) {
-      this.uncollapse(this.sidebarController.hideSidebarAnimated);
+      this.uncollapse(SidebarControllers.sidebarController.hideSidebarAnimated);
     } else if (
       !this.collapsed() &&
       ((position === "right" &&
@@ -119,7 +119,7 @@ export class CollapseController {
         (position === "left" &&
           event.screenX > leftEdge + 2 * sidebarRect.width))
     ) {
-      this.collapse(this.sidebarController.hideSidebarAnimated);
+      this.collapse(SidebarControllers.sidebarController.hideSidebarAnimated);
     }
   }
 
@@ -128,7 +128,7 @@ export class CollapseController {
    * @returns {boolean}
    */
   collapsed() {
-    return this.sidebarMainController.collapsed();
+    return SidebarControllers.sidebarMainController.collapsed();
   }
 
   /**
@@ -139,7 +139,7 @@ export class CollapseController {
   collapse(animate = false, fullScreenAnimate = false) {
     this.shouldAnimate(animate);
     this.fullScreenShouldAnimate(fullScreenAnimate);
-    this.sidebarMainController.collapse();
+    SidebarControllers.sidebarMainController.collapse();
   }
 
   /**
@@ -150,6 +150,6 @@ export class CollapseController {
   uncollapse(animate = false, fullScreenAnimate = false) {
     this.shouldAnimate(animate);
     this.fullScreenShouldAnimate(fullScreenAnimate);
-    this.sidebarMainController.uncollapse();
+    SidebarControllers.sidebarMainController.uncollapse();
   }
 }

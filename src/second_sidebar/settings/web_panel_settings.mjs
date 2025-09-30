@@ -8,7 +8,10 @@ export class WebPanelSettings {
    * @param {string} faviconURL
    * @param {object?} params
    * @param {boolean?} params.pinned
+   * @param {string?} params.top
+   * @param {string?} params.left
    * @param {string?} params.width
+   * @param {string?} params.height
    * @param {boolean?} params.mobile
    * @param {number?} params.zoom
    * @param {boolean?} params.loadOnStartup
@@ -25,7 +28,10 @@ export class WebPanelSettings {
     faviconURL,
     {
       pinned,
+      top,
+      left,
       width,
+      height,
       mobile,
       zoom,
       loadOnStartup,
@@ -45,8 +51,14 @@ export class WebPanelSettings {
     this.faviconURL = faviconURL;
     /**@type {boolean} */
     this.pinned = pinned ?? false;
-    /**@type {string} */
-    this.width = width ?? "400";
+    /**@type {string?} */
+    this.top = top;
+    /**@type {string?} */
+    this.left = left;
+    /**@type {string?} */
+    this.width = width;
+    /**@type {string?} */
+    this.height = height;
     /**@type {boolean} */
     this.mobile = mobile ?? false;
     /**@type {number} */
@@ -60,7 +72,7 @@ export class WebPanelSettings {
     /**@type {number} */
     this.userContextId =
       userContextId ?? ScriptSecurityManagerWrapper.DEFAULT_USER_CONTEXT_ID;
-    /**@type {number?} */
+    /**@type {number} */
     this.periodicReload = periodicReload ?? 0;
     /**@type {boolean} */
     this.hideSoundIcon = hideSoundIcon ?? false;
@@ -78,7 +90,10 @@ export class WebPanelSettings {
       url: this.url,
       faviconURL: this.faviconURL,
       pinned: this.pinned,
+      top: this.top,
+      left: this.left,
       width: this.width,
+      height: this.height,
       mobile: this.mobile,
       zoom: this.zoom,
       loadOnStartup: this.loadOnStartup,

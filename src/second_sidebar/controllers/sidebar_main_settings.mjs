@@ -5,12 +5,11 @@ import { SidebarElements } from "../sidebar_elements.mjs";
 
 export class SidebarMainSettingsController {
   constructor() {
-    this.sidebarMainPopupSettings = SidebarElements.sidebarMainPopupSettings;
     this.#setupListeners();
   }
 
   #setupListeners() {
-    this.sidebarMainPopupSettings.listenChanges({
+    SidebarElements.sidebarMainPopupSettings.listenChanges({
       position: (value) =>
         sendEvents(SidebarEvents.EDIT_SIDEBAR_POSITION, { value }),
       padding: (value) =>
@@ -37,13 +36,13 @@ export class SidebarMainSettingsController {
         sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_ANIMATED, { value }),
     });
 
-    this.sidebarMainPopupSettings.listenCancelButtonClick(() =>
-      this.sidebarMainPopupSettings.hidePopup(),
+    SidebarElements.sidebarMainPopupSettings.listenCancelButtonClick(() =>
+      SidebarElements.sidebarMainPopupSettings.hidePopup(),
     );
 
-    this.sidebarMainPopupSettings.listenSaveButtonClick(() => {
+    SidebarElements.sidebarMainPopupSettings.listenSaveButtonClick(() => {
       sendEvents(SidebarEvents.SAVE_SIDEBAR);
-      this.sidebarMainPopupSettings.hidePopup();
+      SidebarElements.sidebarMainPopupSettings.hidePopup();
     });
   }
 
@@ -53,7 +52,7 @@ export class SidebarMainSettingsController {
    * @param {number} screenY
    */
   openPopup(screenX, screenY) {
-    this.sidebarMainPopupSettings.openPopupAtScreen(
+    SidebarElements.sidebarMainPopupSettings.openPopupAtScreen(
       screenX,
       screenY,
       SidebarControllers.sidebarController.dumpSettings(),
