@@ -1,5 +1,6 @@
 import { SidebarEvents, sendEvents } from "./events.mjs";
 
+import { BrowserElements } from "../browser_elements.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { WindowWrapper } from "../wrappers/window.mjs";
@@ -7,6 +8,9 @@ import { WindowWrapper } from "../wrappers/window.mjs";
 export class SidebarMover {
   constructor() {
     this.#setupListeners();
+    BrowserElements.tabbrowserTabbox.addEventListener("resize", () => {
+      SidebarControllers.sidebarController.setUnpinnedBox("move");
+    });
   }
 
   #setupListeners() {

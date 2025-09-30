@@ -5,6 +5,7 @@ import {
   sendEvents,
 } from "./events.mjs";
 
+import { BrowserElements } from "../browser_elements.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { SidebarSettings } from "../settings/sidebar_settings.mjs";
@@ -15,9 +16,6 @@ import { isLeftMouseButton } from "../utils/buttons.mjs";
 export class SidebarController {
   constructor() {
     this.root = new XULElement({ element: document.documentElement });
-    this.tabbox = new XULElement({
-      element: document.getElementById("tabbrowser-tabbox"),
-    });
 
     this.#setupListeners();
 
@@ -286,13 +284,13 @@ export class SidebarController {
   /**
    *
    * @param {string} mode
-   * @param {number} top
-   * @param {number} left
+   * @param {number?} top
+   * @param {number?} left
    * @param {number?} width
    * @param {number?} height
    */
   setUnpinnedBox(mode, top, left, width, height) {
-    const tabboxRect = this.tabbox.getBoundingClientRect();
+    const tabboxRect = BrowserElements.tabbrowserTabbox.getBoundingClientRect();
     const currentRect = SidebarElements.sidebarBox.getBoundingClientRect();
 
     const tabboxLeft = Math.ceil(tabboxRect.left);
@@ -300,8 +298,10 @@ export class SidebarController {
     const tabboxTop = 0;
     const tabboxBottom = Math.floor(tabboxRect.bottom - tabboxRect.top);
 
-    if (!width) width = currentRect.width;
-    if (!height) height = currentRect.height;
+    if (typeof top === "undefined") top = currentRect.top - tabboxRect.top;
+    if (typeof left === "undefined") left = currentRect.left;
+    if (typeof width === "undefined") width = currentRect.width;
+    if (typeof height === "undefined") height = currentRect.height;
 
     // left border
     if (left < tabboxLeft) {
@@ -349,29 +349,6 @@ export class SidebarController {
     const width = SidebarElements.sidebarBox.getProperty("width");
     const height = SidebarElements.sidebarBox.getProperty("height");
     return { top, left, width, height };
-  }
-
-  /**
-   *
-   * @param {number} top
-   * @param {number} left
-   */
-  setPos(top, left) {
-    const sidebarBoxRect = SidebarElements.sidebarBox.getBoundingClientRect();
-    const tabboxRect = this.tabbox.getBoundingClientRect();
-
-    const leftMin = tabboxRect.left;
-    const leftMax = tabboxRect.right - sidebarBoxRect.width;
-    const topMin = 0;
-    const topMax = tabboxRect.bottom - tabboxRect.top - sidebarBoxRect.height;
-
-    if (left < leftMin) left = leftMin;
-    if (left > leftMax) left = leftMax;
-    if (top < topMin) top = topMin;
-    if (top > topMax) top = topMax;
-
-    SidebarElements.sidebarBox.setProperty("left", `${left}px`);
-    SidebarElements.sidebarBox.setProperty("top", `${top}px`);
   }
 
   /**
