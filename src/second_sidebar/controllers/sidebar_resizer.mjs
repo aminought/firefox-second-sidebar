@@ -2,7 +2,6 @@ import { SidebarEvents, sendEvents } from "./events.mjs";
 
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
-import { WindowWrapper } from "../wrappers/window.mjs";
 
 export class SidebarResizer {
   static MIN_WIDTH = 200;
@@ -14,8 +13,7 @@ export class SidebarResizer {
 
   #setupListeners() {
     let startX, startY;
-    let startWidth, startHeight;
-    let startLeft, startTop;
+    let startRect;
     let currentResizer;
 
     SidebarElements.sidebarResizerBl.addEventListener("mousedown", initResize);
@@ -48,13 +46,7 @@ export class SidebarResizer {
       currentResizer.setPointerCapture(e.pointerId);
       startX = e.clientX;
       startY = e.clientY;
-
-      const window = new WindowWrapper();
-      const styles = window.getComputedStyle(SidebarElements.sidebarBox);
-      startWidth = parseInt(styles.width);
-      startHeight = parseInt(styles.height);
-      startLeft = parseInt(styles.left);
-      startTop = parseInt(styles.top);
+      startRect = SidebarElements.sidebarBox.getBoundingClientRect();
 
       document.addEventListener("mousemove", resize);
       document.addEventListener("mouseup", stopResize);
@@ -72,8 +64,8 @@ export class SidebarResizer {
       const deltaY = e.clientY - startY;
 
       if (type === "br") {
-        let newWidth = startWidth + deltaX;
-        let newHeight = startHeight + deltaY;
+        let newWidth = startRect.width + deltaX;
+        let newHeight = startRect.height + deltaY;
         if (newWidth < SidebarResizer.MIN_WIDTH) {
           newWidth = SidebarResizer.MIN_WIDTH;
         }
@@ -82,15 +74,15 @@ export class SidebarResizer {
         }
         SidebarControllers.sidebarController.setUnpinnedBox(
           "resize",
-          startTop,
-          startLeft,
+          startRect.top,
+          startRect.left,
           newWidth,
           newHeight,
         );
       } else if (type === "bl") {
-        let newLeft = startLeft + deltaX;
-        let newWidth = startWidth - deltaX;
-        let newHeight = startHeight + deltaY;
+        let newLeft = startRect.left + deltaX;
+        let newWidth = startRect.width - deltaX;
+        let newHeight = startRect.height + deltaY;
         if (newWidth < SidebarResizer.MIN_WIDTH) {
           newLeft = newLeft + newWidth - SidebarResizer.MIN_WIDTH;
           newWidth = SidebarResizer.MIN_WIDTH;
@@ -100,7 +92,7 @@ export class SidebarResizer {
         }
         SidebarControllers.sidebarController.setUnpinnedBox(
           "resize",
-          startTop,
+          startRect.top,
           newLeft,
           newWidth,
           newHeight,
@@ -111,15 +103,14 @@ export class SidebarResizer {
     function stopResize() {
       const webPanelController =
         SidebarControllers.webPanelsController.getActive();
-      const box = SidebarControllers.sidebarController.getUnpinnedBox();
-
       sendEvents(SidebarEvents.EDIT_SIDEBAR_UNPINNED_BOX, {
         uuid: webPanelController.getUUID(),
-        mode: "resize",
-        top: parseInt(box.top),
-        left: parseInt(box.left),
-        width: parseInt(box.width),
-        height: parseInt(box.height),
+        marginTop: SidebarElements.sidebarBox.getProperty("margin-top"),
+        marginLeft: SidebarElements.sidebarBox.getProperty("margin-left"),
+        marginRight: SidebarElements.sidebarBox.getProperty("margin-right"),
+        marginBottom: SidebarElements.sidebarBox.getProperty("margin-bottom"),
+        width: SidebarElements.sidebarBox.getProperty("width"),
+        height: SidebarElements.sidebarBox.getProperty("height"),
       });
       SidebarControllers.webPanelsController.saveSettings();
     }

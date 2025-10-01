@@ -5,7 +5,6 @@ import {
   sendEvents,
 } from "./events.mjs";
 
-import { BrowserElements } from "../browser_elements.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { SidebarSettings } from "../settings/sidebar_settings.mjs";
@@ -159,13 +158,36 @@ export class SidebarController {
     });
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_UNPINNED_BOX, (event) => {
-      const { uuid, mode, top, left, width, height } = event.detail;
+      const {
+        uuid,
+        marginTop,
+        marginLeft,
+        marginRight,
+        marginBottom,
+        width,
+        height,
+      } = event.detail;
 
       const webPanelController =
         SidebarControllers.webPanelsController.get(uuid);
-      webPanelController.setUnpinnedBox(top, left, width, height);
+      webPanelController.setFloatingPosition(
+        marginTop,
+        marginLeft,
+        marginRight,
+        marginBottom,
+        width,
+        height,
+      );
       if (webPanelController.isActive()) {
-        this.setUnpinnedBox(mode, top, left, width, height);
+        this.setFloatingPosition(
+          webPanelController.getAttach(),
+          marginTop,
+          marginLeft,
+          marginRight,
+          marginBottom,
+          width,
+          height,
+        );
       }
     });
 
@@ -180,8 +202,11 @@ export class SidebarController {
   /**
    *
    * @param {boolean} pinned
-   * @param {string?} top
-   * @param {string?} left
+   * @param {string?} attach
+   * @param {string?} marginTop
+   * @param {string?} marginLeft
+   * @param {string?} marginRight
+   * @param {string?} marginBottom
    * @param {string?} width
    * @param {string?} height
    * @param {boolean} canGoBack
@@ -191,8 +216,11 @@ export class SidebarController {
    */
   open(
     pinned,
-    top,
-    left,
+    attach,
+    marginTop,
+    marginLeft,
+    marginRight,
+    marginBottom,
     width,
     height,
     canGoBack,
@@ -200,18 +228,64 @@ export class SidebarController {
     title,
     hideToolbar,
   ) {
-    SidebarElements.sidebarBox
-      .setProperty("top", top ?? "unset")
-      .setProperty("left", left ?? "unset")
-      .setProperty("width", width ?? "400px")
-      .setProperty("height", height ?? "100%")
-      .show();
+    this.setFloatingPosition(
+      attach,
+      marginTop,
+      marginLeft,
+      marginRight,
+      marginBottom,
+      width,
+      height,
+    );
+    SidebarElements.sidebarBox.show();
     SidebarElements.sidebarToolbar
       .toggleBackButton(!canGoBack)
       .toggleForwardButton(!canGoForward)
       .setTitle(title)
       .setHidden(hideToolbar);
     pinned ? this.pin() : this.unpin();
+  }
+
+  /**
+   * @param {string} attach
+   * @param {string?} marginTop
+   * @param {string?} marginLeft
+   * @param {string?} marginRight
+   * @param {string?} marginBottom
+   * @param {string?} width
+   * @param {string?} height
+   */
+  setFloatingPosition(
+    attach,
+    marginTop,
+    marginLeft,
+    marginRight,
+    marginBottom,
+    width,
+    height,
+  ) {
+    let top, left, right, bottom;
+    top = left = right = bottom = "unset";
+    if (attach == "topleft") {
+      top = left = "0px";
+    } else if (attach == "topright") {
+      top = right = "0px";
+    } else if (attach == "bottomleft") {
+      bottom = left = "0px";
+    } else if (attach == "bottomright") {
+      bottom = right = "0px";
+    }
+    SidebarElements.sidebarBox
+      .setProperty("top", top)
+      .setProperty("left", left)
+      .setProperty("right", right)
+      .setProperty("bottom", bottom)
+      .setProperty("margin-top", marginTop ?? "unset")
+      .setProperty("margin-left", marginLeft ?? "unset")
+      .setProperty("margin-right", marginRight ?? "unset")
+      .setProperty("margin-bottom", marginBottom ?? "unset")
+      .setProperty("width", width ?? "400px")
+      .setProperty("height", height ?? "100%");
   }
 
   close() {
@@ -290,65 +364,89 @@ export class SidebarController {
    * @param {number?} height
    */
   setUnpinnedBox(mode, top, left, width, height) {
-    const tabboxRect = BrowserElements.tabbrowserTabbox.getBoundingClientRect();
-    const currentRect = SidebarElements.sidebarBox.getBoundingClientRect();
+    if (this.closed()) return;
+    const areaRect = SidebarElements.sidebarBoxArea.getBoundingClientRect();
+    const boxRect = SidebarElements.sidebarBox.getBoundingClientRect();
 
-    const tabboxLeft = Math.ceil(tabboxRect.left);
-    const tabboxRight = Math.floor(tabboxRect.right);
-    const tabboxTop = 0;
-    const tabboxBottom = Math.floor(tabboxRect.bottom - tabboxRect.top);
+    const areaTop = 0;
+    const areaLeft = 0;
+    const areaRight = areaRect.right - areaRect.left;
+    const areaBottom = areaRect.bottom - areaRect.top;
 
-    if (typeof top === "undefined") top = currentRect.top - tabboxRect.top;
-    if (typeof left === "undefined") left = currentRect.left;
-    if (typeof width === "undefined") width = currentRect.width;
-    if (typeof height === "undefined") height = currentRect.height;
+    if (typeof top === "undefined") top = boxRect.top;
+    if (typeof left === "undefined") left = boxRect.left;
+    if (typeof width === "undefined") width = boxRect.width;
+    if (typeof height === "undefined") height = boxRect.height;
+
+    top -= areaRect.top;
+    left -= areaRect.left;
 
     // left border
-    if (left < tabboxLeft) {
-      left = tabboxLeft;
+    if (left < areaLeft) {
+      left = areaLeft;
       if (mode == "resize") {
-        width = currentRect.right - tabboxLeft;
+        width = boxRect.right - areaRect.left;
       }
     }
 
     // right border
-    if (left + width > tabboxRight) {
+    if (left + width > areaRight) {
       if (mode == "move") {
-        width = currentRect.width;
-        left = tabboxRight - width;
+        width = boxRect.width;
+        left = areaRight - width;
       } else if (mode == "resize") {
-        width = tabboxRight - left;
+        width = areaRight - left;
       }
     }
 
     // top border
     if (top < 0) {
-      height = currentRect.height;
-      top = tabboxTop;
+      height = boxRect.height;
+      top = areaTop;
     }
 
     // bottom border
-    if (top + height > tabboxBottom) {
+    if (top + height > areaBottom) {
       if (mode == "move") {
-        height = currentRect.height;
-        top = tabboxBottom - height;
+        height = boxRect.height;
+        top = areaBottom - height;
       } else if (mode == "resize") {
-        height = tabboxBottom - top;
+        height = areaBottom - top;
       }
     }
 
-    SidebarElements.sidebarBox.setProperty("top", top + "px");
-    SidebarElements.sidebarBox.setProperty("left", left + "px");
-    SidebarElements.sidebarBox.setProperty("width", width + "px");
-    SidebarElements.sidebarBox.setProperty("height", height + "px");
-  }
+    // calculate margins
 
-  getUnpinnedBox() {
-    const top = SidebarElements.sidebarBox.getProperty("top");
-    const left = SidebarElements.sidebarBox.getProperty("left");
-    const width = SidebarElements.sidebarBox.getProperty("width");
-    const height = SidebarElements.sidebarBox.getProperty("height");
-    return { top, left, width, height };
+    const webPanelController =
+      SidebarControllers.webPanelsController.getActive();
+    const attach = webPanelController.getAttach();
+
+    let marginTop_, marginLeft_, marginRight_, marginBottom_;
+    marginTop_ = marginLeft_ = marginRight_ = marginBottom_ = "unset";
+
+    if (attach === "topright") {
+      marginTop_ = `${top}px`;
+      marginRight_ = `${areaRight - left - width}px`;
+    } else if (attach == "topleft") {
+      marginTop_ = `${top}px`;
+      marginLeft_ = `${left}px`;
+    } else if (attach == "bottomleft") {
+      marginBottom_ = `${areaBottom - top - height}px`;
+      marginLeft_ = `${left}px`;
+    } else if (attach == "bottomright") {
+      marginBottom_ = `${areaBottom - top - height}px`;
+      marginRight_ = `${areaRight - left - width}px`;
+    }
+
+    this.setFloatingPosition(
+      attach,
+      marginTop_,
+      marginLeft_,
+      marginRight_,
+      marginBottom_,
+      width + "px",
+      height + "px",
+    );
   }
 
   /**

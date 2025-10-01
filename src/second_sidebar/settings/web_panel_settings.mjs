@@ -8,8 +8,11 @@ export class WebPanelSettings {
    * @param {string} faviconURL
    * @param {object?} params
    * @param {boolean?} params.pinned
-   * @param {string?} params.top
-   * @param {string?} params.left
+   * @param {string?} params.attach
+   * @param {string?} params.marginTop
+   * @param {string?} params.marginLeft
+   * @param {string?} params.marginRight
+   * @param {string?} params.marginBottom
    * @param {string?} params.width
    * @param {string?} params.height
    * @param {boolean?} params.mobile
@@ -28,8 +31,11 @@ export class WebPanelSettings {
     faviconURL,
     {
       pinned,
-      top,
-      left,
+      attach,
+      marginTop,
+      marginLeft,
+      marginRight,
+      marginBottom,
       width,
       height,
       mobile,
@@ -52,13 +58,19 @@ export class WebPanelSettings {
     /**@type {boolean} */
     this.pinned = pinned ?? false;
     /**@type {string?} */
-    this.top = top;
+    this.attach = attach ?? "topleft";
     /**@type {string?} */
-    this.left = left;
+    this.marginTop = marginTop ?? "unset";
     /**@type {string?} */
-    this.width = width;
+    this.marginLeft = marginLeft ?? "unset";
     /**@type {string?} */
-    this.height = height;
+    this.marginRight = marginRight ?? "unset";
+    /**@type {string?} */
+    this.marginBottom = marginBottom ?? "unset";
+    /**@type {string?} */
+    this.width = width ?? "400px";
+    /**@type {string?} */
+    this.height = height ?? "100%";
     /**@type {boolean} */
     this.mobile = mobile ?? false;
     /**@type {number} */
@@ -90,8 +102,11 @@ export class WebPanelSettings {
       url: this.url,
       faviconURL: this.faviconURL,
       pinned: this.pinned,
-      top: this.top,
-      left: this.left,
+      attach: this.attach,
+      marginTop: this.marginTop,
+      marginLeft: this.marginLeft,
+      marginRight: this.marginRight,
+      marginBottom: this.marginBottom,
       width: this.width,
       height: this.height,
       mobile: this.mobile,

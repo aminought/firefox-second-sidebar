@@ -194,8 +194,11 @@ export class WebPanelController {
     // Open sidebar if it was closed and configure
     SidebarControllers.sidebarController.open(
       this.#settings.pinned,
-      this.#settings.top,
-      this.#settings.left,
+      this.#settings.attach,
+      this.#settings.marginTop,
+      this.#settings.marginLeft,
+      this.#settings.marginRight,
+      this.#settings.marginBottom,
       this.#settings.width,
       this.#settings.height,
       this.#tab.linkedBrowser.canGoBack(),
@@ -422,16 +425,44 @@ export class WebPanelController {
 
   /**
    *
-   * @param {number} top
-   * @param {number} left
-   * @param {number} width
-   * @param {number} height
+   * @returns {string}
    */
-  setUnpinnedBox(top, left, width, height) {
-    this.#settings.top = `${top}px`;
-    this.#settings.left = `${left}px`;
-    this.#settings.width = `${width}px`;
-    this.#settings.height = `${height}px`;
+  getAttach() {
+    return this.#settings.attach;
+  }
+
+  /**
+   *
+   * @param {string} attach
+   */
+  setAttach(attach) {
+    this.#settings.attach = attach;
+    SidebarControllers.sidebarController.setUnpinnedBox("move");
+  }
+
+  /**
+   *
+   * @param {string} marginTop
+   * @param {string} marginLeft
+   * @param {string} marginRight
+   * @param {string} marginBottom
+   * @param {string} width
+   * @param {string} height
+   */
+  setFloatingPosition(
+    marginTop,
+    marginLeft,
+    marginRight,
+    marginBottom,
+    width,
+    height,
+  ) {
+    this.#settings.marginTop = marginTop;
+    this.#settings.marginLeft = marginLeft;
+    this.#settings.marginRight = marginRight;
+    this.#settings.marginBottom = marginBottom;
+    this.#settings.width = width;
+    this.#settings.height = height;
   }
 
   /**
@@ -496,8 +527,11 @@ export class WebPanelController {
       this.#settings.faviconURL,
       {
         pinned: this.#settings.pinned,
-        top: this.#settings.top,
-        left: this.#settings.left,
+        attach: this.#settings.attach,
+        marginTop: this.#settings.marginTop,
+        marginLeft: this.#settings.marginLeft,
+        marginRight: this.#settings.marginRight,
+        marginBottom: this.#settings.marginBottom,
         width: this.#settings.width,
         height: this.#settings.height,
         mobile: this.#settings.mobile,

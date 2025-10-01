@@ -2,6 +2,7 @@ import { AfterSplitter } from "./xul/after_splitter.mjs";
 import { CustomizableUIWrapper } from "./wrappers/customizable_ui.mjs";
 import { OpenLinkInSidebarMenuItem } from "./xul/open_link_in_sidebar_menuitem.mjs";
 import { SidebarBox } from "./xul/sidebar_box.mjs";
+import { SidebarBoxArea } from "./xul/sidebar_box_area.mjs";
 import { SidebarCollapseButton } from "./xul/sidebar_collapse_button.mjs";
 import { SidebarMain } from "./xul/sidebar_main.mjs";
 import { SidebarMainMenuPopup } from "./xul/sidebar_main_menupopup.mjs";
@@ -40,6 +41,7 @@ export class SidebarElements {
   static #createSidebar() {
     this.sidebarWrapper = new SidebarWrapper();
     this.sidebarMain = new SidebarMain();
+    this.sidebarBoxArea = new SidebarBoxArea();
     this.sidebarBox = new SidebarBox();
     this.sidebarToolbar = new SidebarToolbar();
     this.webPanelsBrowser = new WebPanelsBrowser();
@@ -54,11 +56,13 @@ export class SidebarElements {
     browser.appendChildren(
       this.sidebarWrapper.appendChildren(
         this.sidebarMain,
-        this.sidebarBox.appendChildren(
-          this.sidebarToolbar,
-          this.webPanelsBrowser,
-          this.sidebarResizerBl,
-          this.sidebarResizerBr,
+        this.sidebarBoxArea.appendChild(
+          this.sidebarBox.appendChildren(
+            this.sidebarToolbar,
+            this.webPanelsBrowser,
+            this.sidebarResizerBl,
+            this.sidebarResizerBr,
+          ),
         ),
         this.sidebarSplitter,
         this.afterSplitter,

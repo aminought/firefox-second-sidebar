@@ -34,6 +34,12 @@ export class WebPanelEditController {
           pinned,
         });
       },
+      attach: (uuid, attach) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_ATTACH, {
+          uuid,
+          attach,
+        });
+      },
       userContextId: (uuid, userContextId) => {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_USER_CONTEXT_ID, {
           uuid,

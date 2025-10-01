@@ -35,8 +35,11 @@ export class WebPanelsSettings {
             webPanelPref.faviconURL,
             {
               pinned: webPanelPref.pinned,
-              top: webPanelPref.top,
-              left: webPanelPref.left,
+              attach: webPanelPref.attach,
+              marginTop: webPanelPref.marginTop,
+              marginLeft: webPanelPref.marginLeft,
+              marginRight: webPanelPref.marginRight,
+              marginBottom: webPanelPref.marginBottom,
               width: webPanelPref.width,
               height: webPanelPref.height,
               mobile: webPanelPref.mobile,

@@ -119,6 +119,14 @@ export class WebPanelsController {
       }
     });
 
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_ATTACH, (event) => {
+      const uuid = event.detail.uuid;
+      const attach = event.detail.attach;
+
+      const webPanelController = this.get(uuid);
+      webPanelController.setAttach(attach);
+    });
+
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_USER_CONTEXT_ID, (event) => {
       const uuid = event.detail.uuid;
       const userContextId = event.detail.userContextId;

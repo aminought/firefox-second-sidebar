@@ -1,4 +1,8 @@
 export const SIDEBAR_BOX_CSS = `
+  #sb2-box-area {
+    position: absolute;
+  }
+
   #sb2-box {
     background-color: var(--sidebar-background-color);
     color: var(--sidebar-text-color);

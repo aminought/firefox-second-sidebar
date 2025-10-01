@@ -3,14 +3,15 @@ import { SidebarEvents, sendEvents } from "./events.mjs";
 import { BrowserElements } from "../browser_elements.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
-import { WindowWrapper } from "../wrappers/window.mjs";
 
 export class SidebarMover {
   constructor() {
     this.#setupListeners();
-    BrowserElements.tabbrowserTabbox.addEventListener("resize", () => {
+    this.ro = new ResizeObserver(() => {
+      SidebarElements.sidebarBoxArea.updatePosition();
       SidebarControllers.sidebarController.setUnpinnedBox("move");
     });
+    this.ro.observe(BrowserElements.tabbrowserTabbox.element);
   }
 
   #setupListeners() {
@@ -20,7 +21,7 @@ export class SidebarMover {
     let isDragging = false;
     let hasMoved = false;
     let dragStartX, dragStartY;
-    let startPosLeft, startPosTop;
+    let startRect;
 
     toolbarTitleWrapper.addEventListener("mousedown", startDrag);
 
@@ -58,13 +59,9 @@ export class SidebarMover {
       hasMoved = false;
       dragStartX = e.clientX;
       dragStartY = e.clientY;
+      startRect = SidebarElements.sidebarBox.getBoundingClientRect();
 
       toolbarTitleWrapper.setProperty("cursor", "grabbing");
-
-      const window = new WindowWrapper();
-      const styles = window.getComputedStyle(SidebarElements.sidebarBox);
-      startPosLeft = parseInt(styles.left);
-      startPosTop = parseInt(styles.top);
 
       document.addEventListener("mousemove", drag);
       document.addEventListener("mouseup", stopDrag);
@@ -86,8 +83,8 @@ export class SidebarMover {
         SidebarElements.webPanelsBrowser.setProperty("pointer-events", "none");
         SidebarControllers.sidebarController.setUnpinnedBox(
           "move",
-          startPosTop + deltaY,
-          startPosLeft + deltaX,
+          startRect.top + deltaY,
+          startRect.left + deltaX,
         );
       }
     }
@@ -96,15 +93,14 @@ export class SidebarMover {
       if (hasMoved) {
         const webPanelController =
           SidebarControllers.webPanelsController.getActive();
-        const box = SidebarControllers.sidebarController.getUnpinnedBox();
-
         sendEvents(SidebarEvents.EDIT_SIDEBAR_UNPINNED_BOX, {
           uuid: webPanelController.getUUID(),
-          mode: "move",
-          top: parseInt(box.top),
-          left: parseInt(box.left),
-          width: parseInt(box.width),
-          height: parseInt(box.height),
+          marginTop: SidebarElements.sidebarBox.getProperty("margin-top"),
+          marginLeft: SidebarElements.sidebarBox.getProperty("margin-left"),
+          marginRight: SidebarElements.sidebarBox.getProperty("margin-right"),
+          marginBottom: SidebarElements.sidebarBox.getProperty("margin-bottom"),
+          width: SidebarElements.sidebarBox.getProperty("width"),
+          height: SidebarElements.sidebarBox.getProperty("height"),
         });
         SidebarControllers.webPanelsController.saveSettings();
       }

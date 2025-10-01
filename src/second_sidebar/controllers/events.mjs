@@ -18,6 +18,7 @@ export const WebPanelEvents = {
   EDIT_WEB_PANEL_ZOOM_OUT: "edit_web_panel_zoom_out",
   EDIT_WEB_PANEL_ZOOM_IN: "edit_web_panel_zoom_in",
   EDIT_WEB_PANEL_ZOOM: "edit_web_panel_zoom",
+  EDIT_WEB_PANEL_ATTACH: "edit_web_panel_attach",
   CREATE_WEB_PANEL: "create_web_panel",
   SWITCH_WEB_PANEL: "switch_web_panel",
   DELETE_WEB_PANEL: "delete_web_panel",

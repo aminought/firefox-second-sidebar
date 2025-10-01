@@ -56,6 +56,7 @@ export class WebPanelPopupEdit extends Panel {
       "Request Favicon",
     );
     this.pinnedMenuList = this.#createPinTypeMenuList();
+    this.unpinnedAttachMenuList = this.#createUnpinnedAttachMenuList();
     this.containerMenuList = new MenuList({ id: "sb2-container-menu-list" });
     this.mobileToggle = new Toggle();
     this.loadOnStartupToggle = new Toggle();
@@ -108,6 +109,19 @@ export class WebPanelPopupEdit extends Panel {
    *
    * @returns {MenuList}
    */
+  #createUnpinnedAttachMenuList() {
+    const menuList = new MenuList();
+    menuList.appendItem("Top-Left", "topleft");
+    menuList.appendItem("Top-Right", "topright");
+    menuList.appendItem("Bottom-Left", "bottomleft");
+    menuList.appendItem("Bottom-Right", "bottomright");
+    return menuList;
+  }
+
+  /**
+   *
+   * @returns {MenuList}
+   */
   #createPeriodicReloadMenuList() {
     const menuList = new MenuList();
     menuList.appendItem("Never", 0);
@@ -138,6 +152,10 @@ export class WebPanelPopupEdit extends Panel {
             createPopupRow(this.faviconURLInput, this.faviconResetButton),
             new ToolbarSeparator(),
             createPopupGroup("Web panel type", this.pinnedMenuList),
+            createPopupGroup(
+              "Unpinned web panel attach",
+              this.unpinnedAttachMenuList,
+            ),
             createPopupGroup("Mobile View", this.mobileToggle),
             createPopupGroup(
               "Load into memory at startup",
@@ -179,6 +197,7 @@ export class WebPanelPopupEdit extends Panel {
    * @param {function(string, string, number):void} callbacks.faviconURL
    * @param {function(string, boolean):void} callbacks.mobile
    * @param {function(string, boolean):void} callbacks.pinned
+   * @param {function(string, string):void} callbacks.attach
    * @param {function(string, string):void} callbacks.userContextId
    * @param {function(string, boolean):void} callbacks.loadOnStartup
    * @param {function(string, boolean):void} callbacks.unloadOnClose
@@ -194,6 +213,7 @@ export class WebPanelPopupEdit extends Panel {
     url,
     faviconURL,
     pinned,
+    attach,
     userContextId,
     mobile,
     loadOnStartup,
@@ -210,6 +230,7 @@ export class WebPanelPopupEdit extends Panel {
     this.onFaviconUrlChange = faviconURL;
     this.onMobileChange = mobile;
     this.onPinnedChange = pinned;
+    this.onUnpinnedAttachChange = attach;
     this.onUserContextIdChange = userContextId;
     this.onLoadOnStartupChange = loadOnStartup;
     this.onUnloadOnCloseChange = unloadOnClose;
@@ -229,6 +250,9 @@ export class WebPanelPopupEdit extends Panel {
     });
     this.pinnedMenuList.addEventListener("command", () => {
       pinned(this.settings.uuid, this.pinnedMenuList.getValue() === "true");
+    });
+    this.unpinnedAttachMenuList.addEventListener("command", () => {
+      attach(this.settings.uuid, this.unpinnedAttachMenuList.getValue());
     });
     this.containerMenuList.addEventListener("command", () => {
       userContextId(this.settings.uuid, this.containerMenuList.getValue());
@@ -329,6 +353,7 @@ export class WebPanelPopupEdit extends Panel {
     this.urlInput.setValue(settings.url);
     this.faviconURLInput.setValue(settings.faviconURL);
     this.pinnedMenuList.setValue(settings.pinned);
+    this.unpinnedAttachMenuList.setValue(settings.attach);
 
     fillContainerMenuList(this.containerMenuList);
     this.containerMenuList.setValue(settings.userContextId);
@@ -379,6 +404,9 @@ export class WebPanelPopupEdit extends Panel {
     }
     if ((this.pinnedMenuList.getValue() === "true") !== this.settings.pinned) {
       this.onPinnedChange(this.settings.uuid, this.settings.pinned);
+    }
+    if (this.unpinnedAttachMenuList.getValue() !== this.settings.attach) {
+      this.onAttachChange(this.settings.uuid, this.settings.attach);
     }
     if (
       String(this.containerMenuList.getValue()) !==
