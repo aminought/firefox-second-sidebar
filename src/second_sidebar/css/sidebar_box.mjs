@@ -81,4 +81,8 @@ export const SIDEBAR_BOX_CSS = `
       }
     }
   }
+
+  #sb2-after-splitter {
+    width: var(--space-small);
+  }
 `;

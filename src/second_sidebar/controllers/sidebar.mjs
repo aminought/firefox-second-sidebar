@@ -308,6 +308,7 @@ export class SidebarController {
   pin() {
     SidebarElements.sidebarBox.setAttribute("pinned", true);
     SidebarElements.sidebarSplitter.show();
+    SidebarElements.afterSplitter.show();
     SidebarElements.sidebarToolbar.changePinButton(true);
     document.removeEventListener("click", this.onClickOutsideWhileUnpinned);
   }
@@ -315,6 +316,7 @@ export class SidebarController {
   unpin() {
     SidebarElements.sidebarBox.setAttribute("pinned", false);
     SidebarElements.sidebarSplitter.hide();
+    SidebarElements.afterSplitter.hide();
     SidebarElements.sidebarToolbar.changePinButton(false);
     document.addEventListener("click", this.onClickOutsideWhileUnpinned);
   }
