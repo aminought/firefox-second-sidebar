@@ -4,6 +4,7 @@ import { OpenLinkInSidebarMenuItem } from "./xul/open_link_in_sidebar_menuitem.m
 import { SidebarBox } from "./xul/sidebar_box.mjs";
 import { SidebarBoxArea } from "./xul/sidebar_box_area.mjs";
 import { SidebarCollapseButton } from "./xul/sidebar_collapse_button.mjs";
+import { SidebarHint } from "./xul/sidebar_hint.mjs";
 import { SidebarMain } from "./xul/sidebar_main.mjs";
 import { SidebarMainMenuPopup } from "./xul/sidebar_main_menupopup.mjs";
 import { SidebarMainPopupSettings } from "./xul/sidebar_main_popup_settings.mjs";
@@ -49,6 +50,7 @@ export class SidebarElements {
     this.sidebarResizerBr = new SidebarResizer("br");
     this.sidebarSplitter = new SidebarSplitter();
     this.afterSplitter = new AfterSplitter();
+    this.sidebarHint = new SidebarHint();
 
     const browser = new XULElement({
       element: document.getElementById("browser"),
@@ -60,6 +62,7 @@ export class SidebarElements {
           this.sidebarBox.appendChildren(
             this.sidebarToolbar,
             this.webPanelsBrowser,
+            this.sidebarHint,
             this.sidebarResizerBl,
             this.sidebarResizerBr,
           ),

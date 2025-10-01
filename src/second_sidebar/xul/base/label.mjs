@@ -20,4 +20,12 @@ export class Label extends XULElement {
     this.element.textContent = text;
     return this;
   }
+
+  /**
+   *
+   * @returns {string}
+   */
+  getText() {
+    return this.element.textContent;
+  }
 }

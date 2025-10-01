@@ -85,4 +85,16 @@ export const SIDEBAR_BOX_CSS = `
   #sb2-after-splitter {
     width: var(--space-small);
   }
+
+  #sb2-hint {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 4px;
+    background-color: var(--sidebar-background-color);
+    color: var(--sidebar-text-color);
+    border-radius: var(--border-radius-medium);
+    box-shadow: var(--content-area-shadow);
+    border: 1px solid var(--sidebar-border-color);
+  }
 `;

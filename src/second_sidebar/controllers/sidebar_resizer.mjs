@@ -2,6 +2,7 @@ import { SidebarEvents, sendEvents } from "./events.mjs";
 
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
+import { showSidebarBoxOffsetHint } from "../utils/hint.mjs";
 
 export class SidebarResizer {
   static MIN_WIDTH = 200;
@@ -13,11 +14,11 @@ export class SidebarResizer {
 
   #setupListeners() {
     let startX, startY;
-    let startRect;
-    let currentResizer;
+    let startRect, currentResizer;
 
     SidebarElements.sidebarResizerBl.addEventListener("mousedown", initResize);
     SidebarElements.sidebarResizerBr.addEventListener("mousedown", initResize);
+
     document.addEventListener(
       "click",
       (e) => {
@@ -28,6 +29,7 @@ export class SidebarResizer {
           SidebarElements.webPanelsBrowser.setProperty("pointer-events", "");
           currentResizer.releasePointerCapture(e.pointerId);
           currentResizer = null;
+          SidebarElements.sidebarHint.hide();
 
           document.removeEventListener("mousemove", resize);
           document.removeEventListener("mouseup", stopResize);
@@ -47,6 +49,7 @@ export class SidebarResizer {
       startX = e.clientX;
       startY = e.clientY;
       startRect = SidebarElements.sidebarBox.getBoundingClientRect();
+      SidebarElements.sidebarHint.show();
 
       document.addEventListener("mousemove", resize);
       document.addEventListener("mouseup", stopResize);
@@ -98,6 +101,7 @@ export class SidebarResizer {
           newHeight,
         );
       }
+      showSidebarBoxOffsetHint();
     }
 
     function stopResize() {

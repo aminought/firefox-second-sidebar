@@ -3,6 +3,7 @@ import { SidebarEvents, sendEvents } from "./events.mjs";
 import { BrowserElements } from "../browser_elements.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
+import { showSidebarBoxOffsetHint } from "../utils/hint.mjs";
 
 export class SidebarMover {
   constructor() {
@@ -19,8 +20,7 @@ export class SidebarMover {
 
     let isDragging = false;
     let hasMoved = false;
-    let dragStartX, dragStartY;
-    let startRect;
+    let dragStartX, dragStartY, startRect;
 
     toolbarTitleWrapper.addEventListener("mousedown", startDrag);
 
@@ -35,6 +35,7 @@ export class SidebarMover {
           if (hasMoved) {
             SidebarElements.webPanelsBrowser.setProperty("pointer-events", "");
             toolbarTitleWrapper.releasePointerCapture(e.pointerId);
+            SidebarElements.sidebarHint.hide();
           }
           toolbarTitleWrapper.setProperty("cursor", "grab");
 
@@ -85,6 +86,8 @@ export class SidebarMover {
           startRect.top + deltaY,
           startRect.left + deltaX,
         );
+        SidebarElements.sidebarHint.show();
+        showSidebarBoxOffsetHint();
       }
     }
 

@@ -178,6 +178,14 @@ export class SidebarToolbar extends Toolbar {
 
   /**
    *
+   * @returns {string}
+   */
+  getTitle() {
+    return this.toolbarTitle.getText();
+  }
+
+  /**
+   *
    * @param {string} title
    * @returns {SidebarToolbar}
    */
