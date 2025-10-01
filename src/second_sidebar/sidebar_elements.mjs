@@ -56,16 +56,16 @@ export class SidebarElements {
     browser.appendChildren(
       this.sidebarWrapper.appendChildren(
         this.sidebarMain,
-        this.sidebarBoxArea.appendChild(
+        this.sidebarBoxArea.appendChildren(
           this.sidebarBox.appendChildren(
             this.sidebarToolbar,
             this.webPanelsBrowser,
             this.sidebarResizerBl,
             this.sidebarResizerBr,
           ),
+          this.sidebarSplitter,
+          this.afterSplitter,
         ),
-        this.sidebarSplitter,
-        this.afterSplitter,
       ),
     );
   }

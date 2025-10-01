@@ -9,7 +9,6 @@ export class SidebarMover {
     this.#setupListeners();
     this.ro = new ResizeObserver(() => {
       SidebarElements.sidebarBoxArea.updatePosition();
-      SidebarControllers.sidebarController.setUnpinnedBox("move");
     });
     this.ro.observe(BrowserElements.tabbrowserTabbox.element);
   }

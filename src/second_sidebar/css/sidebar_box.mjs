@@ -1,6 +1,20 @@
 export const SIDEBAR_BOX_CSS = `
-  #sb2-box-area {
-    position: absolute;
+  #browser:has(#sb2-box[hidden="true"]) {
+    #sb2-box-area {
+      display: contents;
+    }
+  }
+
+  #browser:has(#sb2-box[pinned="true"]) {
+    #sb2-box-area {
+      display: contents;
+    }
+  }
+
+  #browser:has(#sb2-box[pinned="false"]) {
+    #sb2-box-area {
+      position: absolute;
+    }
   }
 
   #sb2-box {
@@ -16,6 +30,14 @@ export const SIDEBAR_BOX_CSS = `
     box-sizing: border-box;
 
     &[pinned="true"] {
+      top: unset !important;
+      left: unset !important;
+      right: unset !important;
+      bottom: unset !important;
+      margin-top: unset !important;
+      margin-left: unset !important;
+      margin-right: unset !important;
+      margin-bottom: unset !important;
       height: 100% !important;
 
       #sb2-toolbar-title-wrapper {
