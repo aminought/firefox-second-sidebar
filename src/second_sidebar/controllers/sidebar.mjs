@@ -28,9 +28,13 @@ export class SidebarController {
     /** @param {MouseEvent} event */
     this.onClickOutsideWhileUnpinned = (event) => {
       const target = new XULElement({ element: event.target });
+      const webPanelController =
+        SidebarControllers.webPanelsController.getActive();
 
       if (
+        webPanelController &&
         isLeftMouseButton(event) &&
+        !webPanelController.getAlwaysOnTop() &&
         !SidebarElements.webPanelsBrowser.activeWebPanelContains(target) &&
         !SidebarElements.sidebarBox.contains(target) &&
         !SidebarElements.sidebarSplitter.contains(target) &&

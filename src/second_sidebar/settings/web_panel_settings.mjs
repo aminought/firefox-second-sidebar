@@ -16,6 +16,7 @@ export class WebPanelSettings {
    * @param {string?} params.marginBottom
    * @param {string?} params.width
    * @param {string?} params.height
+   * @param {boolean?} params.alwaysOnTop
    * @param {boolean?} params.mobile
    * @param {number?} params.zoom
    * @param {boolean?} params.loadOnStartup
@@ -41,6 +42,7 @@ export class WebPanelSettings {
       marginBottom,
       width,
       height,
+      alwaysOnTop,
       mobile,
       zoom,
       loadOnStartup,
@@ -75,6 +77,8 @@ export class WebPanelSettings {
     this.width = width ?? "400px";
     /**@type {string?} */
     this.height = height ?? `calc(100% - ${padding} * 2)`;
+    /**@type {boolean} */
+    this.alwaysOnTop = alwaysOnTop ?? false;
     /**@type {boolean} */
     this.mobile = mobile ?? false;
     /**@type {number} */
@@ -113,6 +117,7 @@ export class WebPanelSettings {
       marginBottom: this.marginBottom,
       width: this.width,
       height: this.height,
+      alwaysOnTop: this.alwaysOnTop,
       mobile: this.mobile,
       zoom: this.zoom,
       loadOnStartup: this.loadOnStartup,

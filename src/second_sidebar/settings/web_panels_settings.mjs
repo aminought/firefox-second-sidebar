@@ -46,6 +46,7 @@ export class WebPanelsSettings {
               marginBottom: webPanelPref.marginBottom,
               width: webPanelPref.width,
               height: webPanelPref.height,
+              alwaysOnTop: webPanelPref.alwaysOnTop,
               mobile: webPanelPref.mobile,
               zoom: webPanelPref.zoom,
               loadOnStartup: webPanelPref.loadOnStartup,

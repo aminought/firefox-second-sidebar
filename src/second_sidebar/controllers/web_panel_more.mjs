@@ -46,6 +46,16 @@ export class WebPanelMoreController {
       },
     );
 
+    SidebarElements.webPanelPopupMore.listenAlwaysOnTopButtonClick(
+      (uuid, alwaysOnTop) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_ALWAYS_ON_TOP, {
+          uuid,
+          alwaysOnTop,
+        });
+        sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
+      },
+    );
+
     SidebarElements.webPanelPopupMore.listenZoomOutButtonClick((uuid) => {
       sendEvents(WebPanelEvents.EDIT_WEB_PANEL_ZOOM_OUT, {
         uuid,

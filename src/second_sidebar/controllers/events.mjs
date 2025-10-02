@@ -7,6 +7,7 @@ export const WebPanelEvents = {
   EDIT_WEB_PANEL_FAVICON_URL: "edit_web_panel_favicon_url",
   EDIT_WEB_PANEL_PINNED: "edit_web_panel_pinned",
   EDIT_WEB_PANEL_USER_CONTEXT_ID: "edit_web_panel_user_context_id",
+  EDIT_WEB_PANEL_ALWAYS_ON_TOP: "edit_web_panel_always_on_top",
   EDIT_WEB_PANEL_MOBILE: "edit_web_panel_mobile",
   EDIT_WEB_PANEL_LOAD_ON_STARTUP: "edit_web_panel_load_on_startup",
   EDIT_WEB_PANEL_UNLOAD_ON_CLOSE: "edit_web_panel_unload_on_close",

@@ -314,6 +314,22 @@ export class WebPanelController {
 
   /**
    *
+   * @returns {boolean}
+   */
+  getAlwaysOnTop() {
+    return this.#settings.alwaysOnTop;
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   */
+  setAlwaysOnTop(value) {
+    this.#settings.alwaysOnTop = value;
+  }
+
+  /**
+   *
    * @returns {number}
    */
   getZoom() {
@@ -536,6 +552,7 @@ export class WebPanelController {
         marginBottom: this.#settings.marginBottom,
         width: this.#settings.width,
         height: this.#settings.height,
+        alwaysOnTop: this.#settings.alwaysOnTop,
         mobile: this.#settings.mobile,
         zoom: this.#settings.zoom,
         loadOnStartup: this.#settings.loadOnStartup,

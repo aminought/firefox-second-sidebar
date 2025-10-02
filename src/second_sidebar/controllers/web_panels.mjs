@@ -147,6 +147,14 @@ export class WebPanelsController {
       webPanelController.setUserContextId(userContextId);
     });
 
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_ALWAYS_ON_TOP, (event) => {
+      const uuid = event.detail.uuid;
+      const alwaysOnTop = event.detail.alwaysOnTop;
+
+      const webPanelController = this.get(uuid);
+      webPanelController.setAlwaysOnTop(alwaysOnTop);
+    });
+
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_MOBILE, (event) => {
       const uuid = event.detail.uuid;
       const mobile = event.detail.mobile;
