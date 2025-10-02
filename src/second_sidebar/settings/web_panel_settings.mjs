@@ -76,7 +76,7 @@ export class WebPanelSettings {
     /**@type {string?} */
     this.width = width ?? "400px";
     /**@type {string?} */
-    this.height = height ?? `calc(100% - ${padding} * 2)`;
+    this.height = height ?? `calc(100% - var(--space-${padding}) * 2)`;
     /**@type {boolean} */
     this.alwaysOnTop = alwaysOnTop ?? false;
     /**@type {boolean} */
