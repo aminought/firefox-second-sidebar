@@ -202,7 +202,31 @@ export class SidebarController {
 
     listenEvent(SidebarEvents.RESET_SIDEBAR_FLOATING_POSITION, (event) => {
       const { uuid, isActiveWindow } = event.detail;
-      this.resetFloatingPosition(uuid);
+      this.resetFloatingSidebar(uuid, true, false, false);
+      if (isActiveWindow) {
+        SidebarControllers.webPanelsController.saveSettings();
+      }
+    });
+
+    listenEvent(SidebarEvents.RESET_SIDEBAR_FLOATING_WIDTH, (event) => {
+      const { uuid, isActiveWindow } = event.detail;
+      this.resetFloatingSidebar(uuid, false, true, false);
+      if (isActiveWindow) {
+        SidebarControllers.webPanelsController.saveSettings();
+      }
+    });
+
+    listenEvent(SidebarEvents.RESET_SIDEBAR_FLOATING_HEIGHT, (event) => {
+      const { uuid, isActiveWindow } = event.detail;
+      this.resetFloatingSidebar(uuid, false, false, true);
+      if (isActiveWindow) {
+        SidebarControllers.webPanelsController.saveSettings();
+      }
+    });
+
+    listenEvent(SidebarEvents.RESET_SIDEBAR_FLOATING_ALL, (event) => {
+      const { uuid, isActiveWindow } = event.detail;
+      this.resetFloatingSidebar(uuid, true, true, true);
       if (isActiveWindow) {
         SidebarControllers.webPanelsController.saveSettings();
       }
@@ -306,18 +330,38 @@ export class SidebarController {
   /**
    *
    * @param {string} uuid
+   * @param {boolean} resetPosition
+   * @param {boolean} resetWidth
+   * @param {boolean} resetHeight
    */
-  resetFloatingPosition(uuid) {
+  resetFloatingSidebar(uuid, resetPosition, resetWidth, resetHeight) {
     const webPanelController = SidebarControllers.webPanelsController.get(uuid);
     const position = SidebarElements.sidebarWrapper.getPosition();
     const padding = this.getUnpinnedPadding();
-    const attach = "default";
-    const marginTop = padding;
-    const marginLeft = position === "left" ? padding : "unset";
-    const marginRight = position === "right" ? padding : "unset";
-    const marginBottom = "unset";
-    const width = SidebarElements.sidebarBox.getProperty("width");
-    const height = `calc(100% - ${padding} * 2)`;
+    const attach = resetPosition ? "default" : webPanelController.getAttach();
+    const marginTop = resetPosition
+      ? padding
+      : SidebarElements.sidebarBox.getProperty("margin-top");
+    const marginLeft = resetPosition
+      ? position === "left"
+        ? padding
+        : "unset"
+      : SidebarElements.sidebarBox.getProperty("margin-left");
+    const marginRight = resetPosition
+      ? position === "right"
+        ? padding
+        : "unset"
+      : SidebarElements.sidebarBox.getProperty("margin-right");
+    const marginBottom = resetPosition
+      ? "unset"
+      : SidebarElements.sidebarBox.getProperty("margin-bottom");
+    const width = resetWidth
+      ? "400px"
+      : SidebarElements.sidebarBox.getProperty("width");
+    const margin = marginTop !== "unset" ? marginTop : marginBottom;
+    const height = resetHeight
+      ? `calc(100% - ${margin} * 2)`
+      : SidebarElements.sidebarBox.getProperty("height");
     webPanelController.setAttach(attach);
     webPanelController.setFloatingPosition(
       marginTop,

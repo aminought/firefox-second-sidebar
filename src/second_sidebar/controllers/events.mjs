@@ -42,6 +42,9 @@ export const SidebarEvents = {
   EDIT_SIDEBAR_PINNED_WIDTH: "edit_sidebar_pinned_width",
   EDIT_SIDEBAR_FLOATING_POSITION: "edit_sidebar_floating_position",
   RESET_SIDEBAR_FLOATING_POSITION: "reset_sidebar_floating_position",
+  RESET_SIDEBAR_FLOATING_WIDTH: "reset_sidebar_floating_width",
+  RESET_SIDEBAR_FLOATING_HEIGHT: "reset_sidebar_floating_height",
+  RESET_SIDEBAR_FLOATING_ALL: "reset_sidebar_floating_all",
   SAVE_SIDEBAR: "save_sidebar",
   COLLAPSE_SIDEBAR: "collapse_sidebar",
 };

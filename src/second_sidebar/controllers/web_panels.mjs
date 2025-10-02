@@ -48,6 +48,30 @@ export class WebPanelsController {
       },
     );
 
+    SidebarElements.webPanelMenuPopup.listenResetWidthItemClick(
+      (webPanelController) => {
+        sendEvents(SidebarEvents.RESET_SIDEBAR_FLOATING_WIDTH, {
+          uuid: webPanelController.getUUID(),
+        });
+      },
+    );
+
+    SidebarElements.webPanelMenuPopup.listenResetHeightItemClick(
+      (webPanelController) => {
+        sendEvents(SidebarEvents.RESET_SIDEBAR_FLOATING_HEIGHT, {
+          uuid: webPanelController.getUUID(),
+        });
+      },
+    );
+
+    SidebarElements.webPanelMenuPopup.listenResetAllItemClick(
+      (webPanelController) => {
+        sendEvents(SidebarEvents.RESET_SIDEBAR_FLOATING_ALL, {
+          uuid: webPanelController.getUUID(),
+        });
+      },
+    );
+
     SidebarElements.webPanelMenuPopup.listenEditItemClick(
       (webPanelController) => {
         SidebarControllers.webPanelEditController.openPopup(webPanelController);
