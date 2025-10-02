@@ -46,6 +46,8 @@ export class SidebarElements {
     this.sidebarBox = new SidebarBox();
     this.sidebarToolbar = new SidebarToolbar();
     this.webPanelsBrowser = new WebPanelsBrowser();
+    this.sidebarResizerTl = new SidebarResizer("tl");
+    this.sidebarResizerTr = new SidebarResizer("tr");
     this.sidebarResizerBl = new SidebarResizer("bl");
     this.sidebarResizerBr = new SidebarResizer("br");
     this.sidebarSplitter = new SidebarSplitter();
@@ -63,6 +65,8 @@ export class SidebarElements {
             this.sidebarToolbar,
             this.webPanelsBrowser,
             this.sidebarHint,
+            this.sidebarResizerTl,
+            this.sidebarResizerTr,
             this.sidebarResizerBl,
             this.sidebarResizerBr,
           ),

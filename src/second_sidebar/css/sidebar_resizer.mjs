@@ -12,6 +12,18 @@ export const SIDEBAR_RESIZER_CSS = `
       background-color: var(--focus-outline-color);
     }
   }
+    
+  .sb2-resizer[type="tl"] {
+      top: -12px;
+      left: -12px;
+      cursor: nwse-resize;
+  }
+
+  .sb2-resizer[type="tr"] {
+      top: -12px;
+      right: -12px;
+      cursor: nesw-resize;
+  }
 
   .sb2-resizer[type="bl"] {
       bottom: -12px;

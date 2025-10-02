@@ -16,6 +16,8 @@ export class SidebarResizer {
     let startX, startY;
     let startRect, currentResizer;
 
+    SidebarElements.sidebarResizerTl.addEventListener("mousedown", initResize);
+    SidebarElements.sidebarResizerTr.addEventListener("mousedown", initResize);
     SidebarElements.sidebarResizerBl.addEventListener("mousedown", initResize);
     SidebarElements.sidebarResizerBr.addEventListener("mousedown", initResize);
 
@@ -66,41 +68,65 @@ export class SidebarResizer {
       const deltaX = e.clientX - startX;
       const deltaY = e.clientY - startY;
 
-      if (type === "br") {
-        let newWidth = startRect.width + deltaX;
-        let newHeight = startRect.height + deltaY;
-        if (newWidth < SidebarResizer.MIN_WIDTH) {
-          newWidth = SidebarResizer.MIN_WIDTH;
+      let top, left, width, height;
+
+      if (type == "tl") {
+        top = startRect.top + deltaY;
+        left = startRect.left + deltaX;
+        width = startRect.width - deltaX;
+        height = startRect.height - deltaY;
+        if (width < SidebarResizer.MIN_WIDTH) {
+          left = left + width - SidebarResizer.MIN_WIDTH;
+          width = SidebarResizer.MIN_WIDTH;
         }
-        if (newHeight < SidebarResizer.MIN_HEIGHT) {
-          newHeight = SidebarResizer.MIN_HEIGHT;
+        if (height < SidebarResizer.MIN_HEIGHT) {
+          top = top + height - SidebarResizer.MIN_HEIGHT;
+          height = SidebarResizer.MIN_HEIGHT;
         }
-        SidebarControllers.sidebarController.setUnpinnedBox(
-          "resize",
-          startRect.top,
-          startRect.left,
-          newWidth,
-          newHeight,
-        );
+      } else if (type === "tr") {
+        top = startRect.top + deltaY;
+        left = startRect.left;
+        width = startRect.width + deltaX;
+        height = startRect.height - deltaY;
+        if (width < SidebarResizer.MIN_WIDTH) {
+          width = SidebarResizer.MIN_WIDTH;
+        }
+        if (height < SidebarResizer.MIN_HEIGHT) {
+          top = top + height - SidebarResizer.MIN_HEIGHT;
+          height = SidebarResizer.MIN_HEIGHT;
+        }
+      } else if (type === "br") {
+        top = startRect.top;
+        left = startRect.left;
+        width = startRect.width + deltaX;
+        height = startRect.height + deltaY;
+        if (width < SidebarResizer.MIN_WIDTH) {
+          width = SidebarResizer.MIN_WIDTH;
+        }
+        if (height < SidebarResizer.MIN_HEIGHT) {
+          height = SidebarResizer.MIN_HEIGHT;
+        }
       } else if (type === "bl") {
-        let newLeft = startRect.left + deltaX;
-        let newWidth = startRect.width - deltaX;
-        let newHeight = startRect.height + deltaY;
-        if (newWidth < SidebarResizer.MIN_WIDTH) {
-          newLeft = newLeft + newWidth - SidebarResizer.MIN_WIDTH;
-          newWidth = SidebarResizer.MIN_WIDTH;
+        top = startRect.top;
+        left = startRect.left + deltaX;
+        width = startRect.width - deltaX;
+        height = startRect.height + deltaY;
+        if (width < SidebarResizer.MIN_WIDTH) {
+          left = left + width - SidebarResizer.MIN_WIDTH;
+          width = SidebarResizer.MIN_WIDTH;
         }
-        if (newHeight < SidebarResizer.MIN_HEIGHT) {
-          newHeight = SidebarResizer.MIN_HEIGHT;
+        if (height < SidebarResizer.MIN_HEIGHT) {
+          height = SidebarResizer.MIN_HEIGHT;
         }
-        SidebarControllers.sidebarController.setUnpinnedBox(
-          "resize",
-          startRect.top,
-          newLeft,
-          newWidth,
-          newHeight,
-        );
       }
+
+      SidebarControllers.sidebarController.setUnpinnedBox(
+        "resize",
+        top,
+        left,
+        width,
+        height,
+      );
       showSidebarBoxPositionHint();
     }
 
