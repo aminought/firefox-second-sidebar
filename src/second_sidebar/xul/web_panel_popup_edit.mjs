@@ -112,10 +112,10 @@ export class WebPanelPopupEdit extends Panel {
   #createUnpinnedAttachMenuList() {
     const menuList = new MenuList();
     menuList.appendItem("Default", "default");
-    menuList.appendItem("Top-Left", "topleft");
-    menuList.appendItem("Top-Right", "topright");
-    menuList.appendItem("Bottom-Left", "bottomleft");
-    menuList.appendItem("Bottom-Right", "bottomright");
+    menuList.appendItem("Top-left", "topleft");
+    menuList.appendItem("Top-right", "topright");
+    menuList.appendItem("Bottom-left", "bottomleft");
+    menuList.appendItem("Bottom-right", "bottomright");
     return menuList;
   }
 
@@ -154,7 +154,7 @@ export class WebPanelPopupEdit extends Panel {
             new ToolbarSeparator(),
             createPopupGroup("Web panel type", this.pinnedMenuList),
             createPopupGroup(
-              "Unpinned web panel attach",
+              "Attach floating web panel to corner",
               this.unpinnedAttachMenuList,
             ),
             createPopupGroup("Mobile View", this.mobileToggle),
