@@ -19,7 +19,7 @@ export class SidebarInjector {
     }
 
     console.log("Loading web panel settings...");
-    const webPanelsSettings = WebPanelsSettings.load();
+    const webPanelsSettings = WebPanelsSettings.load(sidebarSettings.position);
 
     console.log("Elements creation...");
     SidebarElements.create();

@@ -522,6 +522,7 @@ export class WebPanelController {
    */
   dumpSettings() {
     return new WebPanelSettings(
+      SidebarElements.sidebarWrapper.getPosition(),
       this.#settings.uuid,
       this.#settings.url,
       this.#settings.faviconURL,

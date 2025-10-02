@@ -111,6 +111,7 @@ export class WebPanelPopupEdit extends Panel {
    */
   #createUnpinnedAttachMenuList() {
     const menuList = new MenuList();
+    menuList.appendItem("Default", "default");
     menuList.appendItem("Top-Left", "topleft");
     menuList.appendItem("Top-Right", "topright");
     menuList.appendItem("Bottom-Left", "bottomleft");

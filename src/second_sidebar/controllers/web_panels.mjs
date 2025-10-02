@@ -35,6 +35,40 @@ export class WebPanelsController {
       },
     );
 
+    SidebarElements.webPanelMenuPopup.listenResetPositionItemClick(
+      (webPanelController) => {
+        const position = SidebarElements.sidebarWrapper.getPosition();
+        const attach = "default";
+        const marginTop = "8px";
+        const marginLeft = position === "left" ? "8px" : "unset";
+        const marginRight = position === "right" ? "8px" : "unset";
+        const marginBottom = "unset";
+        const width = SidebarElements.sidebarBox.getProperty("width");
+        const height = "calc(100% - 16px)";
+        webPanelController.setAttach(attach);
+        webPanelController.setFloatingPosition(
+          marginTop,
+          marginLeft,
+          marginRight,
+          marginBottom,
+          width,
+          height,
+        );
+        SidebarControllers.sidebarController.setFloatingPosition(
+          attach,
+          marginTop,
+          marginLeft,
+          marginRight,
+          marginBottom,
+          width,
+          height,
+        );
+        if (webPanelController.isActive()) {
+          SidebarControllers.webPanelsController.saveSettings();
+        }
+      },
+    );
+
     SidebarElements.webPanelMenuPopup.listenEditItemClick(
       (webPanelController) => {
         SidebarControllers.webPanelEditController.openPopup(webPanelController);
@@ -314,9 +348,15 @@ export class WebPanelsController {
     }
     const faviconURL = await fetchIconURL(url);
 
-    const webPanelSettings = new WebPanelSettings(uuid, url, faviconURL, {
-      userContextId,
-    });
+    const webPanelSettings = new WebPanelSettings(
+      SidebarElements.sidebarWrapper.getPosition(),
+      uuid,
+      url,
+      faviconURL,
+      {
+        userContextId,
+      },
+    );
     const webPanelController = new WebPanelController(webPanelSettings, {
       loaded: isActiveWindow,
       position: newWebPanelPosition,

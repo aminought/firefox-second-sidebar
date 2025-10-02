@@ -92,6 +92,7 @@ export class SidebarController {
     listenEvent(SidebarEvents.EDIT_SIDEBAR_POSITION, (event) => {
       const value = event.detail.value;
       SidebarElements.sidebarWrapper.setPosition(value);
+      SidebarElements.sidebarBoxArea.updatePosition();
     });
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_PADDING, (event) => {
@@ -266,15 +267,13 @@ export class SidebarController {
   ) {
     let top, left, right, bottom;
     top = left = right = bottom = "unset";
-    if (attach == "topleft") {
-      top = left = "0px";
-    } else if (attach == "topright") {
-      top = right = "0px";
-    } else if (attach == "bottomleft") {
-      bottom = left = "0px";
-    } else if (attach == "bottomright") {
-      bottom = right = "0px";
-    }
+
+    if (attach == "default") attach = this.getDefaultAttach();
+    if (attach == "topleft") top = left = "0px";
+    else if (attach == "topright") top = right = "0px";
+    else if (attach == "bottomleft") bottom = left = "0px";
+    else if (attach == "bottomright") bottom = right = "0px";
+
     SidebarElements.sidebarBox
       .setProperty("top", top)
       .setProperty("left", left)
@@ -286,6 +285,15 @@ export class SidebarController {
       .setProperty("margin-bottom", marginBottom ?? "unset")
       .setProperty("width", width ?? "400px")
       .setProperty("height", height ?? "100%");
+  }
+
+  /**
+   *
+   * @returns {string}
+   */
+  getDefaultAttach() {
+    const position = SidebarElements.sidebarWrapper.getPosition();
+    return position == "left" ? "topleft" : "topright";
   }
 
   close() {
@@ -421,11 +429,12 @@ export class SidebarController {
 
     const webPanelController =
       SidebarControllers.webPanelsController.getActive();
-    const attach = webPanelController.getAttach();
+    let attach = webPanelController.getAttach();
 
     let marginTop_, marginLeft_, marginRight_, marginBottom_;
     marginTop_ = marginLeft_ = marginRight_ = marginBottom_ = "unset";
 
+    if (attach == "default") attach = this.getDefaultAttach();
     if (attach === "topright") {
       marginTop_ = `${top}px`;
       marginRight_ = `${areaRight - left - width}px`;

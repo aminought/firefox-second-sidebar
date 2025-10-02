@@ -3,6 +3,7 @@ import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manage
 export class WebPanelSettings {
   /**
    *
+   * @param {string} position
    * @param {string} uuid
    * @param {string} url
    * @param {string} faviconURL
@@ -26,6 +27,7 @@ export class WebPanelSettings {
    * @param {number} params.hideNotificationBadge
    */
   constructor(
+    position,
     uuid,
     url,
     faviconURL,
@@ -58,19 +60,19 @@ export class WebPanelSettings {
     /**@type {boolean} */
     this.pinned = pinned ?? false;
     /**@type {string?} */
-    this.attach = attach ?? "topleft";
+    this.attach = attach ?? "default";
     /**@type {string?} */
-    this.marginTop = marginTop ?? "unset";
+    this.marginTop = marginTop ?? "8px";
     /**@type {string?} */
-    this.marginLeft = marginLeft ?? "unset";
+    this.marginLeft = marginLeft ?? (position === "left" ? "8px" : "unset");
     /**@type {string?} */
-    this.marginRight = marginRight ?? "unset";
+    this.marginRight = marginRight ?? (position === "right" ? "8px" : "unset");
     /**@type {string?} */
     this.marginBottom = marginBottom ?? "unset";
     /**@type {string?} */
     this.width = width ?? "400px";
     /**@type {string?} */
-    this.height = height ?? "100%";
+    this.height = height ?? "calc(100% - 16px)";
     /**@type {boolean} */
     this.mobile = mobile ?? false;
     /**@type {number} */

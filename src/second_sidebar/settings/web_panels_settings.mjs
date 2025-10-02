@@ -21,15 +21,17 @@ export class WebPanelsSettings {
 
   /**
    *
+   * @param {string} position
    * @returns {WebPanelsSettings}
    */
-  static load() {
+  static load(position) {
     const pref = Settings.load(PREF) ?? [];
 
     return new WebPanelsSettings(
       pref.map(
         (webPanelPref) =>
           new WebPanelSettings(
+            position,
             webPanelPref.uuid,
             webPanelPref.url,
             webPanelPref.faviconURL,
