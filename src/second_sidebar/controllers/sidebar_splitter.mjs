@@ -17,7 +17,6 @@ export class SidebarSplitterController {
         uuid: webPanelController.getUUID(),
         width,
       });
-      SidebarControllers.webPanelsController.saveSettings();
     });
   }
 }

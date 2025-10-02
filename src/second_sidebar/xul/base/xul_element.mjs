@@ -284,6 +284,16 @@ export class XULElement {
 
   /**
    *
+   * @param {string} html
+   * @returns {XULElement}
+   */
+  setInnerHtml(html) {
+    this.element.innerHTML = html;
+    return this;
+  }
+
+  /**
+   *
    * @param {string} event
    * @param {function(MouseEvent):void} callback
    * @returns {XULElement}

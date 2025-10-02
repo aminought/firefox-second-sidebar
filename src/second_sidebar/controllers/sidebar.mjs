@@ -148,7 +148,7 @@ export class SidebarController {
     });
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_PINNED_WIDTH, (event) => {
-      const { uuid, width } = event.detail;
+      const { uuid, width, isActiveWindow } = event.detail;
 
       const webPanelController =
         SidebarControllers.webPanelsController.get(uuid);
@@ -156,9 +156,13 @@ export class SidebarController {
       if (webPanelController.isActive()) {
         this.setPinnedWidth(width);
       }
+
+      if (isActiveWindow) {
+        SidebarControllers.webPanelsController.saveSettings();
+      }
     });
 
-    listenEvent(SidebarEvents.EDIT_SIDEBAR_UNPINNED_BOX, (event) => {
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_FLOATING_POSITION, (event) => {
       const {
         uuid,
         marginTop,
@@ -189,6 +193,14 @@ export class SidebarController {
           width,
           height,
         );
+      }
+    });
+
+    listenEvent(SidebarEvents.RESET_SIDEBAR_FLOATING_POSITION, (event) => {
+      const { uuid, isActiveWindow } = event.detail;
+      this.resetFloatingPosition(uuid);
+      if (isActiveWindow) {
+        SidebarControllers.webPanelsController.saveSettings();
       }
     });
 
@@ -289,6 +301,44 @@ export class SidebarController {
 
   /**
    *
+   * @param {string} uuid
+   */
+  resetFloatingPosition(uuid) {
+    const webPanelController = SidebarControllers.webPanelsController.get(uuid);
+    const position = SidebarElements.sidebarWrapper.getPosition();
+    const padding = this.getUnpinnedPadding();
+    const attach = "default";
+    const marginTop = padding;
+    const marginLeft = position === "left" ? padding : "unset";
+    const marginRight = position === "right" ? padding : "unset";
+    const marginBottom = "unset";
+    const width = SidebarElements.sidebarBox.getProperty("width");
+    const height = `calc(100% - ${padding} * 2)`;
+    webPanelController.setAttach(attach);
+    webPanelController.setFloatingPosition(
+      marginTop,
+      marginLeft,
+      marginRight,
+      marginBottom,
+      width,
+      height,
+    );
+    this.setFloatingPosition(
+      attach,
+      marginTop,
+      marginLeft,
+      marginRight,
+      marginBottom,
+      width,
+      height,
+    );
+    if (webPanelController.isActive()) {
+      SidebarControllers.webPanelsController.saveSettings();
+    }
+  }
+
+  /**
+   *
    * @returns {string}
    */
   getDefaultAttach() {
@@ -342,7 +392,15 @@ export class SidebarController {
    * @returns {string}
    */
   getUnpinnedPadding() {
-    const value = this.root.getProperty("--sb2-box-unpinned-padding");
+    return this.root.getProperty("--sb2-box-unpinned-padding");
+  }
+
+  /**
+   *
+   * @returns {string}
+   */
+  getUnpinnedPaddingKey() {
+    const value = this.getUnpinnedPadding();
     return value.match(/var\(--space-([^)]+)\)/)[1];
   }
 
@@ -362,7 +420,7 @@ export class SidebarController {
    * @param {number} width
    */
   setPinnedWidth(width) {
-    SidebarElements.sidebarBox.setAttribute("width", `${width}px`);
+    SidebarElements.sidebarBox.setProperty("width", `${width}px`);
   }
 
   /**
@@ -512,7 +570,7 @@ export class SidebarController {
       SidebarElements.sidebarWrapper.getPosition(),
       SidebarControllers.sidebarMainController.getPadding(),
       SidebarControllers.webPanelNewController.getNewWebPanelPosition(),
-      this.getUnpinnedPadding(),
+      this.getUnpinnedPaddingKey(),
       this.hideInPopupWindows,
       SidebarElements.sidebarToolbar.getAutoHideBackButton(),
       SidebarElements.sidebarToolbar.getAutoHideForwardButton(),

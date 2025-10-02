@@ -28,6 +28,7 @@ export class WebPanelSettings {
    */
   constructor(
     position,
+    padding,
     uuid,
     url,
     faviconURL,
@@ -62,17 +63,18 @@ export class WebPanelSettings {
     /**@type {string?} */
     this.attach = attach ?? "default";
     /**@type {string?} */
-    this.marginTop = marginTop ?? "8px";
+    this.marginTop = marginTop ?? padding;
     /**@type {string?} */
-    this.marginLeft = marginLeft ?? (position === "left" ? "8px" : "unset");
+    this.marginLeft = marginLeft ?? (position === "left" ? padding : "unset");
     /**@type {string?} */
-    this.marginRight = marginRight ?? (position === "right" ? "8px" : "unset");
+    this.marginRight =
+      marginRight ?? (position === "right" ? padding : "unset");
     /**@type {string?} */
     this.marginBottom = marginBottom ?? "unset";
     /**@type {string?} */
     this.width = width ?? "400px";
     /**@type {string?} */
-    this.height = height ?? "calc(100% - 16px)";
+    this.height = height ?? `calc(100% - ${padding} * 2)`;
     /**@type {boolean} */
     this.mobile = mobile ?? false;
     /**@type {number} */

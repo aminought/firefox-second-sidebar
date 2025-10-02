@@ -1,4 +1,9 @@
-import { WebPanelEvents, listenEvent } from "./events.mjs";
+import {
+  SidebarEvents,
+  WebPanelEvents,
+  listenEvent,
+  sendEvents,
+} from "./events.mjs";
 import { isLeftMouseButton, isMiddleMouseButton } from "../utils/buttons.mjs";
 
 import { NetUtilWrapper } from "../wrappers/net_utils.mjs";
@@ -37,35 +42,9 @@ export class WebPanelsController {
 
     SidebarElements.webPanelMenuPopup.listenResetPositionItemClick(
       (webPanelController) => {
-        const position = SidebarElements.sidebarWrapper.getPosition();
-        const attach = "default";
-        const marginTop = "8px";
-        const marginLeft = position === "left" ? "8px" : "unset";
-        const marginRight = position === "right" ? "8px" : "unset";
-        const marginBottom = "unset";
-        const width = SidebarElements.sidebarBox.getProperty("width");
-        const height = "calc(100% - 16px)";
-        webPanelController.setAttach(attach);
-        webPanelController.setFloatingPosition(
-          marginTop,
-          marginLeft,
-          marginRight,
-          marginBottom,
-          width,
-          height,
-        );
-        SidebarControllers.sidebarController.setFloatingPosition(
-          attach,
-          marginTop,
-          marginLeft,
-          marginRight,
-          marginBottom,
-          width,
-          height,
-        );
-        if (webPanelController.isActive()) {
-          SidebarControllers.webPanelsController.saveSettings();
-        }
+        sendEvents(SidebarEvents.RESET_SIDEBAR_FLOATING_POSITION, {
+          uuid: webPanelController.getUUID(),
+        });
       },
     );
 
@@ -350,6 +329,7 @@ export class WebPanelsController {
 
     const webPanelSettings = new WebPanelSettings(
       SidebarElements.sidebarWrapper.getPosition(),
+      SidebarControllers.sidebarController.getUnpinnedPadding(),
       uuid,
       url,
       faviconURL,

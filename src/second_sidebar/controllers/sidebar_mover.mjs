@@ -3,7 +3,7 @@ import { SidebarEvents, sendEvents } from "./events.mjs";
 import { BrowserElements } from "../browser_elements.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
-import { showSidebarBoxOffsetHint } from "../utils/hint.mjs";
+import { showSidebarBoxPositionHint } from "../utils/hint.mjs";
 
 export class SidebarMover {
   constructor() {
@@ -87,7 +87,7 @@ export class SidebarMover {
           startRect.left + deltaX,
         );
         SidebarElements.sidebarHint.show();
-        showSidebarBoxOffsetHint();
+        showSidebarBoxPositionHint();
       }
     }
 
@@ -95,7 +95,7 @@ export class SidebarMover {
       if (hasMoved) {
         const webPanelController =
           SidebarControllers.webPanelsController.getActive();
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_UNPINNED_BOX, {
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_FLOATING_POSITION, {
           uuid: webPanelController.getUUID(),
           marginTop: SidebarElements.sidebarBox.getProperty("margin-top"),
           marginLeft: SidebarElements.sidebarBox.getProperty("margin-left"),

@@ -523,6 +523,7 @@ export class WebPanelController {
   dumpSettings() {
     return new WebPanelSettings(
       SidebarElements.sidebarWrapper.getPosition(),
+      SidebarControllers.sidebarController.getUnpinnedPadding(),
       this.#settings.uuid,
       this.#settings.url,
       this.#settings.faviconURL,

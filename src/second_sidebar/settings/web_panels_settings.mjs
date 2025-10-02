@@ -22,9 +22,10 @@ export class WebPanelsSettings {
   /**
    *
    * @param {string} position
+   * @param {string} padding
    * @returns {WebPanelsSettings}
    */
-  static load(position) {
+  static load(position, padding) {
     const pref = Settings.load(PREF) ?? [];
 
     return new WebPanelsSettings(
@@ -32,6 +33,7 @@ export class WebPanelsSettings {
         (webPanelPref) =>
           new WebPanelSettings(
             position,
+            padding,
             webPanelPref.uuid,
             webPanelPref.url,
             webPanelPref.faviconURL,

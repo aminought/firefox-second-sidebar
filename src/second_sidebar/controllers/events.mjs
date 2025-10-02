@@ -39,7 +39,8 @@ export const SidebarEvents = {
   EDIT_SIDEBAR_AUTO_HIDE: "edit_sidebar_auto_hide",
   EDIT_SIDEBAR_AUTO_HIDE_ANIMATED: "edit_sidebar_auto_hide_animated",
   EDIT_SIDEBAR_PINNED_WIDTH: "edit_sidebar_pinned_width",
-  EDIT_SIDEBAR_UNPINNED_BOX: "edit_sidebar_unpinned_box",
+  EDIT_SIDEBAR_FLOATING_POSITION: "edit_sidebar_floating_position",
+  RESET_SIDEBAR_FLOATING_POSITION: "reset_sidebar_floating_position",
   SAVE_SIDEBAR: "save_sidebar",
   COLLAPSE_SIDEBAR: "collapse_sidebar",
 };
