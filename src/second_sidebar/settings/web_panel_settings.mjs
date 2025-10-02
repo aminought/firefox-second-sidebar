@@ -4,6 +4,7 @@ export class WebPanelSettings {
   /**
    *
    * @param {string} position
+   * @param {string} defaultMargin
    * @param {string} uuid
    * @param {string} url
    * @param {string} faviconURL
@@ -29,7 +30,7 @@ export class WebPanelSettings {
    */
   constructor(
     position,
-    padding,
+    defaultMargin,
     uuid,
     url,
     faviconURL,
@@ -65,18 +66,19 @@ export class WebPanelSettings {
     /**@type {string?} */
     this.attach = attach ?? "default";
     /**@type {string?} */
-    this.marginTop = marginTop ?? padding;
+    this.marginTop = marginTop ?? defaultMargin;
     /**@type {string?} */
-    this.marginLeft = marginLeft ?? (position === "left" ? padding : "unset");
+    this.marginLeft =
+      marginLeft ?? (position === "left" ? defaultMargin : "unset");
     /**@type {string?} */
     this.marginRight =
-      marginRight ?? (position === "right" ? padding : "unset");
+      marginRight ?? (position === "right" ? defaultMargin : "unset");
     /**@type {string?} */
     this.marginBottom = marginBottom ?? "unset";
     /**@type {string?} */
     this.width = width ?? "400px";
     /**@type {string?} */
-    this.height = height ?? `calc(100% - var(--space-${padding}) * 2)`;
+    this.height = height ?? `calc(100% - ${defaultMargin} * 2)`;
     /**@type {boolean} */
     this.alwaysOnTop = alwaysOnTop ?? false;
     /**@type {boolean} */

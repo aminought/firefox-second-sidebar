@@ -33,7 +33,7 @@ export class WebPanelsSettings {
         (webPanelPref) =>
           new WebPanelSettings(
             position,
-            padding,
+            `var(--space-${padding})`,
             webPanelPref.uuid,
             webPanelPref.url,
             webPanelPref.faviconURL,
