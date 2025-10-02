@@ -282,8 +282,10 @@ export class SidebarController {
     SidebarElements.sidebarToolbar
       .toggleBackButton(!canGoBack)
       .toggleForwardButton(!canGoForward)
-      .setTitle(title)
-      .setHidden(hideToolbar);
+      .setTitle(title);
+    hideToolbar
+      ? SidebarElements.sidebarToolbar.hide()
+      : SidebarElements.sidebarToolbar.show();
     pinned ? this.pin() : this.unpin();
   }
 

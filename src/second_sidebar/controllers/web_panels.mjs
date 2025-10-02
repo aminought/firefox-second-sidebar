@@ -209,7 +209,9 @@ export class WebPanelsController {
 
       const webPanelController = this.get(uuid);
       webPanelController.setHideToolbar(hideToolbar);
-      SidebarElements.sidebarToolbar.setHidden(hideToolbar);
+      hideToolbar
+        ? SidebarElements.sidebarToolbar.hide()
+        : SidebarElements.sidebarToolbar.show();
     });
 
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_HIDE_SOUND_ICON, (event) => {

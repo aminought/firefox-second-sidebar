@@ -70,16 +70,7 @@ export class XULElement {
    * @returns {XULElement}
    */
   hide() {
-    return this.setHidden(true);
-  }
-
-  /**
-   *
-   * @param {boolean} value
-   * @returns {XULElement}
-   */
-  setHidden(value) {
-    return this.setAttribute("hidden", value);
+    return this.setAttribute("hidden", true);
   }
 
   /**
