@@ -24,7 +24,8 @@ export const SIDEBAR_BOX_CSS = `
     box-shadow: var(--content-area-shadow);
     border: 0.5px solid var(--sidebar-border-color);
     overflow: hidden;
-    min-height: 32px;
+    min-width: 200px;
+    min-height: 200px;
     width: 400px;
     height: 100%;
     box-sizing: border-box;
