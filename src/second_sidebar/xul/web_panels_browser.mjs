@@ -71,8 +71,9 @@ export class WebPanelsBrowser extends Browser {
       SessionStoreWrapper.maybeDontRestoreTabs(this.window);
       // Hack SessionStore to prevent restoring this window
       this.#hackSessionStore();
-      // Hack browser commands to hack SessionStore before closing window
-      this.#hackCmdCloseWindow();
+      // Hack browser commands to hack SessionStore
+      // and remove sb2-web-panels-browser before closing window
+      this.#hackCloseWindowCommand();
       this.initialized = true;
       console.log(`${this.window.name}: web panels browser initialized`);
     }
@@ -91,12 +92,13 @@ export class WebPanelsBrowser extends Browser {
     setInterval(() => this.#logWindowsCount("after"), 1000);
   }
 
-  #hackCmdCloseWindow() {
+  #hackCloseWindowCommand() {
     const elements = document.querySelectorAll('[command="cmd_closeWindow"]');
     for (const element of elements) {
       element.removeAttribute("command");
       element.addEventListener("click", (e) => {
         this.#hackSessionStore();
+        this.remove();
         BrowserCommandsWrapper.tryToCloseWindow(e);
       });
     }
