@@ -15,7 +15,7 @@ export class SessionStoreWrapper {
   }
 
   /**
-   * 
+   *
    * @returns {number}
    */
   static getWindowsCount() {
