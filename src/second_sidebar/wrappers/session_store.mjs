@@ -13,4 +13,12 @@ export class SessionStoreWrapper {
   static maybeDontRestoreTabs(window) {
     this.raw.maybeDontRestoreTabs(window.raw);
   }
+
+  /**
+   * 
+   * @returns {number}
+   */
+  static getWindowsCount() {
+    return this.raw.getWindows().length;
+  }
 }

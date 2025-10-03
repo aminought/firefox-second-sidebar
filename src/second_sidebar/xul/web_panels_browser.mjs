@@ -68,14 +68,24 @@ export class WebPanelsBrowser extends Browser {
     } else if (topic === INITIALIZED_EVENT) {
       ObserversWrapper.removeObserver(this, INITIALIZED_EVENT);
       SessionStoreWrapper.maybeDontRestoreTabs(this.window);
-      // Hack to prevent SessionStore from restoring this window
-      ObserversWrapper.notifyObservers(
-        this.window.raw,
-        DOM_WINDOW_CLOSED_EVENT,
-      );
+      // Hack SessionStore to prevent restoring this window
+      this.#hackSessionStore();
       this.initialized = true;
       console.log(`${this.window.name}: web panels browser initialized`);
     }
+  }
+
+  #logWindowsCount(moment) {
+    console.log(
+      `Windows count ${moment}:`,
+      SessionStoreWrapper.getWindowsCount(),
+    );
+  }
+
+  #hackSessionStore() {
+    this.#logWindowsCount("before");
+    ObserversWrapper.notifyObservers(this.window.raw, DOM_WINDOW_CLOSED_EVENT);
+    setInterval(() => this.#logWindowsCount("after"), 1000);
   }
 
   initWindow() {
