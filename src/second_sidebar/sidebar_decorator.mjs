@@ -4,17 +4,19 @@ import { CONTEXT_ITEM_CSS } from "./css/context_item.mjs";
 import { CUSTOMIZATION_CSS } from "./css/customization.mjs";
 import { POPUPS_CSS } from "./css/popups.mjs";
 import { SIDEBAR_BOX_CSS } from "./css/sidebar_box.mjs";
-import { SIDEBAR_CSS } from "./css/sidebar.mjs";
 import { SIDEBAR_MAIN_CSS } from "./css/sidebar_main.mjs";
+import { SIDEBAR_RESIZER_CSS } from "./css/sidebar_resizer.mjs";
+import { SIDEBAR_WRAPPER_CSS } from "./css/sidebar_wrapper.mjs";
 import { SidebarControllers } from "./sidebar_controllers.mjs";
 import { WEB_PANELS_BROWSER_CSS } from "./css/web_panels_browser.mjs";
 import { WEB_PANEL_CSS } from "./css/web_panel.mjs";
 
 const STYLE =
   COMMON_CSS +
+  SIDEBAR_WRAPPER_CSS +
   SIDEBAR_MAIN_CSS +
   SIDEBAR_BOX_CSS +
-  SIDEBAR_CSS +
+  SIDEBAR_RESIZER_CSS +
   WEB_PANELS_BROWSER_CSS +
   WEB_PANEL_CSS +
   POPUPS_CSS +

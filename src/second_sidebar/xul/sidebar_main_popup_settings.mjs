@@ -108,7 +108,7 @@ export class SidebarMainPopupSettings extends Panel {
           new ToolbarSeparator(),
           createPopupGroup("Sidebar width", this.paddingMenuList),
           createPopupGroup(
-            "Floating web panel offset",
+            "Floating web panel default offset",
             this.unpinnedPaddingMenuList,
           ),
           createPopupGroup(

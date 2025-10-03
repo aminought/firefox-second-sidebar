@@ -21,21 +21,32 @@ export class WebPanelsSettings {
 
   /**
    *
+   * @param {string} position
+   * @param {string} padding
    * @returns {WebPanelsSettings}
    */
-  static load() {
+  static load(position, padding) {
     const pref = Settings.load(PREF) ?? [];
 
     return new WebPanelsSettings(
       pref.map(
         (webPanelPref) =>
           new WebPanelSettings(
+            position,
+            `var(--space-${padding})`,
             webPanelPref.uuid,
             webPanelPref.url,
             webPanelPref.faviconURL,
             {
               pinned: webPanelPref.pinned,
+              attach: webPanelPref.attach,
+              marginTop: webPanelPref.marginTop,
+              marginLeft: webPanelPref.marginLeft,
+              marginRight: webPanelPref.marginRight,
+              marginBottom: webPanelPref.marginBottom,
               width: webPanelPref.width,
+              height: webPanelPref.height,
+              alwaysOnTop: webPanelPref.alwaysOnTop,
               mobile: webPanelPref.mobile,
               zoom: webPanelPref.zoom,
               loadOnStartup: webPanelPref.loadOnStartup,

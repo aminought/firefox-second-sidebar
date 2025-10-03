@@ -4,18 +4,19 @@ import { SidebarElements } from "../sidebar_elements.mjs";
 
 export class ContextMenuItemsController {
   constructor() {
-    this.openLinkInSidebarMenuItem = SidebarElements.openLinkInSidebarMenuItem;
-
     this.#setupListeners();
   }
 
   #setupListeners() {
-    this.openLinkInSidebarMenuItem.addEventListener("command", () => {
-      const url = gContextMenu.linkURL;
-      SidebarControllers.webPanelNewController.createWebPanel(
-        url,
-        ScriptSecurityManagerWrapper.DEFAULT_USER_CONTEXT_ID,
-      );
-    });
+    SidebarElements.openLinkInSidebarMenuItem.addEventListener(
+      "command",
+      () => {
+        const url = gContextMenu.linkURL;
+        SidebarControllers.webPanelNewController.createWebPanel(
+          url,
+          ScriptSecurityManagerWrapper.DEFAULT_USER_CONTEXT_ID,
+        );
+      },
+    );
   }
 }

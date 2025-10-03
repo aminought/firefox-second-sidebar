@@ -33,8 +33,6 @@ export class WebPanelController {
    * @param {string?} params.position
    */
   constructor(settings, { loaded = false, position = null } = {}) {
-    this.webPanelsBrowser = SidebarElements.webPanelsBrowser;
-
     this.#settings = settings;
     this.#button = this.#createWebPanelButton(settings, loaded, position);
 
@@ -49,13 +47,9 @@ export class WebPanelController {
         const title = this.#tab.linkedBrowser.getTitle();
         const canGoBack = this.#tab.linkedBrowser.canGoBack();
         const canGoForward = this.#tab.linkedBrowser.canGoForward();
-        SidebarControllers.sidebarController.setToolbarTitle(title);
-        SidebarControllers.sidebarController.setToolbarBackButtonDisabled(
-          !canGoBack,
-        );
-        SidebarControllers.sidebarController.setToolbarForwardButtonDisabled(
-          !canGoForward,
-        );
+        SidebarElements.sidebarToolbar.setTitle(title);
+        SidebarElements.sidebarToolbar.toggleBackButton(!canGoBack);
+        SidebarElements.sidebarToolbar.toggleForwardButton(!canGoForward);
       }
     };
     return {
@@ -135,7 +129,7 @@ export class WebPanelController {
       this.unload();
       this.load();
       if (isActive) {
-        this.webPanelsBrowser.selectWebPanelTab(this.#tab);
+        SidebarElements.webPanelsBrowser.selectWebPanelTab(this.#tab);
       }
     }
 
@@ -177,18 +171,18 @@ export class WebPanelController {
   }
 
   switchWebPanel() {
-    const activeTab = this.webPanelsBrowser.getActiveWebPanelTab();
+    const activeTab = SidebarElements.webPanelsBrowser.getActiveWebPanelTab();
 
     if (activeTab.uuid === this.getUUID()) {
       // Select empty web panel tab
-      this.webPanelsBrowser.deselectWebPanelTab();
+      SidebarElements.webPanelsBrowser.deselectWebPanelTab();
     } else {
       // Create web panel tab if it was not loaded yet
       if (this.isUnloaded()) {
         this.load();
       }
       // Select web panel tab
-      this.webPanelsBrowser.selectWebPanelTab(this.#tab);
+      SidebarElements.webPanelsBrowser.selectWebPanelTab(this.#tab);
     }
   }
 
@@ -200,7 +194,13 @@ export class WebPanelController {
     // Open sidebar if it was closed and configure
     SidebarControllers.sidebarController.open(
       this.#settings.pinned,
+      this.#settings.attach,
+      this.#settings.marginTop,
+      this.#settings.marginLeft,
+      this.#settings.marginRight,
+      this.#settings.marginBottom,
       this.#settings.width,
+      this.#settings.height,
       this.#tab.linkedBrowser.canGoBack(),
       this.#tab.linkedBrowser.canGoForward(),
       this.#tab.linkedBrowser.getTitle(),
@@ -216,7 +216,7 @@ export class WebPanelController {
   }
 
   load() {
-    this.#tab = this.webPanelsBrowser.addWebPanelTab(
+    this.#tab = SidebarElements.webPanelsBrowser.addWebPanelTab(
       this.#settings,
       this.#progressListener,
     );
@@ -237,11 +237,11 @@ export class WebPanelController {
     const activeWebPanelController =
       SidebarControllers.webPanelsController.getActive();
     if (activeWebPanelController?.getUUID() === this.getUUID()) {
-      this.webPanelsBrowser.deselectWebPanelTab();
+      SidebarElements.webPanelsBrowser.deselectWebPanelTab();
     }
 
     if (this.#tab && force) {
-      this.webPanelsBrowser.removeWebPanelTab(this.#tab);
+      SidebarElements.webPanelsBrowser.removeWebPanelTab(this.#tab);
     }
 
     this.#button
@@ -310,6 +310,22 @@ export class WebPanelController {
       }
       this.goHome();
     }
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  getAlwaysOnTop() {
+    return this.#settings.alwaysOnTop;
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   */
+  setAlwaysOnTop(value) {
+    this.#settings.alwaysOnTop = value;
   }
 
   /**
@@ -415,13 +431,54 @@ export class WebPanelController {
       this.#startTimer();
     }
   }
-
   /**
    *
    * @param {number} width
    */
-  setWidth(width) {
+  setPinnedWidth(width) {
+    this.#settings.width = `${width}px`;
+  }
+
+  /**
+   *
+   * @returns {string}
+   */
+  getAttach() {
+    return this.#settings.attach;
+  }
+
+  /**
+   *
+   * @param {string} attach
+   */
+  setAttach(attach) {
+    this.#settings.attach = attach;
+    SidebarControllers.sidebarController.setUnpinnedBox("move");
+  }
+
+  /**
+   *
+   * @param {string} marginTop
+   * @param {string} marginLeft
+   * @param {string} marginRight
+   * @param {string} marginBottom
+   * @param {string} width
+   * @param {string} height
+   */
+  setFloatingPosition(
+    marginTop,
+    marginLeft,
+    marginRight,
+    marginBottom,
+    width,
+    height,
+  ) {
+    this.#settings.marginTop = marginTop;
+    this.#settings.marginLeft = marginLeft;
+    this.#settings.marginRight = marginRight;
+    this.#settings.marginBottom = marginBottom;
     this.#settings.width = width;
+    this.#settings.height = height;
   }
 
   /**
@@ -470,7 +527,7 @@ export class WebPanelController {
 
   remove() {
     if (this.#tab) {
-      this.webPanelsBrowser.removeWebPanelTab(this.#tab);
+      SidebarElements.webPanelsBrowser.removeWebPanelTab(this.#tab);
     }
     this.#button.remove();
   }
@@ -481,12 +538,21 @@ export class WebPanelController {
    */
   dumpSettings() {
     return new WebPanelSettings(
+      SidebarElements.sidebarWrapper.getPosition(),
+      SidebarControllers.sidebarController.getUnpinnedPadding(),
       this.#settings.uuid,
       this.#settings.url,
       this.#settings.faviconURL,
       {
         pinned: this.#settings.pinned,
+        attach: this.#settings.attach,
+        marginTop: this.#settings.marginTop,
+        marginLeft: this.#settings.marginLeft,
+        marginRight: this.#settings.marginRight,
+        marginBottom: this.#settings.marginBottom,
         width: this.#settings.width,
+        height: this.#settings.height,
+        alwaysOnTop: this.#settings.alwaysOnTop,
         mobile: this.#settings.mobile,
         zoom: this.#settings.zoom,
         loadOnStartup: this.#settings.loadOnStartup,
