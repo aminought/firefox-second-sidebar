@@ -2,6 +2,7 @@
 
 import { AppConstantsWrapper } from "../wrappers/app_constants.mjs";
 import { Browser } from "./base/browser.mjs";
+import { BrowserCommandsWrapper } from "../wrappers/browser_commands.mjs";
 import { ObserversWrapper } from "../wrappers/observers.mjs";
 import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manager.mjs";
 import { SessionStoreWrapper } from "../wrappers/session_store.mjs";
@@ -70,6 +71,8 @@ export class WebPanelsBrowser extends Browser {
       SessionStoreWrapper.maybeDontRestoreTabs(this.window);
       // Hack SessionStore to prevent restoring this window
       this.#hackSessionStore();
+      // Hack browser commands to hack SessionStore before closing window
+      this.#hackCmdCloseWindow();
       this.initialized = true;
       console.log(`${this.window.name}: web panels browser initialized`);
     }
@@ -86,6 +89,17 @@ export class WebPanelsBrowser extends Browser {
     this.#logWindowsCount("before");
     ObserversWrapper.notifyObservers(this.window.raw, DOM_WINDOW_CLOSED_EVENT);
     setInterval(() => this.#logWindowsCount("after"), 1000);
+  }
+
+  #hackCmdCloseWindow() {
+    const elements = document.querySelectorAll('[command="cmd_closeWindow"]');
+    for (const element of elements) {
+      element.removeAttribute("command");
+      element.addEventListener("click", (e) => {
+        this.#hackSessionStore();
+        BrowserCommandsWrapper.tryToCloseWindow(e);
+      });
+    }
   }
 
   initWindow() {
