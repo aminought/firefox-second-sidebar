@@ -68,36 +68,31 @@ export class WebPanelsBrowser extends Browser {
       this.initWindow();
     } else if (topic === INITIALIZED_EVENT) {
       ObserversWrapper.removeObserver(this, INITIALIZED_EVENT);
-      SessionStoreWrapper.maybeDontRestoreTabs(this.window);
-      // Hack SessionStore to prevent restoring this window
       this.#hackSessionStore();
-      // Hack browser commands to hack SessionStore
-      // and remove sb2-web-panels-browser before closing window
       this.#hackCloseWindowCommand();
       this.initialized = true;
       console.log(`${this.window.name}: web panels browser initialized`);
     }
   }
 
-  #logWindowsCount(moment) {
-    console.log(
-      `Windows count ${moment}:`,
-      SessionStoreWrapper.getWindowsCount(),
-    );
-  }
-
-  #hackSessionStore() {
-    this.#logWindowsCount("before");
+  /**
+   *
+   * @param {boolean} dontRestoreTabs
+   */
+  #hackSessionStore(dontRestoreTabs = true) {
+    // Hack SessionStore to prevent restoring hidden window
+    if (dontRestoreTabs) SessionStoreWrapper.maybeDontRestoreTabs(this.window);
     ObserversWrapper.notifyObservers(this.window.raw, DOM_WINDOW_CLOSED_EVENT);
-    setInterval(() => this.#logWindowsCount("after"), 1000);
   }
 
   #hackCloseWindowCommand() {
+    // Hack browser commands to hack SessionStore
+    // and remove sb2-web-panels-browser before closing window
     const elements = document.querySelectorAll('[command="cmd_closeWindow"]');
     for (const element of elements) {
       element.removeAttribute("command");
       element.addEventListener("click", (e) => {
-        this.#hackSessionStore();
+        this.#hackSessionStore(false);
         this.remove();
         BrowserCommandsWrapper.tryToCloseWindow(e);
       });
