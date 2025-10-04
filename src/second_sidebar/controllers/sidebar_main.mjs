@@ -53,7 +53,6 @@ export class SidebarMainController {
     });
 
     gNavToolboxWrapper.addEventListener("customizationready", () => {
-      BrowserElements.browser.show();
       BrowserElements.tabbrowserTabbox.appendChild(
         BrowserElements.customizationContainer,
       );

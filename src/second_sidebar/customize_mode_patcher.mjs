@@ -22,6 +22,7 @@ export class CustomizeModePatcher {
       moduleSource
         .replaceAll("CustomizableUI.getPlaceForItem", "getPlaceForItem")
         .replace(/([^/])(CustomizableUI)(\.)/gm, "$1window.$2$3")
+        .replace("browser.hidden = true", "browser.hidden = false")
         .replace(
           "window.CustomizableUI.removeListener",
           "CustomizableUI.removeListener",
