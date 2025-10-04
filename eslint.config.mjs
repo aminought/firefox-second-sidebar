@@ -15,6 +15,7 @@ export default [
         gNavToolbox: "readonly",
         openTrustedLinkIn: "readonly",
         AppConstants: "readonly",
+        BrowserCommands: "readonly",
         Cc: "readonly",
         Ci: "readonly",
         ContextualIdentityService: "readonly",

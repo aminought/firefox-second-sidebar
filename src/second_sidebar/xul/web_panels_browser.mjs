@@ -2,6 +2,7 @@
 
 import { AppConstantsWrapper } from "../wrappers/app_constants.mjs";
 import { Browser } from "./base/browser.mjs";
+import { BrowserCommandsWrapper } from "../wrappers/browser_commands.mjs";
 import { ObserversWrapper } from "../wrappers/observers.mjs";
 import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manager.mjs";
 import { SessionStoreWrapper } from "../wrappers/session_store.mjs";
@@ -67,14 +68,34 @@ export class WebPanelsBrowser extends Browser {
       this.initWindow();
     } else if (topic === INITIALIZED_EVENT) {
       ObserversWrapper.removeObserver(this, INITIALIZED_EVENT);
-      SessionStoreWrapper.maybeDontRestoreTabs(this.window);
-      // Hack to prevent SessionStore from restoring this window
-      ObserversWrapper.notifyObservers(
-        this.window.raw,
-        DOM_WINDOW_CLOSED_EVENT,
-      );
+      this.#hackSessionStore();
+      this.#hackCloseWindowCommand();
       this.initialized = true;
       console.log(`${this.window.name}: web panels browser initialized`);
+    }
+  }
+
+  /**
+   *
+   * @param {boolean} dontRestoreTabs
+   */
+  #hackSessionStore(dontRestoreTabs = true) {
+    // Hack SessionStore to prevent restoring hidden window
+    if (dontRestoreTabs) SessionStoreWrapper.maybeDontRestoreTabs(this.window);
+    ObserversWrapper.notifyObservers(this.window.raw, DOM_WINDOW_CLOSED_EVENT);
+  }
+
+  #hackCloseWindowCommand() {
+    // Hack browser commands to hack SessionStore
+    // and remove sb2-web-panels-browser before closing window
+    const elements = document.querySelectorAll('[command="cmd_closeWindow"]');
+    for (const element of elements) {
+      element.removeAttribute("command");
+      element.addEventListener("click", (e) => {
+        this.#hackSessionStore(false);
+        this.remove();
+        BrowserCommandsWrapper.tryToCloseWindow(e);
+      });
     }
   }
 
