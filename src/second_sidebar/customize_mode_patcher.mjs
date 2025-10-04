@@ -5,9 +5,9 @@ const MODULE_RELATIVE_PATH = "fss/CustomizeMode.sys.mjs";
 export class CustomizeModePatcher {
   static patch() {
     fetch("resource:///modules/CustomizeMode.sys.mjs").then((response) => {
-      response.text().then((moduleSource) => {
+      response.text().then(async (moduleSource) => {
         moduleSource = this.#patchModuleSource(moduleSource);
-        this.#replaceModule(moduleSource);
+        await this.#replaceModule(moduleSource);
       });
     });
   }

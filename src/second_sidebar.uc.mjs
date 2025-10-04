@@ -10,11 +10,11 @@ import { CustomizeModePatcher } from "./second_sidebar/customize_mode_patcher.mj
 import { SidebarDecorator } from "./second_sidebar/sidebar_decorator.mjs";
 import { SidebarInjector } from "./second_sidebar/sidebar_injector.mjs";
 
-const run = async () => {
+const run = () => {
   ContextualIdentityServiceWrapper.ensureDataReady();
   if (SidebarInjector.inject()) {
     SidebarDecorator.decorate();
-    await CustomizeModePatcher.patch();
+    CustomizeModePatcher.patch();
   }
 };
 
