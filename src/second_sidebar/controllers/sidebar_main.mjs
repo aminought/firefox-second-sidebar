@@ -1,3 +1,4 @@
+import { BrowserElements } from "../browser_elements.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { XULElement } from "../xul/base/xul_element.mjs";
@@ -51,12 +52,13 @@ export class SidebarMainController {
       gCustomizeModeWrapper.enter();
     });
 
-    const browser = new XULElement({
-      element: document.getElementById("browser"),
-    });
     gNavToolboxWrapper.addEventListener("customizationready", () => {
-      browser.show();
+      BrowserElements.browser.show();
+      BrowserElements.tabbrowserTabbox.appendChild(
+        BrowserElements.customizationContainer,
+      );
     });
+
     gNavToolboxWrapper.addEventListener("aftercustomization", () => {
       const springs = document.querySelectorAll("#sb2-main toolbarspring");
       for (const spring of springs) {
