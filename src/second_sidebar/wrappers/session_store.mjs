@@ -1,6 +1,4 @@
-/* eslint-disable no-unused-vars */
-import { WindowWrapper } from "./window.mjs";
-/* eslint-enable no-unused-vars */
+import { WindowWrapper } from "./window.mjs"; // eslint-disable-line no-unused-vars
 
 export class SessionStoreWrapper {
   static get raw() {

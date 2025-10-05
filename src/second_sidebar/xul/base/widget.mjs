@@ -1,6 +1,6 @@
 import { CustomizableUIWrapper } from "../../wrappers/customizable_ui.mjs";
 import { ToolbarButton } from "./toolbar_button.mjs";
-import { gCustomizeModeWrapper } from "../../wrappers/g_customize_mode.mjs";
+import { XULElement } from "./xul_element.mjs"; // eslint-disable-line no-unused-vars
 
 export class Widget {
   /**
@@ -62,11 +62,6 @@ export class Widget {
         placement.position + (position === "before" ? 0 : 1),
       );
     }
-    // unwrap toolbar item if needed
-    const wrapper = this.button.element.parentElement;
-    if (wrapper.tagName === "toolbarpaletteitem") {
-      gCustomizeModeWrapper.unwrapToolbarItem(wrapper);
-    }
   }
 
   /**
@@ -85,6 +80,25 @@ export class Widget {
       element: instance.node,
       classList: this.classList,
     });
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  get isWrapped() {
+    return (
+      this.button.parentElement &&
+      this.button.parentElement.tagName === "toolbarpaletteitem"
+    );
+  }
+
+  /**
+   *
+   * @returns {XULElement?}
+   */
+  get parentElement() {
+    return this.button.parentElement;
   }
 
   /**

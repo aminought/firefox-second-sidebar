@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
   applyContainerColor,
   fillContainerMenuList,
@@ -24,11 +23,9 @@ import { PopupFooter } from "./popup_footer.mjs";
 import { PopupHeader } from "./popup_header.mjs";
 import { Toggle } from "./base/toggle.mjs";
 import { ToolbarSeparator } from "./base/toolbar_separator.mjs";
-import { WebPanelController } from "../controllers/web_panel.mjs";
+import { WebPanelController } from "../controllers/web_panel.mjs"; // eslint-disable-line no-unused-vars
 import { fetchIconURL } from "../utils/icons.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
-
-/* eslint-enable no-unused-vars */
 
 const ICONS = {
   DOWN: "chrome://global/skin/icons/arrow-down.svg",

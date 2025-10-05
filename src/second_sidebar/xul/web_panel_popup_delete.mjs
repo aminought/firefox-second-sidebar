@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { createCancelButton, createDeleteButton } from "../utils/xul.mjs";
 
 import { Label } from "./base/label.mjs";
@@ -7,10 +6,8 @@ import { PanelMultiView } from "./base/panel_multi_view.mjs";
 import { PopupBody } from "./popup_body.mjs";
 import { PopupFooter } from "./popup_footer.mjs";
 import { PopupHeader } from "./popup_header.mjs";
-import { WebPanelController } from "../controllers/web_panel.mjs";
+import { WebPanelController } from "../controllers/web_panel.mjs"; // eslint-disable-line no-unused-vars
 import { isLeftMouseButton } from "../utils/buttons.mjs";
-
-/* eslint-enable no-unused-vars */
 
 export class WebPanelPopupDelete extends Panel {
   constructor() {

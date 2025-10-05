@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 import { AppConstantsWrapper } from "../wrappers/app_constants.mjs";
 import { Browser } from "./base/browser.mjs";
 import { BrowserCommandsWrapper } from "../wrappers/browser_commands.mjs";
@@ -7,13 +5,11 @@ import { ObserversWrapper } from "../wrappers/observers.mjs";
 import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manager.mjs";
 import { SessionStoreWrapper } from "../wrappers/session_store.mjs";
 import { Style } from "./base/style.mjs";
-import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
+import { WebPanelSettings } from "../settings/web_panel_settings.mjs"; // eslint-disable-line no-unused-vars
 import { WebPanelTab } from "./web_panel_tab.mjs";
 import { WindowWatcherWrapper } from "../wrappers/window_watcher.mjs";
-import { WindowWrapper } from "../wrappers/window.mjs";
+import { WindowWrapper } from "../wrappers/window.mjs"; // eslint-disable-line no-unused-vars
 import { XULElement } from "./base/xul_element.mjs";
-
-/* eslint-enable no-unused-vars */
 
 const BEFORE_SHOW_EVENT = "browser-window-before-show";
 const INITIALIZED_EVENT = "browser-delayed-startup-finished";
