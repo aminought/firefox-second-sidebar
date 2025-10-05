@@ -24,7 +24,9 @@ export class FaviconsWrapper {
     if ("getFaviconURLForPage" in Favicons) {
       Favicons.getFaviconURLForPage(uri, callback);
     } else {
-      Favicons.getFaviconForPage(uri).then((favicon) => callback(favicon.uri));
+      Favicons.getFaviconForPage(uri).then((favicon) =>
+        callback(favicon ? favicon.uri : null),
+      );
     }
   }
 }
