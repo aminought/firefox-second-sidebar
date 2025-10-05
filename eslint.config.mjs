@@ -23,7 +23,6 @@ export default [
         ChromeUtils: "readonly",
         Favicons: "readonly",
         FullZoom: "readonly",
-        IOUtils: "readonly",
         NetUtil: "readonly",
         Services: "readonly",
         SessionStore: "readonly",
