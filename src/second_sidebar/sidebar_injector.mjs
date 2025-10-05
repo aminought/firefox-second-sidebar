@@ -13,7 +13,7 @@ export class SidebarInjector {
     console.log("Loading sidebar settings...");
     const sidebarSettings = SidebarSettings.load();
 
-    if (isPopupWindow() && sidebarSettings.hideInPopupWindows) {
+    if (isPopupWindow()) {
       console.log("Failed to load second sidebar because window is popup");
       return false;
     }
