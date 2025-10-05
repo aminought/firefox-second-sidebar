@@ -35,7 +35,6 @@ export class SidebarController {
 
     this.#setupListeners();
 
-    this.hideInPopupWindows = false;
     this.autoHideBackButton = false;
     this.autoHideForwardButton = false;
     this.containerBorder = "left";
@@ -126,11 +125,6 @@ export class SidebarController {
     listenEvent(SidebarEvents.EDIT_SIDEBAR_UNPINNED_PADDING, (event) => {
       const value = event.detail.value;
       this.setUnpinnedPadding(value);
-    });
-
-    listenEvent(SidebarEvents.EDIT_SIDEBAR_HIDE_IN_POPUP_WINDOWS, (event) => {
-      const value = event.detail.value;
-      this.hideInPopupWindows = value;
     });
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_BACK_BUTTON, (event) => {
@@ -420,7 +414,6 @@ export class SidebarController {
       settings.newWebPanelPosition,
     );
     this.setUnpinnedPadding(settings.unpinnedPadding);
-    this.hideInPopupWindows = settings.hideInPopupWindows;
     this.autoHideBackButton = settings.autoHideBackButton;
     this.autoHideForwardButton = settings.autoHideForwardButton;
     this.setContainerBorder(settings.containerBorder);
@@ -438,7 +431,6 @@ export class SidebarController {
       SidebarControllers.sidebarMainController.getPadding(),
       SidebarControllers.webPanelNewController.getNewWebPanelPosition(),
       this.getUnpinnedPadding(),
-      this.hideInPopupWindows,
       this.autoHideBackButton,
       this.autoHideForwardButton,
       this.containerBorder,

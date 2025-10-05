@@ -10,13 +10,13 @@ export class SidebarInjector {
    * @returns {boolean}
    */
   static inject() {
-    console.log("Loading sidebar settings...");
-    const sidebarSettings = SidebarSettings.load();
-
-    if (isPopupWindow() && sidebarSettings.hideInPopupWindows) {
+    if (isPopupWindow()) {
       console.log("Failed to load second sidebar because window is popup");
       return false;
     }
+
+    console.log("Loading sidebar settings...");
+    const sidebarSettings = SidebarSettings.load();
 
     console.log("Loading web panel settings...");
     const webPanelsSettings = WebPanelsSettings.load();
