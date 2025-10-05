@@ -1,6 +1,5 @@
 import { CustomizableUIWrapper } from "../../wrappers/customizable_ui.mjs";
 import { ToolbarButton } from "./toolbar_button.mjs";
-import { gCustomizeModeWrapper } from "../../wrappers/g_customize_mode.mjs";
 
 export class Widget {
   /**
@@ -37,7 +36,7 @@ export class Widget {
     this.context = context;
     this.onClick = null;
     try {
-      this.wrapper = CustomizableUIWrapper.createWidget({
+      this.widget = CustomizableUIWrapper.createWidget({
         id,
         onCreated: async (element) => {
           console.log(`Widget ${id} was created`);
@@ -61,11 +60,6 @@ export class Widget {
         placement.area,
         placement.position + (position === "before" ? 0 : 1),
       );
-    }
-    // unwrap toolbar item if needed
-    const wrapper = this.button.element.parentElement;
-    if (wrapper.tagName === "toolbarpaletteitem") {
-      gCustomizeModeWrapper.unwrapToolbarItem(wrapper);
     }
   }
 
