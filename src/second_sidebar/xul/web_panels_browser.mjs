@@ -18,6 +18,7 @@ import { XULElement } from "./base/xul_element.mjs";
 const BEFORE_SHOW_EVENT = "browser-window-before-show";
 const INITIALIZED_EVENT = "browser-delayed-startup-finished";
 const DOM_WINDOW_CLOSED_EVENT = "domwindowclosed";
+const DIALOG_OPEN_EVENT = "dialogopen";
 
 const FIRST_TAB_INDEX = 0;
 
@@ -140,6 +141,20 @@ export class WebPanelsBrowser extends Browser {
 
     // Add class for userChrome.css
     windowRoot.addClass("sb2-webpanels-window");
+
+    // Close first dialog window within first 5 seconds
+    this.#listenToFirstDialogAndClose();
+  }
+
+  #listenToFirstDialogAndClose() {
+    const closeDialog = () => {
+      this.window.gDialogBox.closeDialog();
+      this.window.removeEventListener(DIALOG_OPEN_EVENT, closeDialog);
+    };
+    this.window.addEventListener(DIALOG_OPEN_EVENT, closeDialog);
+    setTimeout(() => {
+      this.window.removeEventListener(DIALOG_OPEN_EVENT, closeDialog);
+    }, 5000);
   }
 
   /**
