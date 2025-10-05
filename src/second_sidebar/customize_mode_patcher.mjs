@@ -1,15 +1,20 @@
 import { removeFile, writeFile } from "./utils/files.mjs";
 
-const MODULE_RELATIVE_PATH = "fss/CustomizeMode.sys.mjs";
+const MODULE_URLS = [
+  "resource:///modules/CustomizeMode.sys.mjs",
+  "moz-src:///browser/components/customizableui/CustomizeMode.sys.mjs",
+];
+const PATCHED_MODULE_RELATIVE_PATH = "fss/CustomizeMode.sys.mjs";
 
 export class CustomizeModePatcher {
   static patch() {
-    fetch("resource:///modules/CustomizeMode.sys.mjs").then((response) => {
-      response.text().then(async (moduleSource) => {
+    for (const moduleUrl of MODULE_URLS) {
+      fetch(moduleUrl).then(async (response) => {
+        let moduleSource = await response.text();
         moduleSource = this.#patchModuleSource(moduleSource);
         await this.#replaceModule(moduleSource);
       });
-    });
+    }
   }
 
   /**
@@ -35,12 +40,15 @@ export class CustomizeModePatcher {
    * @param {string} moduleText
    */
   static async #replaceModule(moduleText) {
-    const chromePath = await writeFile(MODULE_RELATIVE_PATH, moduleText);
+    const chromePath = await writeFile(
+      PATCHED_MODULE_RELATIVE_PATH,
+      moduleText,
+    );
     const module = await import(chromePath);
     ChromeUtils.defineLazyGetter(window, "gCustomizeMode", () => {
       return new module.CustomizeMode(window);
     });
-    removeFile(MODULE_RELATIVE_PATH);
+    removeFile(PATCHED_MODULE_RELATIVE_PATH);
   }
 }
 
