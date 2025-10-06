@@ -65,7 +65,7 @@ export class WebPanelsController {
       if (isActiveWindow) {
         webPanelController.switchWebPanel();
       }
-      this.#unwrapButtons();
+      setTimeout(() => this.#unwrapButtons(), 100);
     });
 
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_URL, (event) => {
