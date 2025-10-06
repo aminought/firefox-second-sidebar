@@ -22,10 +22,10 @@ export class WebPanelsSettings {
   /**
    *
    * @param {string} position
-   * @param {string} padding
+   * @param {string} defaultFloatingOffset
    * @returns {WebPanelsSettings}
    */
-  static load(position, padding) {
+  static load(position, defaultFloatingOffset) {
     const pref = Settings.load(PREF) ?? [];
 
     return new WebPanelsSettings(
@@ -33,7 +33,7 @@ export class WebPanelsSettings {
         (webPanelPref) =>
           new WebPanelSettings(
             position,
-            `var(--space-${padding})`,
+            `var(--space-${defaultFloatingOffset})`,
             webPanelPref.uuid,
             webPanelPref.url,
             webPanelPref.faviconURL,

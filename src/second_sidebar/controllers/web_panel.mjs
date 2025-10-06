@@ -626,7 +626,7 @@ export class WebPanelController {
   dumpSettings() {
     return new WebPanelSettings(
       SidebarElements.sidebarWrapper.getPosition(),
-      SidebarControllers.sidebarController.getDefaultFloatingOffset(),
+      SidebarControllers.sidebarController.getDefaultFloatingOffsetCSS(),
       this.#settings.uuid,
       this.#settings.url,
       this.#settings.faviconURL,

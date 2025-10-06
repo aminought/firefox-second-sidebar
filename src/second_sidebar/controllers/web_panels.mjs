@@ -456,7 +456,7 @@ export class WebPanelsController {
 
     const webPanelSettings = new WebPanelSettings(
       SidebarElements.sidebarWrapper.getPosition(),
-      SidebarControllers.sidebarController.getDefaultFloatingOffset(),
+      SidebarControllers.sidebarController.getDefaultFloatingOffsetCSS(),
       uuid,
       url,
       faviconURL,

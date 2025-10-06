@@ -21,6 +21,7 @@ export class SidebarController {
     this.containerBorder = "left";
     this.autoHideSidebar = false;
     this.hideSidebarAnimated = false;
+    this.defaultFloatingOffset = "small";
   }
 
   #setupListeners() {
@@ -331,7 +332,7 @@ export class SidebarController {
   resetFloatingSidebar(uuid, resetPosition, resetWidth, resetHeight) {
     const webPanelController = SidebarControllers.webPanelsController.get(uuid);
     const position = SidebarElements.sidebarWrapper.getPosition();
-    const padding = this.getDefaultFloatingOffset();
+    const padding = this.getDefaultFloatingOffsetCSS();
     const anchor = resetPosition ? "default" : webPanelController.getAnchor();
     const marginTop = resetPosition
       ? padding
@@ -434,16 +435,15 @@ export class SidebarController {
    * @returns {string}
    */
   getDefaultFloatingOffset() {
-    return this.root.getProperty("--sb2-box-floating-padding");
+    return this.defaultFloatingOffset;
   }
 
   /**
    *
    * @returns {string}
    */
-  getDefaultFloatingOffsetKey() {
-    const value = this.getDefaultFloatingOffset();
-    return value.match(/var\(--space-([^)]+)\)/)[1];
+  getDefaultFloatingOffsetCSS() {
+    return `var(--space-${this.getDefaultFloatingOffset()})`;
   }
 
   /**
@@ -451,10 +451,7 @@ export class SidebarController {
    * @param {string} value
    */
   setDefaultFloatingOffset(value) {
-    document.documentElement.style.setProperty(
-      "--sb2-box-floating-padding",
-      `var(--space-${value})`,
-    );
+    this.defaultFloatingOffset = value;
   }
 
   /**
@@ -641,7 +638,7 @@ export class SidebarController {
       SidebarElements.sidebarWrapper.getPosition(),
       SidebarControllers.sidebarMainController.getPadding(),
       SidebarControllers.webPanelNewController.getNewWebPanelPosition(),
-      this.getDefaultFloatingOffsetKey(),
+      this.getDefaultFloatingOffset(),
       SidebarElements.sidebarToolbar.getAutoHideBackButton(),
       SidebarElements.sidebarToolbar.getAutoHideForwardButton(),
       this.containerBorder,
