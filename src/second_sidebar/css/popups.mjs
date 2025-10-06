@@ -96,4 +96,10 @@ export const POPUPS_CSS = `
       text-align: center;
     }
   }
+
+  .sb2-popup-body:has(#sb2-selector-toggle:not([pressed])) {
+    #sb2-selector-input {
+      display: none;
+    }
+  }
 `;

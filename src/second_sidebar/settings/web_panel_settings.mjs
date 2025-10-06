@@ -25,8 +25,10 @@ export class WebPanelSettings {
    * @param {boolean?} params.hideToolbar
    * @param {string?} params.userContextId
    * @param {number} params.periodicReload
-   * @param {number} params.hideSoundIcon
-   * @param {number} params.hideNotificationBadge
+   * @param {boolean} params.hideSoundIcon
+   * @param {boolean} params.hideNotificationBadge
+   * @param {boolean?} params.selectorEnabled
+   * @param {string?} params.selector
    */
   constructor(
     position,
@@ -53,6 +55,8 @@ export class WebPanelSettings {
       periodicReload,
       hideSoundIcon,
       hideNotificationBadge,
+      selectorEnabled,
+      selector,
     } = {},
   ) {
     /**@type {string} */
@@ -100,6 +104,10 @@ export class WebPanelSettings {
     this.hideSoundIcon = hideSoundIcon ?? false;
     /**@type {boolean} */
     this.hideNotificationBadge = hideNotificationBadge ?? false;
+    /**@type {boolean} */
+    this.selectorEnabled = selectorEnabled ?? false;
+    /**@type {string} */
+    this.selector = selector ?? "";
   }
 
   /**
@@ -129,6 +137,8 @@ export class WebPanelSettings {
       periodicReload: this.periodicReload,
       hideSoundIcon: this.hideSoundIcon,
       hideNotificationBadge: this.hideNotificationBadge,
+      selectorEnabled: this.selectorEnabled,
+      selector: this.selector,
     };
   }
 }

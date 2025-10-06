@@ -1,5 +1,6 @@
 import { Button } from "../xul/base/button.mjs";
 import { HBox } from "../xul/base/hbox.mjs";
+import { Header } from "../xul/base/header.mjs";
 import { Input } from "../xul/base/input.mjs";
 import { Label } from "../xul/base/label.mjs";
 import { ToolbarButton } from "../xul/base/toolbar_button.mjs";
@@ -57,8 +58,8 @@ export function createSubviewIconicButton(
  * @param {string} params.type
  * @returns {Input}
  */
-export function createInput({ type = "text" } = {}) {
-  return new Input().setType(type);
+export function createInput({ id = null, type = "text" } = {}) {
+  return new Input({ id }).setType(type);
 }
 
 /**
@@ -153,6 +154,19 @@ export function createPopupGroup(text, element) {
   return new HBox({
     classList: ["sb2-popup-group"],
   }).appendChildren(new Label().setText(text), element);
+}
+
+/**
+ *
+ * @param {number} level
+ * @param {string} text
+ * @param {XULElement} element
+ * @returns {HBox}
+ */
+export function createPopupHeaderGroup(level, text, element) {
+  return new HBox({
+    classList: ["sb2-popup-group"],
+  }).appendChildren(new Header(level).setText(text), element);
 }
 
 /**

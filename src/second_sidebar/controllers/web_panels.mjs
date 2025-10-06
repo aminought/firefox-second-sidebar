@@ -128,6 +128,39 @@ export class WebPanelsController {
       }, timeout);
     });
 
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_SELECTOR_ENABLED, (event) => {
+      const uuid = event.detail.uuid;
+      const selectorEnabled = event.detail.selectorEnabled;
+
+      const webPanelController = this.get(uuid);
+      const oldSelectorEnabled = webPanelController.getSelectorEnabled();
+      webPanelController.setSelectorEnabled(selectorEnabled);
+
+      if (
+        !webPanelController.isUnloaded() &&
+        oldSelectorEnabled !== selectorEnabled
+      ) {
+        webPanelController.reload();
+      }
+    });
+
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_SELECTOR, (event) => {
+      const uuid = event.detail.uuid;
+      const selector = event.detail.selector;
+      const timeout = event.detail.timeout;
+
+      const webPanelController = this.get(uuid);
+      const oldSelector = webPanelController.getSelector();
+      webPanelController.setSelector(selector);
+
+      clearTimeout(this.urlTimeout);
+      this.urlTimeout = setTimeout(() => {
+        if (!webPanelController.isUnloaded() && oldSelector !== selector) {
+          webPanelController.reload();
+        }
+      }, timeout);
+    });
+
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_FAVICON_URL, (event) => {
       const uuid = event.detail.uuid;
       const faviconURL = event.detail.faviconURL;

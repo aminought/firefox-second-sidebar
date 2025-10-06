@@ -49,6 +49,20 @@ export class WebPanelController {
         SidebarElements.sidebarToolbar.toggleForwardButton(!canGoForward);
       }
     };
+    const onStateChange = (aWebProgress, aRequest, aFlag) => {
+      callback();
+      const STATE_STOP = Ci.nsIWebProgressListener2.STATE_STOP;
+      const STATE_IS_WINDOW = Ci.nsIWebProgressListener2.STATE_IS_WINDOW;
+      if (
+        aWebProgress.isTopLevel &&
+        aFlag & STATE_STOP &&
+        aFlag & STATE_IS_WINDOW
+      ) {
+        if (this.getSelectorEnabled()) {
+          setTimeout(() => this.#applySelector(), 100);
+        }
+      }
+    };
     return {
       QueryInterface: ChromeUtilsWrapper.generateQI([
         "nsIWebProgressListener",
@@ -57,9 +71,45 @@ export class WebPanelController {
         "nsIXULBrowserWindow",
       ]),
       onLocationChange: callback,
-      onStateChange: callback,
+      onStateChange: onStateChange,
       onStatusChange: callback,
     };
+  }
+
+  #applySelector() {
+    const selector = this.getSelector();
+    if (!this.getSelectorEnabled() || selector === "") {
+      return;
+    }
+    const script = `javascript:(() => {
+      var toDelete = [];
+      var e = document.querySelector('${selector}');
+      e.style.margin = 0;
+      while (e.nodeName != "BODY") {
+        for (var c of e.parentElement.children) {
+          if (!["STYLE", "SCRIPT"].includes(c.nodeName) && c !== e) {
+            toDelete.push({ parent: e.parentElement, child: c });
+          }
+        }
+        e.style.overflow = "visible";
+        e.style.minWidth = "0px";
+        e.style.minHeight = "0px";
+        e.style.gridGap = "0px";
+        e = e.parentElement;
+        e.style.padding = 0;
+        e.style.margin = 0;
+        e.style.transform = "none";
+      }
+      toDelete.forEach((e) => {
+        e.parent.removeChild(e.child);
+      });
+      const body = document.querySelector("body");
+      body.style.overflow = "hidden";
+      body.style.minWidth = "0px";
+      body.style.minHeight = "0px";
+      window.scrollTo(0, 0);
+    })()`;
+    this.#tab.linkedBrowser.go(script);
   }
 
   /**
@@ -463,6 +513,38 @@ export class WebPanelController {
 
   /**
    *
+   * @returns {boolean}
+   */
+  getSelectorEnabled() {
+    return this.#settings.selectorEnabled;
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   */
+  setSelectorEnabled(value) {
+    this.#settings.selectorEnabled = value;
+  }
+
+  /**
+   *
+   * @returns {string?}
+   */
+  getSelector() {
+    return this.#settings.selector;
+  }
+
+  /**
+   *
+   * @param {string} selector
+   */
+  setSelector(selector) {
+    this.#settings.selector = selector;
+  }
+
+  /**
+   *
    * @param {string} marginTop
    * @param {string} marginLeft
    * @param {string} marginRight
@@ -567,6 +649,8 @@ export class WebPanelController {
         periodicReload: this.#settings.periodicReload,
         hideSoundIcon: this.#settings.hideSoundIcon,
         hideNotificationBadge: this.#settings.hideNotificationBadge,
+        selectorEnabled: this.#settings.selectorEnabled,
+        selector: this.#settings.selector,
       },
     );
   }

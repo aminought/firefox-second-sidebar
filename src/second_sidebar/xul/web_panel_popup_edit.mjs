@@ -6,6 +6,7 @@ import {
   createCancelButton,
   createInput,
   createPopupGroup,
+  createPopupHeaderGroup,
   createPopupRow,
   createSaveButton,
   createSubviewButton,
@@ -47,6 +48,8 @@ export class WebPanelPopupEdit extends Panel {
     this.setType("arrow").setRole("group");
 
     this.urlInput = createInput();
+    this.selectorToggle = new Toggle({ id: "sb2-selector-toggle" });
+    this.selectorInput = createInput({ id: "sb2-selector-input" });
     this.faviconURLInput = createInput();
     this.faviconResetButton = createSubviewIconicButton(
       ICONS.UNDO,
@@ -146,6 +149,8 @@ export class WebPanelPopupEdit extends Panel {
             new Header(1).setText("Page web address"),
             this.urlInput,
             createPopupGroup("Multi-Account Container", this.containerMenuList),
+            createPopupHeaderGroup(1, "CSS selector", this.selectorToggle),
+            this.selectorInput,
             new Header(1).setText("Favicon web address"),
             createPopupRow(this.faviconURLInput, this.faviconResetButton),
             new ToolbarSeparator(),
@@ -192,6 +197,8 @@ export class WebPanelPopupEdit extends Panel {
    *
    * @param {object} callbacks
    * @param {function(string, string, number):void} callbacks.url
+   * @param {function(string, boolean, number):void} callbacks.selectorEnabled
+   * @param {function(string, string, number):void} callbacks.selector
    * @param {function(string, string, number):void} callbacks.faviconURL
    * @param {function(string, boolean):void} callbacks.mobile
    * @param {function(string, boolean):void} callbacks.pinned
@@ -209,6 +216,8 @@ export class WebPanelPopupEdit extends Panel {
    */
   listenChanges({
     url,
+    selectorEnabled,
+    selector,
     faviconURL,
     pinned,
     attach,
@@ -225,6 +234,8 @@ export class WebPanelPopupEdit extends Panel {
     zoom,
   }) {
     this.onUrlChange = url;
+    this.onSelectorEnabledChange = selectorEnabled;
+    this.onSelectorChange = selector;
     this.onFaviconUrlChange = faviconURL;
     this.onMobileChange = mobile;
     this.onPinnedChange = pinned;
@@ -242,6 +253,12 @@ export class WebPanelPopupEdit extends Panel {
 
     this.urlInput.addEventListener("input", () => {
       url(this.settings.uuid, this.urlInput.getValue(), 1000);
+    });
+    this.selectorToggle.addEventListener("toggle", () => {
+      selectorEnabled(this.settings.uuid, this.selectorToggle.getPressed());
+    });
+    this.selectorInput.addEventListener("input", () => {
+      selector(this.settings.uuid, this.selectorInput.getValue(), 1000);
     });
     this.faviconURLInput.addEventListener("input", () => {
       faviconURL(this.settings.uuid, this.faviconURLInput.getValue(), 1000);
@@ -349,6 +366,8 @@ export class WebPanelPopupEdit extends Panel {
     const settings = webPanelController.dumpSettings();
     this.uuid = settings.uuid;
     this.urlInput.setValue(settings.url);
+    this.selectorToggle.setPressed(settings.selectorEnabled);
+    this.selectorInput.setValue(settings.selector);
     this.faviconURLInput.setValue(settings.faviconURL);
     this.pinnedMenuList.setValue(settings.pinned);
     this.unpinnedAttachMenuList.setValue(settings.attach);
@@ -396,6 +415,15 @@ export class WebPanelPopupEdit extends Panel {
   #cancelChanges() {
     if (this.urlInput.getValue() !== this.settings.url) {
       this.onUrlChange(this.settings.uuid, this.settings.url);
+    }
+    if (this.selectorToggle.getPressed() !== this.settings.selectorEnabled) {
+      this.onSelectorEnabledChange(
+        this.settings.uuid,
+        this.settings.selectorEnabled,
+      );
+    }
+    if (this.selectorInput.getValue() !== this.settings.selector) {
+      this.onSelectorChange(this.settings.uuid, this.settings.selector);
     }
     if (this.faviconURLInput.getValue() !== this.settings.faviconURL) {
       this.onFaviconUrlChange(this.settings.uuid, this.settings.faviconURL);

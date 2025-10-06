@@ -18,6 +18,20 @@ export class WebPanelEditController {
           timeout,
         });
       },
+      selectorEnabled: (uuid, selectorEnabled, timeout = 0) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_SELECTOR_ENABLED, {
+          uuid,
+          selectorEnabled,
+          timeout,
+        });
+      },
+      selector: (uuid, selector, timeout = 0) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_SELECTOR, {
+          uuid,
+          selector,
+          timeout,
+        });
+      },
       faviconURL: (uuid, faviconURL, timeout = 0) => {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_FAVICON_URL, {
           uuid,

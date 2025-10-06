@@ -56,6 +56,8 @@ export class WebPanelsSettings {
               periodicReload: webPanelPref.periodicReload,
               hideSoundIcon: webPanelPref.hideSoundIcon,
               hideNotificationBadge: webPanelPref.hideNotificationBadge,
+              selectorEnabled: webPanelPref.selectorEnabled,
+              selector: webPanelPref.selector,
             },
           ),
       ),
