@@ -56,7 +56,7 @@ export class WebPanelPopupEdit extends Panel {
       "Request Favicon",
     );
     this.pinnedMenuList = this.#createPinTypeMenuList();
-    this.unpinnedAttachMenuList = this.#createUnpinnedAttachMenuList();
+    this.floatingAnchorMenuList = this.#createFloatingAnchorMenuList();
     this.containerMenuList = new MenuList({ id: "sb2-container-menu-list" });
     this.mobileToggle = new Toggle();
     this.loadOnStartupToggle = new Toggle();
@@ -109,7 +109,7 @@ export class WebPanelPopupEdit extends Panel {
    *
    * @returns {MenuList}
    */
-  #createUnpinnedAttachMenuList() {
+  #createFloatingAnchorMenuList() {
     const menuList = new MenuList();
     menuList.appendItem("Default", "default");
     menuList.appendItem("Top-left", "topleft");
@@ -156,8 +156,8 @@ export class WebPanelPopupEdit extends Panel {
             new ToolbarSeparator(),
             createPopupGroup("Web panel type", this.pinnedMenuList),
             createPopupGroup(
-              "Attach floating web panel to corner",
-              this.unpinnedAttachMenuList,
+              "Floating web panel anchor",
+              this.floatingAnchorMenuList,
             ),
             createPopupGroup("Mobile View", this.mobileToggle),
             createPopupGroup(
@@ -202,7 +202,7 @@ export class WebPanelPopupEdit extends Panel {
    * @param {function(string, string, number):void} callbacks.faviconURL
    * @param {function(string, boolean):void} callbacks.mobile
    * @param {function(string, boolean):void} callbacks.pinned
-   * @param {function(string, string):void} callbacks.attach
+   * @param {function(string, string):void} callbacks.anchor
    * @param {function(string, string):void} callbacks.userContextId
    * @param {function(string, boolean):void} callbacks.loadOnStartup
    * @param {function(string, boolean):void} callbacks.unloadOnClose
@@ -220,7 +220,7 @@ export class WebPanelPopupEdit extends Panel {
     selector,
     faviconURL,
     pinned,
-    attach,
+    anchor,
     userContextId,
     mobile,
     loadOnStartup,
@@ -239,7 +239,7 @@ export class WebPanelPopupEdit extends Panel {
     this.onFaviconUrlChange = faviconURL;
     this.onMobileChange = mobile;
     this.onPinnedChange = pinned;
-    this.onUnpinnedAttachChange = attach;
+    this.onFloatingAnchorChange = anchor;
     this.onUserContextIdChange = userContextId;
     this.onLoadOnStartupChange = loadOnStartup;
     this.onUnloadOnCloseChange = unloadOnClose;
@@ -266,8 +266,8 @@ export class WebPanelPopupEdit extends Panel {
     this.pinnedMenuList.addEventListener("command", () => {
       pinned(this.settings.uuid, this.pinnedMenuList.getValue() === "true");
     });
-    this.unpinnedAttachMenuList.addEventListener("command", () => {
-      attach(this.settings.uuid, this.unpinnedAttachMenuList.getValue());
+    this.floatingAnchorMenuList.addEventListener("command", () => {
+      anchor(this.settings.uuid, this.floatingAnchorMenuList.getValue());
     });
     this.containerMenuList.addEventListener("command", () => {
       userContextId(this.settings.uuid, this.containerMenuList.getValue());
@@ -370,7 +370,7 @@ export class WebPanelPopupEdit extends Panel {
     this.selectorInput.setValue(settings.selector);
     this.faviconURLInput.setValue(settings.faviconURL);
     this.pinnedMenuList.setValue(settings.pinned);
-    this.unpinnedAttachMenuList.setValue(settings.attach);
+    this.floatingAnchorMenuList.setValue(settings.anchor);
 
     fillContainerMenuList(this.containerMenuList);
     this.containerMenuList.setValue(settings.userContextId);
@@ -431,8 +431,8 @@ export class WebPanelPopupEdit extends Panel {
     if ((this.pinnedMenuList.getValue() === "true") !== this.settings.pinned) {
       this.onPinnedChange(this.settings.uuid, this.settings.pinned);
     }
-    if (this.unpinnedAttachMenuList.getValue() !== this.settings.attach) {
-      this.onAttachChange(this.settings.uuid, this.settings.attach);
+    if (this.floatingAnchorMenuList.getValue() !== this.settings.anchor) {
+      this.onAnchorChange(this.settings.uuid, this.settings.anchor);
     }
     if (
       String(this.containerMenuList.getValue()) !==

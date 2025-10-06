@@ -10,7 +10,7 @@ export class SidebarSettings {
   /**@type {string} */
   #newWebPanelPosition;
   /**@type {string} */
-  #unpinnedPadding;
+  #defaultFloatingOffset;
   /**@type {boolean} */
   #autoHideBackButton;
   /**@type {boolean} */
@@ -27,7 +27,7 @@ export class SidebarSettings {
    * @param {string} position
    * @param {string} padding
    * @param {string} newWebPanelPosition
-   * @param {string} unpinnedPadding
+   * @param {string} defaultFloatingOffset
    * @param {boolean} autoHideBackButton
    * @param {boolean} autoHideForwardButton
    * @param {string} containerBorder
@@ -38,7 +38,7 @@ export class SidebarSettings {
     position,
     padding,
     newWebPanelPosition,
-    unpinnedPadding,
+    defaultFloatingOffset,
     autoHideBackButton,
     autoHideForwardButton,
     containerBorder,
@@ -48,7 +48,7 @@ export class SidebarSettings {
     this.#position = position;
     this.#padding = padding;
     this.#newWebPanelPosition = newWebPanelPosition;
-    this.#unpinnedPadding = unpinnedPadding;
+    this.#defaultFloatingOffset = defaultFloatingOffset;
     this.#autoHideBackButton = autoHideBackButton;
     this.#autoHideForwardButton = autoHideForwardButton;
     this.#containerBorder = containerBorder;
@@ -68,8 +68,8 @@ export class SidebarSettings {
     return this.#newWebPanelPosition;
   }
 
-  get unpinnedPadding() {
-    return this.#unpinnedPadding;
+  get defaultFloatingOffset() {
+    return this.#defaultFloatingOffset;
   }
 
   get autoHideBackButton() {
@@ -102,7 +102,7 @@ export class SidebarSettings {
       pref.position ?? "right",
       pref.padding ?? "small",
       pref.newWebPanelPosition ?? "before",
-      pref.unpinnedPadding ?? "small",
+      pref.defaultFloatingOffset ?? "small",
       pref.autoHideBackButton ?? false,
       pref.autoHideForwardButton ?? false,
       pref.containerBorder ?? "left",
@@ -116,7 +116,7 @@ export class SidebarSettings {
       position: this.#position,
       padding: this.#padding,
       newWebPanelPosition: this.#newWebPanelPosition,
-      unpinnedPadding: this.#unpinnedPadding,
+      defaultFloatingOffset: this.#defaultFloatingOffset,
       autoHideBackButton: this.#autoHideBackButton,
       autoHideForwardButton: this.#autoHideForwardButton,
       containerBorder: this.#containerBorder,

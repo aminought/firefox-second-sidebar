@@ -29,7 +29,7 @@ export class SidebarMainPopupSettings extends Panel {
       this.#createNewWebPanelPositionMenuList();
     this.autoHideBackToggle = new Toggle();
     this.autoHideForwardToggle = new Toggle();
-    this.unpinnedPaddingMenuList = this.#createPaddingMenuList();
+    this.defaultFloatingOffsetMenuList = this.#createPaddingMenuList();
     this.containerBorderMenuList = this.#createContainerBorderMenuList();
     this.autoHideSidebarToggle = new Toggle();
     this.hideSidebarAnimatedToggle = new Toggle();
@@ -104,8 +104,8 @@ export class SidebarMainPopupSettings extends Panel {
           new ToolbarSeparator(),
           createPopupGroup("Sidebar width", this.paddingMenuList),
           createPopupGroup(
-            "Floating web panel default offset",
-            this.unpinnedPaddingMenuList,
+            "Default floating panel offset",
+            this.defaultFloatingOffsetMenuList,
           ),
           createPopupGroup(
             "New web panel position",
@@ -133,7 +133,7 @@ export class SidebarMainPopupSettings extends Panel {
    * @param {function(string):void} callbacks.position
    * @param {function(string):void} callbacks.padding
    * @param {function(string):void} callbacks.newWebPanelPosition
-   * @param {function(string):void} callbacks.unpinnedPadding
+   * @param {function(string):void} callbacks.defaultFloatingOffset
    * @param {function(boolean):void} callbacks.autoHideBackButton
    * @param {function(boolean):void} callbacks.autoHideForwardButton
    * @param {function(boolean):void} callbacks.containerBorder
@@ -144,7 +144,7 @@ export class SidebarMainPopupSettings extends Panel {
     position,
     padding,
     newWebPanelPosition,
-    unpinnedPadding,
+    defaultFloatingOffset,
     autoHideBackButton,
     autoHideForwardButton,
     containerBorder,
@@ -154,7 +154,7 @@ export class SidebarMainPopupSettings extends Panel {
     this.onPositionChange = position;
     this.onPaddingChange = padding;
     this.onNewWebPanelPositionChange = newWebPanelPosition;
-    this.onUnpinnedPaddingChange = unpinnedPadding;
+    this.onDefaultFloatingOffsetChange = defaultFloatingOffset;
     this.onAutoHideBackButtonChange = autoHideBackButton;
     this.onAutoHideForwardButtonChange = autoHideForwardButton;
     this.onContainerBorderChange = containerBorder;
@@ -170,8 +170,8 @@ export class SidebarMainPopupSettings extends Panel {
     this.newWebPanelPositionMenuList.addEventListener("command", () =>
       newWebPanelPosition(this.newWebPanelPositionMenuList.getValue()),
     );
-    this.unpinnedPaddingMenuList.addEventListener("command", () =>
-      unpinnedPadding(this.unpinnedPaddingMenuList.getValue()),
+    this.defaultFloatingOffsetMenuList.addEventListener("command", () =>
+      defaultFloatingOffset(this.defaultFloatingOffsetMenuList.getValue()),
     );
     this.autoHideBackToggle.addEventListener("toggle", () =>
       autoHideBackButton(this.autoHideBackToggle.getPressed()),
@@ -225,7 +225,7 @@ export class SidebarMainPopupSettings extends Panel {
     this.positionMenuList.setValue(settings.position);
     this.paddingMenuList.setValue(settings.padding);
     this.newWebPanelPositionMenuList.setValue(settings.newWebPanelPosition);
-    this.unpinnedPaddingMenuList.setValue(settings.unpinnedPadding);
+    this.defaultFloatingOffsetMenuList.setValue(settings.defaultFloatingOffset);
     this.autoHideBackToggle.setPressed(settings.autoHideBackButton);
     this.autoHideForwardToggle.setPressed(settings.autoHideForwardButton);
     this.containerBorderMenuList.setValue(settings.containerBorder);
@@ -260,9 +260,10 @@ export class SidebarMainPopupSettings extends Panel {
       this.onNewWebPanelPositionChange(this.settings.newWebPanelPosition);
     }
     if (
-      this.unpinnedPaddingMenuList.getValue() !== this.settings.unpinnedPadding
+      this.defaultFloatingOffsetMenuList.getValue() !==
+      this.settings.defaultFloatingOffset
     ) {
-      this.onUnpinnedPaddingChange(this.settings.unpinnedPadding);
+      this.onDefaultFloatingOffsetChange(this.settings.defaultFloatingOffset);
     }
     if (
       this.autoHideBackToggle.getPressed() !== this.settings.autoHideBackButton

@@ -10,7 +10,7 @@ export class WebPanelSettings {
    * @param {string} faviconURL
    * @param {object?} params
    * @param {boolean?} params.pinned
-   * @param {string?} params.attach
+   * @param {string?} params.anchor
    * @param {string?} params.marginTop
    * @param {string?} params.marginLeft
    * @param {string?} params.marginRight
@@ -38,7 +38,7 @@ export class WebPanelSettings {
     faviconURL,
     {
       pinned,
-      attach,
+      anchor,
       marginTop,
       marginLeft,
       marginRight,
@@ -68,7 +68,7 @@ export class WebPanelSettings {
     /**@type {boolean} */
     this.pinned = pinned ?? false;
     /**@type {string?} */
-    this.attach = attach ?? "default";
+    this.anchor = anchor ?? "default";
     /**@type {string?} */
     this.marginTop = marginTop ?? defaultMargin;
     /**@type {string?} */
@@ -120,7 +120,7 @@ export class WebPanelSettings {
       url: this.url,
       faviconURL: this.faviconURL,
       pinned: this.pinned,
-      attach: this.attach,
+      anchor: this.anchor,
       marginTop: this.marginTop,
       marginLeft: this.marginLeft,
       marginRight: this.marginRight,

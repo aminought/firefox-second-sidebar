@@ -15,9 +15,9 @@ const ICONS = {
   PINNED:
     "chrome://activity-stream/content/data/content/assets/glyph-unpin-16.svg",
   PINNED_ALT: "chrome://newtab/content/data/content/assets/glyph-unpin-16.svg",
-  UNPINNED:
+  FLOATING:
     "chrome://activity-stream/content/data/content/assets/glyph-pin-16.svg",
-  UNPINNED_ALT: "chrome://newtab/content/data/content/assets/glyph-pin-16.svg",
+  FLOATING_ALT: "chrome://newtab/content/data/content/assets/glyph-pin-16.svg",
   CLOSE: "chrome://global/skin/icons/close.svg",
 };
 
@@ -196,7 +196,7 @@ export class SidebarToolbar extends Toolbar {
       .setIcon(
         pinned
           ? await useAvailableIcon(ICONS.PINNED, ICONS.PINNED_ALT)
-          : await useAvailableIcon(ICONS.UNPINNED, ICONS.UNPINNED_ALT),
+          : await useAvailableIcon(ICONS.FLOATING, ICONS.FLOATING_ALT),
       )
       .setTooltipText(pinned ? "Unpin" : "Pin");
     return this;

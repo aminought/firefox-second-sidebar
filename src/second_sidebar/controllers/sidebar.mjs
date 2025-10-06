@@ -25,7 +25,7 @@ export class SidebarController {
 
   #setupListeners() {
     /** @param {MouseEvent} event */
-    this.onClickOutsideWhileUnpinned = (event) => {
+    this.onClickOutsideWhileFloating = (event) => {
       const target = new XULElement({ element: event.target });
       const webPanelController =
         SidebarControllers.webPanelsController.getActive();
@@ -108,9 +108,9 @@ export class SidebarController {
       SidebarControllers.webPanelNewController.setNewWebPanelPosition(value);
     });
 
-    listenEvent(SidebarEvents.EDIT_SIDEBAR_UNPINNED_PADDING, (event) => {
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_DEFAULT_FLOATING_OFFSET, (event) => {
       const value = event.detail.value;
-      this.setUnpinnedPadding(value);
+      this.setDefaultFloatingOffset(value);
     });
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_BACK_BUTTON, (event) => {
@@ -183,7 +183,7 @@ export class SidebarController {
       );
       if (webPanelController.isActive()) {
         this.setFloatingPosition(
-          webPanelController.getAttach(),
+          webPanelController.getAnchor(),
           marginTop,
           marginLeft,
           marginRight,
@@ -237,7 +237,7 @@ export class SidebarController {
   /**
    *
    * @param {boolean} pinned
-   * @param {string?} attach
+   * @param {string?} anchor
    * @param {string?} marginTop
    * @param {string?} marginLeft
    * @param {string?} marginRight
@@ -251,7 +251,7 @@ export class SidebarController {
    */
   open(
     pinned,
-    attach,
+    anchor,
     marginTop,
     marginLeft,
     marginRight,
@@ -264,7 +264,7 @@ export class SidebarController {
     hideToolbar,
   ) {
     this.setFloatingPosition(
-      attach,
+      anchor,
       marginTop,
       marginLeft,
       marginRight,
@@ -282,7 +282,7 @@ export class SidebarController {
   }
 
   /**
-   * @param {string} attach
+   * @param {string} anchor
    * @param {string?} marginTop
    * @param {string?} marginLeft
    * @param {string?} marginRight
@@ -291,7 +291,7 @@ export class SidebarController {
    * @param {string?} height
    */
   setFloatingPosition(
-    attach,
+    anchor,
     marginTop,
     marginLeft,
     marginRight,
@@ -302,11 +302,11 @@ export class SidebarController {
     let top, left, right, bottom;
     top = left = right = bottom = "unset";
 
-    if (attach == "default") attach = this.getDefaultAttach();
-    if (attach == "topleft") top = left = "0px";
-    else if (attach == "topright") top = right = "0px";
-    else if (attach == "bottomleft") bottom = left = "0px";
-    else if (attach == "bottomright") bottom = right = "0px";
+    if (anchor == "default") anchor = this.getDefaultAnchor();
+    if (anchor == "topleft") top = left = "0px";
+    else if (anchor == "topright") top = right = "0px";
+    else if (anchor == "bottomleft") bottom = left = "0px";
+    else if (anchor == "bottomright") bottom = right = "0px";
 
     SidebarElements.sidebarBox
       .setProperty("top", top)
@@ -331,8 +331,8 @@ export class SidebarController {
   resetFloatingSidebar(uuid, resetPosition, resetWidth, resetHeight) {
     const webPanelController = SidebarControllers.webPanelsController.get(uuid);
     const position = SidebarElements.sidebarWrapper.getPosition();
-    const padding = this.getUnpinnedPadding();
-    const attach = resetPosition ? "default" : webPanelController.getAttach();
+    const padding = this.getDefaultFloatingOffset();
+    const anchor = resetPosition ? "default" : webPanelController.getAnchor();
     const marginTop = resetPosition
       ? padding
       : SidebarElements.sidebarBox.getProperty("margin-top");
@@ -356,7 +356,7 @@ export class SidebarController {
     const height = resetHeight
       ? `calc(100% - ${margin} * 2)`
       : SidebarElements.sidebarBox.getProperty("height");
-    webPanelController.setAttach(attach);
+    webPanelController.setAnchor(anchor);
     webPanelController.setFloatingPosition(
       marginTop,
       marginLeft,
@@ -366,7 +366,7 @@ export class SidebarController {
       height,
     );
     this.setFloatingPosition(
-      attach,
+      anchor,
       marginTop,
       marginLeft,
       marginRight,
@@ -383,7 +383,7 @@ export class SidebarController {
    *
    * @returns {string}
    */
-  getDefaultAttach() {
+  getDefaultAnchor() {
     const position = SidebarElements.sidebarWrapper.getPosition();
     return position == "left" ? "topleft" : "topright";
   }
@@ -410,7 +410,7 @@ export class SidebarController {
     SidebarElements.sidebarSplitter.show();
     SidebarElements.afterSplitter.show();
     SidebarElements.sidebarToolbar.changePinButton(true);
-    document.removeEventListener("click", this.onClickOutsideWhileUnpinned);
+    document.removeEventListener("click", this.onClickOutsideWhileFloating);
   }
 
   unpin() {
@@ -418,7 +418,7 @@ export class SidebarController {
     SidebarElements.sidebarSplitter.hide();
     SidebarElements.afterSplitter.hide();
     SidebarElements.sidebarToolbar.changePinButton(false);
-    document.addEventListener("click", this.onClickOutsideWhileUnpinned);
+    document.addEventListener("click", this.onClickOutsideWhileFloating);
   }
 
   /**
@@ -433,16 +433,16 @@ export class SidebarController {
    *
    * @returns {string}
    */
-  getUnpinnedPadding() {
-    return this.root.getProperty("--sb2-box-unpinned-padding");
+  getDefaultFloatingOffset() {
+    return this.root.getProperty("--sb2-box-floating-padding");
   }
 
   /**
    *
    * @returns {string}
    */
-  getUnpinnedPaddingKey() {
-    const value = this.getUnpinnedPadding();
+  getDefaultFloatingOffsetKey() {
+    const value = this.getDefaultFloatingOffset();
     return value.match(/var\(--space-([^)]+)\)/)[1];
   }
 
@@ -450,9 +450,9 @@ export class SidebarController {
    *
    * @param {string} value
    */
-  setUnpinnedPadding(value) {
+  setDefaultFloatingOffset(value) {
     document.documentElement.style.setProperty(
-      "--sb2-box-unpinned-padding",
+      "--sb2-box-floating-padding",
       `var(--space-${value})`,
     );
   }
@@ -533,29 +533,29 @@ export class SidebarController {
 
     const webPanelController =
       SidebarControllers.webPanelsController.getActive();
-    let attach = webPanelController.getAttach();
+    let anchor = webPanelController.getAnchor();
 
     let marginTop, marginLeft, marginRight, marginBottom;
     marginTop = marginLeft = marginRight = marginBottom = "unset";
 
     // calculate margins
-    if (attach == "default") attach = this.getDefaultAttach();
-    if (attach === "topright") {
+    if (anchor == "default") anchor = this.getDefaultAnchor();
+    if (anchor === "topright") {
       marginTop = `${top}px`;
       marginRight = `${areaRight - left - width}px`;
-    } else if (attach == "topleft") {
+    } else if (anchor == "topleft") {
       marginTop = `${top}px`;
       marginLeft = `${left}px`;
-    } else if (attach == "bottomleft") {
+    } else if (anchor == "bottomleft") {
       marginBottom = `${areaBottom - top - height}px`;
       marginLeft = `${left}px`;
-    } else if (attach == "bottomright") {
+    } else if (anchor == "bottomright") {
       marginBottom = `${areaBottom - top - height}px`;
       marginRight = `${areaRight - left - width}px`;
     }
 
     this.setFloatingPosition(
-      attach,
+      anchor,
       marginTop,
       marginLeft,
       marginRight,
@@ -620,7 +620,7 @@ export class SidebarController {
     SidebarControllers.webPanelNewController.setNewWebPanelPosition(
       settings.newWebPanelPosition,
     );
-    this.setUnpinnedPadding(settings.unpinnedPadding);
+    this.setDefaultFloatingOffset(settings.defaultFloatingOffset);
     SidebarElements.sidebarToolbar.setAutoHideBackButton(
       settings.autoHideBackButton,
     );
@@ -641,7 +641,7 @@ export class SidebarController {
       SidebarElements.sidebarWrapper.getPosition(),
       SidebarControllers.sidebarMainController.getPadding(),
       SidebarControllers.webPanelNewController.getNewWebPanelPosition(),
-      this.getUnpinnedPaddingKey(),
+      this.getDefaultFloatingOffsetKey(),
       SidebarElements.sidebarToolbar.getAutoHideBackButton(),
       SidebarElements.sidebarToolbar.getAutoHideForwardButton(),
       this.containerBorder,

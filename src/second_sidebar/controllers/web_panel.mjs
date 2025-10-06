@@ -241,7 +241,7 @@ export class WebPanelController {
     // Open sidebar if it was closed and configure
     SidebarControllers.sidebarController.open(
       this.#settings.pinned,
-      this.#settings.attach,
+      this.#settings.anchor,
       this.#settings.marginTop,
       this.#settings.marginLeft,
       this.#settings.marginRight,
@@ -498,16 +498,16 @@ export class WebPanelController {
    *
    * @returns {string}
    */
-  getAttach() {
-    return this.#settings.attach;
+  getAnchor() {
+    return this.#settings.anchor;
   }
 
   /**
    *
-   * @param {string} attach
+   * @param {string} anchor
    */
-  setAttach(attach) {
-    this.#settings.attach = attach;
+  setAnchor(anchor) {
+    this.#settings.anchor = anchor;
     SidebarControllers.sidebarController.calculateAndSetFloatingPosition();
   }
 
@@ -626,13 +626,13 @@ export class WebPanelController {
   dumpSettings() {
     return new WebPanelSettings(
       SidebarElements.sidebarWrapper.getPosition(),
-      SidebarControllers.sidebarController.getUnpinnedPadding(),
+      SidebarControllers.sidebarController.getDefaultFloatingOffset(),
       this.#settings.uuid,
       this.#settings.url,
       this.#settings.faviconURL,
       {
         pinned: this.#settings.pinned,
-        attach: this.#settings.attach,
+        anchor: this.#settings.anchor,
         marginTop: this.#settings.marginTop,
         marginLeft: this.#settings.marginLeft,
         marginRight: this.#settings.marginRight,

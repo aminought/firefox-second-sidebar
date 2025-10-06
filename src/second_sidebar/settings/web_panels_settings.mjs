@@ -39,7 +39,7 @@ export class WebPanelsSettings {
             webPanelPref.faviconURL,
             {
               pinned: webPanelPref.pinned,
-              attach: webPanelPref.attach,
+              anchor: webPanelPref.anchor,
               marginTop: webPanelPref.marginTop,
               marginLeft: webPanelPref.marginLeft,
               marginRight: webPanelPref.marginRight,

@@ -21,7 +21,7 @@ export const WebPanelEvents = {
   EDIT_WEB_PANEL_ZOOM: "edit_web_panel_zoom",
   EDIT_WEB_PANEL_SELECTOR_ENABLED: "edit_web_panel_selector_enabled",
   EDIT_WEB_PANEL_SELECTOR: "edit_web_panel_selector",
-  EDIT_WEB_PANEL_ATTACH: "edit_web_panel_attach",
+  EDIT_WEB_PANEL_ANCHOR: "edit_web_panel_anchor",
   CREATE_WEB_PANEL: "create_web_panel",
   SWITCH_WEB_PANEL: "switch_web_panel",
   DELETE_WEB_PANEL: "delete_web_panel",
@@ -33,7 +33,7 @@ export const SidebarEvents = {
   EDIT_SIDEBAR_POSITION: "edit_sidebar_position",
   EDIT_SIDEBAR_PADDING: "edit_sidebar_padding",
   EDIT_SIDEBAR_NEW_WEB_PANEL_POSITION: "edit_sidebar_new_web_panel_position",
-  EDIT_SIDEBAR_UNPINNED_PADDING: "edit_sidebar_unpinned_padding",
+  EDIT_SIDEBAR_DEFAULT_FLOATING_OFFSET: "edit_sidebar_floating_padding",
   EDIT_SIDEBAR_AUTO_HIDE_BACK_BUTTON: "edit_sidebar_auto_hide_back_button",
   EDIT_SIDEBAR_AUTO_HIDE_FORWARD_BUTTON:
     "edit_sidebar_auto_hide_forward_button",

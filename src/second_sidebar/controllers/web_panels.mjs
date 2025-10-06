@@ -195,12 +195,12 @@ export class WebPanelsController {
       }
     });
 
-    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_ATTACH, (event) => {
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_ANCHOR, (event) => {
       const uuid = event.detail.uuid;
-      const attach = event.detail.attach;
+      const anchor = event.detail.anchor;
 
       const webPanelController = this.get(uuid);
-      webPanelController.setAttach(attach);
+      webPanelController.setAnchor(anchor);
     });
 
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_USER_CONTEXT_ID, (event) => {
@@ -449,7 +449,7 @@ export class WebPanelsController {
 
     const webPanelSettings = new WebPanelSettings(
       SidebarElements.sidebarWrapper.getPosition(),
-      SidebarControllers.sidebarController.getUnpinnedPadding(),
+      SidebarControllers.sidebarController.getDefaultFloatingOffset(),
       uuid,
       url,
       faviconURL,

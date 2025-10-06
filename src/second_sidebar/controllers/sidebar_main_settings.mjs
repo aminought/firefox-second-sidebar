@@ -18,8 +18,10 @@ export class SidebarMainSettingsController {
         sendEvents(SidebarEvents.EDIT_SIDEBAR_NEW_WEB_PANEL_POSITION, {
           value,
         }),
-      unpinnedPadding: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_UNPINNED_PADDING, { value }),
+      defaultFloatingOffset: (value) =>
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_DEFAULT_FLOATING_OFFSET, {
+          value,
+        }),
       autoHideBackButton: (value) =>
         sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_BACK_BUTTON, { value }),
       autoHideForwardButton: (value) =>

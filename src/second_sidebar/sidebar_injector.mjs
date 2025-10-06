@@ -21,7 +21,7 @@ export class SidebarInjector {
     console.log("Loading web panel settings...");
     const webPanelsSettings = WebPanelsSettings.load(
       sidebarSettings.position,
-      sidebarSettings.unpinnedPadding,
+      sidebarSettings.defaultFloatingOffset,
     );
 
     console.log("Elements creation...");

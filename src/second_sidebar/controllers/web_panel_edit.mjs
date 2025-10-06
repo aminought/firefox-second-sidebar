@@ -45,10 +45,10 @@ export class WebPanelEditController {
           pinned,
         });
       },
-      attach: (uuid, attach) => {
-        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_ATTACH, {
+      anchor: (uuid, anchor) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_ANCHOR, {
           uuid,
-          attach,
+          anchor,
         });
       },
       userContextId: (uuid, userContextId) => {
