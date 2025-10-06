@@ -380,6 +380,22 @@ export class XULElement {
   }
 
   /**
+   *
+   * @returns {number}
+   */
+  get screenX() {
+    return this.element.screenX;
+  }
+
+  /**
+   *
+   * @returns {number}
+   */
+  get screenY() {
+    return this.element.screenY;
+  }
+
+  /**
    * @returns {XULElement}
    */
   remove() {

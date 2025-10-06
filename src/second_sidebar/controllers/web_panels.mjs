@@ -6,6 +6,7 @@ import {
 } from "./events.mjs";
 import { isLeftMouseButton, isMiddleMouseButton } from "../utils/buttons.mjs";
 
+import { BrowserElements } from "../browser_elements.mjs";
 import { NetUtilWrapper } from "../wrappers/net_utils.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
@@ -154,6 +155,9 @@ export class WebPanelsController {
         pinned
           ? SidebarControllers.sidebarController.pin()
           : SidebarControllers.sidebarController.unpin();
+        if (webPanelController.getHideToolbar()) {
+          SidebarControllers.sidebarController.collapseToolbar();
+        }
       }
     });
 
@@ -211,8 +215,8 @@ export class WebPanelsController {
       const webPanelController = this.get(uuid);
       webPanelController.setHideToolbar(hideToolbar);
       hideToolbar
-        ? SidebarElements.sidebarToolbar.hide()
-        : SidebarElements.sidebarToolbar.show();
+        ? SidebarControllers.sidebarController.collapseToolbar()
+        : SidebarControllers.sidebarController.uncollapseToolbar();
     });
 
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_HIDE_SOUND_ICON, (event) => {
@@ -298,6 +302,35 @@ export class WebPanelsController {
 
       if (event.detail.isActiveWindow) {
         this.saveSettings();
+      }
+    });
+
+    BrowserElements.root.addEventListener("mousemove", (event) => {
+      const webPanelController = this.getActive();
+      if (!webPanelController || !webPanelController.getHideToolbar()) return;
+
+      const sidebarBox = SidebarElements.sidebarBox;
+      const sidebarBoxRect = sidebarBox.getBoundingClientRect();
+      const collapsed = SidebarControllers.sidebarController.toolbarCollapsed();
+      if (
+        event.screenX < sidebarBox.screenX ||
+        event.screenY < sidebarBox.screenY ||
+        event.screenX > sidebarBox.screenX + sidebarBoxRect.width ||
+        event.screenY > sidebarBox.screenY + sidebarBoxRect.height
+      ) {
+        if (!collapsed) SidebarControllers.sidebarController.collapseToolbar();
+        return;
+      }
+
+      const toolbar = SidebarElements.sidebarToolbar;
+      const toolbarRect = toolbar.getBoundingClientRect();
+      const uncollapseThreshold = sidebarBox.screenY + toolbarRect.height / 2;
+      const collapseThreshold = sidebarBox.screenY + toolbarRect.height;
+
+      if (collapsed && event.screenY < uncollapseThreshold) {
+        SidebarControllers.sidebarController.uncollapseToolbar();
+      } else if (!collapsed && event.screenY > collapseThreshold) {
+        SidebarControllers.sidebarController.collapseToolbar();
       }
     });
   }

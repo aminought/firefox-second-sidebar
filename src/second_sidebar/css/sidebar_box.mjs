@@ -60,6 +60,7 @@ export const SIDEBAR_BOX_CSS = `
       padding: 1px;
       overflow: scroll;
       -moz-window-dragging: no-drag;
+      transition: 0.4s margin-top ease-out;
 
       #sb2-toolbar-title-wrapper {
         display: flex;

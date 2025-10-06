@@ -277,9 +277,7 @@ export class SidebarController {
       .toggleBackButton(!canGoBack)
       .toggleForwardButton(!canGoForward)
       .setTitle(title);
-    hideToolbar
-      ? SidebarElements.sidebarToolbar.hide()
-      : SidebarElements.sidebarToolbar.show();
+    hideToolbar ? this.collapseToolbar() : this.uncollapseToolbar();
     pinned ? this.pin() : this.unpin();
   }
 
@@ -589,6 +587,27 @@ export class SidebarController {
     SidebarElements.sidebarCollapseButton
       .setDisabled(value)
       .setOpen(!SidebarControllers.collapseController.collapsed());
+  }
+
+  collapseToolbar() {
+    SidebarElements.sidebarToolbar.setProperty(
+      "margin-top",
+      -SidebarElements.sidebarToolbar.getBoundingClientRect().height + "px",
+    );
+  }
+
+  uncollapseToolbar() {
+    SidebarElements.sidebarToolbar.setProperty("margin-top", "0px");
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  toolbarCollapsed() {
+    const zeros = ["0px", ""];
+    const marginTop = SidebarElements.sidebarToolbar.getProperty("margin-top");
+    return !zeros.includes(marginTop);
   }
 
   /**

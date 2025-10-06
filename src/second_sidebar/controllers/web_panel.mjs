@@ -394,6 +394,14 @@ export class WebPanelController {
 
   /**
    *
+   * @returns {boolean}
+   */
+  getHideToolbar() {
+    return this.#settings.hideToolbar;
+  }
+
+  /**
+   *
    * @param {boolean} value
    */
   setHideToolbar(value) {
