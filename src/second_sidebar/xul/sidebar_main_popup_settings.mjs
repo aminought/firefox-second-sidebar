@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
   createCancelButton,
   createPopupGroup,
@@ -11,12 +10,10 @@ import { PanelMultiView } from "./base/panel_multi_view.mjs";
 import { PopupBody } from "./popup_body.mjs";
 import { PopupFooter } from "./popup_footer.mjs";
 import { PopupHeader } from "./popup_header.mjs";
-import { SidebarSettings } from "../settings/sidebar_settings.mjs";
+import { SidebarSettings } from "../settings/sidebar_settings.mjs"; // eslint-disable-line no-unused-vars
 import { Toggle } from "./base/toggle.mjs";
 import { ToolbarSeparator } from "./base/toolbar_separator.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
-
-/* eslint-enable no-unused-vars */
 
 export class SidebarMainPopupSettings extends Panel {
   constructor() {

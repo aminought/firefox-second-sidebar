@@ -37,7 +37,7 @@ https://github.com/user-attachments/assets/e4a2c01a-0d32-463d-84da-ffa6b090508c
 
 1. Install [fx-autoconfig](https://github.com/MrOtherGuy/fx-autoconfig).
 2. Copy the contents of the `src/` directory (`second_sidebar/` and `second_sidebar.uc.mjs`) into `chrome/JS/`.
-3. Enable `dom.allow_scripts_to_close_windows` and `security.allow_unsafe_dangerous_privileged_evil_eval` in `about:config`.
+3. Enable `dom.allow_scripts_to_close_windows` in `about:config`.
 4. [Clear](https://github.com/MrOtherGuy/fx-autoconfig?tab=readme-ov-file#deleting-startup-cache) startup-cache.
 5. Have fun!
 

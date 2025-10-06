@@ -351,6 +351,24 @@ export class XULElement {
   }
 
   /**
+   *
+   * @returns {string}
+   */
+  get tagName() {
+    return this.element.tagName;
+  }
+
+  /**
+   *
+   * @returns {XULElement?}
+   */
+  get parentElement() {
+    return this.element.parentElement
+      ? new XULElement({ element: this.element.parentElement })
+      : null;
+  }
+
+  /**
    * @returns {XULElement}
    */
   remove() {

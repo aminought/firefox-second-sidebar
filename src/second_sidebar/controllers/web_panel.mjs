@@ -1,5 +1,4 @@
 import { FALLBACK_ICON, useAvailableIcon } from "../utils/icons.mjs";
-/* eslint-disable no-unused-vars */
 import { WebPanelEvents, sendEvent } from "./events.mjs";
 
 import { ChromeUtilsWrapper } from "../wrappers/chrome_utils.mjs";
@@ -7,10 +6,8 @@ import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { WebPanelButton } from "../xul/web_panel_button.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
-import { WebPanelTab } from "../xul/web_panel_tab.mjs";
+import { WebPanelTab } from "../xul/web_panel_tab.mjs"; // eslint-disable-line no-unused-vars
 import { ZoomManagerWrapper } from "../wrappers/zoom_manager.mjs";
-
-/* eslint-enable no-unused-vars */
 
 const DEFAULT_ZOOM = 1;
 

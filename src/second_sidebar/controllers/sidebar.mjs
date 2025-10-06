@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
   SidebarEvents,
   WebPanelEvents,
@@ -10,12 +9,10 @@ import { SidebarControllerWrapper } from "../wrappers/sidebar_controller.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { SidebarSettings } from "../settings/sidebar_settings.mjs";
-import { ToolbarButton } from "../xul/base/toolbar_button.mjs";
+import { ToolbarButton } from "../xul/base/toolbar_button.mjs"; // eslint-disable-line no-unused-vars
 import { XULElement } from "../xul/base/xul_element.mjs";
 import { changeContainerBorder } from "../utils/containers.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
-
-/* eslint-enable no-unused-vars */
 
 export class SidebarController {
   constructor() {

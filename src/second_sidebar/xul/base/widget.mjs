@@ -1,5 +1,6 @@
 import { CustomizableUIWrapper } from "../../wrappers/customizable_ui.mjs";
 import { ToolbarButton } from "./toolbar_button.mjs";
+import { XULElement } from "./xul_element.mjs"; // eslint-disable-line no-unused-vars
 
 export class Widget {
   /**
@@ -36,7 +37,7 @@ export class Widget {
     this.context = context;
     this.onClick = null;
     try {
-      this.widget = CustomizableUIWrapper.createWidget({
+      this.wrapper = CustomizableUIWrapper.createWidget({
         id,
         onCreated: async (element) => {
           console.log(`Widget ${id} was created`);
@@ -79,6 +80,25 @@ export class Widget {
       element: instance.node,
       classList: this.classList,
     });
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  get isWrapped() {
+    return (
+      this.button.parentElement &&
+      this.button.parentElement.tagName === "toolbarpaletteitem"
+    );
+  }
+
+  /**
+   *
+   * @returns {XULElement?}
+   */
+  get parentElement() {
+    return this.button.parentElement;
   }
 
   /**
