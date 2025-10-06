@@ -8,6 +8,10 @@ import { showSidebarBoxPositionHint } from "../utils/hint.mjs";
 export class SidebarMover {
   constructor() {
     this.#setupListeners();
+    setTimeout(() => this.#setupResizeObserver(), 1000);
+  }
+
+  #setupResizeObserver() {
     this.ro = new ResizeObserver(() => {
       SidebarElements.sidebarBoxArea.updatePosition();
     });
