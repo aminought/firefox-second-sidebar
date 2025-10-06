@@ -201,6 +201,43 @@ export class WebPanelsController {
 
       const webPanelController = this.get(uuid);
       webPanelController.setAnchor(anchor);
+
+      if (webPanelController.isActive()) {
+        SidebarControllers.sidebarController.calculateAndSetFloatingPosition({
+          widthType: webPanelController.getWidthType(),
+          heightType: webPanelController.getHeightType(),
+        });
+      }
+    });
+
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_WIDTH_TYPE, (event) => {
+      const uuid = event.detail.uuid;
+      const widthType = event.detail.widthType;
+
+      const webPanelController = this.get(uuid);
+      webPanelController.setWidthType(widthType);
+
+      if (webPanelController.isActive()) {
+        SidebarControllers.sidebarController.calculateAndSetFloatingPosition({
+          widthType: webPanelController.getWidthType(),
+          heightType: webPanelController.getHeightType(),
+        });
+      }
+    });
+
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_HEIGHT_TYPE, (event) => {
+      const uuid = event.detail.uuid;
+      const heightType = event.detail.heightType;
+
+      const webPanelController = this.get(uuid);
+      webPanelController.setHeightType(heightType);
+
+      if (webPanelController.isActive()) {
+        SidebarControllers.sidebarController.calculateAndSetFloatingPosition({
+          widthType: webPanelController.getWidthType(),
+          heightType: webPanelController.getHeightType(),
+        });
+      }
     });
 
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_USER_CONTEXT_ID, (event) => {
@@ -342,7 +379,11 @@ export class WebPanelsController {
     let showToolbarTimer, hideToolbarTimer;
     BrowserElements.root.addEventListener("mousemove", (event) => {
       const webPanelController = this.getActive();
-      if (!webPanelController || !webPanelController.getHideToolbar()) return;
+      if (!webPanelController) return;
+      if (!webPanelController.getHideToolbar()) {
+        SidebarControllers.sidebarController.uncollapseToolbar();
+        return;
+      }
 
       const target = new XULElement({ element: event.target });
       const toolbarRect =

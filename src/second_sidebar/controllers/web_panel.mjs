@@ -508,7 +508,38 @@ export class WebPanelController {
    */
   setAnchor(anchor) {
     this.#settings.anchor = anchor;
-    SidebarControllers.sidebarController.calculateAndSetFloatingPosition();
+  }
+
+  /**
+   *
+   * @returns {string}
+   */
+  getWidthType() {
+    return this.#settings.widthType;
+  }
+
+  /**
+   *
+   * @param {string} widthType
+   */
+  setWidthType(widthType) {
+    this.#settings.widthType = widthType;
+  }
+
+  /**
+   *
+   * @returns {string}
+   */
+  getHeightType() {
+    return this.#settings.heightType;
+  }
+
+  /**
+   *
+   * @param {string} heightType
+   */
+  setHeightType(heightType) {
+    this.#settings.heightType = heightType;
   }
 
   /**
@@ -633,6 +664,8 @@ export class WebPanelController {
       {
         pinned: this.#settings.pinned,
         anchor: this.#settings.anchor,
+        widthType: this.#settings.widthType,
+        heightType: this.#settings.heightType,
         marginTop: this.#settings.marginTop,
         marginLeft: this.#settings.marginLeft,
         marginRight: this.#settings.marginRight,

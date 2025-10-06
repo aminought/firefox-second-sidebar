@@ -51,6 +51,18 @@ export class WebPanelEditController {
           anchor,
         });
       },
+      widthType: (uuid, widthType) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_WIDTH_TYPE, {
+          uuid,
+          widthType,
+        });
+      },
+      heightType: (uuid, heightType) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_HEIGHT_TYPE, {
+          uuid,
+          heightType,
+        });
+      },
       userContextId: (uuid, userContextId) => {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_USER_CONTEXT_ID, {
           uuid,

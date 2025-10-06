@@ -358,6 +358,8 @@ export class SidebarController {
       ? `calc(100% - ${margin} * 2)`
       : SidebarElements.sidebarBox.getProperty("height");
     webPanelController.setAnchor(anchor);
+    if (resetWidth) webPanelController.setWidthType("absolute");
+    if (resetHeight) webPanelController.setHeightType("relative");
     webPanelController.setFloatingPosition(
       marginTop,
       marginLeft,
@@ -464,21 +466,26 @@ export class SidebarController {
 
   /**
    *
-   * @param {number?} top
-   * @param {number?} left
-   * @param {number?} width
-   * @param {number?} height
    * @param {object} params
+   * @param {number?} params.top
+   * @param {number?} params.left
+   * @param {number?} params.width
+   * @param {number?} params.height
    * @param {boolean} params.widthChanged
    * @param {boolean} params.heightChanged
+   * @param {string} params.widthType
+   * @param {string} params.heightType
    */
-  calculateAndSetFloatingPosition(
-    top,
-    left,
-    width,
-    height,
-    { widthChanged = false, heightChanged = false } = {},
-  ) {
+  calculateAndSetFloatingPosition({
+    top = null,
+    left = null,
+    width = null,
+    height = null,
+    widthChanged = false,
+    heightChanged = false,
+    widthType = "absolute",
+    heightType = "relative",
+  } = {}) {
     if (this.closed()) return;
     const areaRect = SidebarElements.sidebarBoxArea.getBoundingClientRect();
     const boxRect = SidebarElements.sidebarBox.getBoundingClientRect();
@@ -488,10 +495,10 @@ export class SidebarController {
     const areaRight = areaRect.right - areaRect.left;
     const areaBottom = areaRect.bottom - areaRect.top;
 
-    if (typeof top === "undefined") top = boxRect.top;
-    if (typeof left === "undefined") left = boxRect.left;
-    if (typeof width === "undefined") width = boxRect.width;
-    if (typeof height === "undefined") height = boxRect.height;
+    if (top === null) top = boxRect.top;
+    if (left === null) left = boxRect.left;
+    if (width === null) width = boxRect.width;
+    if (height === null) height = boxRect.height;
 
     top -= areaRect.top;
     left -= areaRect.left;
@@ -557,12 +564,12 @@ export class SidebarController {
       marginLeft,
       marginRight,
       marginBottom,
-      widthChanged
+      widthType === "absolute"
         ? width + "px"
-        : SidebarElements.sidebarBox.getProperty("width"),
-      heightChanged
+        : `${(width / areaRect.width) * 100}%`,
+      heightType === "absolute"
         ? height + "px"
-        : SidebarElements.sidebarBox.getProperty("height"),
+        : `${(height / areaRect.height) * 100}%`,
     );
   }
 

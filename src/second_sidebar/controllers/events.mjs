@@ -22,6 +22,8 @@ export const WebPanelEvents = {
   EDIT_WEB_PANEL_SELECTOR_ENABLED: "edit_web_panel_selector_enabled",
   EDIT_WEB_PANEL_SELECTOR: "edit_web_panel_selector",
   EDIT_WEB_PANEL_ANCHOR: "edit_web_panel_anchor",
+  EDIT_WEB_PANEL_WIDTH_TYPE: "edit_web_panel_width_type",
+  EDIT_WEB_PANEL_HEIGHT_TYPE: "edit_web_panel_height_type",
   CREATE_WEB_PANEL: "create_web_panel",
   SWITCH_WEB_PANEL: "switch_web_panel",
   DELETE_WEB_PANEL: "delete_web_panel",

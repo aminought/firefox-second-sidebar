@@ -11,6 +11,8 @@ export class WebPanelSettings {
    * @param {object?} params
    * @param {boolean?} params.pinned
    * @param {string?} params.anchor
+   * @param {string?} params.widthType
+   * @param {string?} params.heightType
    * @param {string?} params.marginTop
    * @param {string?} params.marginLeft
    * @param {string?} params.marginRight
@@ -39,6 +41,8 @@ export class WebPanelSettings {
     {
       pinned,
       anchor,
+      widthType,
+      heightType,
       marginTop,
       marginLeft,
       marginRight,
@@ -69,6 +73,10 @@ export class WebPanelSettings {
     this.pinned = pinned ?? false;
     /**@type {string?} */
     this.anchor = anchor ?? "default";
+    /**@type {string?} */
+    this.widthType = widthType ?? "absolute";
+    /**@type {string?} */
+    this.heightType = heightType ?? "relative";
     /**@type {string?} */
     this.marginTop = marginTop ?? defaultFloatingOffsetCSS;
     /**@type {string?} */
@@ -122,6 +130,8 @@ export class WebPanelSettings {
       faviconURL: this.faviconURL,
       pinned: this.pinned,
       anchor: this.anchor,
+      widthType: this.widthType,
+      heightType: this.heightType,
       marginTop: this.marginTop,
       marginLeft: this.marginLeft,
       marginRight: this.marginRight,

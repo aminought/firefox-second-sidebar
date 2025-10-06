@@ -40,6 +40,8 @@ export class WebPanelsSettings {
             {
               pinned: webPanelPref.pinned,
               anchor: webPanelPref.anchor,
+              widthType: webPanelPref.widthType,
+              heightType: webPanelPref.heightType,
               marginTop: webPanelPref.marginTop,
               marginLeft: webPanelPref.marginLeft,
               marginRight: webPanelPref.marginRight,

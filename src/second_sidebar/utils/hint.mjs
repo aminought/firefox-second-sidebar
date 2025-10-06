@@ -30,5 +30,8 @@ function parseProperty(property) {
   if (value.endsWith("px")) {
     return Math.round(parseFloat(value)) + "px";
   }
+  if (value.endsWith("%")) {
+    return Math.round(parseFloat(value)) + "%";
+  }
   return "default";
 }

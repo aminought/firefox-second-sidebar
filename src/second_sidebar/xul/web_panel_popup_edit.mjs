@@ -57,6 +57,8 @@ export class WebPanelPopupEdit extends Panel {
     );
     this.pinnedMenuList = this.#createPinTypeMenuList();
     this.floatingAnchorMenuList = this.#createFloatingAnchorMenuList();
+    this.widthTypeMenuList = this.#createDimensionTypeMenuList();
+    this.heightTypeMenuList = this.#createDimensionTypeMenuList();
     this.containerMenuList = new MenuList({ id: "sb2-container-menu-list" });
     this.mobileToggle = new Toggle();
     this.loadOnStartupToggle = new Toggle();
@@ -123,6 +125,17 @@ export class WebPanelPopupEdit extends Panel {
    *
    * @returns {MenuList}
    */
+  #createDimensionTypeMenuList() {
+    const menuList = new MenuList();
+    menuList.appendItem("Absolute", "absolute");
+    menuList.appendItem("Relative", "relative");
+    return menuList;
+  }
+
+  /**
+   *
+   * @returns {MenuList}
+   */
   #createPeriodicReloadMenuList() {
     const menuList = new MenuList();
     menuList.appendItem("Never", 0);
@@ -159,6 +172,15 @@ export class WebPanelPopupEdit extends Panel {
               "Floating web panel anchor",
               this.floatingAnchorMenuList,
             ),
+            createPopupGroup(
+              "Floating web panel width",
+              this.widthTypeMenuList,
+            ),
+            createPopupGroup(
+              "Floating web panel height",
+              this.heightTypeMenuList,
+            ),
+            new ToolbarSeparator(),
             createPopupGroup("Mobile View", this.mobileToggle),
             createPopupGroup(
               "Load into memory at startup",
@@ -203,6 +225,8 @@ export class WebPanelPopupEdit extends Panel {
    * @param {function(string, boolean):void} callbacks.mobile
    * @param {function(string, boolean):void} callbacks.pinned
    * @param {function(string, string):void} callbacks.anchor
+   * @param {function(string, string):void} callbacks.widthType
+   * @param {function(string, string):void} callbacks.heightType
    * @param {function(string, string):void} callbacks.userContextId
    * @param {function(string, boolean):void} callbacks.loadOnStartup
    * @param {function(string, boolean):void} callbacks.unloadOnClose
@@ -221,6 +245,8 @@ export class WebPanelPopupEdit extends Panel {
     faviconURL,
     pinned,
     anchor,
+    widthType,
+    heightType,
     userContextId,
     mobile,
     loadOnStartup,
@@ -240,6 +266,8 @@ export class WebPanelPopupEdit extends Panel {
     this.onMobileChange = mobile;
     this.onPinnedChange = pinned;
     this.onFloatingAnchorChange = anchor;
+    this.onWidthTypeChange = widthType;
+    this.onHeightTypeChange = heightType;
     this.onUserContextIdChange = userContextId;
     this.onLoadOnStartupChange = loadOnStartup;
     this.onUnloadOnCloseChange = unloadOnClose;
@@ -268,6 +296,12 @@ export class WebPanelPopupEdit extends Panel {
     });
     this.floatingAnchorMenuList.addEventListener("command", () => {
       anchor(this.settings.uuid, this.floatingAnchorMenuList.getValue());
+    });
+    this.widthTypeMenuList.addEventListener("command", () => {
+      widthType(this.settings.uuid, this.widthTypeMenuList.getValue());
+    });
+    this.heightTypeMenuList.addEventListener("command", () => {
+      heightType(this.settings.uuid, this.heightTypeMenuList.getValue());
     });
     this.containerMenuList.addEventListener("command", () => {
       userContextId(this.settings.uuid, this.containerMenuList.getValue());
@@ -371,6 +405,8 @@ export class WebPanelPopupEdit extends Panel {
     this.faviconURLInput.setValue(settings.faviconURL);
     this.pinnedMenuList.setValue(settings.pinned);
     this.floatingAnchorMenuList.setValue(settings.anchor);
+    this.widthTypeMenuList.setValue(settings.widthType);
+    this.heightTypeMenuList.setValue(settings.heightType);
 
     fillContainerMenuList(this.containerMenuList);
     this.containerMenuList.setValue(settings.userContextId);
@@ -433,6 +469,12 @@ export class WebPanelPopupEdit extends Panel {
     }
     if (this.floatingAnchorMenuList.getValue() !== this.settings.anchor) {
       this.onAnchorChange(this.settings.uuid, this.settings.anchor);
+    }
+    if (this.widthTypeMenuList.getValue() !== this.settings.widthType) {
+      this.onWidthTypeChange(this.settings.uuid, this.settings.widthType);
+    }
+    if (this.heightTypeMenuList.getValue() !== this.settings.heightType) {
+      this.onHeightTypeChange(this.settings.uuid, this.settings.heightType);
     }
     if (
       String(this.containerMenuList.getValue()) !==

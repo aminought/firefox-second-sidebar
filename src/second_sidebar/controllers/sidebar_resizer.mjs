@@ -124,16 +124,18 @@ export class SidebarResizer {
         height = SidebarResizer.MIN_HEIGHT;
       }
 
-      SidebarControllers.sidebarController.calculateAndSetFloatingPosition(
+      const webPanelController =
+        SidebarControllers.webPanelsController.getActive();
+      SidebarControllers.sidebarController.calculateAndSetFloatingPosition({
         top,
         left,
         width,
         height,
-        {
-          widthChanged: width != startRect.width,
-          heightChanged: height != startRect.height,
-        },
-      );
+        widthChanged: width != startRect.width,
+        heightChanged: height != startRect.height,
+        widthType: webPanelController.getWidthType(),
+        heightType: webPanelController.getHeightType(),
+      });
       showSidebarBoxPositionHint();
     }
 

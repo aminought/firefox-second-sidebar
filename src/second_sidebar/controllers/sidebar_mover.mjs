@@ -85,10 +85,14 @@ export class SidebarMover {
         hasMoved = true;
         toolbarTitleWrapper.setPointerCapture(e.pointerId);
         SidebarElements.webPanelsBrowser.setProperty("pointer-events", "none");
-        SidebarControllers.sidebarController.calculateAndSetFloatingPosition(
-          startRect.top + deltaY,
-          startRect.left + deltaX,
-        );
+        const webPanelController =
+          SidebarControllers.webPanelsController.getActive();
+        SidebarControllers.sidebarController.calculateAndSetFloatingPosition({
+          top: startRect.top + deltaY,
+          left: startRect.left + deltaX,
+          widthType: webPanelController.getWidthType(),
+          heightType: webPanelController.getHeightType(),
+        });
         SidebarElements.sidebarHint.show();
         showSidebarBoxPositionHint();
       }
