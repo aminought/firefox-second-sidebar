@@ -17,7 +17,7 @@ export function showSidebarBoxPositionHint() {
 
   const webPanelController = SidebarControllers.webPanelsController.getActive();
   const hint = `anchor: ${webPanelController.getAnchor()}, offset: [${parts[0]} ${parts[1]}], size: [${width} ${height}]`;
-  SidebarElements.sidebarHint.setText(hint);
+  SidebarElements.sidebarHint.setText(hint).show();
 }
 
 /**

@@ -59,7 +59,6 @@ export class SidebarResizer {
       startX = e.clientX;
       startY = e.clientY;
       startRect = SidebarElements.sidebarBox.getBoundingClientRect();
-      SidebarElements.sidebarHint.show();
 
       document.addEventListener("mousemove", resize);
       document.addEventListener("mouseup", stopResize);
