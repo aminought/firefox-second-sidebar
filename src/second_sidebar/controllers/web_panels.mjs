@@ -14,6 +14,7 @@ import { WebPanelController } from "./web_panel.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { WebPanelsSettings } from "../settings/web_panels_settings.mjs";
 import { WindowWrapper } from "../wrappers/window.mjs";
+import { XULElement } from "../xul/base/xul_element.mjs";
 import { fetchIconURL } from "../utils/icons.mjs";
 import { gCustomizeModeWrapper } from "../wrappers/g_customize_mode.mjs";
 import { parseNotifications } from "../utils/string.mjs";
@@ -344,8 +345,12 @@ export class WebPanelsController {
 
       const sidebarBox = SidebarElements.sidebarBox;
       const sidebarBoxRect = sidebarBox.getBoundingClientRect();
+      const target = new XULElement({ element: event.target });
       const collapsed = SidebarControllers.sidebarController.toolbarCollapsed();
+
       if (
+        (!sidebarBox.contains(target) &&
+          !SidebarElements.webPanelsBrowser.activeWebPanelContains(target)) ||
         event.screenX < sidebarBox.screenX ||
         event.screenY < sidebarBox.screenY ||
         event.screenX > sidebarBox.screenX + sidebarBoxRect.width ||
