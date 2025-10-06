@@ -51,6 +51,15 @@ export class XULElement {
 
   /**
    *
+   * @param {string} className
+   * @returns {boolean}
+   */
+  hasClass(className) {
+    return this.element.classList.contains(className);
+  }
+
+  /**
+   *
    * @returns {HTMLelement}
    */
   getXUL() {

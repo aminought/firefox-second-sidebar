@@ -339,36 +339,43 @@ export class WebPanelsController {
       }
     });
 
+    let showToolbarTimer, hideToolbarTimer;
     BrowserElements.root.addEventListener("mousemove", (event) => {
       const webPanelController = this.getActive();
       if (!webPanelController || !webPanelController.getHideToolbar()) return;
 
-      const sidebarBox = SidebarElements.sidebarBox;
-      const sidebarBoxRect = sidebarBox.getBoundingClientRect();
       const target = new XULElement({ element: event.target });
-      const collapsed = SidebarControllers.sidebarController.toolbarCollapsed();
+      const toolbarRect =
+        SidebarElements.sidebarToolbar.getBoundingClientRect();
+      const threshold = SidebarElements.sidebarBox.screenY + toolbarRect.height;
+      const delay = 200;
 
-      if (
-        (!sidebarBox.contains(target) &&
-          !SidebarElements.webPanelsBrowser.activeWebPanelContains(target)) ||
-        event.screenX < sidebarBox.screenX ||
-        event.screenY < sidebarBox.screenY ||
-        event.screenX > sidebarBox.screenX + sidebarBoxRect.width ||
-        event.screenY > sidebarBox.screenY + sidebarBoxRect.height
-      ) {
-        if (!collapsed) SidebarControllers.sidebarController.collapseToolbar();
-        return;
-      }
+      const isInsideSidebarBox =
+        SidebarElements.sidebarBox.contains(target) ||
+        SidebarElements.webPanelsBrowser.activeWebPanelContains(target);
+      const isInUncollapseArea =
+        isInsideSidebarBox &&
+        !target.hasClass("sb2-resizer") &&
+        event.screenY < threshold;
 
-      const toolbar = SidebarElements.sidebarToolbar;
-      const toolbarRect = toolbar.getBoundingClientRect();
-      const uncollapseThreshold = sidebarBox.screenY + toolbarRect.height / 2;
-      const collapseThreshold = sidebarBox.screenY + toolbarRect.height;
-
-      if (collapsed && event.screenY < uncollapseThreshold) {
-        SidebarControllers.sidebarController.uncollapseToolbar();
-      } else if (!collapsed && event.screenY > collapseThreshold) {
-        SidebarControllers.sidebarController.collapseToolbar();
+      if (isInUncollapseArea) {
+        clearTimeout(hideToolbarTimer);
+        hideToolbarTimer = null;
+        if (!showToolbarTimer) {
+          showToolbarTimer = setTimeout(() => {
+            SidebarControllers.sidebarController.uncollapseToolbar();
+            showToolbarTimer = null;
+          }, delay);
+        }
+      } else {
+        clearTimeout(showToolbarTimer);
+        showToolbarTimer = null;
+        if (!hideToolbarTimer) {
+          hideToolbarTimer = setTimeout(() => {
+            SidebarControllers.sidebarController.collapseToolbar();
+            hideToolbarTimer = null;
+          }, delay);
+        }
       }
     });
   }
