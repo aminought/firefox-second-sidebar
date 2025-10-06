@@ -46,10 +46,14 @@ export class SidebarElements {
     this.sidebarBox = new SidebarBox();
     this.sidebarToolbar = new SidebarToolbar();
     this.webPanelsBrowser = new WebPanelsBrowser();
-    this.sidebarResizerTl = new SidebarResizer("tl");
-    this.sidebarResizerTr = new SidebarResizer("tr");
-    this.sidebarResizerBl = new SidebarResizer("bl");
-    this.sidebarResizerBr = new SidebarResizer("br");
+    this.sidebarResizerTop = new SidebarResizer("top");
+    this.sidebarResizerLeft = new SidebarResizer("left");
+    this.sidebarResizerRight = new SidebarResizer("right");
+    this.sidebarResizerBottom = new SidebarResizer("bottom");
+    this.sidebarResizerTopLeft = new SidebarResizer("topleft");
+    this.sidebarResizerTopRight = new SidebarResizer("topright");
+    this.sidebarResizerBottomLeft = new SidebarResizer("bottomleft");
+    this.sidebarResizerBottomRight = new SidebarResizer("bottomright");
     this.sidebarSplitter = new SidebarSplitter();
     this.afterSplitter = new AfterSplitter();
     this.sidebarHint = new SidebarHint();
@@ -65,10 +69,14 @@ export class SidebarElements {
             this.sidebarToolbar,
             this.webPanelsBrowser,
             this.sidebarHint,
-            this.sidebarResizerTl,
-            this.sidebarResizerTr,
-            this.sidebarResizerBl,
-            this.sidebarResizerBr,
+            this.sidebarResizerTop,
+            this.sidebarResizerLeft,
+            this.sidebarResizerRight,
+            this.sidebarResizerBottom,
+            this.sidebarResizerTopLeft,
+            this.sidebarResizerTopRight,
+            this.sidebarResizerBottomLeft,
+            this.sidebarResizerBottomRight,
           ),
           this.sidebarSplitter,
           this.afterSplitter,

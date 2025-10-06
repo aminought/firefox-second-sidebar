@@ -450,7 +450,7 @@ export class WebPanelController {
    */
   setAttach(attach) {
     this.#settings.attach = attach;
-    SidebarControllers.sidebarController.setUnpinnedBox("move");
+    SidebarControllers.sidebarController.calculateAndSetFloatingPosition();
   }
 
   /**

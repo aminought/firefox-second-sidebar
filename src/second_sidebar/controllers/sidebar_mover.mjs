@@ -81,8 +81,7 @@ export class SidebarMover {
         hasMoved = true;
         toolbarTitleWrapper.setPointerCapture(e.pointerId);
         SidebarElements.webPanelsBrowser.setProperty("pointer-events", "none");
-        SidebarControllers.sidebarController.setUnpinnedBox(
-          "move",
+        SidebarControllers.sidebarController.calculateAndSetFloatingPosition(
           startRect.top + deltaY,
           startRect.left + deltaX,
         );

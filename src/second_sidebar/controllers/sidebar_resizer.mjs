@@ -13,13 +13,21 @@ export class SidebarResizer {
   }
 
   #setupListeners() {
+    [
+      SidebarElements.sidebarResizerTop,
+      SidebarElements.sidebarResizerLeft,
+      SidebarElements.sidebarResizerRight,
+      SidebarElements.sidebarResizerBottom,
+      SidebarElements.sidebarResizerTopLeft,
+      SidebarElements.sidebarResizerTopRight,
+      SidebarElements.sidebarResizerBottomLeft,
+      SidebarElements.sidebarResizerBottomRight,
+    ].forEach((resizer) => {
+      resizer.addEventListener("mousedown", initResize);
+    });
+
     let startX, startY;
     let startRect, currentResizer;
-
-    SidebarElements.sidebarResizerTl.addEventListener("mousedown", initResize);
-    SidebarElements.sidebarResizerTr.addEventListener("mousedown", initResize);
-    SidebarElements.sidebarResizerBl.addEventListener("mousedown", initResize);
-    SidebarElements.sidebarResizerBr.addEventListener("mousedown", initResize);
 
     document.addEventListener(
       "click",
@@ -65,67 +73,67 @@ export class SidebarResizer {
       if (!currentResizer) return;
       const type = currentResizer.getAttribute("type");
 
+      let top = startRect.top;
+      let left = startRect.left;
+      let width = startRect.width;
+      let height = startRect.height;
+
       const deltaX = e.clientX - startX;
       const deltaY = e.clientY - startY;
 
-      let top, left, width, height;
-
-      if (type == "tl") {
+      // calculate new position and size
+      if (type == "top") {
+        top = startRect.top + deltaY;
+        height = startRect.height - deltaY;
+      } else if (type == "left") {
+        left = startRect.left + deltaX;
+        width = startRect.width - deltaX;
+      } else if (type == "right") {
+        width = startRect.width + deltaX;
+        height = startRect.height;
+      } else if (type == "bottom") {
+        height = startRect.height + deltaY;
+      } else if (type == "topleft") {
         top = startRect.top + deltaY;
         left = startRect.left + deltaX;
         width = startRect.width - deltaX;
         height = startRect.height - deltaY;
-        if (width < SidebarResizer.MIN_WIDTH) {
-          left = left + width - SidebarResizer.MIN_WIDTH;
-          width = SidebarResizer.MIN_WIDTH;
-        }
-        if (height < SidebarResizer.MIN_HEIGHT) {
-          top = top + height - SidebarResizer.MIN_HEIGHT;
-          height = SidebarResizer.MIN_HEIGHT;
-        }
-      } else if (type === "tr") {
+      } else if (type === "topright") {
         top = startRect.top + deltaY;
-        left = startRect.left;
         width = startRect.width + deltaX;
         height = startRect.height - deltaY;
-        if (width < SidebarResizer.MIN_WIDTH) {
-          width = SidebarResizer.MIN_WIDTH;
-        }
-        if (height < SidebarResizer.MIN_HEIGHT) {
-          top = top + height - SidebarResizer.MIN_HEIGHT;
-          height = SidebarResizer.MIN_HEIGHT;
-        }
-      } else if (type === "br") {
-        top = startRect.top;
-        left = startRect.left;
+      } else if (type === "bottomright") {
         width = startRect.width + deltaX;
         height = startRect.height + deltaY;
-        if (width < SidebarResizer.MIN_WIDTH) {
-          width = SidebarResizer.MIN_WIDTH;
-        }
-        if (height < SidebarResizer.MIN_HEIGHT) {
-          height = SidebarResizer.MIN_HEIGHT;
-        }
-      } else if (type === "bl") {
-        top = startRect.top;
+      } else if (type === "bottomleft") {
         left = startRect.left + deltaX;
         width = startRect.width - deltaX;
         height = startRect.height + deltaY;
-        if (width < SidebarResizer.MIN_WIDTH) {
-          left = left + width - SidebarResizer.MIN_WIDTH;
-          width = SidebarResizer.MIN_WIDTH;
-        }
-        if (height < SidebarResizer.MIN_HEIGHT) {
-          height = SidebarResizer.MIN_HEIGHT;
-        }
       }
 
-      SidebarControllers.sidebarController.setUnpinnedBox(
-        "resize",
+      // check minimal bounds
+      if (width < SidebarResizer.MIN_WIDTH) {
+        if (left != startRect.left) {
+          left = left + width - SidebarResizer.MIN_WIDTH;
+        }
+        width = SidebarResizer.MIN_WIDTH;
+      }
+      if (height < SidebarResizer.MIN_HEIGHT) {
+        if (top != startRect.top) {
+          top = top + height - SidebarResizer.MIN_HEIGHT;
+        }
+        height = SidebarResizer.MIN_HEIGHT;
+      }
+
+      SidebarControllers.sidebarController.calculateAndSetFloatingPosition(
         top,
         left,
         width,
         height,
+        {
+          widthChanged: width != startRect.width,
+          heightChanged: height != startRect.height,
+        },
       );
       showSidebarBoxPositionHint();
     }

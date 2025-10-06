@@ -469,13 +469,21 @@ export class SidebarController {
 
   /**
    *
-   * @param {string} mode
    * @param {number?} top
    * @param {number?} left
    * @param {number?} width
    * @param {number?} height
+   * @param {object} params
+   * @param {boolean} params.widthChanged
+   * @param {boolean} params.heightChanged
    */
-  setUnpinnedBox(mode, top, left, width, height) {
+  calculateAndSetFloatingPosition(
+    top,
+    left,
+    width,
+    height,
+    { widthChanged = false, heightChanged = false } = {},
+  ) {
     if (this.closed()) return;
     const areaRect = SidebarElements.sidebarBoxArea.getBoundingClientRect();
     const boxRect = SidebarElements.sidebarBox.getBoundingClientRect();
@@ -496,18 +504,17 @@ export class SidebarController {
     // left border
     if (left < areaLeft) {
       left = areaLeft;
-      if (mode == "resize") {
+      if (widthChanged) {
         width = boxRect.right - areaRect.left;
       }
     }
 
     // right border
     if (left + width > areaRight) {
-      if (mode == "move") {
-        width = boxRect.width;
-        left = areaRight - width;
-      } else if (mode == "resize") {
+      if (widthChanged) {
         width = areaRight - left;
+      } else {
+        left = areaRight - width;
       }
     }
 
@@ -519,46 +526,48 @@ export class SidebarController {
 
     // bottom border
     if (top + height > areaBottom) {
-      if (mode == "move") {
-        height = boxRect.height;
-        top = areaBottom - height;
-      } else if (mode == "resize") {
+      if (heightChanged) {
         height = areaBottom - top;
+      } else {
+        top = areaBottom - height;
       }
     }
-
-    // calculate margins
 
     const webPanelController =
       SidebarControllers.webPanelsController.getActive();
     let attach = webPanelController.getAttach();
 
-    let marginTop_, marginLeft_, marginRight_, marginBottom_;
-    marginTop_ = marginLeft_ = marginRight_ = marginBottom_ = "unset";
+    let marginTop, marginLeft, marginRight, marginBottom;
+    marginTop = marginLeft = marginRight = marginBottom = "unset";
 
+    // calculate margins
     if (attach == "default") attach = this.getDefaultAttach();
     if (attach === "topright") {
-      marginTop_ = `${top}px`;
-      marginRight_ = `${areaRight - left - width}px`;
+      marginTop = `${top}px`;
+      marginRight = `${areaRight - left - width}px`;
     } else if (attach == "topleft") {
-      marginTop_ = `${top}px`;
-      marginLeft_ = `${left}px`;
+      marginTop = `${top}px`;
+      marginLeft = `${left}px`;
     } else if (attach == "bottomleft") {
-      marginBottom_ = `${areaBottom - top - height}px`;
-      marginLeft_ = `${left}px`;
+      marginBottom = `${areaBottom - top - height}px`;
+      marginLeft = `${left}px`;
     } else if (attach == "bottomright") {
-      marginBottom_ = `${areaBottom - top - height}px`;
-      marginRight_ = `${areaRight - left - width}px`;
+      marginBottom = `${areaBottom - top - height}px`;
+      marginRight = `${areaRight - left - width}px`;
     }
 
     this.setFloatingPosition(
       attach,
-      marginTop_,
-      marginLeft_,
-      marginRight_,
-      marginBottom_,
-      width + "px",
-      height + "px",
+      marginTop,
+      marginLeft,
+      marginRight,
+      marginBottom,
+      widthChanged
+        ? width + "px"
+        : SidebarElements.sidebarBox.getProperty("width"),
+      heightChanged
+        ? height + "px"
+        : SidebarElements.sidebarBox.getProperty("height"),
     );
   }
 
