@@ -1,6 +1,4 @@
-/* eslint-disable no-unused-vars */
-import { Browser } from "../xul/base/browser.mjs";
-/* eslint-enable no-unused-vars */
+import { Browser } from "../xul/base/browser.mjs"; // eslint-disable-line no-unused-vars
 
 export class ZoomManagerWrapper {
   /**@type {number} */

@@ -12,8 +12,6 @@ export class SidebarSettings {
   /**@type {string} */
   #unpinnedPadding;
   /**@type {boolean} */
-  #hideInPopupWindows;
-  /**@type {boolean} */
   #autoHideBackButton;
   /**@type {boolean} */
   #autoHideForwardButton;
@@ -30,7 +28,6 @@ export class SidebarSettings {
    * @param {string} padding
    * @param {string} newWebPanelPosition
    * @param {string} unpinnedPadding
-   * @param {boolean} hideInPopupWindows
    * @param {boolean} autoHideBackButton
    * @param {boolean} autoHideForwardButton
    * @param {string} containerBorder
@@ -42,7 +39,6 @@ export class SidebarSettings {
     padding,
     newWebPanelPosition,
     unpinnedPadding,
-    hideInPopupWindows,
     autoHideBackButton,
     autoHideForwardButton,
     containerBorder,
@@ -53,7 +49,6 @@ export class SidebarSettings {
     this.#padding = padding;
     this.#newWebPanelPosition = newWebPanelPosition;
     this.#unpinnedPadding = unpinnedPadding;
-    this.#hideInPopupWindows = hideInPopupWindows;
     this.#autoHideBackButton = autoHideBackButton;
     this.#autoHideForwardButton = autoHideForwardButton;
     this.#containerBorder = containerBorder;
@@ -75,10 +70,6 @@ export class SidebarSettings {
 
   get unpinnedPadding() {
     return this.#unpinnedPadding;
-  }
-
-  get hideInPopupWindows() {
-    return this.#hideInPopupWindows;
   }
 
   get autoHideBackButton() {
@@ -112,7 +103,6 @@ export class SidebarSettings {
       pref.padding ?? "small",
       pref.newWebPanelPosition ?? "before",
       pref.unpinnedPadding ?? "small",
-      pref.hideInPopupWindows ?? false,
       pref.autoHideBackButton ?? false,
       pref.autoHideForwardButton ?? false,
       pref.containerBorder ?? "left",
@@ -127,7 +117,6 @@ export class SidebarSettings {
       padding: this.#padding,
       newWebPanelPosition: this.#newWebPanelPosition,
       unpinnedPadding: this.#unpinnedPadding,
-      hideInPopupWindows: this.#hideInPopupWindows,
       autoHideBackButton: this.#autoHideBackButton,
       autoHideForwardButton: this.#autoHideForwardButton,
       containerBorder: this.#containerBorder,

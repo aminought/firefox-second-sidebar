@@ -1,13 +1,10 @@
-/* eslint-disable no-unused-vars */
 import { Button } from "../xul/base/button.mjs";
 import { HBox } from "../xul/base/hbox.mjs";
-import { Header } from "../xul/base/header.mjs";
 import { Input } from "../xul/base/input.mjs";
 import { Label } from "../xul/base/label.mjs";
 import { ToolbarButton } from "../xul/base/toolbar_button.mjs";
-import { XULElement } from "../xul/base/xul_element.mjs";
+import { XULElement } from "../xul/base/xul_element.mjs"; // eslint-disable-line no-unused-vars
 import { ZoomManagerWrapper } from "../wrappers/zoom_manager.mjs";
-/* eslint-enable no-unused-vars */
 
 /**
  *

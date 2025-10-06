@@ -1,9 +1,12 @@
+import { DialogBoxWrapper } from "./dialog_box.mjs";
 import { TabBrowserWrapper } from "./tab_browser.mjs";
 import { XULElement } from "../xul/base/xul_element.mjs";
 
 export class WindowWrapper {
   #window;
   #gBrowser;
+  #gDialogBox;
+
   /**
    *
    * @param {Window} chromeWindow
@@ -11,6 +14,7 @@ export class WindowWrapper {
   constructor(chromeWindow = null) {
     this.#window = chromeWindow ?? window;
     this.#gBrowser = new TabBrowserWrapper(this.raw.gBrowser);
+    this.#gDialogBox = new DialogBoxWrapper(this.raw.gDialogBox);
   }
 
   /**
@@ -39,6 +43,13 @@ export class WindowWrapper {
    */
   get gBrowser() {
     return this.#gBrowser;
+  }
+
+  /**
+   * @returns {DialogBoxWrapper}
+   */
+  get gDialogBox() {
+    return this.#gDialogBox;
   }
 
   /**
@@ -96,6 +107,15 @@ export class WindowWrapper {
    */
   addEventListener(type, listener) {
     this.raw.addEventListener(type, listener);
+  }
+
+  /**
+   *
+   * @param {string} type
+   * @param {function(Event):any} listener
+   */
+  removeEventListener(type, listener) {
+    this.raw.removeEventListener(type, listener);
   }
 
   relinkTreeOwner() {

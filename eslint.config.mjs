@@ -25,6 +25,7 @@ export default [
         FullZoom: "readonly",
         IOUtils: "readonly",
         NetUtil: "readonly",
+        PathUtils: "readonly",
         Services: "readonly",
         SessionStore: "readonly",
         SidebarController: "readonly",

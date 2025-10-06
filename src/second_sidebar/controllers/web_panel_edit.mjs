@@ -1,11 +1,8 @@
-/* eslint-disable no-unused-vars */
 import { WebPanelEvents, sendEvents } from "./events.mjs";
 
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
-import { WebPanelController } from "./web_panel.mjs";
-
-/* eslint-enable no-unused-vars */
+import { WebPanelController } from "./web_panel.mjs"; // eslint-disable-line no-unused-vars
 
 export class WebPanelEditController {
   constructor() {

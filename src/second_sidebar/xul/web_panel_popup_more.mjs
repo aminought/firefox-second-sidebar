@@ -5,15 +5,12 @@ import {
   updateZoomButtons,
 } from "../utils/xul.mjs";
 
-/* eslint-disable no-unused-vars */
 import { MenuSeparator } from "./base/menuseparator.mjs";
 import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";
 import { PopupBody } from "./popup_body.mjs";
-import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
+import { WebPanelSettings } from "../settings/web_panel_settings.mjs"; // eslint-disable-line no-unused-vars
 import { isLeftMouseButton } from "../utils/buttons.mjs";
-
-/* eslint-enable no-unused-vars */
 
 const ICONS = {
   MINUS: "chrome://global/skin/icons/minus.svg",

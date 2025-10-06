@@ -1,11 +1,9 @@
 import { Menu } from "./base/menu.mjs";
-/* eslint-disable no-unused-vars */
 import { MenuItem } from "./base/menuitem.mjs";
 import { MenuPopup } from "./base/menupopup.mjs";
 import { MenuSeparator } from "./base/menuseparator.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
-import { WebPanelController } from "../controllers/web_panel.mjs";
-/* eslint-enable no-unused-vars */
+import { WebPanelController } from "../controllers/web_panel.mjs"; // eslint-disable-line no-unused-vars
 
 export class WebPanelMenuPopup extends MenuPopup {
   constructor() {

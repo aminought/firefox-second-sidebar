@@ -107,6 +107,7 @@ export class WebPanelsController {
       if (isActiveWindow) {
         webPanelController.switchWebPanel();
       }
+      setTimeout(() => this.#unwrapButtons(), 100);
     });
 
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_URL, (event) => {
@@ -335,6 +336,20 @@ export class WebPanelsController {
         webPanelController.setZoom(zoom);
       }
     });
+  }
+
+  #unwrapButtons() {
+    const buttons = [
+      SidebarElements.webPanelNewButton,
+      ...[...this.webPanelControllers.values()].map(
+        (webPanelController) => webPanelController.button,
+      ),
+    ];
+    for (const button of buttons) {
+      if (button.isWrapped) {
+        gCustomizeModeWrapper.unwrapToolbarItem(button.parentElement.getXUL());
+      }
+    }
   }
 
   /**
