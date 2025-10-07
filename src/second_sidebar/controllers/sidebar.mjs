@@ -268,6 +268,7 @@ export class SidebarController {
     title,
     hideToolbar,
   ) {
+    SidebarControllers.sidebarToolbarCollapser.clearTimers();
     this.setFloatingPosition(
       anchor,
       marginTop,
@@ -277,7 +278,6 @@ export class SidebarController {
       width,
       height,
     );
-    SidebarControllers.sidebarToolbarCollapser.clearTimers();
     SidebarElements.sidebarBox.show();
     SidebarElements.sidebarToolbar
       .toggleBackButton(!canGoBack)

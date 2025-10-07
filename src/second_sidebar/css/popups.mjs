@@ -3,16 +3,21 @@ export const POPUPS_CSS = `
     display: flex;
     flex-direction: column;
     align-items: unset;
-    gap: var(--space-medium);
     width: 100%;
-    padding: var(--space-xsmall);
 
     .panel-header {
       align-self: center;
     }
 
-    toolbarseparator, input {
+    toolbarseparator {
+      width: 100%;
+      align-self: center;
+    }
+    
+    input {
       width: -moz-available;
+      box-sizing: border-box;
+      height: 32px;
     }
 
     .sb2-button-iconic .toolbarbutton-text {
@@ -47,6 +52,7 @@ export const POPUPS_CSS = `
 
   .sb2-popup-header {
     align-self: center;
+    padding: 0 var(--space-xsmall);
 
     h1 {
       align-self: center;
@@ -54,13 +60,18 @@ export const POPUPS_CSS = `
   }
 
   .sb2-popup-body {
-    overflow-y: auto;
+    overflow-y: scroll;
     padding: 0 var(--space-medium);
-    gap: var(--space-xsmall);
 
     .subviewbutton {
       margin: unset;
       padding: var(--space-small) var(--space-medium);
+    }
+
+    label {
+      text-wrap: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 
@@ -71,21 +82,45 @@ export const POPUPS_CSS = `
 
   .sb2-popup-footer {
     justify-content: end;
+    margin-top: var(--space-small);
   }
 
   .sb2-popup-group {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    min-height: 33px;
+    min-height: 24px;
+    max-height: 24px;
+
+    h1 {
+      text-wrap: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 
   .sb2-popup-row {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: var(--space-small);
+    gap: var(--space-xsmall);
     width: 100%;
+  }
+
+  .sb2-popup-set {
+    display: flex;
+  }
+
+  .sb2-popup-set-header {
+    display: flex;
+  }
+
+  .sb2-popup-set-body {
+    display: flex;
+    background-color: var(--arrowpanel-dimmed);
+    border-radius: var(--border-radius-medium);
+    padding: var(--space-small);
+    gap: 1px;
   }
 
   #sb2-zoom-buttons {
@@ -97,9 +132,16 @@ export const POPUPS_CSS = `
     }
   }
 
-  .sb2-popup-body:has(#sb2-selector-toggle:not([pressed])) {
-    #sb2-selector-input {
+  .sb2-popup-body:has(#sb2-popup-css-selector-toggle:not([pressed])) {
+    #sb2-popup-css-selector-sep,
+    #sb2-popup-css-selector-input {
       display: none;
     }
+  }
+
+  .sb2-popup-menu-list {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    line-height: 16px;
   }
 `;

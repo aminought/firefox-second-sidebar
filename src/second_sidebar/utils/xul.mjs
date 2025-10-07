@@ -2,8 +2,9 @@ import { Button } from "../xul/base/button.mjs";
 import { HBox } from "../xul/base/hbox.mjs";
 import { Header } from "../xul/base/header.mjs";
 import { Input } from "../xul/base/input.mjs";
-import { Label } from "../xul/base/label.mjs";
+import { MenuList } from "../xul/base/menulist.mjs";
 import { ToolbarButton } from "../xul/base/toolbar_button.mjs";
+import { VBox } from "../xul/base/vbox.mjs";
 import { XULElement } from "../xul/base/xul_element.mjs"; // eslint-disable-line no-unused-vars
 import { ZoomManagerWrapper } from "../wrappers/zoom_manager.mjs";
 
@@ -153,7 +154,40 @@ export function createCancelButton() {
 export function createPopupGroup(text, element) {
   return new HBox({
     classList: ["sb2-popup-group"],
-  }).appendChildren(new Label().setText(text), element);
+  }).appendChildren(new Header(1).setText(text), element);
+}
+
+/**
+ *
+ * @param {string?} text
+ * @param {XULElement[]} elements
+ * @returns {VBox}
+ */
+export function createPopupSet(text, elements) {
+  const vbox = new VBox({ classList: ["sb2-popup-set"] });
+  if (text !== null) vbox.appendChild(createPopupSetHeader(text));
+  vbox.appendChild(createPopupSetBody(elements));
+  return vbox;
+}
+
+/**
+ *
+ * @param {string} text
+ * @returns {Header}
+ */
+export function createPopupSetHeader(text) {
+  return new Header(1, { classList: ["sb2-popup-set-header"] }).setText(text);
+}
+
+/**
+ *
+ * @param {XULElement[]} elements
+ * @returns {VBox}
+ */
+export function createPopupSetBody(elements) {
+  return new VBox({
+    classList: ["sb2-popup-set-body"],
+  }).appendChildren(...elements);
 }
 
 /**
@@ -178,4 +212,15 @@ export function createPopupRow(...elements) {
   return new HBox({
     classList: ["sb2-popup-row"],
   }).appendChildren(...elements);
+}
+
+/**
+ *
+ * @param {object} params
+ * @param {string?} params.id
+ * @param {string[]} params.classList
+ * @returns {MenuList}
+ */
+export function createMenuList({ id = null, classList = [] } = {}) {
+  return new MenuList({ id, classList: ["sb2-popup-menu-list", ...classList] });
 }

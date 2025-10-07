@@ -5,9 +5,10 @@ import {
 import {
   createCancelButton,
   createInput,
+  createMenuList,
   createPopupGroup,
-  createPopupHeaderGroup,
   createPopupRow,
+  createPopupSet,
   createSaveButton,
   createSubviewButton,
   createSubviewIconicButton,
@@ -15,8 +16,6 @@ import {
   updateZoomButtons,
 } from "../utils/xul.mjs";
 
-import { Header } from "./base/header.mjs";
-import { MenuList } from "./base/menulist.mjs";
 import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";
 import { PopupBody } from "./popup_body.mjs";
@@ -48,8 +47,8 @@ export class WebPanelPopupEdit extends Panel {
     this.setType("arrow").setRole("group");
 
     this.urlInput = createInput();
-    this.selectorToggle = new Toggle({ id: "sb2-selector-toggle" });
-    this.selectorInput = createInput({ id: "sb2-selector-input" });
+    this.selectorToggle = new Toggle({ id: "sb2-popup-css-selector-toggle" });
+    this.selectorInput = createInput({ id: "sb2-popup-css-selector-input" });
     this.faviconURLInput = createInput();
     this.faviconResetButton = createSubviewIconicButton(
       ICONS.UNDO,
@@ -59,7 +58,7 @@ export class WebPanelPopupEdit extends Panel {
     this.floatingAnchorMenuList = this.#createFloatingAnchorMenuList();
     this.widthTypeMenuList = this.#createDimensionTypeMenuList();
     this.heightTypeMenuList = this.#createDimensionTypeMenuList();
-    this.containerMenuList = new MenuList({ id: "sb2-container-menu-list" });
+    this.containerMenuList = createMenuList({ id: "sb2-container-menu-list" });
     this.mobileToggle = new Toggle();
     this.loadOnStartupToggle = new Toggle();
     this.unloadOnCloseToggle = new Toggle();
@@ -101,7 +100,7 @@ export class WebPanelPopupEdit extends Panel {
    * @returns {MenuList}
    */
   #createPinTypeMenuList() {
-    const pinTypeMenuList = new MenuList();
+    const pinTypeMenuList = createMenuList();
     pinTypeMenuList.appendItem("Pinned", true);
     pinTypeMenuList.appendItem("Floating", false);
     return pinTypeMenuList;
@@ -112,7 +111,7 @@ export class WebPanelPopupEdit extends Panel {
    * @returns {MenuList}
    */
   #createFloatingAnchorMenuList() {
-    const menuList = new MenuList();
+    const menuList = createMenuList();
     menuList.appendItem("Default", "default");
     menuList.appendItem("Top-left", "topleft");
     menuList.appendItem("Top-right", "topright");
@@ -127,7 +126,7 @@ export class WebPanelPopupEdit extends Panel {
    * @returns {MenuList}
    */
   #createDimensionTypeMenuList() {
-    const menuList = new MenuList();
+    const menuList = createMenuList();
     menuList.appendItem("Absolute", "absolute");
     menuList.appendItem("Relative", "relative");
     return menuList;
@@ -138,7 +137,7 @@ export class WebPanelPopupEdit extends Panel {
    * @returns {MenuList}
    */
   #createPeriodicReloadMenuList() {
-    const menuList = new MenuList();
+    const menuList = createMenuList();
     menuList.appendItem("Never", 0);
     menuList.appendItem("5 seconds", 5 * SECOND);
     menuList.appendItem("10 seconds", 10 * SECOND);
@@ -157,49 +156,15 @@ export class WebPanelPopupEdit extends Panel {
     this.appendChildren(
       new PanelMultiView().appendChildren(
         new PopupHeader("Edit Web Panel"),
-        new PopupBody()
-          .setProperty("padding", "0 var(--space-medium)")
-          .appendChildren(
-            new Header(1).setText("Page web address"),
-            this.urlInput,
-            createPopupGroup("Multi-Account Container", this.containerMenuList),
-            createPopupHeaderGroup(1, "CSS selector", this.selectorToggle),
-            this.selectorInput,
-            new Header(1).setText("Favicon web address"),
+        new PopupBody().appendChildren(
+          createPopupSet("Web page URL", [createPopupRow(this.urlInput)]),
+          createPopupSet("Favicon URL", [
             createPopupRow(this.faviconURLInput, this.faviconResetButton),
-            new ToolbarSeparator(),
-            createPopupGroup("Web panel type", this.pinnedMenuList),
-            createPopupGroup(
-              "Floating web panel anchor",
-              this.floatingAnchorMenuList,
-            ),
-            createPopupGroup(
-              "Floating web panel width",
-              this.widthTypeMenuList,
-            ),
-            createPopupGroup(
-              "Floating web panel height",
-              this.heightTypeMenuList,
-            ),
+          ]),
+          createPopupSet("General settings", [
+            createPopupGroup("Multi-Account Container", this.containerMenuList),
             new ToolbarSeparator(),
             createPopupGroup("Mobile View", this.mobileToggle),
-            createPopupGroup(
-              "Load into memory at startup",
-              this.loadOnStartupToggle,
-            ),
-            createPopupGroup(
-              "Unload from memory after closing",
-              this.unloadOnCloseToggle,
-            ),
-            new ToolbarSeparator(),
-            createPopupGroup("Hide toolbar", this.hideToolbarToggle),
-            createPopupGroup("Hide sound icon", this.hideSoundIconToggle),
-            createPopupGroup(
-              "Hide notification badge",
-              this.hideNotificationBadgeToggle,
-            ),
-            new ToolbarSeparator(),
-            createPopupGroup("Periodic reload", this.periodicReloadMenuList),
             new ToolbarSeparator(),
             createPopupGroup(
               "Zoom",
@@ -209,8 +174,45 @@ export class WebPanelPopupEdit extends Panel {
                 this.zoomInButton,
               ),
             ),
-          )
-          .setProperty("overflow-y", "scroll"),
+            new ToolbarSeparator(),
+            createPopupGroup("Web panel type", this.pinnedMenuList),
+          ]),
+          createPopupSet("CSS selector", [
+            createPopupGroup("Enable", this.selectorToggle),
+            new ToolbarSeparator({ id: "sb2-popup-css-selector-sep" }),
+            createPopupRow(this.selectorInput),
+          ]),
+          createPopupSet("Floating web panel settings", [
+            createPopupGroup("Position anchor", this.floatingAnchorMenuList),
+            new ToolbarSeparator(),
+            createPopupGroup("Width type", this.widthTypeMenuList),
+            new ToolbarSeparator(),
+            createPopupGroup("Height type", this.heightTypeMenuList),
+          ]),
+          createPopupSet("Loading settings", [
+            createPopupGroup(
+              "Load into memory at startup",
+              this.loadOnStartupToggle,
+            ),
+            new ToolbarSeparator(),
+            createPopupGroup(
+              "Unload from memory after closing",
+              this.unloadOnCloseToggle,
+            ),
+            new ToolbarSeparator(),
+            createPopupGroup("Periodic reload", this.periodicReloadMenuList),
+          ]),
+          createPopupSet("Hide elements", [
+            createPopupGroup("Hide toolbar", this.hideToolbarToggle),
+            new ToolbarSeparator(),
+            createPopupGroup("Hide sound icon", this.hideSoundIconToggle),
+            new ToolbarSeparator(),
+            createPopupGroup(
+              "Hide notification badge",
+              this.hideNotificationBadgeToggle,
+            ),
+          ]),
+        ),
         new PopupFooter().appendChildren(this.cancelButton, this.saveButton),
       ),
     );

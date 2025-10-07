@@ -1,6 +1,7 @@
 import {
   createCancelButton,
   createPopupGroup,
+  createPopupSet,
   createSaveButton,
 } from "../utils/xul.mjs";
 
@@ -95,32 +96,39 @@ export class SidebarMainPopupSettings extends Panel {
       new PanelMultiView().appendChildren(
         new PopupHeader("Sidebar Settings"),
         new PopupBody().appendChildren(
-          createPopupGroup("Sidebar position", this.positionMenuList),
-          createPopupGroup("Auto-hide sidebar", this.autoHideSidebarToggle),
-          createPopupGroup(
-            "Animate sidebar hiding",
-            this.hideSidebarAnimatedToggle,
-          ),
-          new ToolbarSeparator(),
-          createPopupGroup("Sidebar width", this.paddingMenuList),
-          createPopupGroup(
-            "Default floating panel offset",
-            this.defaultFloatingOffsetMenuList,
-          ),
-          createPopupGroup(
-            "New web panel position",
-            this.newWebPanelPositionMenuList,
-          ),
-          createPopupGroup(
-            "Container indicator position",
-            this.containerBorderMenuList,
-          ),
-          new ToolbarSeparator(),
-          createPopupGroup("Auto hide back button", this.autoHideBackToggle),
-          createPopupGroup(
-            "Auto hide forward button",
-            this.autoHideForwardToggle,
-          ),
+          createPopupSet("General sidebar settings", [
+            createPopupGroup("Sidebar position", this.positionMenuList),
+            new ToolbarSeparator(),
+            createPopupGroup("Sidebar width", this.paddingMenuList),
+            new ToolbarSeparator(),
+            createPopupGroup("Auto-hide sidebar", this.autoHideSidebarToggle),
+          ]),
+          createPopupSet("General web panels settings", [
+            createPopupGroup(
+              "Default floating panel offset",
+              this.defaultFloatingOffsetMenuList,
+            ),
+            new ToolbarSeparator(),
+            createPopupGroup(
+              "New web panel position",
+              this.newWebPanelPositionMenuList,
+            ),
+            new ToolbarSeparator(),
+            createPopupGroup(
+              "Container indicator position",
+              this.containerBorderMenuList,
+            ),
+            new ToolbarSeparator(),
+            createPopupGroup("Auto-hide back button", this.autoHideBackToggle),
+            new ToolbarSeparator(),
+            createPopupGroup(
+              "Auto-hide forward button",
+              this.autoHideForwardToggle,
+            ),
+          ]),
+          createPopupSet("Animations", [
+            createPopupGroup("Animate sidebar", this.hideSidebarAnimatedToggle),
+          ]),
         ),
         new PopupFooter().appendChildren(this.cancelButton, this.saveButton),
       ),
