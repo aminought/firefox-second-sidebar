@@ -177,11 +177,6 @@ export class WebPanelPopupEdit extends Panel {
             new ToolbarSeparator(),
             createPopupGroup("Web panel type", this.pinnedMenuList),
           ]),
-          createPopupSet("CSS selector", [
-            createPopupGroup("Enable", this.selectorToggle),
-            new ToolbarSeparator({ id: "sb2-popup-css-selector-sep" }),
-            createPopupRow(this.selectorInput),
-          ]),
           createPopupSet("Floating web panel settings", [
             createPopupGroup("Position anchor", this.floatingAnchorMenuList),
             new ToolbarSeparator(),
@@ -201,6 +196,11 @@ export class WebPanelPopupEdit extends Panel {
             ),
             new ToolbarSeparator(),
             createPopupGroup("Periodic reload", this.periodicReloadMenuList),
+          ]),
+          createPopupSet("CSS selector", [
+            createPopupGroup("Enable", this.selectorToggle),
+            new ToolbarSeparator({ id: "sb2-popup-css-selector-sep" }),
+            createPopupRow(this.selectorInput),
           ]),
           createPopupSet("Hide elements", [
             createPopupGroup("Hide toolbar", this.hideToolbarToggle),
