@@ -1,5 +1,6 @@
 import { SidebarEvents, listenEvent, sendEvents } from "./events.mjs";
 
+import { BrowserElements } from "../browser_elements.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { WindowWrapper } from "../wrappers/window.mjs";
@@ -8,17 +9,15 @@ import { XULElement } from "../xul/base/xul_element.mjs";
 const FULLSCREEN_ANIMATE_ATTRIBUTE = "fullscreenShouldAnimate";
 const ANIMATE_ATTRIBUTE = "shouldAnimate";
 
-export class CollapseController {
+export class SidebarMainCollapser {
   constructor() {
     this.#setupListeners();
   }
 
   #setupListeners() {
+    BrowserElements.root.addEventListener("mousemove", this);
+
     const window = new WindowWrapper();
-    const root = new XULElement({ element: window.document.documentElement });
-
-    root.addEventListener("mousemove", this);
-
     window.addEventListener("fullscreen", () => {
       if (window.fullScreen) {
         // Show sidebar and then immediately hide with fullscreen animation

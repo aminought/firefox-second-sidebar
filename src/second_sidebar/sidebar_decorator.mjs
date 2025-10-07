@@ -35,7 +35,7 @@ export class SidebarDecorator {
   static #collapse() {
     setTimeout(() => {
       if (SidebarControllers.sidebarController.autoHideSidebar) {
-        SidebarControllers.collapseController.collapse(false, true);
+        SidebarControllers.sidebarMainCollapser.collapse(false, true);
       }
     }, 100);
   }

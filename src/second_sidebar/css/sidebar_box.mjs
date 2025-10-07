@@ -55,12 +55,13 @@ export const SIDEBAR_BOX_CSS = `
       background-color: inherit;
       color: inherit;
       flex-direction: row;
+      flex: 1;
       min-height: calc(2 * var(--toolbarbutton-inner-padding) + 16px);
       gap: 4px;
       padding: 1px;
       overflow: scroll;
       -moz-window-dragging: no-drag;
-      transition: 0.4s margin-top ease-out;
+      transition: 0.2s margin-top ease-out;
 
       #sb2-toolbar-title-wrapper {
         display: flex;

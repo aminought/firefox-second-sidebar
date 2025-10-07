@@ -70,6 +70,10 @@ export class SidebarResizer {
      */
     function resize(e) {
       if (!currentResizer) return;
+
+      const webPanelController =
+        SidebarControllers.webPanelsController.getActive();
+      const centered = webPanelController.getAnchor() === "center";
       const type = currentResizer.getAttribute("type");
 
       let top = startRect.top;
@@ -79,35 +83,42 @@ export class SidebarResizer {
 
       const deltaX = e.clientX - startX;
       const deltaY = e.clientY - startY;
+      const deltaWidth = centered ? deltaX * 2 : deltaX;
+      const deltaHeight = centered ? deltaY * 2 : deltaY;
 
       // calculate new position and size
       if (type == "top") {
         top = startRect.top + deltaY;
-        height = startRect.height - deltaY;
+        height = startRect.height - deltaHeight;
       } else if (type == "left") {
         left = startRect.left + deltaX;
-        width = startRect.width - deltaX;
+        width = startRect.width - deltaWidth;
       } else if (type == "right") {
-        width = startRect.width + deltaX;
-        height = startRect.height;
+        if (centered) left = startRect.left - deltaX;
+        width = startRect.width + deltaWidth;
       } else if (type == "bottom") {
-        height = startRect.height + deltaY;
+        if (centered) top = startRect.top - deltaY;
+        height = startRect.height + deltaHeight;
       } else if (type == "topleft") {
         top = startRect.top + deltaY;
         left = startRect.left + deltaX;
-        width = startRect.width - deltaX;
-        height = startRect.height - deltaY;
+        width = startRect.width - deltaWidth;
+        height = startRect.height - deltaHeight;
       } else if (type === "topright") {
         top = startRect.top + deltaY;
-        width = startRect.width + deltaX;
-        height = startRect.height - deltaY;
+        if (centered) left = startRect.left - deltaX;
+        width = startRect.width + deltaWidth;
+        height = startRect.height - deltaHeight;
       } else if (type === "bottomright") {
-        width = startRect.width + deltaX;
-        height = startRect.height + deltaY;
+        if (centered) top = startRect.top - deltaY;
+        if (centered) left = startRect.left - deltaX;
+        width = startRect.width + deltaWidth;
+        height = startRect.height + deltaHeight;
       } else if (type === "bottomleft") {
+        if (centered) top = startRect.top - deltaY;
         left = startRect.left + deltaX;
-        width = startRect.width - deltaX;
-        height = startRect.height + deltaY;
+        width = startRect.width - deltaWidth;
+        height = startRect.height + deltaHeight;
       }
 
       // check minimal bounds
@@ -124,8 +135,6 @@ export class SidebarResizer {
         height = SidebarResizer.MIN_HEIGHT;
       }
 
-      const webPanelController =
-        SidebarControllers.webPanelsController.getActive();
       SidebarControllers.sidebarController.calculateAndSetFloatingPosition({
         top,
         left,

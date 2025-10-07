@@ -197,7 +197,7 @@ export class SidebarController {
 
     listenEvent(SidebarEvents.RESET_SIDEBAR_FLOATING_POSITION, (event) => {
       const { uuid, isActiveWindow } = event.detail;
-      this.resetFloatingSidebar(uuid, true, false, false);
+      this.resetFloatingSidebar(uuid, { resetPosition: true });
       if (isActiveWindow) {
         SidebarControllers.webPanelsController.saveSettings();
       }
@@ -205,7 +205,7 @@ export class SidebarController {
 
     listenEvent(SidebarEvents.RESET_SIDEBAR_FLOATING_WIDTH, (event) => {
       const { uuid, isActiveWindow } = event.detail;
-      this.resetFloatingSidebar(uuid, false, true, false);
+      this.resetFloatingSidebar(uuid, { resetWidth: true });
       if (isActiveWindow) {
         SidebarControllers.webPanelsController.saveSettings();
       }
@@ -213,7 +213,7 @@ export class SidebarController {
 
     listenEvent(SidebarEvents.RESET_SIDEBAR_FLOATING_HEIGHT, (event) => {
       const { uuid, isActiveWindow } = event.detail;
-      this.resetFloatingSidebar(uuid, false, false, true);
+      this.resetFloatingSidebar(uuid, { resetHeight: true });
       if (isActiveWindow) {
         SidebarControllers.webPanelsController.saveSettings();
       }
@@ -221,7 +221,11 @@ export class SidebarController {
 
     listenEvent(SidebarEvents.RESET_SIDEBAR_FLOATING_ALL, (event) => {
       const { uuid, isActiveWindow } = event.detail;
-      this.resetFloatingSidebar(uuid, true, true, true);
+      this.resetFloatingSidebar(uuid, {
+        resetPosition: true,
+        resetWidth: true,
+        resetHeight: true,
+      });
       if (isActiveWindow) {
         SidebarControllers.webPanelsController.saveSettings();
       }
@@ -273,6 +277,7 @@ export class SidebarController {
       width,
       height,
     );
+    SidebarControllers.sidebarToolbarCollapser.clearTimers();
     SidebarElements.sidebarBox.show();
     SidebarElements.sidebarToolbar
       .toggleBackButton(!canGoBack)
@@ -283,7 +288,7 @@ export class SidebarController {
   }
 
   /**
-   * @param {string} anchor
+   * @param {string} anchor_
    * @param {string?} marginTop
    * @param {string?} marginLeft
    * @param {string?} marginRight
@@ -303,33 +308,46 @@ export class SidebarController {
     let top, left, right, bottom;
     top = left = right = bottom = "unset";
 
-    if (anchor == "default") anchor = this.getDefaultAnchor();
-    if (anchor == "topleft") top = left = "0px";
-    else if (anchor == "topright") top = right = "0px";
-    else if (anchor == "bottomleft") bottom = left = "0px";
-    else if (anchor == "bottomright") bottom = right = "0px";
+    let resolvedAnchor = anchor;
+    if (resolvedAnchor == "default") resolvedAnchor = this.getDefaultAnchor();
+    if (resolvedAnchor == "topleft") top = left = "0px";
+    else if (resolvedAnchor == "topright") top = right = "0px";
+    else if (resolvedAnchor == "bottomleft") bottom = left = "0px";
+    else if (resolvedAnchor == "bottomright") bottom = right = "0px";
+    else if (resolvedAnchor == "center") top = left = right = bottom = 0;
+
+    marginTop = marginTop ?? "unset";
+    marginLeft = marginLeft ?? "unset";
+
+    const margin = marginTop !== "unset" ? marginTop : marginBottom;
+    width = width ?? "400px";
+    height = height ?? `calc(100% - ${margin} * 2)`;
 
     SidebarElements.sidebarBox
       .setProperty("top", top)
       .setProperty("left", left)
       .setProperty("right", right)
       .setProperty("bottom", bottom)
-      .setProperty("margin-top", marginTop ?? "unset")
-      .setProperty("margin-left", marginLeft ?? "unset")
-      .setProperty("margin-right", marginRight ?? "unset")
-      .setProperty("margin-bottom", marginBottom ?? "unset")
-      .setProperty("width", width ?? "400px")
-      .setProperty("height", height ?? "100%");
+      .setProperty("margin-top", marginTop)
+      .setProperty("margin-left", marginLeft)
+      .setProperty("margin-right", marginRight)
+      .setProperty("margin-bottom", marginBottom)
+      .setProperty("width", width)
+      .setProperty("height", height);
   }
 
   /**
    *
    * @param {string} uuid
-   * @param {boolean} resetPosition
-   * @param {boolean} resetWidth
-   * @param {boolean} resetHeight
+   * @param {object} params
+   * @param {boolean} params.resetPosition
+   * @param {boolean} params.resetWidth
+   * @param {boolean} params.resetHeight
    */
-  resetFloatingSidebar(uuid, resetPosition, resetWidth, resetHeight) {
+  resetFloatingSidebar(
+    uuid,
+    { resetPosition = false, resetWidth = false, resetHeight = false } = {},
+  ) {
     const webPanelController = SidebarControllers.webPanelsController.get(uuid);
     const position = SidebarElements.sidebarWrapper.getPosition();
     const padding = this.getDefaultFloatingOffsetCSS();
@@ -392,6 +410,7 @@ export class SidebarController {
   }
 
   close() {
+    SidebarControllers.sidebarToolbarCollapser.clearTimers();
     SidebarElements.sidebarBox.hide();
     SidebarElements.sidebarSplitter.hide();
     SidebarControllers.webPanelsController.close();
@@ -556,6 +575,8 @@ export class SidebarController {
     } else if (anchor == "bottomright") {
       marginBottom = `${areaBottom - top - height}px`;
       marginRight = `${areaRight - left - width}px`;
+    } else if (anchor == "center") {
+      marginTop = marginLeft = marginRight = marginBottom = "auto";
     }
 
     this.setFloatingPosition(
@@ -590,14 +611,13 @@ export class SidebarController {
     this.autoHideSidebar = value;
     SidebarElements.sidebarCollapseButton
       .setDisabled(value)
-      .setOpen(!SidebarControllers.collapseController.collapsed());
+      .setOpen(!SidebarControllers.sidebarMainCollapser.collapsed());
   }
 
   collapseToolbar() {
-    SidebarElements.sidebarToolbar.setProperty(
-      "margin-top",
-      -SidebarElements.sidebarToolbar.getBoundingClientRect().height + "px",
-    );
+    const height =
+      SidebarElements.sidebarToolbar.getBoundingClientRect().height;
+    SidebarElements.sidebarToolbar.setProperty("margin-top", -height + "px");
   }
 
   uncollapseToolbar() {

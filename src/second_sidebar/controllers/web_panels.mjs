@@ -6,7 +6,6 @@ import {
 } from "./events.mjs";
 import { isLeftMouseButton, isMiddleMouseButton } from "../utils/buttons.mjs";
 
-import { BrowserElements } from "../browser_elements.mjs";
 import { NetUtilWrapper } from "../wrappers/net_utils.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
@@ -14,7 +13,6 @@ import { WebPanelController } from "./web_panel.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { WebPanelsSettings } from "../settings/web_panels_settings.mjs";
 import { WindowWrapper } from "../wrappers/window.mjs";
-import { XULElement } from "../xul/base/xul_element.mjs";
 import { fetchIconURL } from "../utils/icons.mjs";
 import { gCustomizeModeWrapper } from "../wrappers/g_customize_mode.mjs";
 import { parseNotifications } from "../utils/string.mjs";
@@ -373,50 +371,6 @@ export class WebPanelsController {
 
       if (event.detail.isActiveWindow) {
         this.saveSettings();
-      }
-    });
-
-    let showToolbarTimer, hideToolbarTimer;
-    BrowserElements.root.addEventListener("mousemove", (event) => {
-      const webPanelController = this.getActive();
-      if (!webPanelController) return;
-      if (!webPanelController.getHideToolbar()) {
-        SidebarControllers.sidebarController.uncollapseToolbar();
-        return;
-      }
-
-      const target = new XULElement({ element: event.target });
-      const toolbarRect =
-        SidebarElements.sidebarToolbar.getBoundingClientRect();
-      const threshold = SidebarElements.sidebarBox.screenY + toolbarRect.height;
-      const delay = 200;
-
-      const isInsideSidebarBox =
-        SidebarElements.sidebarBox.contains(target) ||
-        SidebarElements.webPanelsBrowser.activeWebPanelContains(target);
-      const isInUncollapseArea =
-        isInsideSidebarBox &&
-        !target.hasClass("sb2-resizer") &&
-        event.screenY < threshold;
-
-      if (isInUncollapseArea) {
-        clearTimeout(hideToolbarTimer);
-        hideToolbarTimer = null;
-        if (!showToolbarTimer) {
-          showToolbarTimer = setTimeout(() => {
-            SidebarControllers.sidebarController.uncollapseToolbar();
-            showToolbarTimer = null;
-          }, delay);
-        }
-      } else {
-        clearTimeout(showToolbarTimer);
-        showToolbarTimer = null;
-        if (!hideToolbarTimer) {
-          hideToolbarTimer = setTimeout(() => {
-            SidebarControllers.sidebarController.collapseToolbar();
-            hideToolbarTimer = null;
-          }, delay);
-        }
       }
     });
   }

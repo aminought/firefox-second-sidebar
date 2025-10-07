@@ -118,6 +118,7 @@ export class WebPanelPopupEdit extends Panel {
     menuList.appendItem("Top-right", "topright");
     menuList.appendItem("Bottom-left", "bottomleft");
     menuList.appendItem("Bottom-right", "bottomright");
+    menuList.appendItem("Center", "center");
     return menuList;
   }
 
@@ -468,7 +469,7 @@ export class WebPanelPopupEdit extends Panel {
       this.onPinnedChange(this.settings.uuid, this.settings.pinned);
     }
     if (this.floatingAnchorMenuList.getValue() !== this.settings.anchor) {
-      this.onAnchorChange(this.settings.uuid, this.settings.anchor);
+      this.onFloatingAnchorChange(this.settings.uuid, this.settings.anchor);
     }
     if (this.widthTypeMenuList.getValue() !== this.settings.widthType) {
       this.onWidthTypeChange(this.settings.uuid, this.settings.widthType);
@@ -516,7 +517,8 @@ export class WebPanelPopupEdit extends Panel {
       );
     }
     if (
-      this.periodicReloadMenuList.getValue() !== this.settings.periodicReload
+      parseInt(this.periodicReloadMenuList.getValue()) !==
+      this.settings.periodicReload
     ) {
       this.onPeriodicReload(this.settings.uuid, this.settings.periodicReload);
     }
