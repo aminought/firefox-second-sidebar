@@ -594,18 +594,34 @@ export class SidebarController {
       marginTop = marginLeft = marginRight = marginBottom = "auto";
     }
 
+    // calculate width
+    if (widthChanged) {
+      width =
+        widthType === "absolute"
+          ? width + "px"
+          : `${(width / areaRect.width) * 100}%`;
+    } else {
+      width = SidebarElements.sidebarBox.getProperty("width");
+    }
+
+    // calculate height
+    if (heightChanged) {
+      height =
+        heightType === "absolute"
+          ? height + "px"
+          : `${(height / areaRect.height) * 100}%`;
+    } else {
+      height = SidebarElements.sidebarBox.getProperty("height");
+    }
+
     this.setFloatingPosition(
       anchor,
       marginTop,
       marginLeft,
       marginRight,
       marginBottom,
-      widthType === "absolute"
-        ? width + "px"
-        : `${(width / areaRect.width) * 100}%`,
-      heightType === "absolute"
-        ? height + "px"
-        : `${(height / areaRect.height) * 100}%`,
+      width,
+      height,
     );
   }
 
