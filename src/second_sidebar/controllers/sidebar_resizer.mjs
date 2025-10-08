@@ -88,49 +88,49 @@ export class SidebarResizer {
 
       // calculate new position and size
       if (type == "top") {
-        top = startRect.top + deltaY;
-        height = startRect.height - deltaHeight;
+        top += deltaY;
+        height -= deltaHeight;
       } else if (type == "left") {
-        left = startRect.left + deltaX;
-        width = startRect.width - deltaWidth;
+        left += deltaX;
+        width -= deltaWidth;
       } else if (type == "right") {
-        if (centered) left = startRect.left - deltaX;
-        width = startRect.width + deltaWidth;
+        if (centered) left -= deltaX;
+        width += deltaWidth;
       } else if (type == "bottom") {
-        if (centered) top = startRect.top - deltaY;
-        height = startRect.height + deltaHeight;
+        if (centered) top -= deltaY;
+        height += deltaHeight;
       } else if (type == "topleft") {
-        top = startRect.top + deltaY;
-        left = startRect.left + deltaX;
-        width = startRect.width - deltaWidth;
-        height = startRect.height - deltaHeight;
+        top += deltaY;
+        left += deltaX;
+        width -= deltaWidth;
+        height -= deltaHeight;
       } else if (type === "topright") {
-        top = startRect.top + deltaY;
-        if (centered) left = startRect.left - deltaX;
-        width = startRect.width + deltaWidth;
-        height = startRect.height - deltaHeight;
+        top += deltaY;
+        if (centered) left -= deltaX;
+        width += deltaWidth;
+        height -= deltaHeight;
       } else if (type === "bottomright") {
-        if (centered) top = startRect.top - deltaY;
-        if (centered) left = startRect.left - deltaX;
-        width = startRect.width + deltaWidth;
-        height = startRect.height + deltaHeight;
+        if (centered) top -= deltaY;
+        if (centered) left -= deltaX;
+        width += deltaWidth;
+        height += deltaHeight;
       } else if (type === "bottomleft") {
-        if (centered) top = startRect.top - deltaY;
-        left = startRect.left + deltaX;
-        width = startRect.width - deltaWidth;
-        height = startRect.height + deltaHeight;
+        if (centered) top -= deltaY;
+        left += deltaX;
+        width -= deltaWidth;
+        height += deltaHeight;
       }
 
       // check minimal bounds
       if (width < SidebarResizer.MIN_WIDTH) {
         if (left != startRect.left) {
-          left = left + width - SidebarResizer.MIN_WIDTH;
+          left += width - SidebarResizer.MIN_WIDTH;
         }
         width = SidebarResizer.MIN_WIDTH;
       }
       if (height < SidebarResizer.MIN_HEIGHT) {
         if (top != startRect.top) {
-          top = top + height - SidebarResizer.MIN_HEIGHT;
+          top += height - SidebarResizer.MIN_HEIGHT;
         }
         height = SidebarResizer.MIN_HEIGHT;
       }
@@ -138,12 +138,8 @@ export class SidebarResizer {
       SidebarControllers.sidebarGeometry.calculateAndSetFloatingGeometry({
         top,
         left,
-        width,
-        height,
-        widthChanged: width != startRect.width,
-        heightChanged: height != startRect.height,
-        widthType: webPanelController.getWidthType(),
-        heightType: webPanelController.getHeightType(),
+        width: width !== startRect.width ? width : null,
+        height: height !== startRect.height ? height : null,
       });
       showSidebarBoxPositionHint();
     }

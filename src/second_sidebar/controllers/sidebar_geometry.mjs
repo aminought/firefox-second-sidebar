@@ -115,20 +115,12 @@ export class SidebarGeometry {
    * @param {number?} params.left
    * @param {number?} params.width
    * @param {number?} params.height
-   * @param {boolean} params.widthChanged
-   * @param {boolean} params.heightChanged
-   * @param {string} params.widthType
-   * @param {string} params.heightType
    */
   calculateAndSetFloatingGeometry({
     top = null,
     left = null,
     width = null,
     height = null,
-    widthChanged = false,
-    heightChanged = false,
-    widthType = "absolute",
-    heightType = "relative",
   } = {}) {
     if (SidebarControllers.sidebarController.closed()) return;
     const areaRect = SidebarElements.sidebarBoxArea.getBoundingClientRect();
@@ -138,6 +130,9 @@ export class SidebarGeometry {
     const areaLeft = 0;
     const areaRight = areaRect.right - areaRect.left;
     const areaBottom = areaRect.bottom - areaRect.top;
+
+    const sameWidth = width === null;
+    const sameHeight = height === null;
 
     if (top === null) top = boxRect.top;
     if (left === null) left = boxRect.left;
@@ -150,17 +145,17 @@ export class SidebarGeometry {
     // left border
     if (left < areaLeft) {
       left = areaLeft;
-      if (widthChanged) {
+      if (!sameWidth) {
         width = boxRect.right - areaRect.left;
       }
     }
 
     // right border
     if (left + width > areaRight) {
-      if (widthChanged) {
-        width = areaRight - left;
-      } else {
+      if (sameWidth) {
         left = areaRight - width;
+      } else {
+        width = areaRight - left;
       }
     }
 
@@ -172,15 +167,17 @@ export class SidebarGeometry {
 
     // bottom border
     if (top + height > areaBottom) {
-      if (heightChanged) {
-        height = areaBottom - top;
-      } else {
+      if (sameHeight) {
         top = areaBottom - height;
+      } else {
+        height = areaBottom - top;
       }
     }
 
     const webPanelController =
       SidebarControllers.webPanelsController.getActive();
+    const widthType = webPanelController.getWidthType();
+    const heightType = webPanelController.getHeightType();
     let anchor = webPanelController.getAnchor();
 
     let marginTop, marginLeft, marginRight, marginBottom;
@@ -205,23 +202,23 @@ export class SidebarGeometry {
     }
 
     // calculate width
-    if (widthChanged) {
+    if (sameWidth) {
+      width = SidebarElements.sidebarBox.getProperty("width");
+    } else {
       width =
         widthType === "absolute"
           ? width + "px"
           : `${(width / areaRect.width) * 100}%`;
-    } else {
-      width = SidebarElements.sidebarBox.getProperty("width");
     }
 
     // calculate height
-    if (heightChanged) {
+    if (sameHeight) {
+      height = SidebarElements.sidebarBox.getProperty("height");
+    } else {
       height =
         heightType === "absolute"
           ? height + "px"
           : `${(height / areaRect.height) * 100}%`;
-    } else {
-      height = SidebarElements.sidebarBox.getProperty("height");
     }
 
     this.setFloatingGeometry(
