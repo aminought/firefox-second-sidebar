@@ -185,7 +185,7 @@ export class SidebarController {
     hideToolbar,
   ) {
     SidebarControllers.sidebarToolbarCollapser.clearTimers();
-    SidebarControllers.sidebarPositionAndSize.setFloatingPosition(
+    SidebarControllers.sidebarGeometry.setFloatingGeometry(
       anchor,
       marginTop,
       marginLeft,
@@ -312,7 +312,7 @@ export class SidebarController {
     SidebarControllers.webPanelNewController.setNewWebPanelPosition(
       settings.newWebPanelPosition,
     );
-    SidebarControllers.sidebarPositionAndSize.setDefaultFloatingOffset(
+    SidebarControllers.sidebarGeometry.setDefaultFloatingOffset(
       settings.defaultFloatingOffset,
     );
     SidebarElements.sidebarToolbar.setAutoHideBackButton(
@@ -325,7 +325,7 @@ export class SidebarController {
     this.setAutoHideSidebar(settings.autoHideSidebar);
     this.hideSidebarAnimated = settings.hideSidebarAnimated;
     this.setHideToolbarAnimated(settings.hideToolbarAnimated);
-    SidebarControllers.sidebarPositionAndSize.setEnableSidebarBoxHint(
+    SidebarControllers.sidebarGeometry.setEnableSidebarBoxHint(
       settings.enableSidebarBoxHint,
     );
   }
@@ -339,14 +339,14 @@ export class SidebarController {
       SidebarElements.sidebarWrapper.getPosition(),
       SidebarControllers.sidebarMainController.getPadding(),
       SidebarControllers.webPanelNewController.getNewWebPanelPosition(),
-      SidebarControllers.sidebarPositionAndSize.getDefaultFloatingOffset(),
+      SidebarControllers.sidebarGeometry.getDefaultFloatingOffset(),
       SidebarElements.sidebarToolbar.getAutoHideBackButton(),
       SidebarElements.sidebarToolbar.getAutoHideForwardButton(),
       this.containerBorder,
       this.autoHideSidebar,
       this.hideSidebarAnimated,
       this.hideToolbarAnimated,
-      SidebarControllers.sidebarPositionAndSize.getEnableSidebarBoxHint(),
+      SidebarControllers.sidebarGeometry.getEnableSidebarBoxHint(),
     );
   }
 

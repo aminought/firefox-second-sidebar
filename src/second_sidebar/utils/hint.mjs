@@ -2,7 +2,7 @@ import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 
 export function showSidebarBoxPositionHint() {
-  if (!SidebarControllers.sidebarController.enableSidebarBoxHint) return;
+  if (!SidebarControllers.sidebarGeometry.enableSidebarBoxHint) return;
 
   const marginTop = parseProperty("margin-top");
   const marginLeft = parseProperty("margin-left");
@@ -20,7 +20,7 @@ export function showSidebarBoxPositionHint() {
   const webPanelController = SidebarControllers.webPanelsController.getActive();
   let anchor = webPanelController.getAnchor();
   if (anchor === "default") {
-    anchor = SidebarControllers.sidebarController.getDefaultAnchor();
+    anchor = SidebarControllers.sidebarGeometry.getDefaultAnchor();
   }
 
   const hint = `anchor: ${anchor}, offset: [${parts[0]} ${parts[1]}], size: [${width} ${height}]`;

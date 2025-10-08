@@ -3,7 +3,7 @@ import { SidebarEvents, listenEvent } from "./events.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 
-export class SidebarPositionAndSize {
+export class SidebarGeometry {
   constructor() {
     this.#setupListeners();
 
@@ -54,7 +54,7 @@ export class SidebarPositionAndSize {
         height,
       );
       if (webPanelController.isActive()) {
-        this.setFloatingPosition(
+        this.setFloatingGeometry(
           webPanelController.getAnchor(),
           marginTop,
           marginLeft,
@@ -68,7 +68,7 @@ export class SidebarPositionAndSize {
 
     listenEvent(SidebarEvents.RESET_SIDEBAR_FLOATING_POSITION, (event) => {
       const { uuid, isActiveWindow } = event.detail;
-      this.resetFloatingSidebar(uuid, { resetPosition: true });
+      this.resetFloatingGeometry(uuid, { resetPosition: true });
       if (isActiveWindow) {
         SidebarControllers.webPanelsController.saveSettings();
       }
@@ -76,7 +76,7 @@ export class SidebarPositionAndSize {
 
     listenEvent(SidebarEvents.RESET_SIDEBAR_FLOATING_WIDTH, (event) => {
       const { uuid, isActiveWindow } = event.detail;
-      this.resetFloatingSidebar(uuid, { resetWidth: true });
+      this.resetFloatingGeometry(uuid, { resetWidth: true });
       if (isActiveWindow) {
         SidebarControllers.webPanelsController.saveSettings();
       }
@@ -84,7 +84,7 @@ export class SidebarPositionAndSize {
 
     listenEvent(SidebarEvents.RESET_SIDEBAR_FLOATING_HEIGHT, (event) => {
       const { uuid, isActiveWindow } = event.detail;
-      this.resetFloatingSidebar(uuid, { resetHeight: true });
+      this.resetFloatingGeometry(uuid, { resetHeight: true });
       if (isActiveWindow) {
         SidebarControllers.webPanelsController.saveSettings();
       }
@@ -92,7 +92,7 @@ export class SidebarPositionAndSize {
 
     listenEvent(SidebarEvents.RESET_SIDEBAR_FLOATING_ALL, (event) => {
       const { uuid, isActiveWindow } = event.detail;
-      this.resetFloatingSidebar(uuid, {
+      this.resetFloatingGeometry(uuid, {
         resetPosition: true,
         resetWidth: true,
         resetHeight: true,
@@ -109,160 +109,6 @@ export class SidebarPositionAndSize {
   }
 
   /**
-   * @param {string} anchor_
-   * @param {string?} marginTop
-   * @param {string?} marginLeft
-   * @param {string?} marginRight
-   * @param {string?} marginBottom
-   * @param {string?} width
-   * @param {string?} height
-   */
-  setFloatingPosition(
-    anchor,
-    marginTop,
-    marginLeft,
-    marginRight,
-    marginBottom,
-    width,
-    height,
-  ) {
-    let top, left, right, bottom;
-    top = left = right = bottom = "unset";
-
-    let resolvedAnchor = anchor;
-    if (resolvedAnchor == "default") resolvedAnchor = this.getDefaultAnchor();
-    if (resolvedAnchor == "topleft") top = left = "0px";
-    else if (resolvedAnchor == "topright") top = right = "0px";
-    else if (resolvedAnchor == "bottomleft") bottom = left = "0px";
-    else if (resolvedAnchor == "bottomright") bottom = right = "0px";
-    else if (resolvedAnchor == "center") top = left = right = bottom = 0;
-
-    marginTop = marginTop ?? "unset";
-    marginLeft = marginLeft ?? "unset";
-
-    const margin = marginTop !== "unset" ? marginTop : marginBottom;
-    width = width ?? "400px";
-    height = height ?? `calc(100% - ${margin} * 2)`;
-
-    SidebarElements.sidebarBox
-      .setProperty("top", top)
-      .setProperty("left", left)
-      .setProperty("right", right)
-      .setProperty("bottom", bottom)
-      .setProperty("margin-top", marginTop)
-      .setProperty("margin-left", marginLeft)
-      .setProperty("margin-right", marginRight)
-      .setProperty("margin-bottom", marginBottom)
-      .setProperty("width", width)
-      .setProperty("height", height);
-  }
-
-  /**
-   *
-   * @param {string} uuid
-   * @param {object} params
-   * @param {boolean} params.resetPosition
-   * @param {boolean} params.resetWidth
-   * @param {boolean} params.resetHeight
-   */
-  resetFloatingSidebar(
-    uuid,
-    { resetPosition = false, resetWidth = false, resetHeight = false } = {},
-  ) {
-    const webPanelController = SidebarControllers.webPanelsController.get(uuid);
-    const position = SidebarElements.sidebarWrapper.getPosition();
-    const padding = this.getDefaultFloatingOffsetCSS();
-    const anchor = resetPosition ? "default" : webPanelController.getAnchor();
-    const marginTop = resetPosition
-      ? padding
-      : SidebarElements.sidebarBox.getProperty("margin-top");
-    const marginLeft = resetPosition
-      ? position === "left"
-        ? padding
-        : "unset"
-      : SidebarElements.sidebarBox.getProperty("margin-left");
-    const marginRight = resetPosition
-      ? position === "right"
-        ? padding
-        : "unset"
-      : SidebarElements.sidebarBox.getProperty("margin-right");
-    const marginBottom = resetPosition
-      ? "unset"
-      : SidebarElements.sidebarBox.getProperty("margin-bottom");
-    const width = resetWidth
-      ? "400px"
-      : SidebarElements.sidebarBox.getProperty("width");
-    const margin = marginTop !== "unset" ? marginTop : marginBottom;
-    const height = resetHeight
-      ? `calc(100% - ${margin} * 2)`
-      : SidebarElements.sidebarBox.getProperty("height");
-    webPanelController.setAnchor(anchor);
-    if (resetWidth) webPanelController.setWidthType("absolute");
-    if (resetHeight) webPanelController.setHeightType("relative");
-    webPanelController.setFloatingPosition(
-      marginTop,
-      marginLeft,
-      marginRight,
-      marginBottom,
-      width,
-      height,
-    );
-    this.setFloatingPosition(
-      anchor,
-      marginTop,
-      marginLeft,
-      marginRight,
-      marginBottom,
-      width,
-      height,
-    );
-    if (webPanelController.isActive()) {
-      SidebarControllers.webPanelsController.saveSettings();
-    }
-  }
-
-  /**
-   *
-   * @returns {string}
-   */
-  getDefaultAnchor() {
-    const position = SidebarElements.sidebarWrapper.getPosition();
-    return position == "left" ? "topleft" : "topright";
-  }
-
-  /**
-   *
-   * @returns {string}
-   */
-  getDefaultFloatingOffset() {
-    return this.defaultFloatingOffset;
-  }
-
-  /**
-   *
-   * @returns {string}
-   */
-  getDefaultFloatingOffsetCSS() {
-    return `var(--space-${this.getDefaultFloatingOffset()})`;
-  }
-
-  /**
-   *
-   * @param {string} value
-   */
-  setDefaultFloatingOffset(value) {
-    this.defaultFloatingOffset = value;
-  }
-
-  /**
-   *
-   * @param {number} width
-   */
-  setPinnedWidth(width) {
-    SidebarElements.sidebarBox.setProperty("width", `${width}px`);
-  }
-
-  /**
    *
    * @param {object} params
    * @param {number?} params.top
@@ -274,7 +120,7 @@ export class SidebarPositionAndSize {
    * @param {string} params.widthType
    * @param {string} params.heightType
    */
-  calculateAndSetFloatingPosition({
+  calculateAndSetFloatingGeometry({
     top = null,
     left = null,
     width = null,
@@ -378,7 +224,7 @@ export class SidebarPositionAndSize {
       height = SidebarElements.sidebarBox.getProperty("height");
     }
 
-    this.setFloatingPosition(
+    this.setFloatingGeometry(
       anchor,
       marginTop,
       marginLeft,
@@ -387,6 +233,160 @@ export class SidebarPositionAndSize {
       width,
       height,
     );
+  }
+
+  /**
+   * @param {string} anchor_
+   * @param {string?} marginTop
+   * @param {string?} marginLeft
+   * @param {string?} marginRight
+   * @param {string?} marginBottom
+   * @param {string?} width
+   * @param {string?} height
+   */
+  setFloatingGeometry(
+    anchor,
+    marginTop,
+    marginLeft,
+    marginRight,
+    marginBottom,
+    width,
+    height,
+  ) {
+    let top, left, right, bottom;
+    top = left = right = bottom = "unset";
+
+    let resolvedAnchor = anchor;
+    if (resolvedAnchor == "default") resolvedAnchor = this.getDefaultAnchor();
+    if (resolvedAnchor == "topleft") top = left = "0px";
+    else if (resolvedAnchor == "topright") top = right = "0px";
+    else if (resolvedAnchor == "bottomleft") bottom = left = "0px";
+    else if (resolvedAnchor == "bottomright") bottom = right = "0px";
+    else if (resolvedAnchor == "center") top = left = right = bottom = 0;
+
+    marginTop = marginTop ?? "unset";
+    marginLeft = marginLeft ?? "unset";
+
+    const margin = marginTop !== "unset" ? marginTop : marginBottom;
+    width = width ?? "400px";
+    height = height ?? `calc(100% - ${margin} * 2)`;
+
+    SidebarElements.sidebarBox
+      .setProperty("top", top)
+      .setProperty("left", left)
+      .setProperty("right", right)
+      .setProperty("bottom", bottom)
+      .setProperty("margin-top", marginTop)
+      .setProperty("margin-left", marginLeft)
+      .setProperty("margin-right", marginRight)
+      .setProperty("margin-bottom", marginBottom)
+      .setProperty("width", width)
+      .setProperty("height", height);
+  }
+
+  /**
+   *
+   * @param {string} uuid
+   * @param {object} params
+   * @param {boolean} params.resetPosition
+   * @param {boolean} params.resetWidth
+   * @param {boolean} params.resetHeight
+   */
+  resetFloatingGeometry(
+    uuid,
+    { resetPosition = false, resetWidth = false, resetHeight = false } = {},
+  ) {
+    const webPanelController = SidebarControllers.webPanelsController.get(uuid);
+    const position = SidebarElements.sidebarWrapper.getPosition();
+    const padding = this.getDefaultFloatingOffsetCSS();
+    const anchor = resetPosition ? "default" : webPanelController.getAnchor();
+    const marginTop = resetPosition
+      ? padding
+      : SidebarElements.sidebarBox.getProperty("margin-top");
+    const marginLeft = resetPosition
+      ? position === "left"
+        ? padding
+        : "unset"
+      : SidebarElements.sidebarBox.getProperty("margin-left");
+    const marginRight = resetPosition
+      ? position === "right"
+        ? padding
+        : "unset"
+      : SidebarElements.sidebarBox.getProperty("margin-right");
+    const marginBottom = resetPosition
+      ? "unset"
+      : SidebarElements.sidebarBox.getProperty("margin-bottom");
+    const width = resetWidth
+      ? "400px"
+      : SidebarElements.sidebarBox.getProperty("width");
+    const margin = marginTop !== "unset" ? marginTop : marginBottom;
+    const height = resetHeight
+      ? `calc(100% - ${margin} * 2)`
+      : SidebarElements.sidebarBox.getProperty("height");
+    webPanelController.setAnchor(anchor);
+    if (resetWidth) webPanelController.setWidthType("absolute");
+    if (resetHeight) webPanelController.setHeightType("relative");
+    webPanelController.setFloatingPosition(
+      marginTop,
+      marginLeft,
+      marginRight,
+      marginBottom,
+      width,
+      height,
+    );
+    this.setFloatingGeometry(
+      anchor,
+      marginTop,
+      marginLeft,
+      marginRight,
+      marginBottom,
+      width,
+      height,
+    );
+    if (webPanelController.isActive()) {
+      SidebarControllers.webPanelsController.saveSettings();
+    }
+  }
+
+  /**
+   *
+   * @returns {string}
+   */
+  getDefaultAnchor() {
+    const position = SidebarElements.sidebarWrapper.getPosition();
+    return position == "left" ? "topleft" : "topright";
+  }
+
+  /**
+   *
+   * @returns {string}
+   */
+  getDefaultFloatingOffset() {
+    return this.defaultFloatingOffset;
+  }
+
+  /**
+   *
+   * @returns {string}
+   */
+  getDefaultFloatingOffsetCSS() {
+    return `var(--space-${this.getDefaultFloatingOffset()})`;
+  }
+
+  /**
+   *
+   * @param {string} value
+   */
+  setDefaultFloatingOffset(value) {
+    this.defaultFloatingOffset = value;
+  }
+
+  /**
+   *
+   * @param {number} width
+   */
+  setPinnedWidth(width) {
+    SidebarElements.sidebarBox.setProperty("width", `${width}px`);
   }
 
   /**

@@ -201,12 +201,10 @@ export class WebPanelsController {
       webPanelController.setAnchor(anchor);
 
       if (webPanelController.isActive()) {
-        SidebarControllers.sidebarPositionAndSize.calculateAndSetFloatingPosition(
-          {
-            widthType: webPanelController.getWidthType(),
-            heightType: webPanelController.getHeightType(),
-          },
-        );
+        SidebarControllers.sidebarGeometry.calculateAndSetFloatingGeometry({
+          widthType: webPanelController.getWidthType(),
+          heightType: webPanelController.getHeightType(),
+        });
       }
     });
 
@@ -218,12 +216,10 @@ export class WebPanelsController {
       webPanelController.setWidthType(widthType);
 
       if (webPanelController.isActive()) {
-        SidebarControllers.sidebarPositionAndSize.calculateAndSetFloatingPosition(
-          {
-            widthType: webPanelController.getWidthType(),
-            heightType: webPanelController.getHeightType(),
-          },
-        );
+        SidebarControllers.sidebarGeometry.calculateAndSetFloatingGeometry({
+          widthType: webPanelController.getWidthType(),
+          heightType: webPanelController.getHeightType(),
+        });
       }
     });
 
@@ -235,12 +231,10 @@ export class WebPanelsController {
       webPanelController.setHeightType(heightType);
 
       if (webPanelController.isActive()) {
-        SidebarControllers.sidebarPositionAndSize.calculateAndSetFloatingPosition(
-          {
-            widthType: webPanelController.getWidthType(),
-            heightType: webPanelController.getHeightType(),
-          },
-        );
+        SidebarControllers.sidebarGeometry.calculateAndSetFloatingGeometry({
+          widthType: webPanelController.getWidthType(),
+          heightType: webPanelController.getHeightType(),
+        });
       }
     });
 
@@ -457,7 +451,7 @@ export class WebPanelsController {
 
     const webPanelSettings = new WebPanelSettings(
       SidebarElements.sidebarWrapper.getPosition(),
-      SidebarControllers.sidebarController.getDefaultFloatingOffsetCSS(),
+      SidebarControllers.sidebarGeometry.getDefaultFloatingOffsetCSS(),
       uuid,
       url,
       faviconURL,

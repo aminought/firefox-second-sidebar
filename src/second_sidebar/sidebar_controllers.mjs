@@ -1,10 +1,10 @@
 import { ContextMenuItemsController } from "./controllers/context_menu_items.mjs";
 import { SidebarController } from "./controllers/sidebar.mjs";
+import { SidebarGeometry } from "./controllers/sidebar_geometry.mjs";
 import { SidebarMainCollapser } from "./controllers/sidebar_main_collapser.mjs";
 import { SidebarMainController } from "./controllers/sidebar_main.mjs";
 import { SidebarMainSettingsController } from "./controllers/sidebar_main_settings.mjs";
 import { SidebarMover } from "./controllers/sidebar_mover.mjs";
-import { SidebarPositionAndSize } from "./controllers/sidebar_position_and_size.mjs";
 import { SidebarResizer } from "./controllers/sidebar_resizer.mjs";
 import { SidebarSplitterController } from "./controllers/sidebar_splitter.mjs";
 import { SidebarToolbarCollapser } from "./controllers/sidebar_toolbar_collapser.mjs";
@@ -20,7 +20,7 @@ export class SidebarControllers {
     this.sidebarMainCollapser = new SidebarMainCollapser();
     this.sidebarMainSettingsController = new SidebarMainSettingsController();
     this.sidebarController = new SidebarController();
-    this.sidebarPositionAndSize = new SidebarPositionAndSize();
+    this.sidebarGeometry = new SidebarGeometry();
     this.sidebarToolbarCollapser = new SidebarToolbarCollapser();
     this.sidebarMover = new SidebarMover();
     this.sidebarResizer = new SidebarResizer();
