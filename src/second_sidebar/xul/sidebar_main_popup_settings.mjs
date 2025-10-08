@@ -1,11 +1,11 @@
 import {
   createCancelButton,
+  createMenuList,
   createPopupGroup,
   createPopupSet,
   createSaveButton,
 } from "../utils/xul.mjs";
 
-import { MenuList } from "./base/menulist.mjs";
 import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";
 import { PopupBody } from "./popup_body.mjs";
@@ -44,7 +44,7 @@ export class SidebarMainPopupSettings extends Panel {
    * @returns {MenuList}
    */
   #createPositionMenuList() {
-    const menuList = new MenuList();
+    const menuList = createMenuList();
     menuList.appendItem("Left", "left");
     menuList.appendItem("Right", "right");
     return menuList;
@@ -55,7 +55,7 @@ export class SidebarMainPopupSettings extends Panel {
    * @returns {MenuList}
    */
   #createPaddingMenuList() {
-    const menuList = new MenuList();
+    const menuList = createMenuList();
     menuList.appendItem("Extra Extra Small", "xxsmall");
     menuList.appendItem("Extra Small", "xsmall");
     menuList.appendItem("Small", "small");
@@ -71,7 +71,7 @@ export class SidebarMainPopupSettings extends Panel {
    * @returns {MenuList}
    */
   #createNewWebPanelPositionMenuList() {
-    const menuList = new MenuList();
+    const menuList = createMenuList();
     menuList.appendItem("Before Plus Button", "before");
     menuList.appendItem("After Plus Button", "after");
     return menuList;
@@ -82,7 +82,7 @@ export class SidebarMainPopupSettings extends Panel {
    * @returns {MenuList}
    */
   #createContainerBorderMenuList() {
-    const menuList = new MenuList();
+    const menuList = createMenuList();
     menuList.appendItem("Left", "left");
     menuList.appendItem("Right", "right");
     menuList.appendItem("Top", "top");
@@ -110,7 +110,7 @@ export class SidebarMainPopupSettings extends Panel {
             ),
             new ToolbarSeparator(),
             createPopupGroup(
-              "New web panel position",
+              "New panel position",
               this.newWebPanelPositionMenuList,
             ),
             new ToolbarSeparator(),

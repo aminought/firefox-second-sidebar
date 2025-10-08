@@ -48,12 +48,14 @@ export class WebPanelPopupEdit extends Panel {
 
     this.urlInput = createInput();
     this.selectorToggle = new Toggle({ id: "sb2-popup-css-selector-toggle" });
-    this.selectorInput = createInput({ id: "sb2-popup-css-selector-input" });
+    this.selectorInput = createInput({
+      id: "sb2-popup-css-selector-input",
+      placeholder: ".class-name, #id, tag-name, etc",
+    });
     this.faviconURLInput = createInput();
-    this.faviconResetButton = createSubviewIconicButton(
-      ICONS.UNDO,
-      "Request Favicon",
-    );
+    this.faviconResetButton = createSubviewIconicButton(ICONS.UNDO, {
+      tooltipText: "Request favicon",
+    });
     this.pinnedMenuList = this.#createPinTypeMenuList();
     this.floatingAnchorMenuList = this.#createFloatingAnchorMenuList();
     this.widthTypeMenuList = this.#createDimensionTypeMenuList();
@@ -157,11 +159,9 @@ export class WebPanelPopupEdit extends Panel {
       new PanelMultiView().appendChildren(
         new PopupHeader("Edit Web Panel"),
         new PopupBody().appendChildren(
-          createPopupSet("Web page URL", [createPopupRow(this.urlInput)]),
-          createPopupSet("Favicon URL", [
-            createPopupRow(this.faviconURLInput, this.faviconResetButton),
-          ]),
           createPopupSet("General settings", [
+            createPopupRow(this.urlInput),
+            new ToolbarSeparator(),
             createPopupGroup("Multi-Account Container", this.containerMenuList),
             new ToolbarSeparator(),
             createPopupGroup("Mobile View", this.mobileToggle),
@@ -176,6 +176,9 @@ export class WebPanelPopupEdit extends Panel {
             ),
             new ToolbarSeparator(),
             createPopupGroup("Web panel type", this.pinnedMenuList),
+          ]),
+          createPopupSet("Favicon settings", [
+            createPopupRow(this.faviconURLInput, this.faviconResetButton),
           ]),
           createPopupSet("Floating web panel settings", [
             createPopupGroup("Position anchor", this.floatingAnchorMenuList),

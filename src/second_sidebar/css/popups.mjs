@@ -5,6 +5,107 @@ export const POPUPS_CSS = `
     align-items: unset;
     width: 100%;
 
+    .sb2-popup-header {
+      margin-bottom: var(--space-small);
+      padding: 0 var(--space-xsmall);
+
+      h1 {
+        align-self: center;
+        margin: 0;
+        padding: var(--space-small);
+      }
+    }
+
+    .sb2-popup-body {
+      padding: 0 var(--space-medium);
+      width: 100%;
+      overflow-y: scroll;
+      gap: var(--space-small);
+
+      .subviewbutton {
+        margin: unset;
+        padding: var(--space-small) var(--space-medium);
+      }
+
+      .sb2-popup-set {
+        display: flex;
+
+        .sb2-popup-set-header {
+          display: flex;
+          margin-block: 0;
+          margin-bottom: var(--space-small);
+        }
+
+        .sb2-popup-set-body {
+          display: flex;
+          background-color: var(--toolbar-bgcolor);
+          color: var(--toolbar-color);
+          border: solid 1px var(--border-color-deemphasized);
+          border-radius: var(--border-radius-medium);
+          padding: var(--space-small);
+          gap: 1px;
+
+          .sb2-popup-group {
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            min-height: 24px;
+            max-height: 24px;
+          }
+
+          .sb2-popup-row {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: var(--space-xsmall);
+            width: 100%;
+          }
+
+          label {
+            font-weight: 500;
+            text-wrap: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+      }
+
+      .sb2-popup-set.sb2-popup-warning {
+        .sb2-popup-set-body {
+          background-color: var(--background-color-warning);
+        }
+      }
+    }
+
+    .sb2-popup-body.compact {
+      padding: var(--space-xxsmall);
+      gap: 0;
+
+      .sb2-popup-set-body {
+        padding: 0;
+        background-color: unset;
+      }
+
+      .subviewbutton[type="checkbox"]:not([checked="true"]) {
+        list-style-image: url(chrome://global/skin/icons/close.svg);
+        -moz-context-properties: fill;
+        fill: currentColor;
+        color: inherit;
+
+        .toolbarbutton-text {
+          padding-inline-start: 8px;
+        }
+      }
+    }
+
+    .sb2-popup-footer {
+      justify-content: end;
+      margin-top: var(--space-small);
+      gap: var(--space-small);
+      padding: var(--space-xsmall);
+      width: 100%;
+    }
+
     .panel-header {
       align-self: center;
     }
@@ -13,26 +114,30 @@ export const POPUPS_CSS = `
       width: 100%;
       align-self: center;
     }
-    
+
     input {
       width: -moz-available;
       box-sizing: border-box;
       height: 32px;
+      background-color: var(--toolbar-field-background-color);
+      color: var(--toolbar-field-color);
+      border: solid 1px var(--toolbar-field-border-color);
+      outline: unset;
+    }
+
+    input:focus-visible {
+      background-color: var(--toolbar-field-focus-background-color);
+      color: var(--toolbar-field-focus-color);
+      border: solid 1px var(--toolbar-field-focus-border-color);
     }
 
     .sb2-button-iconic .toolbarbutton-text {
       display: none;
     }
 
-    .subviewbutton[type="checkbox"]:not([checked="true"]) {
-      list-style-image: url(chrome://global/skin/icons/close.svg);
-      -moz-context-properties: fill;
-      fill: currentColor;
-      color: inherit;
-
-      .toolbarbutton-text {
-        padding-inline-start: 8px;
-      }
+    .sb2-popup-menu-list {
+      margin-top: 0px;
+      margin-bottom: 0px;
     }
   }
 
@@ -44,83 +149,10 @@ export const POPUPS_CSS = `
 
   #sb2-web-panel-delete {
     width: 300px;
-  }
-
-  .sb2-popup-header, .sb2-popup-body, .sb2-popup-footer {
-    width: 100%;
-  }
-
-  .sb2-popup-header {
-    align-self: center;
-    padding: 0 var(--space-xsmall);
-
-    h1 {
-      align-self: center;
-    }
-  }
-
-  .sb2-popup-body {
-    overflow-y: scroll;
-    padding: 0 var(--space-medium);
-
-    .subviewbutton {
-      margin: unset;
-      padding: var(--space-small) var(--space-medium);
-    }
 
     label {
-      text-wrap: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      text-wrap: wrap;
     }
-  }
-
-  .sb2-popup-body.compact {
-    padding: 0;
-    gap: 0;
-  }
-
-  .sb2-popup-footer {
-    justify-content: end;
-    margin-top: var(--space-small);
-  }
-
-  .sb2-popup-group {
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    min-height: 24px;
-    max-height: 24px;
-
-    h1 {
-      text-wrap: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  }
-
-  .sb2-popup-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: var(--space-xsmall);
-    width: 100%;
-  }
-
-  .sb2-popup-set {
-    display: flex;
-  }
-
-  .sb2-popup-set-header {
-    display: flex;
-  }
-
-  .sb2-popup-set-body {
-    display: flex;
-    background-color: var(--arrowpanel-dimmed);
-    border-radius: var(--border-radius-medium);
-    padding: var(--space-small);
-    gap: 1px;
   }
 
   #sb2-zoom-buttons {
@@ -137,11 +169,5 @@ export const POPUPS_CSS = `
     #sb2-popup-css-selector-input {
       display: none;
     }
-  }
-
-  .sb2-popup-menu-list {
-    margin-top: 0px;
-    margin-bottom: 0px;
-    line-height: 16px;
   }
 `;

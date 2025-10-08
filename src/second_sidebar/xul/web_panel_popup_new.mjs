@@ -6,12 +6,12 @@ import {
   createCancelButton,
   createCreateButton,
   createInput,
+  createMenuList,
   createPopupGroup,
   createPopupRow,
   createPopupSet,
 } from "../utils/xul.mjs";
 
-import { MenuList } from "./base/menulist.mjs";
 import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";
 import { PopupBody } from "./popup_body.mjs";
@@ -30,7 +30,7 @@ export class WebPanelPopupNew extends Panel {
     this.setType("arrow").setRole("group");
 
     this.input = createInput();
-    this.containerMenuList = new MenuList({ id: "sb2-container-menu-list" });
+    this.containerMenuList = createMenuList({ id: "sb2-container-menu-list" });
 
     this.saveButton = createCreateButton();
     this.cancelButton = createCancelButton();

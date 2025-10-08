@@ -48,4 +48,14 @@ export class Input extends XULElement {
     this.element.style.backgroundImage = `url("${image}")`;
     return this;
   }
+
+  /**
+   *
+   * @param {string} placeholder
+   * @returns {Input}
+   */
+  setPlaceholder(placeholder) {
+    this.element.placeholder = placeholder;
+    return this;
+  }
 }

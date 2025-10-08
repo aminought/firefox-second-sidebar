@@ -1,4 +1,5 @@
 import {
+  createPopupSet,
   createSubviewButton,
   createSubviewIconicButton,
   createZoomButtons,
@@ -46,17 +47,19 @@ export class WebPanelPopupMore extends Panel {
     this.appendChild(
       new PanelMultiView().appendChildren(
         new PopupBody({ compact: true }).appendChildren(
-          this.openInNewTabButton,
-          this.copyPageUrlButton,
-          this.mobileButton,
-          new MenuSeparator(),
-          this.alwaysOnTopButton,
-          new MenuSeparator(),
-          createZoomButtons(
-            this.zoomOutButton,
-            this.resetZoomButton,
-            this.zoomInButton,
-          ),
+          createPopupSet(null, [
+            this.openInNewTabButton,
+            this.copyPageUrlButton,
+            this.mobileButton,
+            new MenuSeparator(),
+            this.alwaysOnTopButton,
+            new MenuSeparator(),
+            createZoomButtons(
+              this.zoomOutButton,
+              this.resetZoomButton,
+              this.zoomInButton,
+            ),
+          ]),
         ),
       ),
     );

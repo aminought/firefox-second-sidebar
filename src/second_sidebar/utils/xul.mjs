@@ -1,8 +1,9 @@
-import { Button } from "../xul/base/button.mjs";
 import { HBox } from "../xul/base/hbox.mjs";
 import { Header } from "../xul/base/header.mjs";
 import { Input } from "../xul/base/input.mjs";
+import { Label } from "../xul/base/label.mjs";
 import { MenuList } from "../xul/base/menulist.mjs";
+import { MozButton } from "../xul/base/moz_button.mjs";
 import { ToolbarButton } from "../xul/base/toolbar_button.mjs";
 import { VBox } from "../xul/base/vbox.mjs";
 import { XULElement } from "../xul/base/xul_element.mjs"; // eslint-disable-line no-unused-vars
@@ -59,8 +60,16 @@ export function createSubviewIconicButton(
  * @param {string} params.type
  * @returns {Input}
  */
-export function createInput({ id = null, type = "text" } = {}) {
-  return new Input({ id }).setType(type);
+export function createInput({
+  id = null,
+  type = "text",
+  placeholder = null,
+} = {}) {
+  const input = new Input({ id }).setType(type);
+  if (placeholder !== null) {
+    input.setPlaceholder(placeholder);
+  }
+  return input;
 }
 
 /**
@@ -104,45 +113,48 @@ export function updateZoomButtons(
 
 /**
  *
- * @param {string} text
- * @returns {Button}
+ * @param {string} label
+ * @param {string?} type
+ * @returns {MozButton}
  */
-export function createPrimaryButton(text) {
-  return new Button({
-    classList: ["footer-button", "primary"],
-  }).setText(text);
+export function createMozButton(label, type = null) {
+  const button = new MozButton({
+    classList: ["button-background"],
+  }).setLabel(label);
+  if (type !== null) button.setType(type);
+  return button;
 }
 
 /**
  *
- * @returns {Button}
+ * @returns {MozButton}
  */
 export function createCreateButton() {
-  return createPrimaryButton("Create");
+  return createMozButton("Create", "primary");
 }
 
 /**
  *
- * @returns {Button}
+ * @returns {MozButton}
  */
 export function createSaveButton() {
-  return createPrimaryButton("Save");
+  return createMozButton("Save", "primary");
 }
 
 /**
  *
- * @returns {Button}
+ * @returns {MozButton}
  */
 export function createDeleteButton() {
-  return createPrimaryButton("Delete");
+  return createMozButton("Delete", "destructive");
 }
 
 /**
  *
- * @returns {Button}
+ * @returns {MozButton}
  */
 export function createCancelButton() {
-  return new Button({ classList: ["footer-button"] }).setText("Cancel");
+  return createMozButton("Cancel");
 }
 
 /**
@@ -154,17 +166,19 @@ export function createCancelButton() {
 export function createPopupGroup(text, element) {
   return new HBox({
     classList: ["sb2-popup-group"],
-  }).appendChildren(new Header(1).setText(text), element);
+  }).appendChildren(new Label().setText(text), element);
 }
 
 /**
  *
  * @param {string?} text
  * @param {XULElement[]} elements
+ * @param {object} params
+ * @param {string[]} params.classList
  * @returns {VBox}
  */
-export function createPopupSet(text, elements) {
-  const vbox = new VBox({ classList: ["sb2-popup-set"] });
+export function createPopupSet(text, elements, { classList = [] } = {}) {
+  const vbox = new VBox({ classList: ["sb2-popup-set", ...classList] });
   if (text !== null) vbox.appendChild(createPopupSetHeader(text));
   vbox.appendChild(createPopupSetBody(elements));
   return vbox;
