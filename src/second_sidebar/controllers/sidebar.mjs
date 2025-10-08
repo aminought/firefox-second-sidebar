@@ -21,6 +21,7 @@ export class SidebarController {
     this.containerBorder = "left";
     this.autoHideSidebar = false;
     this.hideSidebarAnimated = false;
+    this.hideToolbarAnimated = true;
     this.defaultFloatingOffset = "small";
   }
 
@@ -144,6 +145,11 @@ export class SidebarController {
     listenEvent(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_ANIMATED, (event) => {
       const value = event.detail.value;
       this.hideSidebarAnimated = value;
+    });
+
+    listenEvent(SidebarEvents.EDIT_TOOLBAR_AUTO_HIDE_ANIMATED, (event) => {
+      const value = event.detail.value;
+      this.setHideToolbarAnimated(value);
     });
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_PINNED_WIDTH, (event) => {
@@ -614,6 +620,23 @@ export class SidebarController {
       .setOpen(!SidebarControllers.sidebarMainCollapser.collapsed());
   }
 
+  /**
+   *
+   * @returns {boolean}
+   */
+  getHideToolbarAnimated() {
+    return this.hideToolbarAnimated;
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   */
+  setHideToolbarAnimated(value) {
+    this.hideToolbarAnimated = value;
+    SidebarElements.sidebarToolbar.setAttribute("shouldAnimate", value);
+  }
+
   collapseToolbar() {
     const height =
       SidebarElements.sidebarToolbar.getBoundingClientRect().height;
@@ -654,6 +677,7 @@ export class SidebarController {
     this.setContainerBorder(settings.containerBorder);
     this.setAutoHideSidebar(settings.autoHideSidebar);
     this.hideSidebarAnimated = settings.hideSidebarAnimated;
+    this.setHideToolbarAnimated(settings.hideToolbarAnimated);
   }
 
   /**
@@ -671,6 +695,7 @@ export class SidebarController {
       this.containerBorder,
       this.autoHideSidebar,
       this.hideSidebarAnimated,
+      this.getHideToolbarAnimated(),
     );
   }
 

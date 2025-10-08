@@ -61,7 +61,10 @@ export const SIDEBAR_BOX_CSS = `
       padding: 1px;
       overflow: scroll;
       -moz-window-dragging: no-drag;
-      transition: 0.2s margin-top ease-out;
+
+      &[shouldAnimate="true"] {
+        transition: 0.2s margin-top ease-out;
+      }
 
       #sb2-toolbar-title-wrapper {
         display: flex;

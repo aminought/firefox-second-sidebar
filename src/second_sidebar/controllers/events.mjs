@@ -42,6 +42,7 @@ export const SidebarEvents = {
   EDIT_SIDEBAR_CONTAINER_BORDER: "edit_sidebar_container_border",
   EDIT_SIDEBAR_AUTO_HIDE: "edit_sidebar_auto_hide",
   EDIT_SIDEBAR_AUTO_HIDE_ANIMATED: "edit_sidebar_auto_hide_animated",
+  EDIT_TOOLBAR_AUTO_HIDE_ANIMATED: "edit_toolbar_auto_hide_animated",
   EDIT_SIDEBAR_PINNED_WIDTH: "edit_sidebar_pinned_width",
   EDIT_SIDEBAR_FLOATING_POSITION: "edit_sidebar_floating_position",
   RESET_SIDEBAR_FLOATING_POSITION: "reset_sidebar_floating_position",

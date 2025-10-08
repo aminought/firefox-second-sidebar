@@ -34,6 +34,8 @@ export class SidebarMainSettingsController {
         sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE, { value }),
       hideSidebarAnimated: (value) =>
         sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_ANIMATED, { value }),
+      hideToolbarAnimated: (value) =>
+        sendEvents(SidebarEvents.EDIT_TOOLBAR_AUTO_HIDE_ANIMATED, { value }),
     });
 
     SidebarElements.sidebarMainPopupSettings.listenCancelButtonClick(() =>
