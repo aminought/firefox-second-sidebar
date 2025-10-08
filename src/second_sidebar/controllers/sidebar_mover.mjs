@@ -93,7 +93,6 @@ export class SidebarMover {
           widthType: webPanelController.getWidthType(),
           heightType: webPanelController.getHeightType(),
         });
-        SidebarElements.sidebarHint.show();
         showSidebarBoxPositionHint();
       }
     }

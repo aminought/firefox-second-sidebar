@@ -23,6 +23,7 @@ export class SidebarController {
     this.hideSidebarAnimated = false;
     this.hideToolbarAnimated = true;
     this.defaultFloatingOffset = "small";
+    this.enableSidebarBoxHint = false;
   }
 
   #setupListeners() {
@@ -132,6 +133,11 @@ export class SidebarController {
       },
     );
 
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_ENABLE_BOX_HINT, (event) => {
+      const value = event.detail.value;
+      this.setEnableSidebarBoxHint(value);
+    });
+
     listenEvent(SidebarEvents.EDIT_SIDEBAR_CONTAINER_BORDER, (event) => {
       const value = event.detail.value;
       this.setContainerBorder(value);
@@ -147,10 +153,13 @@ export class SidebarController {
       this.hideSidebarAnimated = value;
     });
 
-    listenEvent(SidebarEvents.EDIT_TOOLBAR_AUTO_HIDE_ANIMATED, (event) => {
-      const value = event.detail.value;
-      this.setHideToolbarAnimated(value);
-    });
+    listenEvent(
+      SidebarEvents.EDIT_SIDEBAR_TOOLBAR_AUTO_HIDE_ANIMATED,
+      (event) => {
+        const value = event.detail.value;
+        this.setHideToolbarAnimated(value);
+      },
+    );
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_PINNED_WIDTH, (event) => {
       const { uuid, width, isActiveWindow } = event.detail;
@@ -637,6 +646,22 @@ export class SidebarController {
     SidebarElements.sidebarToolbar.setAttribute("shouldAnimate", value);
   }
 
+  /**
+   *
+   * @returns {boolean}
+   */
+  getEnableSidebarBoxHint() {
+    return this.enableSidebarBoxHint;
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   */
+  setEnableSidebarBoxHint(value) {
+    this.enableSidebarBoxHint = value;
+  }
+
   collapseToolbar() {
     const height =
       SidebarElements.sidebarToolbar.getBoundingClientRect().height;
@@ -678,6 +703,7 @@ export class SidebarController {
     this.setAutoHideSidebar(settings.autoHideSidebar);
     this.hideSidebarAnimated = settings.hideSidebarAnimated;
     this.setHideToolbarAnimated(settings.hideToolbarAnimated);
+    this.setEnableSidebarBoxHint(settings.enableSidebarBoxHint);
   }
 
   /**
@@ -695,7 +721,8 @@ export class SidebarController {
       this.containerBorder,
       this.autoHideSidebar,
       this.hideSidebarAnimated,
-      this.getHideToolbarAnimated(),
+      this.hideToolbarAnimated,
+      this.enableSidebarBoxHint,
     );
   }
 

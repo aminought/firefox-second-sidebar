@@ -102,5 +102,7 @@ export const SIDEBAR_BOX_CSS = `
     border-radius: var(--border-radius-medium);
     box-shadow: var(--content-area-shadow);
     border: 1px solid var(--sidebar-border-color);
+    font-size: small;
+    font-weight: bold;
   }
 `;

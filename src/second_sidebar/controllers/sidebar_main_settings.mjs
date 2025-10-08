@@ -28,6 +28,8 @@ export class SidebarMainSettingsController {
         sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_FORWARD_BUTTON, {
           value,
         }),
+      enableSidebarBoxHint: (value) =>
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_ENABLE_BOX_HINT, { value }),
       containerBorder: (value) =>
         sendEvents(SidebarEvents.EDIT_SIDEBAR_CONTAINER_BORDER, { value }),
       autoHideSidebar: (value) =>
@@ -35,7 +37,9 @@ export class SidebarMainSettingsController {
       hideSidebarAnimated: (value) =>
         sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_ANIMATED, { value }),
       hideToolbarAnimated: (value) =>
-        sendEvents(SidebarEvents.EDIT_TOOLBAR_AUTO_HIDE_ANIMATED, { value }),
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_TOOLBAR_AUTO_HIDE_ANIMATED, {
+          value,
+        }),
     });
 
     SidebarElements.sidebarMainPopupSettings.listenCancelButtonClick(() =>

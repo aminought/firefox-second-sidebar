@@ -35,6 +35,7 @@ export class SidebarMainPopupSettings extends Panel {
     this.autoHideSidebarToggle = new Toggle();
     this.hideSidebarAnimatedToggle = new Toggle();
     this.hideToolbarAnimatedToggle = new Toggle();
+    this.enableSidebarBoxHintToggle = new Toggle();
     this.saveButton = createSaveButton();
     this.cancelButton = createCancelButton();
     this.#compose();
@@ -126,6 +127,11 @@ export class SidebarMainPopupSettings extends Panel {
               "Auto-hide forward button",
               this.autoHideForwardToggle,
             ),
+            new ToolbarSeparator(),
+            createPopupGroup(
+              "Enable web panel position and size hint",
+              this.enableSidebarBoxHintToggle,
+            ),
           ]),
           createPopupSet("Animations", [
             createPopupGroup(
@@ -134,7 +140,7 @@ export class SidebarMainPopupSettings extends Panel {
             ),
             new ToolbarSeparator(),
             createPopupGroup(
-              "Animate web panel toolbar",
+              "Animate sidebar toolbar",
               this.hideToolbarAnimatedToggle,
             ),
           ]),
@@ -153,6 +159,7 @@ export class SidebarMainPopupSettings extends Panel {
    * @param {function(string):void} callbacks.defaultFloatingOffset
    * @param {function(boolean):void} callbacks.autoHideBackButton
    * @param {function(boolean):void} callbacks.autoHideForwardButton
+   * @param {function(boolean):void} callbacks.enableSidebarBoxHint
    * @param {function(boolean):void} callbacks.containerBorder
    * @param {function(boolean):void} callbacks.autoHideSidebar
    * @param {function(boolean):void} callbacks.hideSidebarAnimated
@@ -165,6 +172,7 @@ export class SidebarMainPopupSettings extends Panel {
     defaultFloatingOffset,
     autoHideBackButton,
     autoHideForwardButton,
+    enableSidebarBoxHint,
     containerBorder,
     autoHideSidebar,
     hideSidebarAnimated,
@@ -176,6 +184,7 @@ export class SidebarMainPopupSettings extends Panel {
     this.onDefaultFloatingOffsetChange = defaultFloatingOffset;
     this.onAutoHideBackButtonChange = autoHideBackButton;
     this.onAutoHideForwardButtonChange = autoHideForwardButton;
+    this.onEnableSidebarBoxHintChange = enableSidebarBoxHint;
     this.onContainerBorderChange = containerBorder;
     this.onAutoHideSidebarChange = autoHideSidebar;
     this.onAutoHideSidebarAnimatedChange = hideSidebarAnimated;
@@ -198,6 +207,9 @@ export class SidebarMainPopupSettings extends Panel {
     );
     this.autoHideForwardToggle.addEventListener("toggle", () =>
       autoHideForwardButton(this.autoHideForwardToggle.getPressed()),
+    );
+    this.enableSidebarBoxHintToggle.addEventListener("toggle", () =>
+      enableSidebarBoxHint(this.enableSidebarBoxHintToggle.getPressed()),
     );
     this.containerBorderMenuList.addEventListener("command", () =>
       containerBorder(this.containerBorderMenuList.getValue()),
@@ -251,6 +263,7 @@ export class SidebarMainPopupSettings extends Panel {
     this.defaultFloatingOffsetMenuList.setValue(settings.defaultFloatingOffset);
     this.autoHideBackToggle.setPressed(settings.autoHideBackButton);
     this.autoHideForwardToggle.setPressed(settings.autoHideForwardButton);
+    this.enableSidebarBoxHintToggle.setPressed(settings.enableSidebarBoxHint);
     this.containerBorderMenuList.setValue(settings.containerBorder);
     this.autoHideSidebarToggle.setPressed(settings.autoHideSidebar);
     this.hideSidebarAnimatedToggle.setPressed(settings.hideSidebarAnimated);
@@ -299,6 +312,12 @@ export class SidebarMainPopupSettings extends Panel {
       this.settings.autoHideForwardButton
     ) {
       this.onAutoHideForwardButtonChange(this.settings.autoHideForwardButton);
+    }
+    if (
+      this.enableSidebarBoxHintToggle.getPressed() !==
+      this.settings.enableSidebarBoxHint
+    ) {
+      this.onEnableSidebarBoxHintChange(this.settings.enableSidebarBoxHint);
     }
     if (
       this.containerBorderMenuList.getValue() !== this.settings.containerBorder

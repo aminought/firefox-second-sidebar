@@ -23,6 +23,8 @@ export class SidebarSettings {
   #hideSidebarAnimated;
   /**@type {boolean} */
   #hideToolbarAnimated;
+  /**@type {boolean} */
+  #enableSidebarBoxHint;
 
   /**
    *
@@ -36,6 +38,7 @@ export class SidebarSettings {
    * @param {boolean} autoHideSidebar
    * @param {boolean} hideSidebarAnimated
    * @param {boolean} hideToolbarAnimated
+   * @param {boolean} enableSidebarBoxHint
    */
   constructor(
     position,
@@ -48,6 +51,7 @@ export class SidebarSettings {
     autoHideSidebar,
     hideSidebarAnimated,
     hideToolbarAnimated,
+    enableSidebarBoxHint,
   ) {
     this.#position = position;
     this.#padding = padding;
@@ -59,6 +63,7 @@ export class SidebarSettings {
     this.#autoHideSidebar = autoHideSidebar;
     this.#hideSidebarAnimated = hideSidebarAnimated;
     this.#hideToolbarAnimated = hideToolbarAnimated;
+    this.#enableSidebarBoxHint = enableSidebarBoxHint;
   }
 
   get position() {
@@ -101,6 +106,10 @@ export class SidebarSettings {
     return this.#hideToolbarAnimated;
   }
 
+  get enableSidebarBoxHint() {
+    return this.#enableSidebarBoxHint;
+  }
+
   /**
    *
    * @returns {SidebarSettings}
@@ -118,6 +127,7 @@ export class SidebarSettings {
       pref.autoHideSidebar ?? false,
       pref.hideSidebarAnimated ?? true,
       pref.hideToolbarAnimated ?? true,
+      pref.enableSidebarBoxHint ?? false,
     );
   }
 
@@ -133,6 +143,7 @@ export class SidebarSettings {
       autoHideSidebar: this.#autoHideSidebar,
       hideSidebarAnimated: this.#hideSidebarAnimated,
       hideToolbarAnimated: this.#hideToolbarAnimated,
+      enableSidebarBoxHint: this.#enableSidebarBoxHint,
     });
   }
 }

@@ -2,6 +2,8 @@ import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 
 export function showSidebarBoxPositionHint() {
+  if (!SidebarControllers.sidebarController.enableSidebarBoxHint) return;
+
   const marginTop = parseProperty("margin-top");
   const marginLeft = parseProperty("margin-left");
   const marginRight = parseProperty("margin-right");
@@ -10,10 +12,10 @@ export function showSidebarBoxPositionHint() {
   const height = parseProperty("height");
 
   const parts = [];
-  if (marginTop !== null) parts.push(marginTop);
-  if (marginBottom !== null) parts.push(marginBottom);
   if (marginLeft !== null) parts.push(marginLeft);
   if (marginRight !== null) parts.push(marginRight);
+  if (marginTop !== null) parts.push(marginTop);
+  if (marginBottom !== null) parts.push(marginBottom);
 
   const webPanelController = SidebarControllers.webPanelsController.getActive();
   const hint = `anchor: ${webPanelController.getAnchor()}, offset: [${parts[0]} ${parts[1]}], size: [${width} ${height}]`;
