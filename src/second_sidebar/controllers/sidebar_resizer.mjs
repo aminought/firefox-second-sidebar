@@ -87,38 +87,21 @@ export class SidebarResizer {
       const deltaHeight = centered ? deltaY * 2 : deltaY;
 
       // calculate new position and size
-      if (type == "top") {
+      if (type.startsWith("top")) {
         top += deltaY;
         height -= deltaHeight;
-      } else if (type == "left") {
-        left += deltaX;
-        width -= deltaWidth;
-      } else if (type == "right") {
-        if (centered) left -= deltaX;
-        width += deltaWidth;
-      } else if (type == "bottom") {
+      }
+      if (type.startsWith("bottom")) {
         if (centered) top -= deltaY;
         height += deltaHeight;
-      } else if (type == "topleft") {
-        top += deltaY;
+      }
+      if (type.endsWith("left")) {
         left += deltaX;
         width -= deltaWidth;
-        height -= deltaHeight;
-      } else if (type === "topright") {
-        top += deltaY;
+      }
+      if (type.endsWith("right")) {
         if (centered) left -= deltaX;
         width += deltaWidth;
-        height -= deltaHeight;
-      } else if (type === "bottomright") {
-        if (centered) top -= deltaY;
-        if (centered) left -= deltaX;
-        width += deltaWidth;
-        height += deltaHeight;
-      } else if (type === "bottomleft") {
-        if (centered) top -= deltaY;
-        left += deltaX;
-        width -= deltaWidth;
-        height += deltaHeight;
       }
 
       // check minimal bounds
