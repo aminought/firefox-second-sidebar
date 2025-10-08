@@ -135,16 +135,18 @@ export class SidebarResizer {
         height = SidebarResizer.MIN_HEIGHT;
       }
 
-      SidebarControllers.sidebarController.calculateAndSetFloatingPosition({
-        top,
-        left,
-        width,
-        height,
-        widthChanged: width != startRect.width,
-        heightChanged: height != startRect.height,
-        widthType: webPanelController.getWidthType(),
-        heightType: webPanelController.getHeightType(),
-      });
+      SidebarControllers.sidebarPositionAndSize.calculateAndSetFloatingPosition(
+        {
+          top,
+          left,
+          width,
+          height,
+          widthChanged: width != startRect.width,
+          heightChanged: height != startRect.height,
+          widthType: webPanelController.getWidthType(),
+          heightType: webPanelController.getHeightType(),
+        },
+      );
       showSidebarBoxPositionHint();
     }
 

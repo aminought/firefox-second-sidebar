@@ -201,10 +201,12 @@ export class WebPanelsController {
       webPanelController.setAnchor(anchor);
 
       if (webPanelController.isActive()) {
-        SidebarControllers.sidebarController.calculateAndSetFloatingPosition({
-          widthType: webPanelController.getWidthType(),
-          heightType: webPanelController.getHeightType(),
-        });
+        SidebarControllers.sidebarPositionAndSize.calculateAndSetFloatingPosition(
+          {
+            widthType: webPanelController.getWidthType(),
+            heightType: webPanelController.getHeightType(),
+          },
+        );
       }
     });
 
@@ -216,10 +218,12 @@ export class WebPanelsController {
       webPanelController.setWidthType(widthType);
 
       if (webPanelController.isActive()) {
-        SidebarControllers.sidebarController.calculateAndSetFloatingPosition({
-          widthType: webPanelController.getWidthType(),
-          heightType: webPanelController.getHeightType(),
-        });
+        SidebarControllers.sidebarPositionAndSize.calculateAndSetFloatingPosition(
+          {
+            widthType: webPanelController.getWidthType(),
+            heightType: webPanelController.getHeightType(),
+          },
+        );
       }
     });
 
@@ -231,10 +235,12 @@ export class WebPanelsController {
       webPanelController.setHeightType(heightType);
 
       if (webPanelController.isActive()) {
-        SidebarControllers.sidebarController.calculateAndSetFloatingPosition({
-          widthType: webPanelController.getWidthType(),
-          heightType: webPanelController.getHeightType(),
-        });
+        SidebarControllers.sidebarPositionAndSize.calculateAndSetFloatingPosition(
+          {
+            widthType: webPanelController.getWidthType(),
+            heightType: webPanelController.getHeightType(),
+          },
+        );
       }
     });
 
