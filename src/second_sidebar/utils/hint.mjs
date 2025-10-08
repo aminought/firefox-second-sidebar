@@ -18,7 +18,12 @@ export function showSidebarBoxPositionHint() {
   if (marginBottom !== null) parts.push(marginBottom);
 
   const webPanelController = SidebarControllers.webPanelsController.getActive();
-  const hint = `anchor: ${webPanelController.getAnchor()}, offset: [${parts[0]} ${parts[1]}], size: [${width} ${height}]`;
+  let anchor = webPanelController.getAnchor();
+  if (anchor === "default") {
+    anchor = SidebarControllers.sidebarController.getDefaultAnchor();
+  }
+
+  const hint = `anchor: ${anchor}, offset: [${parts[0]} ${parts[1]}], size: [${width} ${height}]`;
   SidebarElements.sidebarHint.setText(hint).show();
 }
 
