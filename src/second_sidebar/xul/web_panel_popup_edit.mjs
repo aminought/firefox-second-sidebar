@@ -46,13 +46,13 @@ export class WebPanelPopupEdit extends Panel {
     });
     this.setType("arrow").setRole("group");
 
-    this.urlInput = createInput();
+    this.urlInput = createInput({ placeholder: "Web page URL" });
     this.selectorToggle = new Toggle({ id: "sb2-popup-css-selector-toggle" });
     this.selectorInput = createInput({
       id: "sb2-popup-css-selector-input",
       placeholder: ".class-name, #id, tag-name, etc",
     });
-    this.faviconURLInput = createInput();
+    this.faviconURLInput = createInput({ placeholder: "Favicon URL" });
     this.faviconResetButton = createSubviewIconicButton(ICONS.UNDO, {
       tooltipText: "Request favicon",
     });

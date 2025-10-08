@@ -29,7 +29,7 @@ export class WebPanelPopupNew extends Panel {
     });
     this.setType("arrow").setRole("group");
 
-    this.input = createInput();
+    this.input = createInput({ placeholder: "Web page URL" });
     this.containerMenuList = createMenuList({ id: "sb2-container-menu-list" });
 
     this.saveButton = createCreateButton();
