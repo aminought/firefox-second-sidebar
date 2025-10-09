@@ -21,47 +21,20 @@ export class WebPanelsSettings {
 
   /**
    *
-   * @param {string} position
+   * @param {string} sidebarPosition
    * @param {string} defaultFloatingOffset
    * @returns {WebPanelsSettings}
    */
-  static load(position, defaultFloatingOffset) {
+  static load(sidebarPosition, defaultFloatingOffset) {
     const pref = Settings.load(PREF) ?? [];
 
     return new WebPanelsSettings(
-      pref.map(
-        (webPanelPref) =>
-          new WebPanelSettings(
-            position,
-            `var(--space-${defaultFloatingOffset})`,
-            webPanelPref.uuid,
-            webPanelPref.url,
-            webPanelPref.faviconURL,
-            {
-              pinned: webPanelPref.pinned,
-              anchor: webPanelPref.anchor,
-              widthType: webPanelPref.widthType,
-              heightType: webPanelPref.heightType,
-              marginTop: webPanelPref.marginTop,
-              marginLeft: webPanelPref.marginLeft,
-              marginRight: webPanelPref.marginRight,
-              marginBottom: webPanelPref.marginBottom,
-              width: webPanelPref.width,
-              height: webPanelPref.height,
-              alwaysOnTop: webPanelPref.alwaysOnTop,
-              mobile: webPanelPref.mobile,
-              zoom: webPanelPref.zoom,
-              loadOnStartup: webPanelPref.loadOnStartup,
-              unloadOnClose: webPanelPref.unloadOnClose,
-              hideToolbar: webPanelPref.hideToolbar,
-              userContextId: webPanelPref.userContextId,
-              periodicReload: webPanelPref.periodicReload,
-              hideSoundIcon: webPanelPref.hideSoundIcon,
-              hideNotificationBadge: webPanelPref.hideNotificationBadge,
-              selectorEnabled: webPanelPref.selectorEnabled,
-              selector: webPanelPref.selector,
-            },
-          ),
+      pref.map((webPanelPref) =>
+        WebPanelSettings.fromObject(
+          sidebarPosition,
+          `var(--space-${defaultFloatingOffset})`,
+          webPanelPref,
+        ),
       ),
     );
   }

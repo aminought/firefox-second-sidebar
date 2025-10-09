@@ -410,9 +410,9 @@ export class WebPanelPopupEdit extends Panel {
     this.selectorInput.setValue(settings.selector);
     this.faviconURLInput.setValue(settings.faviconURL);
     this.pinnedMenuList.setValue(settings.pinned);
-    this.floatingAnchorMenuList.setValue(settings.anchor);
-    this.widthTypeMenuList.setValue(settings.widthType);
-    this.heightTypeMenuList.setValue(settings.heightType);
+    this.floatingAnchorMenuList.setValue(settings.floatingGeometry.anchor);
+    this.widthTypeMenuList.setValue(settings.floatingGeometry.widthType);
+    this.heightTypeMenuList.setValue(settings.floatingGeometry.heightType);
 
     fillContainerMenuList(this.containerMenuList);
     this.containerMenuList.setValue(settings.userContextId);
@@ -473,14 +473,32 @@ export class WebPanelPopupEdit extends Panel {
     if ((this.pinnedMenuList.getValue() === "true") !== this.settings.pinned) {
       this.onPinnedChange(this.settings.uuid, this.settings.pinned);
     }
-    if (this.floatingAnchorMenuList.getValue() !== this.settings.anchor) {
-      this.onFloatingAnchorChange(this.settings.uuid, this.settings.anchor);
+    if (
+      this.floatingAnchorMenuList.getValue() !==
+      this.settings.floatingGeometry.anchor
+    ) {
+      this.onFloatingAnchorChange(
+        this.settings.uuid,
+        this.settings.floatingGeometry.anchor,
+      );
     }
-    if (this.widthTypeMenuList.getValue() !== this.settings.widthType) {
-      this.onWidthTypeChange(this.settings.uuid, this.settings.widthType);
+    if (
+      this.widthTypeMenuList.getValue() !==
+      this.settings.floatingGeometry.widthType
+    ) {
+      this.onWidthTypeChange(
+        this.settings.uuid,
+        this.settings.floatingGeometry.widthType,
+      );
     }
-    if (this.heightTypeMenuList.getValue() !== this.settings.heightType) {
-      this.onHeightTypeChange(this.settings.uuid, this.settings.heightType);
+    if (
+      this.heightTypeMenuList.getValue() !==
+      this.settings.floatingGeometry.heightType
+    ) {
+      this.onHeightTypeChange(
+        this.settings.uuid,
+        this.settings.floatingGeometry.heightType,
+      );
     }
     if (
       String(this.containerMenuList.getValue()) !==

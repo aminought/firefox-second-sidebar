@@ -1,122 +1,117 @@
+import { FloatingWebPanelGeometrySettings } from "./floating_web_panel_geometry_settings.mjs";
+import { PinnedWebPanelGeometrySettings } from "./pinned_web_panel_geometry_settings.mjs";
 import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manager.mjs";
 
 export class WebPanelSettings {
   /**
    *
-   * @param {string} position
+   * @param {string} sidebarPosition
    * @param {string} defaultFloatingOffsetCSS
    * @param {string} uuid
    * @param {string} url
    * @param {string} faviconURL
-   * @param {object?} params
-   * @param {boolean?} params.pinned
-   * @param {string?} params.anchor
-   * @param {string?} params.widthType
-   * @param {string?} params.heightType
-   * @param {string?} params.marginTop
-   * @param {string?} params.marginLeft
-   * @param {string?} params.marginRight
-   * @param {string?} params.marginBottom
-   * @param {string?} params.width
-   * @param {string?} params.height
-   * @param {boolean?} params.alwaysOnTop
-   * @param {boolean?} params.mobile
-   * @param {number?} params.zoom
-   * @param {boolean?} params.loadOnStartup
-   * @param {boolean?} params.unloadOnClose
-   * @param {boolean?} params.hideToolbar
-   * @param {string?} params.userContextId
+   * @param {object} params
+   * @param {boolean} params.pinned
+   * @param {boolean} params.alwaysOnTop
+   * @param {boolean} params.mobile
+   * @param {number} params.zoom
+   * @param {boolean} params.loadOnStartup
+   * @param {boolean} params.unloadOnClose
+   * @param {boolean} params.hideToolbar
+   * @param {string} params.userContextId
    * @param {number} params.periodicReload
    * @param {boolean} params.hideSoundIcon
    * @param {boolean} params.hideNotificationBadge
-   * @param {boolean?} params.selectorEnabled
-   * @param {string?} params.selector
+   * @param {boolean} params.selectorEnabled
+   * @param {string} params.selector
+   * @param {FloatingWebPanelGeometrySettings} params.floatingGeometry
+   * @param {PinnedWebPanelGeometrySettings} params.pinnedGeometry
    */
   constructor(
-    position,
+    sidebarPosition,
     defaultFloatingOffsetCSS,
     uuid,
     url,
     faviconURL,
     {
-      pinned,
-      anchor,
-      widthType,
-      heightType,
-      marginTop,
-      marginLeft,
-      marginRight,
-      marginBottom,
-      width,
-      height,
-      alwaysOnTop,
-      mobile,
-      zoom,
-      loadOnStartup,
-      unloadOnClose,
-      hideToolbar,
-      userContextId,
-      periodicReload,
-      hideSoundIcon,
-      hideNotificationBadge,
-      selectorEnabled,
-      selector,
+      pinned = false,
+      alwaysOnTop = false,
+      mobile = false,
+      zoom = 1,
+      loadOnStartup = true,
+      unloadOnClose = false,
+      hideToolbar = false,
+      userContextId = ScriptSecurityManagerWrapper.DEFAULT_USER_CONTEXT_ID,
+      periodicReload = 0,
+      hideSoundIcon = false,
+      hideNotificationBadge = false,
+      selectorEnabled = false,
+      selector = "",
+      floatingGeometry = new FloatingWebPanelGeometrySettings(
+        sidebarPosition,
+        defaultFloatingOffsetCSS,
+      ),
+      pinnedGeometry = new PinnedWebPanelGeometrySettings(),
     } = {},
   ) {
-    /**@type {string} */
-    this.uuid = uuid ?? crypto.randomUUID();
-    /**@type {string} */
+    this.uuid = uuid;
     this.url = url;
-    /**@type {string} */
     this.faviconURL = faviconURL;
-    /**@type {boolean} */
-    this.pinned = pinned ?? false;
-    /**@type {string?} */
-    this.anchor = anchor ?? "default";
-    /**@type {string?} */
-    this.widthType = widthType ?? "absolute";
-    /**@type {string?} */
-    this.heightType = heightType ?? "relative";
-    /**@type {string?} */
-    this.marginTop = marginTop ?? defaultFloatingOffsetCSS;
-    /**@type {string?} */
-    this.marginLeft =
-      marginLeft ?? (position === "left" ? defaultFloatingOffsetCSS : "unset");
-    /**@type {string?} */
-    this.marginRight =
-      marginRight ??
-      (position === "right" ? defaultFloatingOffsetCSS : "unset");
-    /**@type {string?} */
-    this.marginBottom = marginBottom ?? "unset";
-    /**@type {string?} */
-    this.width = width ?? "400px";
-    /**@type {string?} */
-    this.height = height ?? `calc(100% - ${defaultFloatingOffsetCSS} * 2)`;
-    /**@type {boolean} */
-    this.alwaysOnTop = alwaysOnTop ?? false;
-    /**@type {boolean} */
-    this.mobile = mobile ?? false;
-    /**@type {number} */
-    this.zoom = zoom ?? 1;
-    /**@type {boolean} */
-    this.loadOnStartup = loadOnStartup ?? false;
-    /**@type {boolean} */
-    this.unloadOnClose = unloadOnClose ?? false;
-    /**@type {boolean} */
-    this.hideToolbar = hideToolbar ?? false;
-    /**@type {number} */
-    this.userContextId =
-      userContextId ?? ScriptSecurityManagerWrapper.DEFAULT_USER_CONTEXT_ID;
-    /**@type {number} */
-    this.periodicReload = periodicReload ?? 0;
-    /**@type {boolean} */
-    this.hideSoundIcon = hideSoundIcon ?? false;
-    /**@type {boolean} */
-    this.hideNotificationBadge = hideNotificationBadge ?? false;
-    /**@type {boolean} */
-    this.selectorEnabled = selectorEnabled ?? false;
-    /**@type {string} */
-    this.selector = selector ?? "";
+    this.pinned = pinned;
+    this.alwaysOnTop = alwaysOnTop;
+    this.mobile = mobile;
+    this.zoom = zoom;
+    this.loadOnStartup = loadOnStartup;
+    this.unloadOnClose = unloadOnClose;
+    this.hideToolbar = hideToolbar;
+    this.userContextId = userContextId;
+    this.periodicReload = periodicReload;
+    this.hideSoundIcon = hideSoundIcon;
+    this.hideNotificationBadge = hideNotificationBadge;
+    this.selectorEnabled = selectorEnabled;
+    this.selector = selector;
+    this.floatingGeometry = floatingGeometry;
+    this.pinnedGeometry = pinnedGeometry;
+  }
+
+  /**
+   *
+   * @param {string} sidebarPosition
+   * @param {string} defaultFloatingOffsetCSS
+   * @param {object} object
+   * @returns {WebPanelSettings}
+   */
+  static fromObject(sidebarPosition, defaultFloatingOffsetCSS, object) {
+    return new WebPanelSettings(
+      sidebarPosition,
+      defaultFloatingOffsetCSS,
+      object.uuid,
+      object.url,
+      object.faviconURL,
+      {
+        pinned: object.pinned,
+        alwaysOnTop: object.alwaysOnTop,
+        mobile: object.mobile,
+        zoom: object.zoom,
+        loadOnStartup: object.loadOnStartup,
+        unloadOnClose: object.unloadOnClose,
+        hideToolbar: object.hideToolbar,
+        userContextId: object.userContextId,
+        periodicReload: object.periodicReload,
+        hideSoundIcon: object.hideSoundIcon,
+        hideNotificationBadge: object.hideNotificationBadge,
+        selectorEnabled: object.selectorEnabled,
+        selector: object.selector,
+        floatingGeometry: FloatingWebPanelGeometrySettings.fromObject(
+          sidebarPosition,
+          defaultFloatingOffsetCSS,
+          object.floatingGeometry,
+        ),
+        pinnedGeometry: PinnedWebPanelGeometrySettings.fromObject(
+          object.pinnedGeometry,
+        ),
+      },
+    );
   }
 
   /**
@@ -129,15 +124,6 @@ export class WebPanelSettings {
       url: this.url,
       faviconURL: this.faviconURL,
       pinned: this.pinned,
-      anchor: this.anchor,
-      widthType: this.widthType,
-      heightType: this.heightType,
-      marginTop: this.marginTop,
-      marginLeft: this.marginLeft,
-      marginRight: this.marginRight,
-      marginBottom: this.marginBottom,
-      width: this.width,
-      height: this.height,
       alwaysOnTop: this.alwaysOnTop,
       mobile: this.mobile,
       zoom: this.zoom,
@@ -150,6 +136,8 @@ export class WebPanelSettings {
       hideNotificationBadge: this.hideNotificationBadge,
       selectorEnabled: this.selectorEnabled,
       selector: this.selector,
+      floatingGeometry: this.floatingGeometry.toObject(),
+      pinnedGeometry: this.pinnedGeometry.toObject(),
     };
   }
 }

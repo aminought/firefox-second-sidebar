@@ -241,13 +241,13 @@ export class WebPanelController {
     // Open sidebar if it was closed and configure
     SidebarControllers.sidebarController.open(
       this.#settings.pinned,
-      this.#settings.anchor,
-      this.#settings.marginTop,
-      this.#settings.marginLeft,
-      this.#settings.marginRight,
-      this.#settings.marginBottom,
-      this.#settings.width,
-      this.#settings.height,
+      this.#settings.floatingGeometry.anchor,
+      this.#settings.floatingGeometry.marginTop,
+      this.#settings.floatingGeometry.marginLeft,
+      this.#settings.floatingGeometry.marginRight,
+      this.#settings.floatingGeometry.marginBottom,
+      this.#settings.floatingGeometry.width,
+      this.#settings.floatingGeometry.height,
       this.#tab.linkedBrowser.canGoBack(),
       this.#tab.linkedBrowser.canGoForward(),
       this.#tab.linkedBrowser.getTitle(),
@@ -491,7 +491,7 @@ export class WebPanelController {
    * @param {number} width
    */
   setPinnedWidth(width) {
-    this.#settings.width = `${width}px`;
+    this.#settings.floatingGeometry.width = `${width}px`;
   }
 
   /**
@@ -499,7 +499,7 @@ export class WebPanelController {
    * @returns {string}
    */
   getAnchor() {
-    return this.#settings.anchor;
+    return this.#settings.floatingGeometry.anchor;
   }
 
   /**
@@ -507,7 +507,7 @@ export class WebPanelController {
    * @param {string} anchor
    */
   setAnchor(anchor) {
-    this.#settings.anchor = anchor;
+    this.#settings.floatingGeometry.anchor = anchor;
   }
 
   /**
@@ -515,7 +515,7 @@ export class WebPanelController {
    * @returns {string}
    */
   getWidthType() {
-    return this.#settings.widthType;
+    return this.#settings.floatingGeometry.widthType;
   }
 
   /**
@@ -523,7 +523,7 @@ export class WebPanelController {
    * @param {string} widthType
    */
   setWidthType(widthType) {
-    this.#settings.widthType = widthType;
+    this.#settings.floatingGeometry.widthType = widthType;
   }
 
   /**
@@ -531,7 +531,7 @@ export class WebPanelController {
    * @returns {string}
    */
   getHeightType() {
-    return this.#settings.heightType;
+    return this.#settings.floatingGeometry.heightType;
   }
 
   /**
@@ -539,7 +539,7 @@ export class WebPanelController {
    * @param {string} heightType
    */
   setHeightType(heightType) {
-    this.#settings.heightType = heightType;
+    this.#settings.floatingGeometry.heightType = heightType;
   }
 
   /**
@@ -591,12 +591,12 @@ export class WebPanelController {
     width,
     height,
   ) {
-    this.#settings.marginTop = marginTop;
-    this.#settings.marginLeft = marginLeft;
-    this.#settings.marginRight = marginRight;
-    this.#settings.marginBottom = marginBottom;
-    this.#settings.width = width;
-    this.#settings.height = height;
+    this.#settings.floatingGeometry.marginTop = marginTop;
+    this.#settings.floatingGeometry.marginLeft = marginLeft;
+    this.#settings.floatingGeometry.marginRight = marginRight;
+    this.#settings.floatingGeometry.marginBottom = marginBottom;
+    this.#settings.floatingGeometry.width = width;
+    this.#settings.floatingGeometry.height = height;
   }
 
   /**
@@ -655,36 +655,10 @@ export class WebPanelController {
    * @returns {WebPanelSettings}
    */
   dumpSettings() {
-    return new WebPanelSettings(
+    return WebPanelSettings.fromObject(
       SidebarElements.sidebarWrapper.getPosition(),
       SidebarControllers.sidebarGeometry.getDefaultFloatingOffsetCSS(),
-      this.#settings.uuid,
-      this.#settings.url,
-      this.#settings.faviconURL,
-      {
-        pinned: this.#settings.pinned,
-        anchor: this.#settings.anchor,
-        widthType: this.#settings.widthType,
-        heightType: this.#settings.heightType,
-        marginTop: this.#settings.marginTop,
-        marginLeft: this.#settings.marginLeft,
-        marginRight: this.#settings.marginRight,
-        marginBottom: this.#settings.marginBottom,
-        width: this.#settings.width,
-        height: this.#settings.height,
-        alwaysOnTop: this.#settings.alwaysOnTop,
-        mobile: this.#settings.mobile,
-        zoom: this.#settings.zoom,
-        loadOnStartup: this.#settings.loadOnStartup,
-        unloadOnClose: this.#settings.unloadOnClose,
-        hideToolbar: this.#settings.hideToolbar,
-        userContextId: this.#settings.userContextId,
-        periodicReload: this.#settings.periodicReload,
-        hideSoundIcon: this.#settings.hideSoundIcon,
-        hideNotificationBadge: this.#settings.hideNotificationBadge,
-        selectorEnabled: this.#settings.selectorEnabled,
-        selector: this.#settings.selector,
-      },
+      this.#settings.toObject(),
     );
   }
 
