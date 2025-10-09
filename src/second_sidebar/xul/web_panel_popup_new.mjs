@@ -46,7 +46,7 @@ export class WebPanelPopupNew extends Panel {
       new PanelMultiView().appendChildren(
         new PopupHeader("New Web Panel"),
         new PopupBody().appendChildren(
-          createPopupSet(null, [
+          createPopupSet("", [
             createPopupRow(this.input),
             new ToolbarSeparator(),
             createPopupGroup("Multi-Account Container", this.containerMenuList),

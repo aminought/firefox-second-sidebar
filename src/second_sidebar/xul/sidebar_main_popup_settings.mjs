@@ -98,14 +98,14 @@ export class SidebarMainPopupSettings extends Panel {
       new PanelMultiView().appendChildren(
         new PopupHeader("Sidebar Settings"),
         new PopupBody().appendChildren(
-          createPopupSet("General sidebar settings", [
+          createPopupSet("", [
             createPopupGroup("Sidebar position", this.positionMenuList),
             new ToolbarSeparator(),
             createPopupGroup("Sidebar width", this.paddingMenuList),
             new ToolbarSeparator(),
             createPopupGroup("Auto-hide sidebar", this.autoHideSidebarToggle),
           ]),
-          createPopupSet("General web panels settings", [
+          createPopupSet("Web panels", [
             createPopupGroup(
               "Default floating panel offset",
               this.defaultFloatingOffsetMenuList,
@@ -129,7 +129,7 @@ export class SidebarMainPopupSettings extends Panel {
             ),
             new ToolbarSeparator(),
             createPopupGroup(
-              "Enable web panel position and size hint",
+              "Show web panel geometry hint",
               this.enableSidebarBoxHintToggle,
             ),
           ]),

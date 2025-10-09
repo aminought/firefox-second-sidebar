@@ -179,7 +179,7 @@ export function createPopupGroup(text, element) {
  */
 export function createPopupSet(text, elements, { classList = [] } = {}) {
   const vbox = new VBox({ classList: ["sb2-popup-set", ...classList] });
-  if (text !== null) vbox.appendChild(createPopupSetHeader(text));
+  if (text !== "") vbox.appendChild(createPopupSetHeader(text));
   vbox.appendChild(createPopupSetBody(elements));
   return vbox;
 }

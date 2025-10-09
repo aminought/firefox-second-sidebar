@@ -161,7 +161,7 @@ export class WebPanelPopupEdit extends Panel {
       new PanelMultiView().appendChildren(
         new PopupHeader("Edit Web Panel"),
         new PopupBody().appendChildren(
-          createPopupSet("General settings", [
+          createPopupSet("", [
             createPopupRow(this.urlInput),
             new ToolbarSeparator(),
             createPopupGroup("Multi-Account Container", this.containerMenuList),
@@ -179,10 +179,10 @@ export class WebPanelPopupEdit extends Panel {
             new ToolbarSeparator(),
             createPopupGroup("Web panel type", this.pinnedMenuList),
           ]),
-          createPopupSet("Favicon settings", [
+          createPopupSet("Favicon", [
             createPopupRow(this.faviconURLInput, this.faviconResetButton),
           ]),
-          createPopupSet("Floating web panel settings", [
+          createPopupSet("Floating web panels", [
             createPopupGroup("Position anchor", this.floatingAnchorMenuList),
             new ToolbarSeparator(),
             createPopupGroup("Horizontal offset", this.offsetXTypeMenuList),
@@ -193,7 +193,7 @@ export class WebPanelPopupEdit extends Panel {
             new ToolbarSeparator(),
             createPopupGroup("Height", this.heightTypeMenuList),
           ]),
-          createPopupSet("Loading settings", [
+          createPopupSet("Loading", [
             createPopupGroup(
               "Load into memory at startup",
               this.loadOnStartupToggle,

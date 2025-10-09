@@ -47,7 +47,7 @@ export class WebPanelPopupMore extends Panel {
     this.appendChild(
       new PanelMultiView().appendChildren(
         new PopupBody({ compact: true }).appendChildren(
-          createPopupSet(null, [
+          createPopupSet("", [
             this.openInNewTabButton,
             this.copyPageUrlButton,
             this.mobileButton,
