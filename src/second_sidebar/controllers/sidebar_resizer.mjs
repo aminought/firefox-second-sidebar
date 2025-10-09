@@ -1,8 +1,11 @@
 import { SidebarEvents, WebPanelEvents, sendEvents } from "./events.mjs";
+import {
+  hideGeometryHint,
+  showFloatingGeometryHint,
+} from "../utils/geometry_hint.mjs";
 
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
-import { showSidebarBoxPositionHint } from "../utils/hint.mjs";
 
 export class SidebarResizer {
   static MIN_WIDTH = 200;
@@ -39,7 +42,7 @@ export class SidebarResizer {
           SidebarElements.webPanelsBrowser.setProperty("pointer-events", "");
           currentResizer.releasePointerCapture(e.pointerId);
           currentResizer = null;
-          SidebarElements.sidebarHint.hide();
+          hideGeometryHint();
 
           document.removeEventListener("mousemove", resize);
           document.removeEventListener("mouseup", stopResize);
@@ -59,6 +62,7 @@ export class SidebarResizer {
       startX = e.clientX;
       startY = e.clientY;
       startRect = SidebarElements.sidebarBox.getBoundingClientRect();
+      showFloatingGeometryHint();
 
       document.addEventListener("mousemove", resize);
       document.addEventListener("mouseup", stopResize);
@@ -124,7 +128,7 @@ export class SidebarResizer {
         width: width !== startRect.width ? width : null,
         height: height !== startRect.height ? height : null,
       });
-      showSidebarBoxPositionHint();
+      showFloatingGeometryHint();
     }
 
     function stopResize() {

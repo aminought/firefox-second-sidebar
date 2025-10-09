@@ -1,9 +1,12 @@
 import { SidebarEvents, WebPanelEvents, sendEvents } from "./events.mjs";
+import {
+  hideGeometryHint,
+  showFloatingGeometryHint,
+} from "../utils/geometry_hint.mjs";
 
 import { BrowserElements } from "../browser_elements.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
-import { showSidebarBoxPositionHint } from "../utils/hint.mjs";
 
 export class SidebarMover {
   constructor() {
@@ -39,7 +42,6 @@ export class SidebarMover {
           if (hasMoved) {
             SidebarElements.webPanelsBrowser.setProperty("pointer-events", "");
             toolbarTitleWrapper.releasePointerCapture(e.pointerId);
-            SidebarElements.sidebarHint.hide();
           }
           toolbarTitleWrapper.setProperty("cursor", "grab");
 
@@ -49,6 +51,7 @@ export class SidebarMover {
           document.removeEventListener("mousemove", drag);
           document.removeEventListener("mouseup", stopDrag);
         }
+        hideGeometryHint();
       },
       true,
     );
@@ -64,6 +67,7 @@ export class SidebarMover {
       dragStartX = e.clientX;
       dragStartY = e.clientY;
       startRect = SidebarElements.sidebarBox.getBoundingClientRect();
+      showFloatingGeometryHint();
 
       toolbarTitleWrapper.setProperty("cursor", "grabbing");
 
@@ -89,7 +93,7 @@ export class SidebarMover {
           top: startRect.top + deltaY,
           left: startRect.left + deltaX,
         });
-        showSidebarBoxPositionHint();
+        showFloatingGeometryHint();
       }
     }
 

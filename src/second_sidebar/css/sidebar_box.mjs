@@ -31,6 +31,7 @@ export const SIDEBAR_BOX_CSS = `
     box-sizing: border-box;
 
     &[pinned="true"] {
+      position: relative;
       top: unset !important;
       left: unset !important;
       right: unset !important;
@@ -92,7 +93,7 @@ export const SIDEBAR_BOX_CSS = `
     width: var(--space-small);
   }
 
-  #sb2-hint {
+  #sb2-geometry-hint {
     position: absolute;
     bottom: 0;
     right: 0;

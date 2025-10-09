@@ -1,8 +1,8 @@
 import { Label } from "./base/label.mjs";
 
-export class SidebarHint extends Label {
+export class GeometryHint extends Label {
   constructor() {
-    super({ id: "sb2-hint" });
+    super({ id: "sb2-geometry-hint" });
     this.hide();
   }
 }

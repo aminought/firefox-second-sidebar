@@ -74,4 +74,10 @@ export const SIDEBAR_RESIZER_CSS = `
       right: -12px;
       cursor: nwse-resize;
   }
+
+  #sb2-box[pinned="true"] {
+    .sb2-resizer {
+      display: none;
+    }
+  }
 `;

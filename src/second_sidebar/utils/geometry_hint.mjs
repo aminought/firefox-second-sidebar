@@ -1,7 +1,7 @@
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 
-export function showSidebarBoxPositionHint() {
+export function showFloatingGeometryHint() {
   if (!SidebarControllers.sidebarGeometry.enableSidebarBoxHint) return;
 
   const marginTop = parseProperty("margin-top");
@@ -24,7 +24,18 @@ export function showSidebarBoxPositionHint() {
   }
 
   const hint = `anchor: ${anchor}, offset: [${parts[0]} ${parts[1]}], size: [${width} ${height}]`;
-  SidebarElements.sidebarHint.setText(hint).show();
+  SidebarElements.geometryHint.setText(hint).show();
+}
+
+export function showPinnedGeometryHint() {
+  if (!SidebarControllers.sidebarGeometry.enableSidebarBoxHint) return;
+  const width = parseProperty("width");
+  const hint = `width: ${width}`;
+  SidebarElements.geometryHint.setText(hint).show();
+}
+
+export function hideGeometryHint() {
+  SidebarElements.geometryHint.hide();
 }
 
 /**
