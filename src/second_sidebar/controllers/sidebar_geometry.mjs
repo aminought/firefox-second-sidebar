@@ -112,12 +112,14 @@ export class SidebarGeometry {
    * @param {number?} params.left
    * @param {number?} params.width
    * @param {number?} params.height
+   * @param {boolean} params.forceUpdate
    */
   calculateAndSetFloatingGeometry({
     top = null,
     left = null,
     width = null,
     height = null,
+    forceUpdate = false,
   } = {}) {
     if (SidebarControllers.sidebarController.closed()) return;
     const areaRect = SidebarElements.sidebarBoxArea.getBoundingClientRect();
@@ -142,13 +144,13 @@ export class SidebarGeometry {
     // check left border
     if (left < areaLeft) {
       left = areaLeft;
-      if (!sameWidth) {
+      if (!sameWidth || forceUpdate) {
         width = boxRect.right - areaRect.left;
       }
     }
     // check right border
     if (left + width > areaRight) {
-      if (sameWidth) {
+      if (sameWidth || forceUpdate) {
         left = areaRight - width;
       } else {
         width = areaRight - left;
@@ -161,7 +163,7 @@ export class SidebarGeometry {
     }
     // check bottom border
     if (top + height > areaBottom) {
-      if (sameHeight) {
+      if (sameHeight || forceUpdate) {
         top = areaBottom - height;
       } else {
         height = areaBottom - top;
@@ -196,7 +198,7 @@ export class SidebarGeometry {
     }
 
     // calculate width
-    if (sameWidth) {
+    if (sameWidth && !forceUpdate) {
       width = SidebarElements.sidebarBox.getProperty("width");
     } else {
       width =
@@ -206,7 +208,7 @@ export class SidebarGeometry {
     }
 
     // calculate height
-    if (sameHeight) {
+    if (sameHeight && !forceUpdate) {
       height = SidebarElements.sidebarBox.getProperty("height");
     } else {
       height =

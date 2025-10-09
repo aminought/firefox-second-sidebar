@@ -201,7 +201,9 @@ export class WebPanelsController {
       webPanelController.setAnchor(anchor);
 
       if (webPanelController.isActive()) {
-        SidebarControllers.sidebarGeometry.calculateAndSetFloatingGeometry();
+        SidebarControllers.sidebarGeometry.calculateAndSetFloatingGeometry({
+          forceUpdate: true,
+        });
       }
     });
 
@@ -213,7 +215,9 @@ export class WebPanelsController {
       webPanelController.setWidthType(widthType);
 
       if (webPanelController.isActive()) {
-        SidebarControllers.sidebarGeometry.calculateAndSetFloatingGeometry();
+        SidebarControllers.sidebarGeometry.calculateAndSetFloatingGeometry({
+          forceUpdate: true,
+        });
       }
     });
 
@@ -225,7 +229,9 @@ export class WebPanelsController {
       webPanelController.setHeightType(heightType);
 
       if (webPanelController.isActive()) {
-        SidebarControllers.sidebarGeometry.calculateAndSetFloatingGeometry();
+        SidebarControllers.sidebarGeometry.calculateAndSetFloatingGeometry({
+          forceUpdate: true,
+        });
       }
     });
 
