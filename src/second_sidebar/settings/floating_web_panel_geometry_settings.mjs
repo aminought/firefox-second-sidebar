@@ -5,43 +5,48 @@ export class FloatingWebPanelGeometrySettings {
    * @param {string} defaultFloatingOffsetCSS
    * @param {object} params
    * @param {string} params.anchor
+   * @param {string} params.offsetXType
+   * @param {string} params.offsetYType
    * @param {string} params.widthType
    * @param {string} params.heightType
-   * @param {string} params.marginTop
-   * @param {string} params.marginLeft
-   * @param {string} params.marginRight
-   * @param {string} params.marginBottom
+   * @param {string} params.top
+   * @param {string} params.left
+   * @param {string} params.right
+   * @param {string} params.bottom
    * @param {string} params.width
    * @param {string} params.height
+   * @param {string} params.margin
    */
   constructor(
     sidebarPosition,
     defaultFloatingOffsetCSS,
     {
       anchor = "default",
+      offsetXType = "absolute",
+      offsetYType = "absolute",
       widthType = "absolute",
       heightType = "relative",
-      marginTop = defaultFloatingOffsetCSS,
-      marginLeft = sidebarPosition === "left"
-        ? defaultFloatingOffsetCSS
-        : "unset",
-      marginRight = sidebarPosition === "right"
-        ? defaultFloatingOffsetCSS
-        : "unset",
-      marginBottom = "unset",
+      top = defaultFloatingOffsetCSS,
+      left = sidebarPosition === "left" ? defaultFloatingOffsetCSS : "unset",
+      right = sidebarPosition === "right" ? defaultFloatingOffsetCSS : "unset",
+      bottom = "unset",
       width = "400px",
       height = this.makeDefaultHeight(defaultFloatingOffsetCSS),
+      margin = "unset",
     } = {},
   ) {
     this.anchor = anchor;
+    this.offsetXType = offsetXType;
+    this.offsetYType = offsetYType;
     this.widthType = widthType;
     this.heightType = heightType;
-    this.marginTop = marginTop;
-    this.marginRight = marginRight;
-    this.marginLeft = marginLeft;
-    this.marginBottom = marginBottom;
+    this.top = top;
+    this.left = left;
+    this.right = right;
+    this.bottom = bottom;
     this.width = width;
     this.height = height;
+    this.margin = margin;
   }
 
   /**
@@ -66,14 +71,17 @@ export class FloatingWebPanelGeometrySettings {
   toObject() {
     return {
       anchor: this.anchor,
+      offsetXType: this.offsetXType,
+      offsetYType: this.offsetYType,
       widthType: this.widthType,
       heightType: this.heightType,
-      marginTop: this.marginTop,
-      marginLeft: this.marginLeft,
-      marginRight: this.marginRight,
-      marginBottom: this.marginBottom,
+      top: this.top,
+      left: this.left,
+      right: this.right,
+      bottom: this.bottom,
       width: this.width,
       height: this.height,
+      margin: this.margin,
     };
   }
 

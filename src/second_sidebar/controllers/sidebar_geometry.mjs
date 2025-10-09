@@ -30,35 +30,30 @@ export class SidebarGeometry {
     });
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_FLOATING_GEOMETRY, (event) => {
-      const {
-        uuid,
-        marginTop,
-        marginLeft,
-        marginRight,
-        marginBottom,
-        width,
-        height,
-      } = event.detail;
+      const { uuid, top, left, right, bottom, width, height, margin } =
+        event.detail;
 
       const webPanelController =
         SidebarControllers.webPanelsController.get(uuid);
       webPanelController.setFloatingGeometry(
-        marginTop,
-        marginLeft,
-        marginRight,
-        marginBottom,
+        top,
+        left,
+        right,
+        bottom,
         width,
         height,
+        margin,
       );
       if (webPanelController.isActive()) {
         this.setFloatingGeometry(
           webPanelController.getAnchor(),
-          marginTop,
-          marginLeft,
-          marginRight,
-          marginBottom,
+          top,
+          left,
+          right,
+          bottom,
           width,
           height,
+          margin,
         );
       }
     });
@@ -170,61 +165,71 @@ export class SidebarGeometry {
       }
     }
 
+    const convert = (value, type, dimension) => {
+      if (type === "absolute") {
+        return value + "px";
+      } else {
+        return `${(value / dimension) * 100}%`;
+      }
+    };
+
     const webPanelController =
       SidebarControllers.webPanelsController.getActive();
+    const offsetXType = webPanelController.getOffsetXType();
+    const offsetYType = webPanelController.getOffsetYType();
     const widthType = webPanelController.getWidthType();
     const heightType = webPanelController.getHeightType();
     let anchor = webPanelController.getAnchor();
 
-    let marginTop, marginLeft, marginRight, marginBottom;
-    marginTop = marginLeft = marginRight = marginBottom = "unset";
+    let right, bottom;
+    let margin = "unset";
 
-    // calculate margins
+    // calculate bounds
     if (anchor == "default") anchor = this.getDefaultAnchor();
-    if (anchor === "topright") {
-      marginTop = `${top}px`;
-      marginRight = `${areaRight - left - width}px`;
-    } else if (anchor == "topleft") {
-      marginTop = `${top}px`;
-      marginLeft = `${left}px`;
+    if (anchor == "topleft") {
+      top = convert(top, offsetYType, areaRect.height);
+      left = convert(left, offsetXType, areaRect.width);
+      right = bottom = "unset";
+    } else if (anchor === "topright") {
+      top = convert(top, offsetYType, areaRect.height);
+      right = convert(areaRight - left - width, offsetXType, areaRect.width);
+      left = bottom = "unset";
     } else if (anchor == "bottomleft") {
-      marginBottom = `${areaBottom - top - height}px`;
-      marginLeft = `${left}px`;
+      bottom = convert(areaBottom - top - height, offsetYType, areaRect.height);
+      left = convert(left, offsetXType, areaRect.width);
+      top = right = "unset";
     } else if (anchor == "bottomright") {
-      marginBottom = `${areaBottom - top - height}px`;
-      marginRight = `${areaRight - left - width}px`;
+      bottom = convert(areaBottom - top - height, offsetYType, areaRect.height);
+      right = convert(areaRight - left - width, offsetXType, areaRect.width);
+      top = left = "unset";
     } else if (anchor == "center") {
-      marginTop = marginLeft = marginRight = marginBottom = "auto";
+      top = left = right = bottom = "0";
+      margin = "auto";
     }
 
     // calculate width
     if (sameWidth && !forceUpdate) {
       width = SidebarElements.sidebarBox.getProperty("width");
     } else {
-      width =
-        widthType === "absolute"
-          ? width + "px"
-          : `${(width / areaRect.width) * 100}%`;
+      width = convert(width, widthType, areaRect.width);
     }
 
     // calculate height
     if (sameHeight && !forceUpdate) {
       height = SidebarElements.sidebarBox.getProperty("height");
     } else {
-      height =
-        heightType === "absolute"
-          ? height + "px"
-          : `${(height / areaRect.height) * 100}%`;
+      height = convert(height, heightType, areaRect.height);
     }
 
     this.setFloatingGeometry(
       anchor,
-      marginTop,
-      marginLeft,
-      marginRight,
-      marginBottom,
+      top,
+      left,
+      right,
+      bottom,
       width,
       height,
+      margin,
     );
   }
 
@@ -234,66 +239,44 @@ export class SidebarGeometry {
     const geometry = webPanelController.getFloatingGeometry();
     this.setFloatingGeometry(
       geometry.anchor,
-      geometry.marginTop,
-      geometry.marginLeft,
-      geometry.marginRight,
-      geometry.marginBottom,
+      geometry.top,
+      geometry.left,
+      geometry.right,
+      geometry.bottom,
       geometry.width,
       geometry.height,
+      geometry.margin,
     );
   }
 
   /**
-   * @param {string} anchor_
-   * @param {string?} marginTop
-   * @param {string?} marginLeft
-   * @param {string?} marginRight
-   * @param {string?} marginBottom
-   * @param {string?} width
-   * @param {string?} height
+   * @param {string} anchor
+   * @param {string} top
+   * @param {string} left
+   * @param {string} right
+   * @param {string} bottom
+   * @param {string} width
+   * @param {string} height
+   * @param {string} margin
    */
-  setFloatingGeometry(
-    anchor,
-    marginTop,
-    marginLeft,
-    marginRight,
-    marginBottom,
-    width,
-    height,
-  ) {
-    let top, left, right, bottom;
-    top = left = right = bottom = "unset";
-
+  setFloatingGeometry(anchor, top, left, right, bottom, width, height, margin) {
     if (anchor == "default") anchor = this.getDefaultAnchor();
-    if (anchor == "topleft") top = left = "0px";
-    else if (anchor == "topright") top = right = "0px";
-    else if (anchor == "bottomleft") bottom = left = "0px";
-    else if (anchor == "bottomright") bottom = right = "0px";
-    else if (anchor == "center") top = left = right = bottom = 0;
-
-    const defaultGeometry = new FloatingWebPanelGeometrySettings(
-      SidebarElements.sidebarWrapper.getPosition(),
-      this.getDefaultFloatingOffsetCSS,
-    );
-
-    marginTop ??= "unset";
-    marginLeft ??= "unset";
-
-    const margin = marginTop !== "unset" ? marginTop : marginBottom;
-    width ??= defaultGeometry.width;
-    height ??= defaultGeometry.makeDefaultHeight(margin);
-
+    if (anchor == "topleft") right = bottom = "unset";
+    else if (anchor == "topright") left = bottom = "unset";
+    else if (anchor == "bottomleft") top = right = "unset";
+    else if (anchor == "bottomright") top = left = "unset";
+    else if (anchor == "center") {
+      top = left = right = bottom = 0;
+      margin = "auto";
+    }
     SidebarElements.sidebarBox
       .setProperty("top", top)
       .setProperty("left", left)
       .setProperty("right", right)
       .setProperty("bottom", bottom)
-      .setProperty("margin-top", marginTop)
-      .setProperty("margin-left", marginLeft)
-      .setProperty("margin-right", marginRight)
-      .setProperty("margin-bottom", marginBottom)
       .setProperty("width", width)
-      .setProperty("height", height);
+      .setProperty("height", height)
+      .setProperty("margin", margin);
   }
 
   /**
@@ -310,50 +293,56 @@ export class SidebarGeometry {
   ) {
     const webPanelController = SidebarControllers.webPanelsController.get(uuid);
     const position = SidebarElements.sidebarWrapper.getPosition();
-    const padding = this.getDefaultFloatingOffsetCSS();
-    const anchor = resetPosition ? "default" : webPanelController.getAnchor();
-    const marginTop = resetPosition
-      ? padding
-      : SidebarElements.sidebarBox.getProperty("margin-top");
-    const marginLeft = resetPosition
-      ? position === "left"
-        ? padding
-        : "unset"
-      : SidebarElements.sidebarBox.getProperty("margin-left");
-    const marginRight = resetPosition
-      ? position === "right"
-        ? padding
-        : "unset"
-      : SidebarElements.sidebarBox.getProperty("margin-right");
-    const marginBottom = resetPosition
-      ? "unset"
-      : SidebarElements.sidebarBox.getProperty("margin-bottom");
-    const width = resetWidth
-      ? "400px"
-      : SidebarElements.sidebarBox.getProperty("width");
-    const margin = marginTop !== "unset" ? marginTop : marginBottom;
-    const height = resetHeight
-      ? `calc(100% - ${margin} * 2)`
-      : SidebarElements.sidebarBox.getProperty("height");
-    webPanelController.setAnchor(anchor);
-    if (resetWidth) webPanelController.setWidthType("absolute");
-    if (resetHeight) webPanelController.setHeightType("relative");
+    const geometry = webPanelController.getFloatingGeometry();
+    const defaultOffset = this.getDefaultFloatingOffsetCSS();
+    const defaultGeometry = new FloatingWebPanelGeometrySettings(
+      position,
+      defaultOffset,
+    );
+
+    if (resetPosition) {
+      geometry.anchor = defaultGeometry.anchor;
+      geometry.offsetXType = defaultGeometry.offsetXType;
+      geometry.offsetYType = defaultGeometry.offsetYType;
+      geometry.top = defaultGeometry.top;
+      geometry.left = defaultGeometry.left;
+      geometry.right = defaultGeometry.right;
+      geometry.bottom = defaultGeometry.bottom;
+      geometry.margin = defaultGeometry.margin;
+    }
+    if (resetWidth) {
+      geometry.widthType = defaultGeometry.widthType;
+      geometry.width = defaultGeometry.width;
+    }
+    if (resetHeight) {
+      const offset = geometry.top !== "unset" ? geometry.top : geometry.bottom;
+      geometry.heightType = defaultGeometry.heightType;
+      geometry.height = defaultGeometry.makeDefaultHeight(offset);
+    }
+
+    webPanelController.setAnchor(geometry.anchor);
+    webPanelController.setOffsetXType(geometry.offsetXType);
+    webPanelController.setOffsetYType(geometry.offsetYType);
+    webPanelController.setWidthType(geometry.widthType);
+    webPanelController.setHeightType(geometry.heightType);
     webPanelController.setFloatingGeometry(
-      marginTop,
-      marginLeft,
-      marginRight,
-      marginBottom,
-      width,
-      height,
+      geometry.top,
+      geometry.left,
+      geometry.right,
+      geometry.bottom,
+      geometry.width,
+      geometry.height,
+      geometry.margin,
     );
     this.setFloatingGeometry(
-      anchor,
-      marginTop,
-      marginLeft,
-      marginRight,
-      marginBottom,
-      width,
-      height,
+      geometry.anchor,
+      geometry.top,
+      geometry.left,
+      geometry.right,
+      geometry.bottom,
+      geometry.width,
+      geometry.height,
+      geometry.margin,
     );
     if (webPanelController.isActive()) {
       SidebarControllers.webPanelsController.saveSettings();

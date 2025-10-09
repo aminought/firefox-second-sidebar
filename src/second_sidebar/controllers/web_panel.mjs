@@ -243,12 +243,13 @@ export class WebPanelController {
     SidebarControllers.sidebarController.open(
       this.#settings.pinned,
       this.#settings.floatingGeometry.anchor,
-      this.#settings.floatingGeometry.marginTop,
-      this.#settings.floatingGeometry.marginLeft,
-      this.#settings.floatingGeometry.marginRight,
-      this.#settings.floatingGeometry.marginBottom,
+      this.#settings.floatingGeometry.top,
+      this.#settings.floatingGeometry.left,
+      this.#settings.floatingGeometry.right,
+      this.#settings.floatingGeometry.bottom,
       this.#settings.floatingGeometry.width,
       this.#settings.floatingGeometry.height,
+      this.#settings.floatingGeometry.margin,
       this.#tab.linkedBrowser.canGoBack(),
       this.#tab.linkedBrowser.canGoForward(),
       this.#tab.linkedBrowser.getTitle(),
@@ -515,6 +516,38 @@ export class WebPanelController {
    *
    * @returns {string}
    */
+  getOffsetXType() {
+    return this.#settings.floatingGeometry.offsetXType;
+  }
+
+  /**
+   *
+   * @param {string} offsetXType
+   */
+  setOffsetXType(offsetXType) {
+    this.#settings.floatingGeometry.offsetXType = offsetXType;
+  }
+
+  /**
+   *
+   * @returns {string}
+   */
+  getOffsetYType() {
+    return this.#settings.floatingGeometry.offsetYType;
+  }
+
+  /**
+   *
+   * @param {string} offsetYType
+   */
+  setOffsetYType(offsetYType) {
+    this.#settings.floatingGeometry.offsetYType = offsetYType;
+  }
+
+  /**
+   *
+   * @returns {string}
+   */
   getWidthType() {
     return this.#settings.floatingGeometry.widthType;
   }
@@ -585,27 +618,22 @@ export class WebPanelController {
 
   /**
    *
-   * @param {string} marginTop
-   * @param {string} marginLeft
-   * @param {string} marginRight
-   * @param {string} marginBottom
+   * @param {string} top
+   * @param {string} left
+   * @param {string} right
+   * @param {string} bottom
    * @param {string} width
    * @param {string} height
+   * @param {string} margin
    */
-  setFloatingGeometry(
-    marginTop,
-    marginLeft,
-    marginRight,
-    marginBottom,
-    width,
-    height,
-  ) {
-    this.#settings.floatingGeometry.marginTop = marginTop;
-    this.#settings.floatingGeometry.marginLeft = marginLeft;
-    this.#settings.floatingGeometry.marginRight = marginRight;
-    this.#settings.floatingGeometry.marginBottom = marginBottom;
+  setFloatingGeometry(top, left, right, bottom, width, height, margin) {
+    this.#settings.floatingGeometry.top = top;
+    this.#settings.floatingGeometry.left = left;
+    this.#settings.floatingGeometry.right = right;
+    this.#settings.floatingGeometry.bottom = bottom;
     this.#settings.floatingGeometry.width = width;
     this.#settings.floatingGeometry.height = height;
+    this.#settings.floatingGeometry.margin = margin;
   }
 
   /**

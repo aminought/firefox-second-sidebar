@@ -58,6 +58,8 @@ export class WebPanelPopupEdit extends Panel {
     });
     this.pinnedMenuList = this.#createPinTypeMenuList();
     this.floatingAnchorMenuList = this.#createFloatingAnchorMenuList();
+    this.offsetXTypeMenuList = this.#createDimensionTypeMenuList();
+    this.offsetYTypeMenuList = this.#createDimensionTypeMenuList();
     this.widthTypeMenuList = this.#createDimensionTypeMenuList();
     this.heightTypeMenuList = this.#createDimensionTypeMenuList();
     this.containerMenuList = createMenuList({ id: "sb2-container-menu-list" });
@@ -183,9 +185,13 @@ export class WebPanelPopupEdit extends Panel {
           createPopupSet("Floating web panel settings", [
             createPopupGroup("Position anchor", this.floatingAnchorMenuList),
             new ToolbarSeparator(),
-            createPopupGroup("Width type", this.widthTypeMenuList),
+            createPopupGroup("Horizontal offset", this.offsetXTypeMenuList),
             new ToolbarSeparator(),
-            createPopupGroup("Height type", this.heightTypeMenuList),
+            createPopupGroup("Vertical offset", this.offsetYTypeMenuList),
+            new ToolbarSeparator(),
+            createPopupGroup("Width", this.widthTypeMenuList),
+            new ToolbarSeparator(),
+            createPopupGroup("Height", this.heightTypeMenuList),
           ]),
           createPopupSet("Loading settings", [
             createPopupGroup(
@@ -231,6 +237,8 @@ export class WebPanelPopupEdit extends Panel {
    * @param {function(string, boolean):void} callbacks.mobile
    * @param {function(string, boolean):void} callbacks.pinned
    * @param {function(string, string):void} callbacks.anchor
+   * @param {function(string, string):void} callbacks.offsetXType
+   * @param {function(string, string):void} callbacks.offsetYType
    * @param {function(string, string):void} callbacks.widthType
    * @param {function(string, string):void} callbacks.heightType
    * @param {function(string, string):void} callbacks.userContextId
@@ -251,6 +259,8 @@ export class WebPanelPopupEdit extends Panel {
     faviconURL,
     pinned,
     anchor,
+    offsetXType,
+    offsetYType,
     widthType,
     heightType,
     userContextId,
@@ -272,6 +282,8 @@ export class WebPanelPopupEdit extends Panel {
     this.onMobileChange = mobile;
     this.onPinnedChange = pinned;
     this.onFloatingAnchorChange = anchor;
+    this.onOffsetXTypeChange = offsetXType;
+    this.onOffsetYTypeChange = offsetYType;
     this.onWidthTypeChange = widthType;
     this.onHeightTypeChange = heightType;
     this.onUserContextIdChange = userContextId;
@@ -302,6 +314,12 @@ export class WebPanelPopupEdit extends Panel {
     });
     this.floatingAnchorMenuList.addEventListener("command", () => {
       anchor(this.settings.uuid, this.floatingAnchorMenuList.getValue());
+    });
+    this.offsetXTypeMenuList.addEventListener("command", () => {
+      offsetXType(this.settings.uuid, this.offsetXTypeMenuList.getValue());
+    });
+    this.offsetYTypeMenuList.addEventListener("command", () => {
+      offsetYType(this.settings.uuid, this.offsetYTypeMenuList.getValue());
     });
     this.widthTypeMenuList.addEventListener("command", () => {
       widthType(this.settings.uuid, this.widthTypeMenuList.getValue());
@@ -411,6 +429,8 @@ export class WebPanelPopupEdit extends Panel {
     this.faviconURLInput.setValue(settings.faviconURL);
     this.pinnedMenuList.setValue(settings.pinned);
     this.floatingAnchorMenuList.setValue(settings.floatingGeometry.anchor);
+    this.offsetXTypeMenuList.setValue(settings.floatingGeometry.offsetXType);
+    this.offsetYTypeMenuList.setValue(settings.floatingGeometry.offsetYType);
     this.widthTypeMenuList.setValue(settings.floatingGeometry.widthType);
     this.heightTypeMenuList.setValue(settings.floatingGeometry.heightType);
 
@@ -480,6 +500,24 @@ export class WebPanelPopupEdit extends Panel {
       this.onFloatingAnchorChange(
         this.settings.uuid,
         this.settings.floatingGeometry.anchor,
+      );
+    }
+    if (
+      this.offsetXTypeMenuList.getValue() !==
+      this.settings.floatingGeometry.offsetXType
+    ) {
+      this.onOffsetXTypeChange(
+        this.settings.uuid,
+        this.settings.floatingGeometry.offsetXType,
+      );
+    }
+    if (
+      this.offsetYTypeMenuList.getValue() !==
+      this.settings.floatingGeometry.offsetYType
+    ) {
+      this.onOffsetYTypeChange(
+        this.settings.uuid,
+        this.settings.floatingGeometry.offsetYType,
       );
     }
     if (

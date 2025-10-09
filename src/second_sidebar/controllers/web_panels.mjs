@@ -207,6 +207,34 @@ export class WebPanelsController {
       }
     });
 
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_OFFSET_X_TYPE, (event) => {
+      const uuid = event.detail.uuid;
+      const offsetXType = event.detail.offsetXType;
+
+      const webPanelController = this.get(uuid);
+      webPanelController.setOffsetXType(offsetXType);
+
+      if (webPanelController.isActive()) {
+        SidebarControllers.sidebarGeometry.calculateAndSetFloatingGeometry({
+          forceUpdate: true,
+        });
+      }
+    });
+
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_OFFSET_Y_TYPE, (event) => {
+      const uuid = event.detail.uuid;
+      const offsetYType = event.detail.offsetYType;
+
+      const webPanelController = this.get(uuid);
+      webPanelController.setOffsetYType(offsetYType);
+
+      if (webPanelController.isActive()) {
+        SidebarControllers.sidebarGeometry.calculateAndSetFloatingGeometry({
+          forceUpdate: true,
+        });
+      }
+    });
+
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_WIDTH_TYPE, (event) => {
       const uuid = event.detail.uuid;
       const widthType = event.detail.widthType;

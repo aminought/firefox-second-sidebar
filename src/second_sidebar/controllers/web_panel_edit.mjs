@@ -51,6 +51,18 @@ export class WebPanelEditController {
           anchor,
         });
       },
+      offsetXType: (uuid, offsetXType) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_OFFSET_X_TYPE, {
+          uuid,
+          offsetXType,
+        });
+      },
+      offsetYType: (uuid, offsetYType) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_OFFSET_Y_TYPE, {
+          uuid,
+          offsetYType,
+        });
+      },
       widthType: (uuid, widthType) => {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_WIDTH_TYPE, {
           uuid,

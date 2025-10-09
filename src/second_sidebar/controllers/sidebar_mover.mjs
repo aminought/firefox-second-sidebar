@@ -103,12 +103,13 @@ export class SidebarMover {
           SidebarControllers.webPanelsController.getActive();
         sendEvents(SidebarEvents.EDIT_SIDEBAR_FLOATING_GEOMETRY, {
           uuid: webPanelController.getUUID(),
-          marginTop: SidebarElements.sidebarBox.getProperty("margin-top"),
-          marginLeft: SidebarElements.sidebarBox.getProperty("margin-left"),
-          marginRight: SidebarElements.sidebarBox.getProperty("margin-right"),
-          marginBottom: SidebarElements.sidebarBox.getProperty("margin-bottom"),
+          top: SidebarElements.sidebarBox.getProperty("top"),
+          left: SidebarElements.sidebarBox.getProperty("left"),
+          right: SidebarElements.sidebarBox.getProperty("right"),
+          bottom: SidebarElements.sidebarBox.getProperty("bottom"),
           width: SidebarElements.sidebarBox.getProperty("width"),
           height: SidebarElements.sidebarBox.getProperty("height"),
+          margin: SidebarElements.sidebarBox.getProperty("margin"),
         });
         sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
       }

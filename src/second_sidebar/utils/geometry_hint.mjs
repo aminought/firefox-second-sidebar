@@ -4,18 +4,18 @@ import { SidebarElements } from "../sidebar_elements.mjs";
 export function showFloatingGeometryHint() {
   if (!SidebarControllers.sidebarGeometry.enableSidebarBoxHint) return;
 
-  const marginTop = parseProperty("margin-top");
-  const marginLeft = parseProperty("margin-left");
-  const marginRight = parseProperty("margin-right");
-  const marginBottom = parseProperty("margin-bottom");
+  const top = parseProperty("top");
+  const left = parseProperty("left");
+  const right = parseProperty("right");
+  const bottom = parseProperty("bottom");
   const width = parseProperty("width");
   const height = parseProperty("height");
 
   const parts = [];
-  if (marginLeft !== null) parts.push(marginLeft);
-  if (marginRight !== null) parts.push(marginRight);
-  if (marginTop !== null) parts.push(marginTop);
-  if (marginBottom !== null) parts.push(marginBottom);
+  if (left !== null) parts.push(left);
+  if (right !== null) parts.push(right);
+  if (top !== null) parts.push(top);
+  if (bottom !== null) parts.push(bottom);
 
   const webPanelController = SidebarControllers.webPanelsController.getActive();
   let anchor = webPanelController.getAnchor();
@@ -48,7 +48,7 @@ function parseProperty(property) {
   if (value.endsWith("px")) {
     return Math.round(parseFloat(value)) + "px";
   }
-  if (value.endsWith("%")) {
+  if (value.endsWith("%") || value.endsWith("vw") || value.endsWith("vh")) {
     return Math.round(parseFloat(value)) + "%";
   }
   return "default";

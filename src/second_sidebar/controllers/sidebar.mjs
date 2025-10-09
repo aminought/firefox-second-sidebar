@@ -159,12 +159,13 @@ export class SidebarController {
    *
    * @param {boolean} pinned
    * @param {string?} anchor
-   * @param {string?} marginTop
-   * @param {string?} marginLeft
-   * @param {string?} marginRight
-   * @param {string?} marginBottom
+   * @param {string?} top
+   * @param {string?} left
+   * @param {string?} right
+   * @param {string?} bottom
    * @param {string?} width
    * @param {string?} height
+   * @param {string?} margin
    * @param {boolean} canGoBack
    * @param {boolean} canGoForward
    * @param {string} title
@@ -173,12 +174,13 @@ export class SidebarController {
   open(
     pinned,
     anchor,
-    marginTop,
-    marginLeft,
-    marginRight,
-    marginBottom,
+    top,
+    left,
+    right,
+    bottom,
     width,
     height,
+    margin,
     canGoBack,
     canGoForward,
     title,
@@ -187,12 +189,13 @@ export class SidebarController {
     SidebarControllers.sidebarToolbarCollapser.clearTimers();
     SidebarControllers.sidebarGeometry.setFloatingGeometry(
       anchor,
-      marginTop,
-      marginLeft,
-      marginRight,
-      marginBottom,
+      top,
+      left,
+      right,
+      bottom,
       width,
       height,
+      margin,
     );
     SidebarElements.sidebarBox.show();
     SidebarElements.sidebarToolbar
