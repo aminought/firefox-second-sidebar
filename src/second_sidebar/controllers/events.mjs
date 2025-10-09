@@ -45,7 +45,7 @@ export const SidebarEvents = {
   EDIT_SIDEBAR_TOOLBAR_AUTO_HIDE_ANIMATED:
     "edit_sidebar_toolbar_auto_hide_animated",
   EDIT_SIDEBAR_ENABLE_BOX_HINT: "edit_sidebar_enable_box_hint",
-  EDIT_SIDEBAR_PINNED_WIDTH: "edit_sidebar_pinned_width",
+  EDIT_SIDEBAR_PINNED_GEOMETRY: "edit_sidebar_pinned_geometry",
   EDIT_SIDEBAR_FLOATING_GEOMETRY: "edit_sidebar_floating_geometry",
   RESET_SIDEBAR_FLOATING_POSITION: "reset_sidebar_floating_position",
   RESET_SIDEBAR_FLOATING_WIDTH: "reset_sidebar_floating_width",
@@ -61,11 +61,12 @@ export const SidebarEvents = {
  * @param {object} detail
  */
 export const sendEvent = (type, detail = {}) => {
+  const window = new WindowWrapper();
   const lastWindow = WindowManagerWrapper.getMostRecentBrowserWindow();
   const customEvent = new CustomEvent(type, {
     detail: {
       ...detail,
-      isActiveWindow: window === lastWindow,
+      isActiveWindow: WindowWrapper.isEqual(window, lastWindow),
     },
   });
   lastWindow.dispatchEvent(customEvent);

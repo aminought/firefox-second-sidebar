@@ -30,7 +30,7 @@ export class FloatingWebPanelGeometrySettings {
         : "unset",
       marginBottom = "unset",
       width = "400px",
-      height = `calc(100% - ${defaultFloatingOffsetCSS} * 2)`,
+      height = this.makeDefaultHeight(defaultFloatingOffsetCSS),
     } = {},
   ) {
     this.anchor = anchor;
@@ -75,5 +75,14 @@ export class FloatingWebPanelGeometrySettings {
       width: this.width,
       height: this.height,
     };
+  }
+
+  /**
+   *
+   * @param {string} offsetCSS
+   * @returns {string}
+   */
+  makeDefaultHeight(offsetCSS) {
+    return `calc(100% - ${offsetCSS} * 2)`;
   }
 }

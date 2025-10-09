@@ -2,6 +2,7 @@ import { FALLBACK_ICON, useAvailableIcon } from "../utils/icons.mjs";
 import { WebPanelEvents, sendEvent } from "./events.mjs";
 
 import { ChromeUtilsWrapper } from "../wrappers/chrome_utils.mjs";
+import { PinnedWebPanelGeometrySettings } from "../settings/pinned_web_panel_geometry_settings.mjs"; // eslint-disable-line no-unused-vars
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { WebPanelButton } from "../xul/web_panel_button.mjs";
@@ -576,6 +577,14 @@ export class WebPanelController {
 
   /**
    *
+   * @returns {FloatingWebPanelGeometrySettings}
+   */
+  getFloatingGeometry() {
+    return this.#settings.floatingGeometry;
+  }
+
+  /**
+   *
    * @param {string} marginTop
    * @param {string} marginLeft
    * @param {string} marginRight
@@ -597,6 +606,22 @@ export class WebPanelController {
     this.#settings.floatingGeometry.marginBottom = marginBottom;
     this.#settings.floatingGeometry.width = width;
     this.#settings.floatingGeometry.height = height;
+  }
+
+  /**
+   *
+   * @returns {PinnedWebPanelGeometrySettings}
+   */
+  getPinnedGeometry() {
+    return this.#settings.pinnedGeometry;
+  }
+
+  /**
+   *
+   * @param {string} width
+   */
+  setPinnedGeometry(width) {
+    this.#settings.pinnedGeometry.width = width;
   }
 
   /**

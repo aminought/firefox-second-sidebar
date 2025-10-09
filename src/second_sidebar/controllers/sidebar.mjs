@@ -226,6 +226,7 @@ export class SidebarController {
     SidebarElements.sidebarSplitter.show();
     SidebarElements.afterSplitter.show();
     SidebarElements.sidebarToolbar.changePinButton(true);
+    SidebarControllers.sidebarGeometry.loadAndSetPinnedGeometry();
     document.removeEventListener("click", this.onClickOutsideWhileFloating);
   }
 
@@ -234,6 +235,7 @@ export class SidebarController {
     SidebarElements.sidebarSplitter.hide();
     SidebarElements.afterSplitter.hide();
     SidebarElements.sidebarToolbar.changePinButton(false);
+    SidebarControllers.sidebarGeometry.loadAndSetFloatingGeometry();
     document.addEventListener("click", this.onClickOutsideWhileFloating);
   }
 

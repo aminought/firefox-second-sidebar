@@ -1,5 +1,6 @@
 import { SidebarEvents, listenEvent } from "./events.mjs";
 
+import { FloatingWebPanelGeometrySettings } from "../settings/floating_web_panel_geometry_settings.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 
@@ -17,18 +18,14 @@ export class SidebarGeometry {
       this.setDefaultFloatingOffset(value);
     });
 
-    listenEvent(SidebarEvents.EDIT_SIDEBAR_PINNED_WIDTH, (event) => {
-      const { uuid, width, isActiveWindow } = event.detail;
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_PINNED_GEOMETRY, (event) => {
+      const { uuid, width } = event.detail;
 
       const webPanelController =
         SidebarControllers.webPanelsController.get(uuid);
-      webPanelController.setPinnedWidth(width);
+      webPanelController.setPinnedGeometry(width);
       if (webPanelController.isActive()) {
-        this.setPinnedWidth(width);
-      }
-
-      if (isActiveWindow) {
-        SidebarControllers.webPanelsController.saveSettings();
+        this.setPinnedGeometry(width);
       }
     });
 
@@ -229,6 +226,21 @@ export class SidebarGeometry {
     );
   }
 
+  loadAndSetFloatingGeometry() {
+    const webPanelController =
+      SidebarControllers.webPanelsController.getActive();
+    const geometry = webPanelController.getFloatingGeometry();
+    this.setFloatingGeometry(
+      geometry.anchor,
+      geometry.marginTop,
+      geometry.marginLeft,
+      geometry.marginRight,
+      geometry.marginBottom,
+      geometry.width,
+      geometry.height,
+    );
+  }
+
   /**
    * @param {string} anchor_
    * @param {string?} marginTop
@@ -257,12 +269,17 @@ export class SidebarGeometry {
     else if (anchor == "bottomright") bottom = right = "0px";
     else if (anchor == "center") top = left = right = bottom = 0;
 
-    marginTop = marginTop ?? "unset";
-    marginLeft = marginLeft ?? "unset";
+    const defaultGeometry = new FloatingWebPanelGeometrySettings(
+      SidebarElements.sidebarWrapper.getPosition(),
+      this.getDefaultFloatingOffsetCSS,
+    );
+
+    marginTop ??= "unset";
+    marginLeft ??= "unset";
 
     const margin = marginTop !== "unset" ? marginTop : marginBottom;
-    width = width ?? "400px";
-    height = height ?? `calc(100% - ${margin} * 2)`;
+    width ??= defaultGeometry.width;
+    height ??= defaultGeometry.makeDefaultHeight(margin);
 
     SidebarElements.sidebarBox
       .setProperty("top", top)
@@ -341,6 +358,26 @@ export class SidebarGeometry {
     }
   }
 
+  loadAndSetPinnedGeometry() {
+    const webPanelController =
+      SidebarControllers.webPanelsController.getActive();
+    const geometry = webPanelController.getPinnedGeometry();
+    this.setPinnedGeometry(geometry.width);
+  }
+
+  /**
+   *
+   * @param {string?} width
+   */
+  setPinnedGeometry(width) {
+    const defaultGeometry = new FloatingWebPanelGeometrySettings(
+      SidebarElements.sidebarWrapper.getPosition(),
+      this.getDefaultFloatingOffsetCSS,
+    );
+    width ??= defaultGeometry.width;
+    SidebarElements.sidebarBox.setProperty("width", width);
+  }
+
   /**
    *
    * @returns {string}
@@ -372,14 +409,6 @@ export class SidebarGeometry {
    */
   setDefaultFloatingOffset(value) {
     this.defaultFloatingOffset = value;
-  }
-
-  /**
-   *
-   * @param {number} width
-   */
-  setPinnedWidth(width) {
-    SidebarElements.sidebarBox.setProperty("width", `${width}px`);
   }
 
   /**
