@@ -1,4 +1,4 @@
-import { SidebarEvents, sendEvents } from "./events.mjs";
+import { SidebarEvents, WebPanelEvents, sendEvents } from "./events.mjs";
 
 import { BrowserElements } from "../browser_elements.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
@@ -97,7 +97,7 @@ export class SidebarMover {
       if (hasMoved) {
         const webPanelController =
           SidebarControllers.webPanelsController.getActive();
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_FLOATING_POSITION, {
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_FLOATING_GEOMETRY, {
           uuid: webPanelController.getUUID(),
           marginTop: SidebarElements.sidebarBox.getProperty("margin-top"),
           marginLeft: SidebarElements.sidebarBox.getProperty("margin-left"),
@@ -106,7 +106,7 @@ export class SidebarMover {
           width: SidebarElements.sidebarBox.getProperty("width"),
           height: SidebarElements.sidebarBox.getProperty("height"),
         });
-        SidebarControllers.webPanelsController.saveSettings();
+        sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
       }
     }
   }

@@ -583,7 +583,7 @@ export class WebPanelController {
    * @param {string} width
    * @param {string} height
    */
-  setFloatingPosition(
+  setFloatingGeometry(
     marginTop,
     marginLeft,
     marginRight,

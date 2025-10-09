@@ -32,7 +32,7 @@ export class SidebarGeometry {
       }
     });
 
-    listenEvent(SidebarEvents.EDIT_SIDEBAR_FLOATING_POSITION, (event) => {
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_FLOATING_GEOMETRY, (event) => {
       const {
         uuid,
         marginTop,
@@ -45,7 +45,7 @@ export class SidebarGeometry {
 
       const webPanelController =
         SidebarControllers.webPanelsController.get(uuid);
-      webPanelController.setFloatingPosition(
+      webPanelController.setFloatingGeometry(
         marginTop,
         marginLeft,
         marginRight,
@@ -142,15 +142,14 @@ export class SidebarGeometry {
     top -= areaRect.top;
     left -= areaRect.left;
 
-    // left border
+    // check left border
     if (left < areaLeft) {
       left = areaLeft;
       if (!sameWidth) {
         width = boxRect.right - areaRect.left;
       }
     }
-
-    // right border
+    // check right border
     if (left + width > areaRight) {
       if (sameWidth) {
         left = areaRight - width;
@@ -158,14 +157,12 @@ export class SidebarGeometry {
         width = areaRight - left;
       }
     }
-
-    // top border
+    // check top border
     if (top < 0) {
       height = boxRect.height;
       top = areaTop;
     }
-
-    // bottom border
+    // check bottom border
     if (top + height > areaBottom) {
       if (sameHeight) {
         top = areaBottom - height;
@@ -253,13 +250,12 @@ export class SidebarGeometry {
     let top, left, right, bottom;
     top = left = right = bottom = "unset";
 
-    let resolvedAnchor = anchor;
-    if (resolvedAnchor == "default") resolvedAnchor = this.getDefaultAnchor();
-    if (resolvedAnchor == "topleft") top = left = "0px";
-    else if (resolvedAnchor == "topright") top = right = "0px";
-    else if (resolvedAnchor == "bottomleft") bottom = left = "0px";
-    else if (resolvedAnchor == "bottomright") bottom = right = "0px";
-    else if (resolvedAnchor == "center") top = left = right = bottom = 0;
+    if (anchor == "default") anchor = this.getDefaultAnchor();
+    if (anchor == "topleft") top = left = "0px";
+    else if (anchor == "topright") top = right = "0px";
+    else if (anchor == "bottomleft") bottom = left = "0px";
+    else if (anchor == "bottomright") bottom = right = "0px";
+    else if (anchor == "center") top = left = right = bottom = 0;
 
     marginTop = marginTop ?? "unset";
     marginLeft = marginLeft ?? "unset";
@@ -323,7 +319,7 @@ export class SidebarGeometry {
     webPanelController.setAnchor(anchor);
     if (resetWidth) webPanelController.setWidthType("absolute");
     if (resetHeight) webPanelController.setHeightType("relative");
-    webPanelController.setFloatingPosition(
+    webPanelController.setFloatingGeometry(
       marginTop,
       marginLeft,
       marginRight,
