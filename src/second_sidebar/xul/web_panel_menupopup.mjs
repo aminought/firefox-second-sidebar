@@ -40,6 +40,18 @@ export class WebPanelMenuPopup extends MenuPopup {
           `${this.webPanelController.isMuted() ? "Unmute" : "Mute"} web panel`,
         );
       }
+      // resetting
+      const activeWebPanelController =
+        SidebarControllers.webPanelsController.getActive();
+      const sidebarClosed = SidebarControllers.sidebarController.closed();
+      const webPanelMismatch =
+        !activeWebPanelController ||
+        this.webPanelController.getUUID() !==
+          activeWebPanelController.getUUID();
+      const webPanelPinned = this.webPanelController.pinned();
+      this.resetMenu.setDisabled(
+        sidebarClosed || webPanelMismatch || webPanelPinned,
+      );
     });
   }
 

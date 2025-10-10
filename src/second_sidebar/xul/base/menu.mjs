@@ -4,11 +4,12 @@ export class Menu extends XULElement {
   /**
    *
    * @param {object} params
+   * @param {string?} params.menu
    * @param {string?} params.id
    * @param {Array<string>} params.classList
    */
-  constructor({ id = null, classList = [] } = {}) {
-    super({ tag: "menu", id, classList });
+  constructor({ tag = "menu", id = null, classList = [] } = {}) {
+    super({ tag, id, classList });
   }
 
   /**
@@ -18,5 +19,19 @@ export class Menu extends XULElement {
    */
   setLabel(text) {
     return this.setAttribute("label", text);
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   * @returns {MenuItem}
+   */
+  setDisabled(value) {
+    if (value) {
+      this.setAttribute("disabled", true);
+    } else {
+      this.removeAttribute("disabled");
+    }
+    return true;
   }
 }
