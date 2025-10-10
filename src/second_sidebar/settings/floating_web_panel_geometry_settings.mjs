@@ -30,7 +30,7 @@ export class FloatingWebPanelGeometrySettings {
       left = sidebarPosition === "left" ? defaultFloatingOffsetCSS : "unset",
       right = sidebarPosition === "right" ? defaultFloatingOffsetCSS : "unset",
       bottom = "unset",
-      width = "400px",
+      width = "600px",
       height = this.makeDefaultHeight(defaultFloatingOffsetCSS),
       margin = "unset",
     } = {},

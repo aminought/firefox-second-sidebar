@@ -1,6 +1,7 @@
 import { removeFile, writeFile } from "../utils/files.mjs";
 
 import { BrowserElements } from "../browser_elements.mjs";
+import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manager.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { XULElement } from "../xul/base/xul_element.mjs";
@@ -69,6 +70,19 @@ export class SidebarMainController {
       for (const spring of springs) {
         spring.removeAttribute("context");
       }
+    });
+
+    SidebarElements.sidebarMain.addEventListener("drop", (event) => {
+      event.preventDefault();
+      const url =
+        event.dataTransfer.getData("URL") ||
+        event.dataTransfer.getData("text/uri-list");
+      if (!url) return;
+      SidebarControllers.webPanelNewController.createWebPanel(
+        url,
+        ScriptSecurityManagerWrapper.DEFAULT_USER_CONTEXT_ID,
+        true,
+      );
     });
   }
 
