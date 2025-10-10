@@ -122,6 +122,7 @@ export class WebPanelController {
   #createWebPanelButton(settings, loaded, position) {
     const button = new WebPanelButton(settings, position);
     button.setUnloaded(!loaded);
+    button.setAttribute("temporary", settings.temporary);
 
     button.listenClick((event) => {
       sendEvent(WebPanelEvents.SWITCH_WEB_PANEL, {
@@ -362,6 +363,7 @@ export class WebPanelController {
    */
   setTemporary(value) {
     this.#settings.temporary = value;
+    this.#button.setAttribute("temporary", value);
   }
 
   /**

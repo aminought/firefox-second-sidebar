@@ -112,6 +112,10 @@ export const SIDEBAR_MAIN_CSS = `
     }
   }
 
+  .sb2-main-button[temporary="true"] > stack.toolbarbutton-badge-stack {
+    background-color: var(--attention-dot-color) !important;
+  }
+
   .sb2-main-button[unloaded="true"] {
     .toolbarbutton-icon {
       opacity: var(--toolbarbutton-disabled-opacity);
