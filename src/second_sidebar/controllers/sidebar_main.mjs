@@ -72,6 +72,14 @@ export class SidebarMainController {
       }
     });
 
+    SidebarElements.sidebarMain.addEventListener("dragover", (event) => {
+      event.preventDefault();
+    });
+
+    SidebarElements.sidebarMain.addEventListener("dragleave", (event) => {
+      event.preventDefault();
+    });
+
     SidebarElements.sidebarMain.addEventListener("drop", (event) => {
       event.preventDefault();
       const url =
