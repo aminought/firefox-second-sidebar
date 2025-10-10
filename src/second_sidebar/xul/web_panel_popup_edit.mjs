@@ -64,6 +64,7 @@ export class WebPanelPopupEdit extends Panel {
     this.widthTypeMenuList = this.#createDimensionTypeMenuList();
     this.heightTypeMenuList = this.#createDimensionTypeMenuList();
     this.containerMenuList = createMenuList({ id: "sb2-container-menu-list" });
+    this.temporaryToggle = new Toggle();
     this.mobileToggle = new Toggle();
     this.loadOnStartupToggle = new Toggle();
     this.unloadOnCloseToggle = new Toggle();
@@ -169,6 +170,8 @@ export class WebPanelPopupEdit extends Panel {
             new ToolbarSeparator(),
             createPopupGroup("Multi-Account Container", this.containerMenuList),
             new ToolbarSeparator(),
+            createPopupGroup("Temporary", this.temporaryToggle),
+            new ToolbarSeparator(),
             createPopupGroup("Mobile View", this.mobileToggle),
             new ToolbarSeparator(),
             createPopupGroup(
@@ -273,6 +276,7 @@ export class WebPanelPopupEdit extends Panel {
     widthType,
     heightType,
     userContextId,
+    temporary,
     mobile,
     loadOnStartup,
     unloadOnClose,
@@ -288,6 +292,7 @@ export class WebPanelPopupEdit extends Panel {
     this.onSelectorEnabledChange = selectorEnabled;
     this.onSelectorChange = selector;
     this.onFaviconUrlChange = faviconURL;
+    this.onTemporaryChange = temporary;
     this.onMobileChange = mobile;
     this.onPinnedChange = pinned;
     this.onFloatingAnchorChange = anchor;
@@ -338,6 +343,9 @@ export class WebPanelPopupEdit extends Panel {
     });
     this.containerMenuList.addEventListener("command", () => {
       userContextId(this.settings.uuid, this.containerMenuList.getValue());
+    });
+    this.temporaryToggle.addEventListener("toggle", () => {
+      temporary(this.settings.uuid, this.temporaryToggle.getPressed());
     });
     this.mobileToggle.addEventListener("toggle", () => {
       mobile(this.settings.uuid, this.mobileToggle.getPressed());
@@ -450,6 +458,7 @@ export class WebPanelPopupEdit extends Panel {
       this.containerMenuList.getXUL(),
     );
 
+    this.temporaryToggle.setPressed(settings.temporary);
     this.mobileToggle.setPressed(settings.mobile);
     this.loadOnStartupToggle.setPressed(settings.loadOnStartup);
     this.unloadOnCloseToggle.setPressed(settings.unloadOnClose);
@@ -555,6 +564,9 @@ export class WebPanelPopupEdit extends Panel {
         this.settings.uuid,
         this.settings.userContextId,
       );
+    }
+    if (this.temporaryToggle.getPressed() !== this.settings.temporary) {
+      this.onTemporaryChange(this.settings.uuid, this.settings.temporary);
     }
     if (this.mobileToggle.getPressed() !== this.settings.mobile) {
       this.onMobileChange(this.settings.uuid, this.settings.mobile);

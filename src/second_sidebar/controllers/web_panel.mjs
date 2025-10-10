@@ -360,6 +360,14 @@ export class WebPanelController {
    *
    * @param {boolean} value
    */
+  setTemporary(value) {
+    this.#settings.temporary = value;
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   */
   setMobile(value) {
     this.#settings.mobile = value;
     if (!this.isUnloaded()) {

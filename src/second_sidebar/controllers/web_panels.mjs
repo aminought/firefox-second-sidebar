@@ -310,6 +310,14 @@ export class WebPanelsController {
       webPanelController.setAlwaysOnTop(alwaysOnTop);
     });
 
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_TEMPORARY, (event) => {
+      const uuid = event.detail.uuid;
+      const temporary = event.detail.temporary;
+
+      const webPanelController = this.get(uuid);
+      webPanelController.setTemporary(temporary);
+    });
+
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_MOBILE, (event) => {
       const uuid = event.detail.uuid;
       const mobile = event.detail.mobile;

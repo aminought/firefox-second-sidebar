@@ -1,4 +1,4 @@
-import { WebPanelEvents, sendEvents } from "./events.mjs";
+import { WebPanelEvents, sendEvent, sendEvents } from "./events.mjs";
 
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
@@ -79,6 +79,12 @@ export class WebPanelEditController {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_USER_CONTEXT_ID, {
           uuid,
           userContextId,
+        });
+      },
+      temporary: (uuid, temporary) => {
+        sendEvent(WebPanelEvents.EDIT_WEB_PANEL_TEMPORARY, {
+          uuid,
+          temporary,
         });
       },
       mobile: (uuid, mobile) => {
