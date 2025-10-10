@@ -1,4 +1,9 @@
-import { SidebarEvents, WebPanelEvents, sendEvents } from "./events.mjs";
+import {
+  SidebarEvents,
+  WebPanelEvents,
+  sendEvent,
+  sendEvents,
+} from "./events.mjs";
 import {
   hideGeometryHint,
   showFloatingGeometryHint,
@@ -31,6 +36,7 @@ export class SidebarResizer {
 
     let startX, startY;
     let startRect, currentResizer;
+    let webPanelController;
 
     document.addEventListener(
       "click",
@@ -62,6 +68,7 @@ export class SidebarResizer {
       startX = e.clientX;
       startY = e.clientY;
       startRect = SidebarElements.sidebarBox.getBoundingClientRect();
+      webPanelController = SidebarControllers.webPanelsController.getActive();
       showFloatingGeometryHint();
 
       document.addEventListener("mousemove", resize);
@@ -122,29 +129,31 @@ export class SidebarResizer {
         height = SidebarResizer.MIN_HEIGHT;
       }
 
-      SidebarControllers.sidebarGeometry.calculateAndSetFloatingGeometry({
-        top,
-        left,
-        width: width !== startRect.width ? width : null,
-        height: height !== startRect.height ? height : null,
-      });
+      SidebarControllers.sidebarGeometry.calculateAndSetFloatingGeometry(
+        webPanelController,
+        {
+          top,
+          left,
+          width: width !== startRect.width ? width : null,
+          height: height !== startRect.height ? height : null,
+        },
+      );
       showFloatingGeometryHint();
     }
 
     function stopResize() {
-      const webPanelController =
-        SidebarControllers.webPanelsController.getActive();
+      const geometry = webPanelController.getFloatingGeometry();
       sendEvents(SidebarEvents.EDIT_SIDEBAR_FLOATING_GEOMETRY, {
         uuid: webPanelController.getUUID(),
-        top: SidebarElements.sidebarBox.getProperty("top"),
-        left: SidebarElements.sidebarBox.getProperty("left"),
-        right: SidebarElements.sidebarBox.getProperty("right"),
-        bottom: SidebarElements.sidebarBox.getProperty("bottom"),
-        width: SidebarElements.sidebarBox.getProperty("width"),
-        height: SidebarElements.sidebarBox.getProperty("height"),
-        margin: SidebarElements.sidebarBox.getProperty("margin"),
+        top: geometry.top,
+        left: geometry.left,
+        right: geometry.right,
+        bottom: geometry.bottom,
+        width: geometry.width,
+        height: geometry.height,
+        margin: geometry.margin,
       });
-      sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
+      sendEvent(WebPanelEvents.SAVE_WEB_PANELS);
     }
   }
 }

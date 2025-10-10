@@ -1,4 +1,9 @@
-import { SidebarEvents, WebPanelEvents, sendEvents } from "./events.mjs";
+import {
+  SidebarEvents,
+  WebPanelEvents,
+  sendEvent,
+  sendEvents,
+} from "./events.mjs";
 import {
   hideGeometryHint,
   showFloatingGeometryHint,
@@ -28,6 +33,7 @@ export class SidebarMover {
     let isDragging = false;
     let hasMoved = false;
     let dragStartX, dragStartY, startRect;
+    let webPanelController;
 
     toolbarTitleWrapper.addEventListener("mousedown", startDrag);
 
@@ -67,6 +73,7 @@ export class SidebarMover {
       dragStartX = e.clientX;
       dragStartY = e.clientY;
       startRect = SidebarElements.sidebarBox.getBoundingClientRect();
+      webPanelController = SidebarControllers.webPanelsController.getActive();
       showFloatingGeometryHint();
 
       toolbarTitleWrapper.setProperty("cursor", "grabbing");
@@ -89,29 +96,31 @@ export class SidebarMover {
         hasMoved = true;
         toolbarTitleWrapper.setPointerCapture(e.pointerId);
         SidebarElements.webPanelsBrowser.setProperty("pointer-events", "none");
-        SidebarControllers.sidebarGeometry.calculateAndSetFloatingGeometry({
-          top: startRect.top + deltaY,
-          left: startRect.left + deltaX,
-        });
+        SidebarControllers.sidebarGeometry.calculateAndSetFloatingGeometry(
+          webPanelController,
+          {
+            top: startRect.top + deltaY,
+            left: startRect.left + deltaX,
+          },
+        );
         showFloatingGeometryHint();
       }
     }
 
     function stopDrag() {
       if (hasMoved) {
-        const webPanelController =
-          SidebarControllers.webPanelsController.getActive();
+        const geometry = webPanelController.getFloatingGeometry();
         sendEvents(SidebarEvents.EDIT_SIDEBAR_FLOATING_GEOMETRY, {
           uuid: webPanelController.getUUID(),
-          top: SidebarElements.sidebarBox.getProperty("top"),
-          left: SidebarElements.sidebarBox.getProperty("left"),
-          right: SidebarElements.sidebarBox.getProperty("right"),
-          bottom: SidebarElements.sidebarBox.getProperty("bottom"),
-          width: SidebarElements.sidebarBox.getProperty("width"),
-          height: SidebarElements.sidebarBox.getProperty("height"),
-          margin: SidebarElements.sidebarBox.getProperty("margin"),
+          top: geometry.top,
+          left: geometry.left,
+          right: geometry.right,
+          bottom: geometry.bottom,
+          width: geometry.width,
+          height: geometry.height,
+          margin: geometry.margin,
         });
-        sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
+        sendEvent(WebPanelEvents.SAVE_WEB_PANELS);
       }
     }
   }

@@ -165,8 +165,13 @@ export const POPUPS_CSS = `
   }
 
   .sb2-popup-body:has(#sb2-popup-css-selector-toggle:not([pressed])) {
-    #sb2-popup-css-selector-sep,
-    #sb2-popup-css-selector-input {
+    #sb2-popup-css-selector-items {
+      display: none;
+    }
+  }
+
+  .sb2-popup-body:has(#sb2-popup-pin-type-menu-list[value="true"]) {
+    #sb2-popup-floating-items {
       display: none;
     }
   }

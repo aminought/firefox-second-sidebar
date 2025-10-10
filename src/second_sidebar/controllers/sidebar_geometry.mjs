@@ -3,6 +3,7 @@ import { SidebarEvents, listenEvent } from "./events.mjs";
 import { FloatingWebPanelGeometrySettings } from "../settings/floating_web_panel_geometry_settings.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
+import { WebPanelController } from "./web_panel.mjs"; // eslint-disable-line no-unused-vars
 
 export class SidebarGeometry {
   constructor() {
@@ -102,6 +103,7 @@ export class SidebarGeometry {
 
   /**
    *
+   * @param {WebPanelController} webPanelController
    * @param {object} params
    * @param {number?} params.top
    * @param {number?} params.left
@@ -109,13 +111,16 @@ export class SidebarGeometry {
    * @param {number?} params.height
    * @param {boolean} params.forceUpdate
    */
-  calculateAndSetFloatingGeometry({
-    top = null,
-    left = null,
-    width = null,
-    height = null,
-    forceUpdate = false,
-  } = {}) {
+  calculateAndSetFloatingGeometry(
+    webPanelController,
+    {
+      top = null,
+      left = null,
+      width = null,
+      height = null,
+      forceUpdate = false,
+    } = {},
+  ) {
     if (SidebarControllers.sidebarController.closed()) return;
     const areaRect = SidebarElements.sidebarBoxArea.getBoundingClientRect();
     const boxRect = SidebarElements.sidebarBox.getBoundingClientRect();
@@ -173,8 +178,6 @@ export class SidebarGeometry {
       }
     };
 
-    const webPanelController =
-      SidebarControllers.webPanelsController.getActive();
     const offsetXType = webPanelController.getOffsetXType();
     const offsetYType = webPanelController.getOffsetYType();
     const widthType = webPanelController.getWidthType();
@@ -220,6 +223,16 @@ export class SidebarGeometry {
     } else {
       height = convert(height, heightType, areaRect.height);
     }
+
+    webPanelController.setFloatingGeometry(
+      top,
+      left,
+      right,
+      bottom,
+      width,
+      height,
+      margin,
+    );
 
     this.setFloatingGeometry(
       anchor,

@@ -218,10 +218,15 @@ export class WebPanelController {
     return this.#tab.linkedBrowser.getCurrentUrl();
   }
 
-  switchWebPanel() {
+  /**
+   *
+   * @param {object} params
+   * @param {boolean} params.forceOpen
+   */
+  switchWebPanel({ forceOpen = false } = {}) {
     const activeTab = SidebarElements.webPanelsBrowser.getActiveWebPanelTab();
 
-    if (activeTab.uuid === this.getUUID()) {
+    if (activeTab.uuid === this.getUUID() && !forceOpen) {
       // Select empty web panel tab
       SidebarElements.webPanelsBrowser.deselectWebPanelTab();
     } else {

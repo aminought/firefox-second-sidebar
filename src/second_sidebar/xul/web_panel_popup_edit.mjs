@@ -16,6 +16,7 @@ import {
   updateZoomButtons,
 } from "../utils/xul.mjs";
 
+import { Div } from "./base/div.mjs";
 import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";
 import { PopupBody } from "./popup_body.mjs";
@@ -104,7 +105,9 @@ export class WebPanelPopupEdit extends Panel {
    * @returns {MenuList}
    */
   #createPinTypeMenuList() {
-    const pinTypeMenuList = createMenuList();
+    const pinTypeMenuList = createMenuList({
+      id: "sb2-popup-pin-type-menu-list",
+    });
     pinTypeMenuList.appendItem("Pinned", true);
     pinTypeMenuList.appendItem("Floating", false);
     return pinTypeMenuList;
@@ -176,22 +179,26 @@ export class WebPanelPopupEdit extends Panel {
                 this.zoomInButton,
               ),
             ),
-            new ToolbarSeparator(),
-            createPopupGroup("Web panel type", this.pinnedMenuList),
           ]),
           createPopupSet("Favicon", [
             createPopupRow(this.faviconURLInput, this.faviconResetButton),
           ]),
-          createPopupSet("Floating web panels", [
-            createPopupGroup("Position anchor", this.floatingAnchorMenuList),
-            new ToolbarSeparator(),
-            createPopupGroup("Horizontal offset", this.offsetXTypeMenuList),
-            new ToolbarSeparator(),
-            createPopupGroup("Vertical offset", this.offsetYTypeMenuList),
-            new ToolbarSeparator(),
-            createPopupGroup("Width", this.widthTypeMenuList),
-            new ToolbarSeparator(),
-            createPopupGroup("Height", this.heightTypeMenuList),
+          createPopupSet("Position and size", [
+            createPopupGroup("Mode", this.pinnedMenuList),
+            new Div({
+              id: "sb2-popup-floating-items",
+            }).appendChildren(
+              new ToolbarSeparator(),
+              createPopupGroup("Position anchor", this.floatingAnchorMenuList),
+              new ToolbarSeparator(),
+              createPopupGroup("Horizontal offset", this.offsetXTypeMenuList),
+              new ToolbarSeparator(),
+              createPopupGroup("Vertical offset", this.offsetYTypeMenuList),
+              new ToolbarSeparator(),
+              createPopupGroup("Width", this.widthTypeMenuList),
+              new ToolbarSeparator(),
+              createPopupGroup("Height", this.heightTypeMenuList),
+            ),
           ]),
           createPopupSet("Loading", [
             createPopupGroup(
@@ -208,8 +215,10 @@ export class WebPanelPopupEdit extends Panel {
           ]),
           createPopupSet("CSS selector", [
             createPopupGroup("Enable", this.selectorToggle),
-            new ToolbarSeparator({ id: "sb2-popup-css-selector-sep" }),
-            createPopupRow(this.selectorInput),
+            new Div({ id: "sb2-popup-css-selector-items" }).appendChildren(
+              new ToolbarSeparator(),
+              createPopupRow(this.selectorInput),
+            ),
           ]),
           createPopupSet("Hide elements", [
             createPopupGroup("Hide toolbar", this.hideToolbarToggle),
