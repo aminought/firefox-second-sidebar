@@ -414,6 +414,8 @@ export class WebPanelsController {
       const mouseEvent = event.detail.event;
 
       const webPanelController = this.get(uuid);
+      if (!webPanelController) return;
+
       if (isLeftMouseButton(mouseEvent)) {
         webPanelController.switchWebPanel();
       } else if (isMiddleMouseButton(mouseEvent)) {
