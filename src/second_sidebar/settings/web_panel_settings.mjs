@@ -27,6 +27,8 @@ export class WebPanelSettings {
    * @param {FloatingWebPanelGeometrySettings} params.floatingGeometry
    * @param {PinnedWebPanelGeometrySettings} params.pinnedGeometry
    * @param {boolean} params.temporary
+   * @param {boolean} params.shortcutEnabled
+   * @param {string} params.shortcut
    */
   constructor(
     sidebarPosition,
@@ -54,6 +56,8 @@ export class WebPanelSettings {
       ),
       pinnedGeometry = new PinnedWebPanelGeometrySettings(),
       temporary = false,
+      shortcutEnabled = false,
+      shortcut = "",
     } = {},
   ) {
     this.uuid = uuid;
@@ -75,6 +79,8 @@ export class WebPanelSettings {
     this.floatingGeometry = floatingGeometry;
     this.pinnedGeometry = pinnedGeometry;
     this.temporary = temporary;
+    this.shortcutEnabled = shortcutEnabled;
+    this.shortcut = shortcut;
   }
 
   /**
@@ -114,6 +120,8 @@ export class WebPanelSettings {
           object.pinnedGeometry,
         ),
         temporary: object.temporary,
+        shortcutEnabled: object.shortcutEnabled,
+        shortcut: object.shortcut,
       },
     );
   }
@@ -143,6 +151,8 @@ export class WebPanelSettings {
       floatingGeometry: this.floatingGeometry.toObject(),
       pinnedGeometry: this.pinnedGeometry.toObject(),
       temporary: this.temporary,
+      shortcutEnabled: this.shortcutEnabled,
+      shortcut: this.shortcut,
     };
   }
 }
