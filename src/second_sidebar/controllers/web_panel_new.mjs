@@ -22,8 +22,8 @@ export class WebPanelNewController {
     });
 
     SidebarElements.webPanelPopupNew.listenSaveButtonClick(
-      async (url, userContextId) => {
-        this.createWebPanel(url, userContextId);
+      async (url, userContextId, temporary) => {
+        this.createWebPanel(url, userContextId, temporary);
         this.hidePopup();
       },
     );
@@ -37,13 +37,15 @@ export class WebPanelNewController {
    *
    * @param {string} url
    * @param {number} userContextId
+   * @param {boolean} temporary
    */
-  createWebPanel(url, userContextId) {
+  createWebPanel(url, userContextId, temporary) {
     const uuid = crypto.randomUUID();
     sendEvents(WebPanelEvents.CREATE_WEB_PANEL, {
       uuid,
       url,
       userContextId,
+      temporary,
       newWebPanelPosition: this.newWebPanelPosition,
     });
   }

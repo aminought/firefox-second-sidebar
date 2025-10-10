@@ -92,23 +92,39 @@ export class WebPanelsController {
     });
 
     listenEvent(WebPanelEvents.CREATE_WEB_PANEL, async (event) => {
-      const uuid = event.detail.uuid;
-      const url = event.detail.url;
-      const userContextId = event.detail.userContextId;
-      const newWebPanelPosition = event.detail.newWebPanelPosition;
-      const isActiveWindow = event.detail.isActiveWindow;
-
-      const webPanelController = await this.createWebPanelController(
+      const {
         uuid,
         url,
         userContextId,
+        temporary,
         newWebPanelPosition,
         isActiveWindow,
-      );
-      if (isActiveWindow) {
-        webPanelController.switchWebPanel();
+      } = event.detail;
+
+      const create = async () => {
+        return await this.createWebPanelController(
+          uuid,
+          url,
+          userContextId,
+          temporary,
+          newWebPanelPosition,
+          isActiveWindow,
+        );
+      };
+
+      if (temporary) {
+        if (isActiveWindow) {
+          const webPanelController = await create();
+          webPanelController.switchWebPanel();
+          setTimeout(() => this.#unwrapButtons(), 100);
+        }
+      } else {
+        const webPanelController = await create();
+        if (isActiveWindow) {
+          webPanelController.switchWebPanel();
+        }
+        setTimeout(() => this.#unwrapButtons(), 100);
       }
-      setTimeout(() => this.#unwrapButtons(), 100);
     });
 
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_URL, (event) => {
@@ -471,14 +487,16 @@ export class WebPanelsController {
    * @param {string} uuid
    * @param {string} url
    * @param {string} userContextId
+   * @param {boolean} temporary
    * @param {string} newWebPanelPosition
    * @param {boolean} isActiveWindow
-   * @returns {WebPanelController}
+   * @returns {Promise<WebPanelController>}
    */
   async createWebPanelController(
     uuid,
     url,
     userContextId,
+    temporary,
     newWebPanelPosition,
     isActiveWindow,
   ) {
@@ -498,6 +516,7 @@ export class WebPanelsController {
       faviconURL,
       {
         userContextId,
+        temporary,
       },
     );
     const webPanelController = new WebPanelController(webPanelSettings, {

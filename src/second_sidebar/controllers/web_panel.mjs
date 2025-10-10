@@ -263,9 +263,15 @@ export class WebPanelController {
   }
 
   close() {
-    this.#button.setOpen(false);
-    if (this.#settings.unloadOnClose) {
-      this.unload();
+    if (this.#settings.temporary) {
+      this.remove();
+      SidebarControllers.webPanelsController.delete(this.getUUID());
+      SidebarControllers.webPanelsController.saveSettings();
+    } else {
+      this.#button.setOpen(false);
+      if (this.#settings.unloadOnClose) {
+        this.unload();
+      }
     }
   }
 
