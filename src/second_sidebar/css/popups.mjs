@@ -50,7 +50,6 @@ export const POPUPS_CSS = `
             align-items: center;
             width: 100%;
             min-height: 24px;
-            max-height: 24px;
           }
 
           .sb2-popup-row {
@@ -59,6 +58,7 @@ export const POPUPS_CSS = `
             align-items: center;
             gap: var(--space-xsmall);
             width: 100%;
+            min-height: 24px;
           }
 
           label {
@@ -78,12 +78,11 @@ export const POPUPS_CSS = `
     }
 
     .sb2-popup-body.compact {
-      padding: var(--space-xxsmall);
+      padding: 0;
       gap: 0;
 
       .sb2-popup-set-body {
         padding: 0;
-        background-color: unset;
       }
 
       .subviewbutton[type="checkbox"]:not([checked="true"]) {
@@ -95,6 +94,18 @@ export const POPUPS_CSS = `
         .toolbarbutton-text {
           padding-inline-start: 8px;
         }
+      }
+
+      #sb2-zoom-buttons {
+        margin: var(--space-xsmall);
+      }
+
+      menuseparator {
+        padding-block: 0;
+      }
+
+      label.toolbarbutton-text {
+        font-weight: normal;
       }
     }
 
