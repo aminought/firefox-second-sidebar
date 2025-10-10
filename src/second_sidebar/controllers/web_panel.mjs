@@ -122,6 +122,7 @@ export class WebPanelController {
   #createWebPanelButton(settings, loaded, position) {
     const button = new WebPanelButton(settings, position);
     button.setUnloaded(!loaded);
+    button.setAttribute("temporary", settings.temporary);
 
     button.listenClick((event) => {
       sendEvent(WebPanelEvents.SWITCH_WEB_PANEL, {
@@ -263,9 +264,15 @@ export class WebPanelController {
   }
 
   close() {
-    this.#button.setOpen(false);
-    if (this.#settings.unloadOnClose) {
-      this.unload();
+    if (this.#settings.temporary) {
+      this.remove();
+      SidebarControllers.webPanelsController.delete(this.getUUID());
+      SidebarControllers.webPanelsController.saveSettings();
+    } else {
+      this.#button.setOpen(false);
+      if (this.#settings.unloadOnClose) {
+        this.unload();
+      }
     }
   }
 
@@ -348,6 +355,15 @@ export class WebPanelController {
 
   goHome() {
     this.#tab.linkedBrowser.go(this.#settings.url);
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   */
+  setTemporary(value) {
+    this.#settings.temporary = value;
+    this.#button.setAttribute("temporary", value);
   }
 
   /**

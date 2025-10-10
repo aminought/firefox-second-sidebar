@@ -29,6 +29,16 @@ export class WebPanelMenuPopup extends MenuPopup {
       this.webPanelController = SidebarControllers.webPanelsController.get(
         this.element.triggerNode.id,
       );
+
+      if (!this.webPanelController) {
+        this.unloadItem.setDisabled(true);
+        this.muteItem.setDisabled(true);
+        this.resetMenu.setDisabled(true);
+        this.editItem.setDisabled(true);
+        this.deleteItem.setDisabled(true);
+        return;
+      }
+
       // unloading
       this.unloadItem.setDisabled(this.webPanelController.isUnloaded());
       // muting

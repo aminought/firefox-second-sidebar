@@ -8,15 +8,25 @@ export class ContextMenuItemsController {
   }
 
   #setupListeners() {
-    SidebarElements.openLinkInSidebarMenuItem.addEventListener(
+    SidebarElements.openLinkAsWebPanelMenuItem.addEventListener("command", () =>
+      this.#openLinkAsWebPanel(),
+    );
+
+    SidebarElements.openLinkAsTempWebPanelMenuItem.addEventListener(
       "command",
-      () => {
-        const url = gContextMenu.linkURL;
-        SidebarControllers.webPanelNewController.createWebPanel(
-          url,
-          ScriptSecurityManagerWrapper.DEFAULT_USER_CONTEXT_ID,
-        );
-      },
+      () => this.#openLinkAsWebPanel(true),
+    );
+  }
+
+  /**
+   * @param {boolean} temporary
+   */
+  #openLinkAsWebPanel(temporary = false) {
+    const url = gContextMenu.linkURL;
+    SidebarControllers.webPanelNewController.createWebPanel(
+      url,
+      ScriptSecurityManagerWrapper.DEFAULT_USER_CONTEXT_ID,
+      temporary,
     );
   }
 }

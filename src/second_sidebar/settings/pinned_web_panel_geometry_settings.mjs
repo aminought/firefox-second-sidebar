@@ -4,7 +4,7 @@ export class PinnedWebPanelGeometrySettings {
    * @param {object} params
    * @param {string} params.width
    */
-  constructor({ width = "400px" } = {}) {
+  constructor({ width = "600px" } = {}) {
     this.width = width;
   }
 

@@ -28,6 +28,9 @@ export class WebPanelPopupMore extends Panel {
 
     this.openInNewTabButton = createSubviewButton("Open in New Tab");
     this.copyPageUrlButton = createSubviewButton("Copy Page URL");
+    this.temporaryButton = createSubviewButton("Temporary", {
+      type: "checkbox",
+    });
     this.mobileButton = createSubviewButton("Mobile View", {
       type: "checkbox",
     });
@@ -53,6 +56,8 @@ export class WebPanelPopupMore extends Panel {
             this.mobileButton,
             new MenuSeparator(),
             this.alwaysOnTopButton,
+            new MenuSeparator(),
+            this.temporaryButton,
             new MenuSeparator(),
             createZoomButtons(
               this.zoomOutButton,
@@ -107,6 +112,18 @@ export class WebPanelPopupMore extends Panel {
     this.mobileButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
         callback(this.settings.uuid, this.mobileButton.isChecked());
+      }
+    });
+  }
+
+  /**
+   *
+   * @param {function(string, boolean):void} callback
+   */
+  listenTemporaryButtonClick(callback) {
+    this.temporaryButton.addEventListener("click", (event) => {
+      if (isLeftMouseButton(event)) {
+        callback(this.settings.uuid, this.temporaryButton.isChecked());
       }
     });
   }
@@ -181,6 +198,7 @@ export class WebPanelPopupMore extends Panel {
    */
   setDefaults(settings) {
     this.mobileButton.setChecked(settings.mobile);
+    this.temporaryButton.setChecked(settings.temporary);
     this.alwaysOnTopButton.setChecked(settings.alwaysOnTop);
     this.#updateZoomButtons(settings.zoom);
 

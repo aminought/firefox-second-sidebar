@@ -26,6 +26,7 @@ export const WebPanelEvents = {
   EDIT_WEB_PANEL_OFFSET_Y_TYPE: "edit_web_panel_offset_y_type",
   EDIT_WEB_PANEL_WIDTH_TYPE: "edit_web_panel_width_type",
   EDIT_WEB_PANEL_HEIGHT_TYPE: "edit_web_panel_height_type",
+  EDIT_WEB_PANEL_TEMPORARY: "edit_web_panel_temporary",
   CREATE_WEB_PANEL: "create_web_panel",
   SWITCH_WEB_PANEL: "switch_web_panel",
   DELETE_WEB_PANEL: "delete_web_panel",

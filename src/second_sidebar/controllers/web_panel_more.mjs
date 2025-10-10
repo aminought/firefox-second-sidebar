@@ -1,5 +1,5 @@
 import { OPEN_URL_IN, openTrustedLinkInWrapper } from "../wrappers/global.mjs";
-import { WebPanelEvents, sendEvents } from "./events.mjs";
+import { WebPanelEvents, sendEvent, sendEvents } from "./events.mjs";
 
 import { ClipboardHelperWrapper } from "../wrappers/clipboard_helper.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
@@ -43,6 +43,16 @@ export class WebPanelMoreController {
           mobile,
         });
         sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
+      },
+    );
+
+    SidebarElements.webPanelPopupMore.listenTemporaryButtonClick(
+      (uuid, temporary) => {
+        sendEvent(WebPanelEvents.EDIT_WEB_PANEL_TEMPORARY, {
+          uuid,
+          temporary,
+        });
+        sendEvent(WebPanelEvents.SAVE_WEB_PANELS);
       },
     );
 

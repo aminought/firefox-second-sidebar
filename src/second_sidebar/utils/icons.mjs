@@ -25,7 +25,7 @@ export const FALLBACK_ICON = "chrome://global/skin/icons/info.svg";
 /**
  *
  * @param {string} url
- * @returns {string}
+ * @returns {Promise<string>}
  */
 export function fetchIconURL(url) {
   const uri = NetUtilWrapper.newURI(url);

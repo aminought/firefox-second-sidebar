@@ -26,6 +26,7 @@ export class WebPanelSettings {
    * @param {string} params.selector
    * @param {FloatingWebPanelGeometrySettings} params.floatingGeometry
    * @param {PinnedWebPanelGeometrySettings} params.pinnedGeometry
+   * @param {boolean} params.temporary
    */
   constructor(
     sidebarPosition,
@@ -52,6 +53,7 @@ export class WebPanelSettings {
         defaultFloatingOffsetCSS,
       ),
       pinnedGeometry = new PinnedWebPanelGeometrySettings(),
+      temporary = false,
     } = {},
   ) {
     this.uuid = uuid;
@@ -72,6 +74,7 @@ export class WebPanelSettings {
     this.selector = selector;
     this.floatingGeometry = floatingGeometry;
     this.pinnedGeometry = pinnedGeometry;
+    this.temporary = temporary;
   }
 
   /**
@@ -110,6 +113,7 @@ export class WebPanelSettings {
         pinnedGeometry: PinnedWebPanelGeometrySettings.fromObject(
           object.pinnedGeometry,
         ),
+        temporary: object.temporary,
       },
     );
   }
@@ -138,6 +142,7 @@ export class WebPanelSettings {
       selector: this.selector,
       floatingGeometry: this.floatingGeometry.toObject(),
       pinnedGeometry: this.pinnedGeometry.toObject(),
+      temporary: this.temporary,
     };
   }
 }

@@ -1,6 +1,6 @@
 export const CONTEXT_ITEM_CSS = `
   #contentAreaContextMenu:has(#context-openlink[hidden="true"]) {
-    #context-openlinkinsidebar, #context-sep-open {
+    #context-openlinkaswebpanel, #context-openlinkastempwebpanel, #context-sep-open {
       display: none;
     }
   }

@@ -1,7 +1,8 @@
 import { AfterSplitter } from "./xul/after_splitter.mjs";
 import { CustomizableUIWrapper } from "./wrappers/customizable_ui.mjs";
 import { GeometryHint } from "./xul/geometry_hint.mjs";
-import { OpenLinkInSidebarMenuItem } from "./xul/open_link_in_sidebar_menuitem.mjs";
+import { OpenLinkAsTempWebPanelMenuItem } from "./xul/open_link_as_temp_web_panel.mjs";
+import { OpenLinkAsWebPanelMenuItem } from "./xul/open_link_as_web_panel.mjs";
 import { SidebarBox } from "./xul/sidebar_box.mjs";
 import { SidebarBoxArea } from "./xul/sidebar_box_area.mjs";
 import { SidebarCollapseButton } from "./xul/sidebar_collapse_button.mjs";
@@ -121,7 +122,8 @@ export class SidebarElements {
   }
 
   static #createContextMenuItems() {
-    this.openLinkInSidebarMenuItem = new OpenLinkInSidebarMenuItem();
+    this.openLinkAsWebPanelMenuItem = new OpenLinkAsWebPanelMenuItem();
+    this.openLinkAsTempWebPanelMenuItem = new OpenLinkAsTempWebPanelMenuItem();
 
     const contentAreaContextMenu = new XULElement({
       element: document.getElementById("contentAreaContextMenu"),
@@ -129,8 +131,13 @@ export class SidebarElements {
     const separator = new XULElement({
       element: document.getElementById("context-sep-open"),
     });
+
     contentAreaContextMenu.insertBefore(
-      this.openLinkInSidebarMenuItem,
+      this.openLinkAsWebPanelMenuItem,
+      separator,
+    );
+    contentAreaContextMenu.insertBefore(
+      this.openLinkAsTempWebPanelMenuItem,
       separator,
     );
   }

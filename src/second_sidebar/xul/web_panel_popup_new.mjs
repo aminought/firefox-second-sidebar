@@ -18,6 +18,7 @@ import { PopupBody } from "./popup_body.mjs";
 import { PopupFooter } from "./popup_footer.mjs";
 import { PopupHeader } from "./popup_header.mjs";
 import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manager.mjs";
+import { Toggle } from "./base/toggle.mjs";
 import { ToolbarSeparator } from "./base/toolbar_separator.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
 
@@ -31,6 +32,7 @@ export class WebPanelPopupNew extends Panel {
 
     this.input = createInput({ placeholder: "Web page URL" });
     this.containerMenuList = createMenuList({ id: "sb2-container-menu-list" });
+    this.temporaryToggle = new Toggle();
 
     this.saveButton = createCreateButton();
     this.cancelButton = createCancelButton();
@@ -50,6 +52,8 @@ export class WebPanelPopupNew extends Panel {
             createPopupRow(this.input),
             new ToolbarSeparator(),
             createPopupGroup("Multi-Account Container", this.containerMenuList),
+            new ToolbarSeparator(),
+            createPopupGroup("Temporary", this.temporaryToggle),
           ]),
         ),
         new PopupFooter().appendChildren(this.cancelButton, this.saveButton),
@@ -65,12 +69,20 @@ export class WebPanelPopupNew extends Panel {
   listenSaveButtonClick(callback) {
     this.input.addEventListener("keyup", (event) => {
       if (event.key === "Enter" || event.keyCode === 13) {
-        callback(this.input.getValue(), this.containerMenuList.getValue());
+        callback(
+          this.input.getValue(),
+          this.containerMenuList.getValue(),
+          this.temporaryToggle.getPressed(),
+        );
       }
     });
     this.saveButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
-        callback(this.input.getValue(), this.containerMenuList.getValue());
+        callback(
+          this.input.getValue(),
+          this.containerMenuList.getValue(),
+          this.temporaryToggle.getPressed(),
+        );
       }
     });
   }
@@ -105,6 +117,8 @@ export class WebPanelPopupNew extends Panel {
       ScriptSecurityManagerWrapper.DEFAULT_USER_CONTEXT_ID,
       this.containerMenuList.getXUL(),
     );
+
+    this.temporaryToggle.setPressed(false);
 
     return Panel.prototype.openPopup.call(this, target);
   }
