@@ -21,32 +21,20 @@ export class WebPanelsSettings {
 
   /**
    *
+   * @param {string} sidebarPosition
+   * @param {string} defaultFloatingOffset
    * @returns {WebPanelsSettings}
    */
-  static load() {
+  static load(sidebarPosition, defaultFloatingOffset) {
     const pref = Settings.load(PREF) ?? [];
 
     return new WebPanelsSettings(
-      pref.map(
-        (webPanelPref) =>
-          new WebPanelSettings(
-            webPanelPref.uuid,
-            webPanelPref.url,
-            webPanelPref.faviconURL,
-            {
-              pinned: webPanelPref.pinned,
-              width: webPanelPref.width,
-              mobile: webPanelPref.mobile,
-              zoom: webPanelPref.zoom,
-              loadOnStartup: webPanelPref.loadOnStartup,
-              unloadOnClose: webPanelPref.unloadOnClose,
-              hideToolbar: webPanelPref.hideToolbar,
-              userContextId: webPanelPref.userContextId,
-              periodicReload: webPanelPref.periodicReload,
-              hideSoundIcon: webPanelPref.hideSoundIcon,
-              hideNotificationBadge: webPanelPref.hideNotificationBadge,
-            },
-          ),
+      pref.map((webPanelPref) =>
+        WebPanelSettings.fromObject(
+          sidebarPosition,
+          `var(--space-${defaultFloatingOffset})`,
+          webPanelPref,
+        ),
       ),
     );
   }

@@ -6,16 +6,29 @@ import { WebPanelController } from "./web_panel.mjs"; // eslint-disable-line no-
 
 export class WebPanelEditController {
   constructor() {
-    this.webPanelPopupEdit = SidebarElements.webPanelPopupEdit;
     this.#setupListeners();
   }
 
   #setupListeners() {
-    this.webPanelPopupEdit.listenChanges({
+    SidebarElements.webPanelPopupEdit.listenChanges({
       url: (uuid, url, timeout = 0) => {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_URL, {
           uuid,
           url,
+          timeout,
+        });
+      },
+      selectorEnabled: (uuid, selectorEnabled, timeout = 0) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_SELECTOR_ENABLED, {
+          uuid,
+          selectorEnabled,
+          timeout,
+        });
+      },
+      selector: (uuid, selector, timeout = 0) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_SELECTOR, {
+          uuid,
+          selector,
           timeout,
         });
       },
@@ -30,6 +43,36 @@ export class WebPanelEditController {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_PINNED, {
           uuid,
           pinned,
+        });
+      },
+      anchor: (uuid, anchor) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_ANCHOR, {
+          uuid,
+          anchor,
+        });
+      },
+      offsetXType: (uuid, offsetXType) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_OFFSET_X_TYPE, {
+          uuid,
+          offsetXType,
+        });
+      },
+      offsetYType: (uuid, offsetYType) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_OFFSET_Y_TYPE, {
+          uuid,
+          offsetYType,
+        });
+      },
+      widthType: (uuid, widthType) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_WIDTH_TYPE, {
+          uuid,
+          widthType,
+        });
+      },
+      heightType: (uuid, heightType) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_HEIGHT_TYPE, {
+          uuid,
+          heightType,
         });
       },
       userContextId: (uuid, userContextId) => {
@@ -107,9 +150,11 @@ export class WebPanelEditController {
       },
     });
 
-    this.webPanelPopupEdit.listenCancelButtonClick(() => this.hidePopup());
+    SidebarElements.webPanelPopupEdit.listenCancelButtonClick(() =>
+      this.hidePopup(),
+    );
 
-    this.webPanelPopupEdit.listenSaveButtonClick(() => {
+    SidebarElements.webPanelPopupEdit.listenSaveButtonClick(() => {
       sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
       this.hidePopup();
     });
@@ -120,10 +165,10 @@ export class WebPanelEditController {
    * @param {WebPanelController} webPanelController
    */
   openPopup(webPanelController) {
-    this.webPanelPopupEdit.openPopup(webPanelController);
+    SidebarElements.webPanelPopupEdit.openPopup(webPanelController);
   }
 
   hidePopup() {
-    this.webPanelPopupEdit.hidePopup();
+    SidebarElements.webPanelPopupEdit.hidePopup();
   }
 }

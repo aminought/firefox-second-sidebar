@@ -10,7 +10,7 @@ export class SidebarSettings {
   /**@type {string} */
   #newWebPanelPosition;
   /**@type {string} */
-  #unpinnedPadding;
+  #defaultFloatingOffset;
   /**@type {boolean} */
   #autoHideBackButton;
   /**@type {boolean} */
@@ -21,39 +21,49 @@ export class SidebarSettings {
   #autoHideSidebar;
   /**@type {boolean} */
   #hideSidebarAnimated;
+  /**@type {boolean} */
+  #hideToolbarAnimated;
+  /**@type {boolean} */
+  #enableSidebarBoxHint;
 
   /**
    *
    * @param {string} position
    * @param {string} padding
    * @param {string} newWebPanelPosition
-   * @param {string} unpinnedPadding
+   * @param {string} defaultFloatingOffset
    * @param {boolean} autoHideBackButton
    * @param {boolean} autoHideForwardButton
    * @param {string} containerBorder
    * @param {boolean} autoHideSidebar
    * @param {boolean} hideSidebarAnimated
+   * @param {boolean} hideToolbarAnimated
+   * @param {boolean} enableSidebarBoxHint
    */
   constructor(
     position,
     padding,
     newWebPanelPosition,
-    unpinnedPadding,
+    defaultFloatingOffset,
     autoHideBackButton,
     autoHideForwardButton,
     containerBorder,
     autoHideSidebar,
     hideSidebarAnimated,
+    hideToolbarAnimated,
+    enableSidebarBoxHint,
   ) {
     this.#position = position;
     this.#padding = padding;
     this.#newWebPanelPosition = newWebPanelPosition;
-    this.#unpinnedPadding = unpinnedPadding;
+    this.#defaultFloatingOffset = defaultFloatingOffset;
     this.#autoHideBackButton = autoHideBackButton;
     this.#autoHideForwardButton = autoHideForwardButton;
     this.#containerBorder = containerBorder;
     this.#autoHideSidebar = autoHideSidebar;
     this.#hideSidebarAnimated = hideSidebarAnimated;
+    this.#hideToolbarAnimated = hideToolbarAnimated;
+    this.#enableSidebarBoxHint = enableSidebarBoxHint;
   }
 
   get position() {
@@ -68,8 +78,8 @@ export class SidebarSettings {
     return this.#newWebPanelPosition;
   }
 
-  get unpinnedPadding() {
-    return this.#unpinnedPadding;
+  get defaultFloatingOffset() {
+    return this.#defaultFloatingOffset;
   }
 
   get autoHideBackButton() {
@@ -92,6 +102,14 @@ export class SidebarSettings {
     return this.#hideSidebarAnimated;
   }
 
+  get hideToolbarAnimated() {
+    return this.#hideToolbarAnimated;
+  }
+
+  get enableSidebarBoxHint() {
+    return this.#enableSidebarBoxHint;
+  }
+
   /**
    *
    * @returns {SidebarSettings}
@@ -102,12 +120,14 @@ export class SidebarSettings {
       pref.position ?? "right",
       pref.padding ?? "small",
       pref.newWebPanelPosition ?? "before",
-      pref.unpinnedPadding ?? "small",
+      pref.defaultFloatingOffset ?? "small",
       pref.autoHideBackButton ?? false,
       pref.autoHideForwardButton ?? false,
       pref.containerBorder ?? "left",
       pref.autoHideSidebar ?? false,
-      pref.hideSidebarAnimated ?? false,
+      pref.hideSidebarAnimated ?? true,
+      pref.hideToolbarAnimated ?? true,
+      pref.enableSidebarBoxHint ?? false,
     );
   }
 
@@ -116,12 +136,14 @@ export class SidebarSettings {
       position: this.#position,
       padding: this.#padding,
       newWebPanelPosition: this.#newWebPanelPosition,
-      unpinnedPadding: this.#unpinnedPadding,
+      defaultFloatingOffset: this.#defaultFloatingOffset,
       autoHideBackButton: this.#autoHideBackButton,
       autoHideForwardButton: this.#autoHideForwardButton,
       containerBorder: this.#containerBorder,
       autoHideSidebar: this.#autoHideSidebar,
       hideSidebarAnimated: this.#hideSidebarAnimated,
+      hideToolbarAnimated: this.#hideToolbarAnimated,
+      enableSidebarBoxHint: this.#enableSidebarBoxHint,
     });
   }
 }

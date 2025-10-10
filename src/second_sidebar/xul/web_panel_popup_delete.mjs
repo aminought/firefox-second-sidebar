@@ -1,4 +1,8 @@
-import { createCancelButton, createDeleteButton } from "../utils/xul.mjs";
+import {
+  createCancelButton,
+  createDeleteButton,
+  createPopupSet,
+} from "../utils/xul.mjs";
 
 import { Label } from "./base/label.mjs";
 import { Panel } from "./base/panel.mjs";
@@ -27,7 +31,15 @@ export class WebPanelPopupDelete extends Panel {
       new PanelMultiView().appendChildren(
         new PopupHeader("Delete Web Panel"),
         new PopupBody().appendChildren(
-          new Label().setText("Are you sure? This action cannot be undone."),
+          createPopupSet(
+            null,
+            [
+              new Label().setText(
+                "Are you sure? This action cannot be undone.",
+              ),
+            ],
+            { classList: ["sb2-popup-warning"] },
+          ),
         ),
         new PopupFooter().appendChildren(this.cancelButton, this.deleteButton),
       ),

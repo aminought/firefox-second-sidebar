@@ -5,14 +5,15 @@ import { WebPanelController } from "./web_panel.mjs"; // eslint-disable-line no-
 
 export class WebPanelDeleteController {
   constructor() {
-    this.webPanelPopupDelete = SidebarElements.webPanelPopupDelete;
     this.#setupListeners();
   }
 
   #setupListeners() {
-    this.webPanelPopupDelete.listenCancelButtonClick(() => this.hidePopup());
+    SidebarElements.webPanelPopupDelete.listenCancelButtonClick(() =>
+      this.hidePopup(),
+    );
 
-    this.webPanelPopupDelete.listenDeleteButtonClick((uuid) => {
+    SidebarElements.webPanelPopupDelete.listenDeleteButtonClick((uuid) => {
       sendEvents(WebPanelEvents.DELETE_WEB_PANEL, { uuid });
       this.hidePopup();
     });
@@ -23,10 +24,10 @@ export class WebPanelDeleteController {
    * @param {WebPanelController} webPanelController
    */
   openPopup(webPanelController) {
-    this.webPanelPopupDelete.openPopup(webPanelController);
+    SidebarElements.webPanelPopupDelete.openPopup(webPanelController);
   }
 
   hidePopup() {
-    this.webPanelPopupDelete.hidePopup();
+    SidebarElements.webPanelPopupDelete.hidePopup();
   }
 }

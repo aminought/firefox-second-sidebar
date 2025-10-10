@@ -51,6 +51,15 @@ export class XULElement {
 
   /**
    *
+   * @param {string} className
+   * @returns {boolean}
+   */
+  hasClass(className) {
+    return this.element.classList.contains(className);
+  }
+
+  /**
+   *
    * @returns {HTMLelement}
    */
   getXUL() {
@@ -70,7 +79,7 @@ export class XULElement {
    * @returns {XULElement}
    */
   hide() {
-    return this.setAttribute("hidden", "true");
+    return this.setAttribute("hidden", true);
   }
 
   /**
@@ -209,25 +218,6 @@ export class XULElement {
 
   /**
    *
-   * @returns {string}
-   */
-  getWidth() {
-    return this.getAttribute("width");
-  }
-
-  /**
-   *
-   * @param {string} width
-   * @returns {XULElement}
-   */
-  setWidth(width) {
-    this.setAttribute("width", width);
-    this.element.style.width = width + "px";
-    return this;
-  }
-
-  /**
-   *
    * @returns {DOMRect}
    */
   getBoundingClientRect() {
@@ -294,6 +284,16 @@ export class XULElement {
 
   /**
    *
+   * @param {string} html
+   * @returns {XULElement}
+   */
+  setInnerHtml(html) {
+    this.element.innerHTML = html;
+    return this;
+  }
+
+  /**
+   *
    * @param {string} event
    * @param {function(MouseEvent):void} callback
    * @returns {XULElement}
@@ -344,6 +344,26 @@ export class XULElement {
 
   /**
    *
+   * @param {number} pointerId
+   * @returns {XULElement}
+   */
+  setPointerCapture(pointerId) {
+    this.element.setPointerCapture(pointerId);
+    return this;
+  }
+
+  /**
+   *
+   * @param {number} pointerId
+   * @returns {XULElement}
+   */
+  releasePointerCapture(pointerId) {
+    this.element.releasePointerCapture(pointerId);
+    return this;
+  }
+
+  /**
+   *
    * @returns {Document}
    */
   get ownerDocument() {
@@ -366,6 +386,22 @@ export class XULElement {
     return this.element.parentElement
       ? new XULElement({ element: this.element.parentElement })
       : null;
+  }
+
+  /**
+   *
+   * @returns {number}
+   */
+  get screenX() {
+    return this.element.screenX;
+  }
+
+  /**
+   *
+   * @returns {number}
+   */
+  get screenY() {
+    return this.element.screenY;
   }
 
   /**

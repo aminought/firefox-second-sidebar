@@ -1,6 +1,7 @@
 import { XULElement } from "./xul/base/xul_element.mjs";
 
 export class BrowserElements {
+  static root = new XULElement({ element: window.document.documentElement });
   static browser = new XULElement({
     element: document.getElementById("browser"),
   });

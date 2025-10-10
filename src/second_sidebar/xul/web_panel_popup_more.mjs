@@ -1,4 +1,5 @@
 import {
+  createPopupSet,
   createSubviewButton,
   createSubviewIconicButton,
   createZoomButtons,
@@ -30,6 +31,9 @@ export class WebPanelPopupMore extends Panel {
     this.mobileButton = createSubviewButton("Mobile View", {
       type: "checkbox",
     });
+    this.alwaysOnTopButton = createSubviewButton("Always On Top", {
+      type: "checkbox",
+    });
     this.zoomOutButton = createSubviewIconicButton(ICONS.MINUS, "Zoom Out");
     this.zoomInButton = createSubviewIconicButton(ICONS.PLUS, "Zoom In");
     this.resetZoomButton = createSubviewButton("100%", {
@@ -43,15 +47,19 @@ export class WebPanelPopupMore extends Panel {
     this.appendChild(
       new PanelMultiView().appendChildren(
         new PopupBody({ compact: true }).appendChildren(
-          this.openInNewTabButton,
-          this.copyPageUrlButton,
-          this.mobileButton,
-          new MenuSeparator(),
-          createZoomButtons(
-            this.zoomOutButton,
-            this.resetZoomButton,
-            this.zoomInButton,
-          ),
+          createPopupSet("", [
+            this.openInNewTabButton,
+            this.copyPageUrlButton,
+            this.mobileButton,
+            new MenuSeparator(),
+            this.alwaysOnTopButton,
+            new MenuSeparator(),
+            createZoomButtons(
+              this.zoomOutButton,
+              this.resetZoomButton,
+              this.zoomInButton,
+            ),
+          ]),
         ),
       ),
     );
@@ -99,6 +107,18 @@ export class WebPanelPopupMore extends Panel {
     this.mobileButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
         callback(this.settings.uuid, this.mobileButton.isChecked());
+      }
+    });
+  }
+
+  /**
+   *
+   * @param {function(string, boolean):void} callback
+   */
+  listenAlwaysOnTopButtonClick(callback) {
+    this.alwaysOnTopButton.addEventListener("click", (event) => {
+      if (isLeftMouseButton(event)) {
+        callback(this.settings.uuid, this.alwaysOnTopButton.isChecked());
       }
     });
   }
@@ -161,6 +181,7 @@ export class WebPanelPopupMore extends Panel {
    */
   setDefaults(settings) {
     this.mobileButton.setChecked(settings.mobile);
+    this.alwaysOnTopButton.setChecked(settings.alwaysOnTop);
     this.#updateZoomButtons(settings.zoom);
 
     this.settings = settings;

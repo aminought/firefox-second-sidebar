@@ -5,12 +5,11 @@ import { SidebarElements } from "../sidebar_elements.mjs";
 
 export class SidebarMainSettingsController {
   constructor() {
-    this.sidebarMainPopupSettings = SidebarElements.sidebarMainPopupSettings;
     this.#setupListeners();
   }
 
   #setupListeners() {
-    this.sidebarMainPopupSettings.listenChanges({
+    SidebarElements.sidebarMainPopupSettings.listenChanges({
       position: (value) =>
         sendEvents(SidebarEvents.EDIT_SIDEBAR_POSITION, { value }),
       padding: (value) =>
@@ -19,29 +18,37 @@ export class SidebarMainSettingsController {
         sendEvents(SidebarEvents.EDIT_SIDEBAR_NEW_WEB_PANEL_POSITION, {
           value,
         }),
-      unpinnedPadding: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_UNPINNED_PADDING, { value }),
+      defaultFloatingOffset: (value) =>
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_DEFAULT_FLOATING_OFFSET, {
+          value,
+        }),
       autoHideBackButton: (value) =>
         sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_BACK_BUTTON, { value }),
       autoHideForwardButton: (value) =>
         sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_FORWARD_BUTTON, {
           value,
         }),
+      enableSidebarBoxHint: (value) =>
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_ENABLE_BOX_HINT, { value }),
       containerBorder: (value) =>
         sendEvents(SidebarEvents.EDIT_SIDEBAR_CONTAINER_BORDER, { value }),
       autoHideSidebar: (value) =>
         sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE, { value }),
       hideSidebarAnimated: (value) =>
         sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_ANIMATED, { value }),
+      hideToolbarAnimated: (value) =>
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_TOOLBAR_AUTO_HIDE_ANIMATED, {
+          value,
+        }),
     });
 
-    this.sidebarMainPopupSettings.listenCancelButtonClick(() =>
-      this.sidebarMainPopupSettings.hidePopup(),
+    SidebarElements.sidebarMainPopupSettings.listenCancelButtonClick(() =>
+      SidebarElements.sidebarMainPopupSettings.hidePopup(),
     );
 
-    this.sidebarMainPopupSettings.listenSaveButtonClick(() => {
+    SidebarElements.sidebarMainPopupSettings.listenSaveButtonClick(() => {
       sendEvents(SidebarEvents.SAVE_SIDEBAR);
-      this.sidebarMainPopupSettings.hidePopup();
+      SidebarElements.sidebarMainPopupSettings.hidePopup();
     });
   }
 
@@ -51,7 +58,7 @@ export class SidebarMainSettingsController {
    * @param {number} screenY
    */
   openPopup(screenX, screenY) {
-    this.sidebarMainPopupSettings.openPopupAtScreen(
+    SidebarElements.sidebarMainPopupSettings.openPopupAtScreen(
       screenX,
       screenY,
       SidebarControllers.sidebarController.dumpSettings(),

@@ -15,9 +15,9 @@ const ICONS = {
   PINNED:
     "chrome://activity-stream/content/data/content/assets/glyph-unpin-16.svg",
   PINNED_ALT: "chrome://newtab/content/data/content/assets/glyph-unpin-16.svg",
-  UNPINNED:
+  FLOATING:
     "chrome://activity-stream/content/data/content/assets/glyph-pin-16.svg",
-  UNPINNED_ALT: "chrome://newtab/content/data/content/assets/glyph-pin-16.svg",
+  FLOATING_ALT: "chrome://newtab/content/data/content/assets/glyph-pin-16.svg",
   CLOSE: "chrome://global/skin/icons/close.svg",
 };
 
@@ -25,6 +25,10 @@ export class SidebarToolbar extends Toolbar {
   constructor() {
     super({ id: "sb2-toolbar" });
     this.setMode("icons").setAttribute("fullscreentoolbar", "true");
+
+    // Settings
+    this.autoHideBackButton = false;
+    this.autoHideForwardButton = false;
 
     // Navigation buttons
     this.backButton = this.#createButton("Back", ICONS.BACK);
@@ -35,6 +39,9 @@ export class SidebarToolbar extends Toolbar {
 
     // Title
     this.toolbarTitle = this.#createToolbarTitle();
+    this.toolbarTitleWrapper = this.#createToolbarTitleWrapper(
+      this.toolbarTitle,
+    );
 
     // Sidebar buttons
     this.moreButton = this.#createMenuButton("More", ICONS.MORE);
@@ -87,13 +94,21 @@ export class SidebarToolbar extends Toolbar {
    * @returns {Label}
    */
   #createToolbarTitle() {
-    const toolbarTitle = new Label({ id: "sb2-toolbar-title" });
+    return new Label({ id: "sb2-toolbar-title" });
+  }
+
+  /**
+   *
+   * @param {Label} toolbarTitle
+   * @returns {Div}
+   */
+  #createToolbarTitleWrapper(toolbarTitle) {
     const toolbarTitleWrapper = new Div({
       id: "sb2-toolbar-title-wrapper",
     });
     toolbarTitleWrapper.appendChild(toolbarTitle);
     this.appendChild(toolbarTitleWrapper);
-    return toolbarTitle;
+    return toolbarTitleWrapper;
   }
 
   /**
@@ -127,6 +142,42 @@ export class SidebarToolbar extends Toolbar {
 
   /**
    *
+   * @param {boolean} value
+   * @returns {SidebarToolbar}
+   */
+  setAutoHideBackButton(value) {
+    this.autoHideBackButton = value;
+    return this;
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  getAutoHideBackButton() {
+    return this.autoHideBackButton;
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   * @returns {SidebarToolbar}
+   */
+  setAutoHideForwardButton(value) {
+    this.autoHideForwardButton = value;
+    return this;
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  getAutoHideForwardButton() {
+    return this.autoHideForwardButton;
+  }
+
+  /**
+   *
    * @param {string} title
    * @returns {SidebarToolbar}
    */
@@ -145,9 +196,35 @@ export class SidebarToolbar extends Toolbar {
       .setIcon(
         pinned
           ? await useAvailableIcon(ICONS.PINNED, ICONS.PINNED_ALT)
-          : await useAvailableIcon(ICONS.UNPINNED, ICONS.UNPINNED_ALT),
+          : await useAvailableIcon(ICONS.FLOATING, ICONS.FLOATING_ALT),
       )
       .setTooltipText(pinned ? "Unpin" : "Pin");
+    return this;
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   * @returns {SidebarToolbar}
+   */
+  toggleBackButton(value) {
+    this.backButton.setDisabled(value);
+    value && this.autoHideBackButton
+      ? this.backButton.hide()
+      : this.backButton.show();
+    return this;
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   * @returns {SidebarToolbar}
+   */
+  toggleForwardButton(value) {
+    this.forwardButton.setDisabled(value);
+    value && this.autoHideForwardButton
+      ? this.forwardButton.hide()
+      : this.forwardButton.show();
     return this;
   }
 

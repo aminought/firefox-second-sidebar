@@ -1,10 +1,11 @@
 import {
   createCancelButton,
+  createMenuList,
   createPopupGroup,
+  createPopupSet,
   createSaveButton,
 } from "../utils/xul.mjs";
 
-import { MenuList } from "./base/menulist.mjs";
 import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";
 import { PopupBody } from "./popup_body.mjs";
@@ -29,10 +30,12 @@ export class SidebarMainPopupSettings extends Panel {
       this.#createNewWebPanelPositionMenuList();
     this.autoHideBackToggle = new Toggle();
     this.autoHideForwardToggle = new Toggle();
-    this.unpinnedPaddingMenuList = this.#createPaddingMenuList();
+    this.defaultFloatingOffsetMenuList = this.#createPaddingMenuList();
     this.containerBorderMenuList = this.#createContainerBorderMenuList();
     this.autoHideSidebarToggle = new Toggle();
     this.hideSidebarAnimatedToggle = new Toggle();
+    this.hideToolbarAnimatedToggle = new Toggle();
+    this.enableSidebarBoxHintToggle = new Toggle();
     this.saveButton = createSaveButton();
     this.cancelButton = createCancelButton();
     this.#compose();
@@ -43,7 +46,7 @@ export class SidebarMainPopupSettings extends Panel {
    * @returns {MenuList}
    */
   #createPositionMenuList() {
-    const menuList = new MenuList();
+    const menuList = createMenuList();
     menuList.appendItem("Left", "left");
     menuList.appendItem("Right", "right");
     return menuList;
@@ -54,7 +57,7 @@ export class SidebarMainPopupSettings extends Panel {
    * @returns {MenuList}
    */
   #createPaddingMenuList() {
-    const menuList = new MenuList();
+    const menuList = createMenuList();
     menuList.appendItem("Extra Extra Small", "xxsmall");
     menuList.appendItem("Extra Small", "xsmall");
     menuList.appendItem("Small", "small");
@@ -70,7 +73,7 @@ export class SidebarMainPopupSettings extends Panel {
    * @returns {MenuList}
    */
   #createNewWebPanelPositionMenuList() {
-    const menuList = new MenuList();
+    const menuList = createMenuList();
     menuList.appendItem("Before Plus Button", "before");
     menuList.appendItem("After Plus Button", "after");
     return menuList;
@@ -81,7 +84,7 @@ export class SidebarMainPopupSettings extends Panel {
    * @returns {MenuList}
    */
   #createContainerBorderMenuList() {
-    const menuList = new MenuList();
+    const menuList = createMenuList();
     menuList.appendItem("Left", "left");
     menuList.appendItem("Right", "right");
     menuList.appendItem("Top", "top");
@@ -95,32 +98,52 @@ export class SidebarMainPopupSettings extends Panel {
       new PanelMultiView().appendChildren(
         new PopupHeader("Sidebar Settings"),
         new PopupBody().appendChildren(
-          createPopupGroup("Sidebar position", this.positionMenuList),
-          createPopupGroup("Auto-hide sidebar", this.autoHideSidebarToggle),
-          createPopupGroup(
-            "Animate sidebar hiding",
-            this.hideSidebarAnimatedToggle,
-          ),
-          new ToolbarSeparator(),
-          createPopupGroup("Sidebar width", this.paddingMenuList),
-          createPopupGroup(
-            "Floating web panel offset",
-            this.unpinnedPaddingMenuList,
-          ),
-          createPopupGroup(
-            "New web panel position",
-            this.newWebPanelPositionMenuList,
-          ),
-          createPopupGroup(
-            "Container indicator position",
-            this.containerBorderMenuList,
-          ),
-          new ToolbarSeparator(),
-          createPopupGroup("Auto hide back button", this.autoHideBackToggle),
-          createPopupGroup(
-            "Auto hide forward button",
-            this.autoHideForwardToggle,
-          ),
+          createPopupSet("", [
+            createPopupGroup("Sidebar position", this.positionMenuList),
+            new ToolbarSeparator(),
+            createPopupGroup("Sidebar width", this.paddingMenuList),
+            new ToolbarSeparator(),
+            createPopupGroup("Auto-hide sidebar", this.autoHideSidebarToggle),
+          ]),
+          createPopupSet("Web panels", [
+            createPopupGroup(
+              "Default floating panel offset",
+              this.defaultFloatingOffsetMenuList,
+            ),
+            new ToolbarSeparator(),
+            createPopupGroup(
+              "New panel position",
+              this.newWebPanelPositionMenuList,
+            ),
+            new ToolbarSeparator(),
+            createPopupGroup(
+              "Container indicator position",
+              this.containerBorderMenuList,
+            ),
+            new ToolbarSeparator(),
+            createPopupGroup("Auto-hide back button", this.autoHideBackToggle),
+            new ToolbarSeparator(),
+            createPopupGroup(
+              "Auto-hide forward button",
+              this.autoHideForwardToggle,
+            ),
+            new ToolbarSeparator(),
+            createPopupGroup(
+              "Show web panel geometry hint",
+              this.enableSidebarBoxHintToggle,
+            ),
+          ]),
+          createPopupSet("Animations", [
+            createPopupGroup(
+              "Animate sidebar launcher",
+              this.hideSidebarAnimatedToggle,
+            ),
+            new ToolbarSeparator(),
+            createPopupGroup(
+              "Animate sidebar toolbar",
+              this.hideToolbarAnimatedToggle,
+            ),
+          ]),
         ),
         new PopupFooter().appendChildren(this.cancelButton, this.saveButton),
       ),
@@ -133,33 +156,39 @@ export class SidebarMainPopupSettings extends Panel {
    * @param {function(string):void} callbacks.position
    * @param {function(string):void} callbacks.padding
    * @param {function(string):void} callbacks.newWebPanelPosition
-   * @param {function(string):void} callbacks.unpinnedPadding
+   * @param {function(string):void} callbacks.defaultFloatingOffset
    * @param {function(boolean):void} callbacks.autoHideBackButton
    * @param {function(boolean):void} callbacks.autoHideForwardButton
+   * @param {function(boolean):void} callbacks.enableSidebarBoxHint
    * @param {function(boolean):void} callbacks.containerBorder
    * @param {function(boolean):void} callbacks.autoHideSidebar
    * @param {function(boolean):void} callbacks.hideSidebarAnimated
+   * @param {function(boolean):void} callbacks.hideToolbarAnimated
    */
   listenChanges({
     position,
     padding,
     newWebPanelPosition,
-    unpinnedPadding,
+    defaultFloatingOffset,
     autoHideBackButton,
     autoHideForwardButton,
+    enableSidebarBoxHint,
     containerBorder,
     autoHideSidebar,
     hideSidebarAnimated,
+    hideToolbarAnimated,
   }) {
     this.onPositionChange = position;
     this.onPaddingChange = padding;
     this.onNewWebPanelPositionChange = newWebPanelPosition;
-    this.onUnpinnedPaddingChange = unpinnedPadding;
+    this.onDefaultFloatingOffsetChange = defaultFloatingOffset;
     this.onAutoHideBackButtonChange = autoHideBackButton;
     this.onAutoHideForwardButtonChange = autoHideForwardButton;
+    this.onEnableSidebarBoxHintChange = enableSidebarBoxHint;
     this.onContainerBorderChange = containerBorder;
     this.onAutoHideSidebarChange = autoHideSidebar;
     this.onAutoHideSidebarAnimatedChange = hideSidebarAnimated;
+    this.onAutoHideToolbarAnimatedChange = hideToolbarAnimated;
 
     this.positionMenuList.addEventListener("command", () =>
       position(this.positionMenuList.getValue()),
@@ -170,14 +199,17 @@ export class SidebarMainPopupSettings extends Panel {
     this.newWebPanelPositionMenuList.addEventListener("command", () =>
       newWebPanelPosition(this.newWebPanelPositionMenuList.getValue()),
     );
-    this.unpinnedPaddingMenuList.addEventListener("command", () =>
-      unpinnedPadding(this.unpinnedPaddingMenuList.getValue()),
+    this.defaultFloatingOffsetMenuList.addEventListener("command", () =>
+      defaultFloatingOffset(this.defaultFloatingOffsetMenuList.getValue()),
     );
     this.autoHideBackToggle.addEventListener("toggle", () =>
       autoHideBackButton(this.autoHideBackToggle.getPressed()),
     );
     this.autoHideForwardToggle.addEventListener("toggle", () =>
       autoHideForwardButton(this.autoHideForwardToggle.getPressed()),
+    );
+    this.enableSidebarBoxHintToggle.addEventListener("toggle", () =>
+      enableSidebarBoxHint(this.enableSidebarBoxHintToggle.getPressed()),
     );
     this.containerBorderMenuList.addEventListener("command", () =>
       containerBorder(this.containerBorderMenuList.getValue()),
@@ -187,6 +219,9 @@ export class SidebarMainPopupSettings extends Panel {
     );
     this.hideSidebarAnimatedToggle.addEventListener("toggle", () =>
       hideSidebarAnimated(this.hideSidebarAnimatedToggle.getPressed()),
+    );
+    this.hideToolbarAnimatedToggle.addEventListener("toggle", () =>
+      hideToolbarAnimated(this.hideToolbarAnimatedToggle.getPressed()),
     );
   }
 
@@ -225,12 +260,14 @@ export class SidebarMainPopupSettings extends Panel {
     this.positionMenuList.setValue(settings.position);
     this.paddingMenuList.setValue(settings.padding);
     this.newWebPanelPositionMenuList.setValue(settings.newWebPanelPosition);
-    this.unpinnedPaddingMenuList.setValue(settings.unpinnedPadding);
+    this.defaultFloatingOffsetMenuList.setValue(settings.defaultFloatingOffset);
     this.autoHideBackToggle.setPressed(settings.autoHideBackButton);
     this.autoHideForwardToggle.setPressed(settings.autoHideForwardButton);
+    this.enableSidebarBoxHintToggle.setPressed(settings.enableSidebarBoxHint);
     this.containerBorderMenuList.setValue(settings.containerBorder);
     this.autoHideSidebarToggle.setPressed(settings.autoHideSidebar);
     this.hideSidebarAnimatedToggle.setPressed(settings.hideSidebarAnimated);
+    this.hideToolbarAnimatedToggle.setPressed(settings.hideToolbarAnimated);
 
     this.settings = settings;
 
@@ -260,9 +297,10 @@ export class SidebarMainPopupSettings extends Panel {
       this.onNewWebPanelPositionChange(this.settings.newWebPanelPosition);
     }
     if (
-      this.unpinnedPaddingMenuList.getValue() !== this.settings.unpinnedPadding
+      this.defaultFloatingOffsetMenuList.getValue() !==
+      this.settings.defaultFloatingOffset
     ) {
-      this.onUnpinnedPaddingChange(this.settings.unpinnedPadding);
+      this.onDefaultFloatingOffsetChange(this.settings.defaultFloatingOffset);
     }
     if (
       this.autoHideBackToggle.getPressed() !== this.settings.autoHideBackButton
@@ -274,6 +312,12 @@ export class SidebarMainPopupSettings extends Panel {
       this.settings.autoHideForwardButton
     ) {
       this.onAutoHideForwardButtonChange(this.settings.autoHideForwardButton);
+    }
+    if (
+      this.enableSidebarBoxHintToggle.getPressed() !==
+      this.settings.enableSidebarBoxHint
+    ) {
+      this.onEnableSidebarBoxHintChange(this.settings.enableSidebarBoxHint);
     }
     if (
       this.containerBorderMenuList.getValue() !== this.settings.containerBorder
@@ -290,6 +334,12 @@ export class SidebarMainPopupSettings extends Panel {
       this.settings.hideSidebarAnimated
     ) {
       this.onAutoHideSidebarAnimatedChange(this.settings.hideSidebarAnimated);
+    }
+    if (
+      this.hideToolbarAnimatedToggle.getPressed() !==
+      this.settings.hideToolbarAnimated
+    ) {
+      this.onAutoHideToolbarAnimatedChange(this.settings.hideToolbarAnimated);
     }
   }
 }

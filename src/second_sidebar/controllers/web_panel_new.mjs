@@ -11,25 +11,24 @@ import { isLeftMouseButton } from "../utils/buttons.mjs";
 
 export class WebPanelNewController {
   constructor() {
-    this.webPanelNewButton = SidebarElements.webPanelNewButton;
-    this.webPanelPopupNew = SidebarElements.webPanelPopupNew;
-
     listenEvent(WebPanelEvents.OPEN_NEW_WEB_PANEL_POPUP, () => {
       this.openPopup();
     });
 
-    this.webPanelNewButton.listenClick((event) => {
+    SidebarElements.webPanelNewButton.listenClick((event) => {
       if (isLeftMouseButton(event)) {
         sendEvent(WebPanelEvents.OPEN_NEW_WEB_PANEL_POPUP);
       }
     });
 
-    this.webPanelPopupNew.listenSaveButtonClick(async (url, userContextId) => {
-      this.createWebPanel(url, userContextId);
-      this.hidePopup();
-    });
+    SidebarElements.webPanelPopupNew.listenSaveButtonClick(
+      async (url, userContextId) => {
+        this.createWebPanel(url, userContextId);
+        this.hidePopup();
+      },
+    );
 
-    this.webPanelPopupNew.listenCancelButtonClick(() => {
+    SidebarElements.webPanelPopupNew.listenCancelButtonClick(() => {
       this.hidePopup();
     });
   }
@@ -57,11 +56,14 @@ export class WebPanelNewController {
       suggest = currentURI.spec;
     }
 
-    this.webPanelPopupNew.openPopup(this.webPanelNewButton.button, suggest);
+    SidebarElements.webPanelPopupNew.openPopup(
+      SidebarElements.webPanelNewButton.button,
+      suggest,
+    );
   }
 
   hidePopup() {
-    this.webPanelPopupNew.hidePopup();
+    SidebarElements.webPanelPopupNew.hidePopup();
   }
 
   /**

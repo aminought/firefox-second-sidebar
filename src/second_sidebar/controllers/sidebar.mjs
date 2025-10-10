@@ -5,54 +5,41 @@ import {
   sendEvents,
 } from "./events.mjs";
 
-import { SidebarControllerWrapper } from "../wrappers/sidebar_controller.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { SidebarSettings } from "../settings/sidebar_settings.mjs";
-import { ToolbarButton } from "../xul/base/toolbar_button.mjs"; // eslint-disable-line no-unused-vars
 import { XULElement } from "../xul/base/xul_element.mjs";
 import { changeContainerBorder } from "../utils/containers.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
 
 export class SidebarController {
   constructor() {
-    this.sidebarBox = SidebarElements.sidebarBox;
-    this.sidebar = SidebarElements.sidebar;
-    this.sidebarToolbar = SidebarElements.sidebarToolbar;
-    this.sidebarSplitterPinned = SidebarElements.sidebarSplitterPinned;
-    this.sidebarSplitterUnpinned = SidebarElements.sidebarSplitterUnpinned;
-    this.sidebarBoxFiller = SidebarElements.sidebarBoxFiller;
-    this.webPanelPopupEdit = SidebarElements.webPanelPopupEdit;
-    this.sidebarMainPopupSettings = SidebarElements.sidebarMainPopupSettings;
-    this.sidebarMainMenuPopup = SidebarElements.sidebarMainMenuPopup;
-    this.webPanelMenuPopup = SidebarElements.webPanelMenuPopup;
-    this.sidebarCollapseButton = SidebarElements.sidebarCollapseButton;
-    this.webPanelsBrowser = SidebarElements.webPanelsBrowser;
-    this.root = new XULElement({ element: document.documentElement });
-
     this.#setupListeners();
 
-    this.autoHideBackButton = false;
-    this.autoHideForwardButton = false;
     this.containerBorder = "left";
     this.autoHideSidebar = false;
     this.hideSidebarAnimated = false;
+    this.hideToolbarAnimated = true;
   }
 
   #setupListeners() {
     /** @param {MouseEvent} event */
-    this.onClickOutsideWhileUnpinned = (event) => {
+    this.onClickOutsideWhileFloating = (event) => {
       const target = new XULElement({ element: event.target });
+      const webPanelController =
+        SidebarControllers.webPanelsController.getActive();
 
       if (
+        webPanelController &&
         isLeftMouseButton(event) &&
-        !this.webPanelsBrowser.activeWebPanelContains(target) &&
-        !this.sidebar.contains(target) &&
-        !this.sidebarSplitterUnpinned.contains(target) &&
-        !this.webPanelPopupEdit.contains(target) &&
-        !this.sidebarMainPopupSettings.contains(target) &&
-        !this.sidebarMainMenuPopup.contains(target) &&
-        !this.webPanelMenuPopup.contains(target)
+        !webPanelController.getAlwaysOnTop() &&
+        !SidebarElements.webPanelsBrowser.activeWebPanelContains(target) &&
+        !SidebarElements.sidebarBox.contains(target) &&
+        !SidebarElements.sidebarSplitter.contains(target) &&
+        !SidebarElements.webPanelPopupEdit.contains(target) &&
+        !SidebarElements.sidebarMainPopupSettings.contains(target) &&
+        !SidebarElements.sidebarMainMenuPopup.contains(target) &&
+        !SidebarElements.webPanelMenuPopup.contains(target)
       ) {
         this.close();
       }
@@ -66,28 +53,28 @@ export class SidebarController {
       }
     };
 
-    this.sidebarToolbar.listenBackButtonClick((event) => {
+    SidebarElements.sidebarToolbar.listenBackButtonClick((event) => {
       addWebPanelButtonListener(event, (webPanelController) =>
         webPanelController.goBack(),
       );
     });
-    this.sidebarToolbar.listenForwardButtonClick((event) => {
+    SidebarElements.sidebarToolbar.listenForwardButtonClick((event) => {
       addWebPanelButtonListener(event, (webPanelController) =>
         webPanelController.goForward(),
       );
     });
-    this.sidebarToolbar.listenReloadButtonClick((event) => {
+    SidebarElements.sidebarToolbar.listenReloadButtonClick((event) => {
       addWebPanelButtonListener(event, (webPanelController) =>
         webPanelController.reload(),
       );
     });
-    this.sidebarToolbar.listenHomeButtonClick((event) => {
+    SidebarElements.sidebarToolbar.listenHomeButtonClick((event) => {
       addWebPanelButtonListener(event, (webPanelController) =>
         webPanelController.goHome(),
       );
     });
 
-    this.sidebarToolbar.listenPinButtonClick(() => {
+    SidebarElements.sidebarToolbar.listenPinButtonClick(() => {
       const webPanelController =
         SidebarControllers.webPanelsController.getActive();
       sendEvents(WebPanelEvents.EDIT_WEB_PANEL_PINNED, {
@@ -97,7 +84,7 @@ export class SidebarController {
       sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
     });
 
-    this.sidebarToolbar.listenCloseButtonClick(() => {
+    SidebarElements.sidebarToolbar.listenCloseButtonClick(() => {
       const webPanelController =
         SidebarControllers.webPanelsController.getActive();
       this.close();
@@ -106,7 +93,8 @@ export class SidebarController {
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_POSITION, (event) => {
       const value = event.detail.value;
-      this.setPosition(value);
+      SidebarElements.sidebarWrapper.setPosition(value);
+      SidebarElements.sidebarBoxArea.updatePosition();
     });
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_PADDING, (event) => {
@@ -119,29 +107,25 @@ export class SidebarController {
       SidebarControllers.webPanelNewController.setNewWebPanelPosition(value);
     });
 
-    listenEvent(SidebarEvents.EDIT_SIDEBAR_UNPINNED_PADDING, (event) => {
-      const value = event.detail.value;
-      this.setUnpinnedPadding(value);
-    });
-
     listenEvent(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_BACK_BUTTON, (event) => {
       const value = event.detail.value;
-      this.autoHideBackButton = value;
-      this.autoHideButton(this.sidebarToolbar.backButton, value);
+      SidebarElements.sidebarToolbar
+        .setAutoHideBackButton(value)
+        .toggleBackButton(value);
     });
 
     listenEvent(
       SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_FORWARD_BUTTON,
       (event) => {
         const value = event.detail.value;
-        this.autoHideForwardButton = value;
-        this.autoHideButton(this.sidebarToolbar.forwardButton, value);
+        SidebarElements.sidebarToolbar
+          .setAutoHideForwardButton(value)
+          .toggleForwardButton(value);
       },
     );
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_CONTAINER_BORDER, (event) => {
       const value = event.detail.value;
-      this.autoHideForwardButton = value;
       this.setContainerBorder(value);
     });
 
@@ -155,17 +139,13 @@ export class SidebarController {
       this.hideSidebarAnimated = value;
     });
 
-    listenEvent(SidebarEvents.EDIT_SIDEBAR_WIDTH, (event) => {
-      const uuid = event.detail.uuid;
-      const width = event.detail.width;
-
-      const webPanelController =
-        SidebarControllers.webPanelsController.get(uuid);
-      webPanelController.setWidth(width);
-      if (webPanelController.isActive()) {
-        this.setWidth(width);
-      }
-    });
+    listenEvent(
+      SidebarEvents.EDIT_SIDEBAR_TOOLBAR_AUTO_HIDE_ANIMATED,
+      (event) => {
+        const value = event.detail.value;
+        this.setHideToolbarAnimated(value);
+      },
+    );
 
     listenEvent(SidebarEvents.SAVE_SIDEBAR, (event) => {
       const isActiveWindow = event.detail.isActiveWindow;
@@ -178,28 +158,58 @@ export class SidebarController {
   /**
    *
    * @param {boolean} pinned
-   * @param {number} width
+   * @param {string?} anchor
+   * @param {string?} top
+   * @param {string?} left
+   * @param {string?} right
+   * @param {string?} bottom
+   * @param {string?} width
+   * @param {string?} height
+   * @param {string?} margin
    * @param {boolean} canGoBack
    * @param {boolean} canGoForward
    * @param {string} title
    * @param {boolean} hideToolbar
    */
-  open(pinned, width, canGoBack, canGoForward, title, hideToolbar) {
-    this.sidebarBox.show();
-    this.setWidth(width);
-    this.setToolbarBackButtonDisabled(!canGoBack);
-    this.setToolbarForwardButtonDisabled(!canGoForward);
-    this.setToolbarTitle(title);
-    this.setHideToolbar(hideToolbar);
-    this.updateAbsolutePosition();
+  open(
+    pinned,
+    anchor,
+    top,
+    left,
+    right,
+    bottom,
+    width,
+    height,
+    margin,
+    canGoBack,
+    canGoForward,
+    title,
+    hideToolbar,
+  ) {
+    SidebarControllers.sidebarToolbarCollapser.clearTimers();
+    SidebarControllers.sidebarGeometry.setFloatingGeometry(
+      anchor,
+      top,
+      left,
+      right,
+      bottom,
+      width,
+      height,
+      margin,
+    );
+    SidebarElements.sidebarBox.show();
+    SidebarElements.sidebarToolbar
+      .toggleBackButton(!canGoBack)
+      .toggleForwardButton(!canGoForward)
+      .setTitle(title);
+    hideToolbar ? this.collapseToolbar() : this.uncollapseToolbar();
     pinned ? this.pin() : this.unpin();
   }
 
   close() {
-    this.sidebarBox.hide();
-    this.sidebarSplitterPinned.hide();
-    this.sidebarSplitterUnpinned.hide();
-    this.sidebarBoxFiller.hide();
+    SidebarControllers.sidebarToolbarCollapser.clearTimers();
+    SidebarElements.sidebarBox.hide();
+    SidebarElements.sidebarSplitter.hide();
     SidebarControllers.webPanelsController.close();
   }
 
@@ -208,175 +218,36 @@ export class SidebarController {
    * @returns {boolean}
    */
   closed() {
-    return this.sidebarBox.hidden();
+    return (
+      SidebarElements.sidebarBox.hidden() &&
+      SidebarElements.sidebarSplitter.hidden()
+    );
   }
 
   pin() {
-    this.sidebar.pin();
-    this.sidebarSplitterPinned.show();
-    this.sidebarSplitterUnpinned.hide();
-    this.sidebarBoxFiller.hide();
-    this.sidebarToolbar.changePinButton(true);
-    document.removeEventListener("click", this.onClickOutsideWhileUnpinned);
+    SidebarElements.sidebarBox.setAttribute("pinned", true);
+    SidebarElements.sidebarSplitter.show();
+    SidebarElements.afterSplitter.show();
+    SidebarElements.sidebarToolbar.changePinButton(true);
+    SidebarControllers.sidebarGeometry.loadAndSetPinnedGeometry();
+    document.removeEventListener("click", this.onClickOutsideWhileFloating);
   }
 
   unpin() {
-    this.sidebar.unpin();
-    this.sidebarSplitterPinned.hide();
-    this.sidebarSplitterUnpinned.show();
-    this.sidebarBoxFiller.show();
-    this.sidebarToolbar.changePinButton(false);
-    document.addEventListener("click", this.onClickOutsideWhileUnpinned);
+    SidebarElements.sidebarBox.setAttribute("pinned", false);
+    SidebarElements.sidebarSplitter.hide();
+    SidebarElements.afterSplitter.hide();
+    SidebarElements.sidebarToolbar.changePinButton(false);
+    SidebarControllers.sidebarGeometry.loadAndSetFloatingGeometry();
+    document.addEventListener("click", this.onClickOutsideWhileFloating);
   }
 
   /**
    *
-   * @param {string} title
+   * @returns {boolean}
    */
-  setToolbarTitle(title) {
-    this.sidebarToolbar.setTitle(title);
-  }
-
-  /**
-   *
-   * @param {boolean} value
-   */
-  setToolbarBackButtonDisabled(value) {
-    const button = this.sidebarToolbar.backButton;
-    button.setDisabled(value);
-    this.autoHideButton(button, this.autoHideBackButton);
-  }
-
-  /**
-   *
-   * @param {boolean} value
-   */
-  setToolbarForwardButtonDisabled(value) {
-    const button = this.sidebarToolbar.forwardButton;
-    button.setDisabled(value);
-    this.autoHideButton(button, this.autoHideForwardButton);
-  }
-
-  /**
-   *
-   * @param {ToolbarButton} button
-   * @param {boolean} autoHide
-   */
-  autoHideButton(button, autoHide) {
-    button.isDisabled() && autoHide ? button.hide() : button.show();
-  }
-
-  /**
-   *
-   * @param {number} width
-   */
-  setWidth(width) {
-    this.sidebarBox.setWidth(width);
-    this.sidebar.setWidth(width);
-    this.updateAbsolutePosition();
-  }
-
-  /**
-   *
-   * @returns {number}
-   */
-  getSidebarWidth() {
-    return this.sidebar.getWidth();
-  }
-
-  /**
-   *
-   * @returns {number}
-   */
-  getSidebarBoxWidth() {
-    return this.sidebarBox.getWidth();
-  }
-
-  /**
-   *
-   * @param {string} position
-   */
-  setPosition(position) {
-    this.sidebar.setPosition(position);
-    if (
-      (position === "right" && !SidebarControllerWrapper._positionStart) ||
-      (position === "left" && SidebarControllerWrapper._positionStart)
-    ) {
-      SidebarControllerWrapper.reversePosition();
-    }
-    this.updateAbsolutePosition();
-    this.sidebarCollapseButton.setAttribute("position", position);
-  }
-
-  /**
-   *
-   * @returns {string}
-   */
-  getPosition() {
-    return this.sidebar.getPosition();
-  }
-
-  /**
-   *
-   * @param {boolean} value
-   */
-  setHideToolbar(value) {
-    value ? this.sidebarToolbar.hide() : this.sidebarToolbar.show();
-  }
-
-  /**
-   *
-   * @returns {string}
-   */
-  getUnpinnedPadding() {
-    const value = this.root.getProperty("--sb2-box-unpinned-padding");
-    return value.match(/var\(--space-([^)]+)\)/)[1];
-  }
-
-  /**
-   *
-   * @param {string} value
-   */
-  setUnpinnedPadding(value) {
-    document.documentElement.style.setProperty(
-      "--sb2-box-unpinned-padding",
-      `var(--space-${value})`,
-    );
-    this.updateAbsolutePosition();
-  }
-
-  updateAbsolutePosition() {
-    const sidebarMainWidth =
-      SidebarControllers.sidebarMainController.getWidth();
-    this.getPosition() === "left"
-      ? this.setAbsoluteLeft(sidebarMainWidth)
-      : this.setAbsoluteRight(sidebarMainWidth);
-  }
-
-  /**
-   *
-   * @param {string} value
-   */
-  setAbsoluteRight(value) {
-    this.sidebarBox.setProperty("left", "unset");
-    this.sidebarBox.setProperty("right", value);
-  }
-
-  /**
-   *
-   * @param {string} value
-   */
-  setAbsoluteLeft(value) {
-    this.sidebarBox.setProperty("left", value);
-    this.sidebarBox.setProperty("right", "unset");
-  }
-
-  /**
-   *
-   * @returns {string}
-   */
-  getContainerBorder() {
-    return this.containerBorder;
+  pinned() {
+    return SidebarElements.sidebarBox.getAttribute("pinned") == "true";
   }
 
   /**
@@ -394,10 +265,46 @@ export class SidebarController {
    */
   setAutoHideSidebar(value) {
     this.autoHideSidebar = value;
-    this.sidebarCollapseButton.setDisabled(value);
-    this.sidebarCollapseButton.setOpen(
-      !SidebarControllers.collapseController.collapsed(),
-    );
+    SidebarElements.sidebarCollapseButton
+      .setDisabled(value)
+      .setOpen(!SidebarControllers.sidebarMainCollapser.collapsed());
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  getHideToolbarAnimated() {
+    return this.hideToolbarAnimated;
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   */
+  setHideToolbarAnimated(value) {
+    this.hideToolbarAnimated = value;
+    SidebarElements.sidebarToolbar.setAttribute("shouldAnimate", value);
+  }
+
+  collapseToolbar() {
+    const height =
+      SidebarElements.sidebarToolbar.getBoundingClientRect().height;
+    SidebarElements.sidebarToolbar.setProperty("margin-top", -height + "px");
+  }
+
+  uncollapseToolbar() {
+    SidebarElements.sidebarToolbar.setProperty("margin-top", "0px");
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  toolbarCollapsed() {
+    const zeros = ["0px", ""];
+    const marginTop = SidebarElements.sidebarToolbar.getProperty("margin-top");
+    return !zeros.includes(marginTop);
   }
 
   /**
@@ -405,17 +312,27 @@ export class SidebarController {
    * @param {SidebarSettings} settings
    */
   loadSettings(settings) {
-    this.setPosition(settings.position);
+    SidebarElements.sidebarWrapper.setPosition(settings.position);
     SidebarControllers.sidebarMainController.setPadding(settings.padding);
     SidebarControllers.webPanelNewController.setNewWebPanelPosition(
       settings.newWebPanelPosition,
     );
-    this.setUnpinnedPadding(settings.unpinnedPadding);
-    this.autoHideBackButton = settings.autoHideBackButton;
-    this.autoHideForwardButton = settings.autoHideForwardButton;
+    SidebarControllers.sidebarGeometry.setDefaultFloatingOffset(
+      settings.defaultFloatingOffset,
+    );
+    SidebarElements.sidebarToolbar.setAutoHideBackButton(
+      settings.autoHideBackButton,
+    );
+    SidebarElements.sidebarToolbar.setAutoHideForwardButton(
+      settings.autoHideForwardButton,
+    );
     this.setContainerBorder(settings.containerBorder);
     this.setAutoHideSidebar(settings.autoHideSidebar);
     this.hideSidebarAnimated = settings.hideSidebarAnimated;
+    this.setHideToolbarAnimated(settings.hideToolbarAnimated);
+    SidebarControllers.sidebarGeometry.setEnableSidebarBoxHint(
+      settings.enableSidebarBoxHint,
+    );
   }
 
   /**
@@ -424,15 +341,17 @@ export class SidebarController {
    */
   dumpSettings() {
     return new SidebarSettings(
-      this.getPosition(),
+      SidebarElements.sidebarWrapper.getPosition(),
       SidebarControllers.sidebarMainController.getPadding(),
       SidebarControllers.webPanelNewController.getNewWebPanelPosition(),
-      this.getUnpinnedPadding(),
-      this.autoHideBackButton,
-      this.autoHideForwardButton,
+      SidebarControllers.sidebarGeometry.getDefaultFloatingOffset(),
+      SidebarElements.sidebarToolbar.getAutoHideBackButton(),
+      SidebarElements.sidebarToolbar.getAutoHideForwardButton(),
       this.containerBorder,
       this.autoHideSidebar,
       this.hideSidebarAnimated,
+      this.hideToolbarAnimated,
+      SidebarControllers.sidebarGeometry.getEnableSidebarBoxHint(),
     );
   }
 

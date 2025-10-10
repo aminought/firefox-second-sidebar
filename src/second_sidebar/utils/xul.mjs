@@ -1,8 +1,11 @@
-import { Button } from "../xul/base/button.mjs";
 import { HBox } from "../xul/base/hbox.mjs";
+import { Header } from "../xul/base/header.mjs";
 import { Input } from "../xul/base/input.mjs";
 import { Label } from "../xul/base/label.mjs";
+import { MenuList } from "../xul/base/menulist.mjs";
+import { MozButton } from "../xul/base/moz_button.mjs";
 import { ToolbarButton } from "../xul/base/toolbar_button.mjs";
+import { VBox } from "../xul/base/vbox.mjs";
 import { XULElement } from "../xul/base/xul_element.mjs"; // eslint-disable-line no-unused-vars
 import { ZoomManagerWrapper } from "../wrappers/zoom_manager.mjs";
 
@@ -57,8 +60,16 @@ export function createSubviewIconicButton(
  * @param {string} params.type
  * @returns {Input}
  */
-export function createInput({ type = "text" } = {}) {
-  return new Input().setType(type);
+export function createInput({
+  id = null,
+  type = "text",
+  placeholder = null,
+} = {}) {
+  const input = new Input({ id }).setType(type);
+  if (placeholder !== null) {
+    input.setPlaceholder(placeholder);
+  }
+  return input;
 }
 
 /**
@@ -102,45 +113,48 @@ export function updateZoomButtons(
 
 /**
  *
- * @param {string} text
- * @returns {Button}
+ * @param {string} label
+ * @param {string?} type
+ * @returns {MozButton}
  */
-export function createPrimaryButton(text) {
-  return new Button({
-    classList: ["footer-button", "primary"],
-  }).setText(text);
+export function createMozButton(label, type = null) {
+  const button = new MozButton({
+    classList: ["button-background"],
+  }).setLabel(label);
+  if (type !== null) button.setType(type);
+  return button;
 }
 
 /**
  *
- * @returns {Button}
+ * @returns {MozButton}
  */
 export function createCreateButton() {
-  return createPrimaryButton("Create");
+  return createMozButton("Create", "primary");
 }
 
 /**
  *
- * @returns {Button}
+ * @returns {MozButton}
  */
 export function createSaveButton() {
-  return createPrimaryButton("Save");
+  return createMozButton("Save", "primary");
 }
 
 /**
  *
- * @returns {Button}
+ * @returns {MozButton}
  */
 export function createDeleteButton() {
-  return createPrimaryButton("Delete");
+  return createMozButton("Delete", "destructive");
 }
 
 /**
  *
- * @returns {Button}
+ * @returns {MozButton}
  */
 export function createCancelButton() {
-  return new Button({ classList: ["footer-button"] }).setText("Cancel");
+  return createMozButton("Cancel");
 }
 
 /**
@@ -157,6 +171,54 @@ export function createPopupGroup(text, element) {
 
 /**
  *
+ * @param {string?} text
+ * @param {XULElement[]} elements
+ * @param {object} params
+ * @param {string[]} params.classList
+ * @returns {VBox}
+ */
+export function createPopupSet(text, elements, { classList = [] } = {}) {
+  const vbox = new VBox({ classList: ["sb2-popup-set", ...classList] });
+  if (text !== "") vbox.appendChild(createPopupSetHeader(text));
+  vbox.appendChild(createPopupSetBody(elements));
+  return vbox;
+}
+
+/**
+ *
+ * @param {string} text
+ * @returns {Header}
+ */
+export function createPopupSetHeader(text) {
+  return new Header(1, { classList: ["sb2-popup-set-header"] }).setText(text);
+}
+
+/**
+ *
+ * @param {XULElement[]} elements
+ * @returns {VBox}
+ */
+export function createPopupSetBody(elements) {
+  return new VBox({
+    classList: ["sb2-popup-set-body"],
+  }).appendChildren(...elements);
+}
+
+/**
+ *
+ * @param {number} level
+ * @param {string} text
+ * @param {XULElement} element
+ * @returns {HBox}
+ */
+export function createPopupHeaderGroup(level, text, element) {
+  return new HBox({
+    classList: ["sb2-popup-group"],
+  }).appendChildren(new Header(level).setText(text), element);
+}
+
+/**
+ *
  * @param {XULElement[]} elements
  * @returns {HBox}
  */
@@ -164,4 +226,15 @@ export function createPopupRow(...elements) {
   return new HBox({
     classList: ["sb2-popup-row"],
   }).appendChildren(...elements);
+}
+
+/**
+ *
+ * @param {object} params
+ * @param {string?} params.id
+ * @param {string[]} params.classList
+ * @returns {MenuList}
+ */
+export function createMenuList({ id = null, classList = [] } = {}) {
+  return new MenuList({ id, classList: ["sb2-popup-menu-list", ...classList] });
 }

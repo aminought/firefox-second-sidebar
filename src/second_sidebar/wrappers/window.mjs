@@ -126,6 +126,15 @@ export class WindowWrapper {
   }
 
   /**
+   *
+   * @param {XULElement} element
+   * @returns {CSSStyleDeclaration}
+   */
+  getComputedStyle(element) {
+    return this.#window.getComputedStyle(element.getXUL());
+  }
+
+  /**
    * @param {WindowWrapper} lhs
    * @param {WindowWrapper} rhs
    * @returns {boolean}

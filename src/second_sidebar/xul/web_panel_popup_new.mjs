@@ -6,16 +6,19 @@ import {
   createCancelButton,
   createCreateButton,
   createInput,
+  createMenuList,
   createPopupGroup,
+  createPopupRow,
+  createPopupSet,
 } from "../utils/xul.mjs";
 
-import { MenuList } from "./base/menulist.mjs";
 import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";
 import { PopupBody } from "./popup_body.mjs";
 import { PopupFooter } from "./popup_footer.mjs";
 import { PopupHeader } from "./popup_header.mjs";
 import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manager.mjs";
+import { ToolbarSeparator } from "./base/toolbar_separator.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
 
 export class WebPanelPopupNew extends Panel {
@@ -26,8 +29,8 @@ export class WebPanelPopupNew extends Panel {
     });
     this.setType("arrow").setRole("group");
 
-    this.input = createInput();
-    this.containerMenuList = new MenuList({ id: "sb2-container-menu-list" });
+    this.input = createInput({ placeholder: "Web page URL" });
+    this.containerMenuList = createMenuList({ id: "sb2-container-menu-list" });
 
     this.saveButton = createCreateButton();
     this.cancelButton = createCancelButton();
@@ -43,8 +46,11 @@ export class WebPanelPopupNew extends Panel {
       new PanelMultiView().appendChildren(
         new PopupHeader("New Web Panel"),
         new PopupBody().appendChildren(
-          this.input,
-          createPopupGroup("Multi-Account Container", this.containerMenuList),
+          createPopupSet("", [
+            createPopupRow(this.input),
+            new ToolbarSeparator(),
+            createPopupGroup("Multi-Account Container", this.containerMenuList),
+          ]),
         ),
         new PopupFooter().appendChildren(this.cancelButton, this.saveButton),
       ),

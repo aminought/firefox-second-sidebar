@@ -1,6 +1,6 @@
-import { XULElement } from "./xul_element.mjs";
+import { Menu } from "./menu.mjs";
 
-export class MenuItem extends XULElement {
+export class MenuItem extends Menu {
   /**
    *
    * @param {object} params
@@ -9,28 +9,5 @@ export class MenuItem extends XULElement {
    */
   constructor({ id = null, classList = [] } = {}) {
     super({ tag: "menuitem", id, classList });
-  }
-
-  /**
-   *
-   * @param {string} text
-   * @returns {MenuItem}
-   */
-  setLabel(text) {
-    return this.setAttribute("label", text);
-  }
-
-  /**
-   *
-   * @param {boolean} value
-   * @returns {MenuItem}
-   */
-  setDisabled(value) {
-    if (value) {
-      this.setAttribute("disabled", true);
-    } else {
-      this.removeAttribute("disabled");
-    }
-    return true;
   }
 }
