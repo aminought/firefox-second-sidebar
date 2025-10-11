@@ -134,6 +134,10 @@ export const POPUPS_CSS = `
       color: var(--toolbar-field-color);
       border: solid 1px var(--toolbar-field-border-color);
       outline: unset;
+
+      &[error="true"] {
+        background-color: var(--background-color-critical) !important;
+      }
     }
 
     input:focus-visible {

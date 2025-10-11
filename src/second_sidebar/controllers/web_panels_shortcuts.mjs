@@ -47,6 +47,21 @@ export class WebPanelsShortcuts {
 
   /**
    *
+   * @param {string} uuid
+   * @param {string} shortcut
+   * @returns {boolean}
+   */
+  isShortcutBusy(uuid, shortcut) {
+    const webPanelControllers = SidebarControllers.webPanelsController.getAll();
+    return webPanelControllers.some(
+      (webPanelController) =>
+        webPanelController.getUUID() !== uuid &&
+        webPanelController.getShortcut() === shortcut,
+    );
+  }
+
+  /**
+   *
    * @param {KeyboardEvent} event
    * @returns {string[]}
    */

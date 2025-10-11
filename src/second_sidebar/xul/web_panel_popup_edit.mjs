@@ -110,14 +110,30 @@ export class WebPanelPopupEdit extends Panel {
       if (isLeftMouseButton(event)) {
         this.shortcutInput
           .setValue("")
+          .removeAttribute("error")
           .dispatchEvent(new Event("input", { bubbles: true }));
       }
     });
 
     this.shortcutInput.addEventListener("keypress", (event) => {
       event.preventDefault();
+
       const parts =
         SidebarControllers.webPanelsShortcuts.getShortcutPartsFromEvent(event);
+      const shortcut = parts.join("+");
+      const isBisy = SidebarControllers.webPanelsShortcuts.isShortcutBusy(
+        this.uuid,
+        shortcut,
+      );
+
+      if (isBisy) {
+        this.shortcutInput
+          .setValue(`Shortcut ${shortcut} is busy`)
+          .setAttribute("error", true);
+        return;
+      }
+
+      this.shortcutInput.removeAttribute("error");
       this.shortcutInput
         .setValue(parts.join("+"))
         .dispatchEvent(new Event("input", { bubbles: true }));
@@ -397,7 +413,10 @@ export class WebPanelPopupEdit extends Panel {
       shortcutEnabled(this.settings.uuid, this.shortcutToggle.getPressed());
     });
     this.shortcutInput.addEventListener("input", () => {
-      shortcut(this.settings.uuid, this.shortcutInput.getValue());
+      const value = this.shortcutInput.hasAttribute("error")
+        ? this.settings.shortcut
+        : this.shortcutInput.getValue();
+      shortcut(this.settings.uuid, value);
     });
     this.hideToolbarToggle.addEventListener("toggle", () => {
       hideToolbar(this.settings.uuid, this.hideToolbarToggle.getPressed());
@@ -506,7 +525,7 @@ export class WebPanelPopupEdit extends Panel {
     this.loadOnStartupToggle.setPressed(settings.loadOnStartup);
     this.unloadOnCloseToggle.setPressed(settings.unloadOnClose);
     this.shortcutToggle.setPressed(settings.shortcutEnabled);
-    this.shortcutInput.setValue(settings.shortcut);
+    this.shortcutInput.setValue(settings.shortcut).removeAttribute("error");
     this.hideToolbarToggle.setPressed(settings.hideToolbar);
     this.hideSoundIconToggle.setPressed(settings.hideSoundIcon);
     this.hideNotificationBadgeToggle.setPressed(settings.hideNotificationBadge);
@@ -641,9 +660,14 @@ export class WebPanelPopupEdit extends Panel {
         this.settings.shortcutEnabled,
       );
     }
-    if (this.shortcutInput.getValue() !== this.settings.shortcut) {
+
+    const shortcutValue = this.shortcutInput.hasAttribute("error")
+      ? this.settings.shortcut
+      : this.shortcutInput.getValue();
+    if (shortcutValue !== this.settings.shortcut) {
       this.onShortcutChange(this.settings.uuid, this.settings.shortcut);
     }
+
     if (this.hideToolbarToggle.getPressed() !== this.settings.hideToolbar) {
       this.onHideToolbar(this.settings.uuid, this.settings.hideToolbar);
     }
