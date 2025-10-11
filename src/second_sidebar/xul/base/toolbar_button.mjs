@@ -73,6 +73,14 @@ export class ToolbarButton extends XULElement {
 
   /**
    *
+   * @returns {boolean}
+   */
+  isOpen() {
+    return this.getAttribute("open") === "true";
+  }
+
+  /**
+   *
    * @param {boolean} value
    * @returns {ToolbarButton}
    */
