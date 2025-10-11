@@ -105,12 +105,6 @@ export class WebPanelEditController {
           unloadOnClose,
         });
       },
-      shortcutEnabled: (uuid, shortcutEnabled) => {
-        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_SHORTCUT_ENABLED, {
-          uuid,
-          shortcutEnabled,
-        });
-      },
       shortcut: (uuid, shortcut) => {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_SHORTCUT, {
           uuid,

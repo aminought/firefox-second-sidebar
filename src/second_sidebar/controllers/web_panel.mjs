@@ -467,22 +467,6 @@ export class WebPanelController {
 
   /**
    *
-   * @returns {boolean}
-   */
-  getShortcutEnabled() {
-    return this.#settings.shortcutEnabled;
-  }
-
-  /**
-   *
-   * @param {boolean} value
-   */
-  setShortcutEnabled(value) {
-    this.#settings.shortcutEnabled = value;
-  }
-
-  /**
-   *
    * @returns {string}
    */
   getShortcut() {

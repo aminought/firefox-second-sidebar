@@ -342,14 +342,6 @@ export class WebPanelsController {
       webPanelController.setUnloadOnClose(unloadOnClose);
     });
 
-    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_SHORTCUT_ENABLED, (event) => {
-      const uuid = event.detail.uuid;
-      const shortcutEnabled = event.detail.shortcutEnabled;
-
-      const webPanelController = this.get(uuid);
-      webPanelController.setShortcutEnabled(shortcutEnabled);
-    });
-
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_SHORTCUT, (event) => {
       const uuid = event.detail.uuid;
       const shortcut = event.detail.shortcut;

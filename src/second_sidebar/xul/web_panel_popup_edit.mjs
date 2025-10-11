@@ -67,7 +67,6 @@ export class WebPanelPopupEdit extends Panel {
     this.mobileToggle = new Toggle();
     this.loadOnStartupToggle = new Toggle();
     this.unloadOnCloseToggle = new Toggle();
-    this.shortcutToggle = new Toggle({ id: "sb2-popup-shortcut-toggle" });
     this.shortcutInput = createInput({
       placeholder: "Click here and press keys...",
     });
@@ -129,7 +128,8 @@ export class WebPanelPopupEdit extends Panel {
       if (isBisy) {
         this.shortcutInput
           .setValue(`Shortcut ${shortcut} is busy`)
-          .setAttribute("error", true);
+          .setAttribute("error", true)
+          .dispatchEvent(new Event("error", { bubbles: true }));
         return;
       }
 
@@ -256,11 +256,7 @@ export class WebPanelPopupEdit extends Panel {
             createPopupGroup("Periodic reload", this.periodicReloadMenuList),
           ]),
           createPopupSet("Keyboard shortcut", [
-            createPopupGroup("Enable", this.shortcutToggle),
-            new Div({ id: "sb2-popup-shortcut-items" }).appendChildren(
-              new ToolbarSeparator(),
-              createPopupRow(this.shortcutInput, this.shortcutResetButton),
-            ),
+            createPopupRow(this.shortcutInput, this.shortcutResetButton),
           ]),
           createPopupSet("CSS selector", [
             createPopupGroup("Enable", this.selectorToggle),
@@ -303,7 +299,6 @@ export class WebPanelPopupEdit extends Panel {
    * @param {function(string, boolean):void} callbacks.temporary
    * @param {function(string, boolean):void} callbacks.loadOnStartup
    * @param {function(string, boolean):void} callbacks.unloadOnClose
-   * @param {function(string, boolean):void} callbacks.shortcutEnabled
    * @param {function(string, string):void} callbacks.shortcut
    * @param {function(string, boolean):void} callbacks.hideToolbar
    * @param {function(string, boolean):void} callbacks.hideSoundIcon
@@ -329,7 +324,6 @@ export class WebPanelPopupEdit extends Panel {
     temporary,
     loadOnStartup,
     unloadOnClose,
-    shortcutEnabled,
     shortcut,
     hideToolbar,
     hideSoundIcon,
@@ -354,7 +348,6 @@ export class WebPanelPopupEdit extends Panel {
     this.onUserContextIdChange = userContextId;
     this.onLoadOnStartupChange = loadOnStartup;
     this.onUnloadOnCloseChange = unloadOnClose;
-    this.onShortcutEnabledChange = shortcutEnabled;
     this.onShortcutChange = shortcut;
     this.onHideToolbar = hideToolbar;
     this.onHideSoundIcon = hideSoundIcon;
@@ -409,14 +402,11 @@ export class WebPanelPopupEdit extends Panel {
     this.unloadOnCloseToggle.addEventListener("toggle", () => {
       unloadOnClose(this.settings.uuid, this.unloadOnCloseToggle.getPressed());
     });
-    this.shortcutToggle.addEventListener("toggle", () => {
-      shortcutEnabled(this.settings.uuid, this.shortcutToggle.getPressed());
-    });
     this.shortcutInput.addEventListener("input", () => {
-      const value = this.shortcutInput.hasAttribute("error")
-        ? this.settings.shortcut
-        : this.shortcutInput.getValue();
-      shortcut(this.settings.uuid, value);
+      shortcut(this.settings.uuid, this.shortcutInput.getValue());
+    });
+    this.shortcutInput.addEventListener("error", () => {
+      shortcut(this.settings.uuid, this.settings.shortcut);
     });
     this.hideToolbarToggle.addEventListener("toggle", () => {
       hideToolbar(this.settings.uuid, this.hideToolbarToggle.getPressed());
@@ -524,7 +514,6 @@ export class WebPanelPopupEdit extends Panel {
     this.mobileToggle.setPressed(settings.mobile);
     this.loadOnStartupToggle.setPressed(settings.loadOnStartup);
     this.unloadOnCloseToggle.setPressed(settings.unloadOnClose);
-    this.shortcutToggle.setPressed(settings.shortcutEnabled);
     this.shortcutInput.setValue(settings.shortcut).removeAttribute("error");
     this.hideToolbarToggle.setPressed(settings.hideToolbar);
     this.hideSoundIconToggle.setPressed(settings.hideSoundIcon);
@@ -652,12 +641,6 @@ export class WebPanelPopupEdit extends Panel {
       this.onUnloadOnCloseChange(
         this.settings.uuid,
         this.settings.unloadOnClose,
-      );
-    }
-    if (this.shortcutToggle.getPressed() !== this.settings.shortcutEnabled) {
-      this.onShortcutEnabledChange(
-        this.settings.uuid,
-        this.settings.shortcutEnabled,
       );
     }
 

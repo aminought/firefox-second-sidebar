@@ -15,10 +15,9 @@ export class WebPanelsShortcuts {
         SidebarControllers.webPanelsController.getAll();
 
       for (const webPanelController of webPanelControllers) {
-        const enabled = webPanelController.getShortcutEnabled();
         const shortcut = webPanelController.getShortcut();
 
-        if (!enabled || shortcut.length === 0) continue;
+        if (shortcut.length === 0) continue;
 
         const shortcutParts = this.getShortcutPartsFromShortcut(shortcut);
         const eventParts = this.getShortcutPartsFromEvent(event);
