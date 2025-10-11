@@ -13,6 +13,7 @@ import { WebPanelEditController } from "./controllers/web_panel_edit.mjs";
 import { WebPanelMoreController } from "./controllers/web_panel_more.mjs";
 import { WebPanelNewController } from "./controllers/web_panel_new.mjs";
 import { WebPanelsController } from "./controllers/web_panels.mjs";
+import { WebPanelsShortcuts } from "./controllers/web_panels_shortcuts.mjs";
 
 export class SidebarControllers {
   static create() {
@@ -26,6 +27,7 @@ export class SidebarControllers {
     this.sidebarResizer = new SidebarResizer();
     this.sidebarSplitterController = new SidebarSplitterController();
     this.webPanelsController = new WebPanelsController();
+    this.webPanelsShortcuts = new WebPanelsShortcuts();
     this.webPanelNewController = new WebPanelNewController();
     this.webPanelEditController = new WebPanelEditController();
     this.webPanelMoreController = new WebPanelMoreController();

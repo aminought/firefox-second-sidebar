@@ -342,6 +342,14 @@ export class WebPanelsController {
       webPanelController.setUnloadOnClose(unloadOnClose);
     });
 
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_SHORTCUT, (event) => {
+      const uuid = event.detail.uuid;
+      const shortcut = event.detail.shortcut;
+
+      const webPanelController = this.get(uuid);
+      webPanelController.setShortcut(shortcut);
+    });
+
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_HIDE_TOOLBAR, (event) => {
       const uuid = event.detail.uuid;
       const hideToolbar = event.detail.hideToolbar;
@@ -569,6 +577,14 @@ export class WebPanelsController {
   getActive() {
     const tab = SidebarElements.webPanelsBrowser.getActiveWebPanelTab();
     return tab.isEmpty() ? null : this.get(tab.uuid);
+  }
+
+  /**
+   *
+   * @returns {WebPanelController[]}
+   */
+  getAll() {
+    return [...this.webPanelControllers.values()];
   }
 
   /**

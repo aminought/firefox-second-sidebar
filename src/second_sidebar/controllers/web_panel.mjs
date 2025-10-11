@@ -467,6 +467,22 @@ export class WebPanelController {
 
   /**
    *
+   * @returns {string}
+   */
+  getShortcut() {
+    return this.#settings.shortcut;
+  }
+
+  /**
+   *
+   * @param {string} value
+   */
+  setShortcut(value) {
+    this.#settings.shortcut = value;
+  }
+
+  /**
+   *
    * @returns {boolean}
    */
   getHideToolbar() {
