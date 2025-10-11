@@ -22,6 +22,7 @@ import { PanelMultiView } from "./base/panel_multi_view.mjs";
 import { PopupBody } from "./popup_body.mjs";
 import { PopupFooter } from "./popup_footer.mjs";
 import { PopupHeader } from "./popup_header.mjs";
+import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { Toggle } from "./base/toggle.mjs";
 import { ToolbarSeparator } from "./base/toolbar_separator.mjs";
 import { WebPanelController } from "../controllers/web_panel.mjs"; // eslint-disable-line no-unused-vars
@@ -115,12 +116,8 @@ export class WebPanelPopupEdit extends Panel {
 
     this.shortcutInput.addEventListener("keypress", (event) => {
       event.preventDefault();
-      const parts = [];
-      if (event.altKey) parts.push("Alt");
-      if (event.ctrlKey) parts.push("Ctrl");
-      if (event.metaKey) parts.push("Meta");
-      if (event.shiftKey) parts.push("Shift");
-      parts.push(event.key.toUpperCase());
+      const parts =
+        SidebarControllers.webPanelsShortcuts.getShortcutPartsFromEvent(event);
       this.shortcutInput
         .setValue(parts.join("+"))
         .dispatchEvent(new Event("input", { bubbles: true }));
@@ -536,6 +533,13 @@ export class WebPanelPopupEdit extends Panel {
       this.removeEventListener("popuphidden", this.restoreWebPanelButtonState);
     };
     this.addEventListener("popuphidden", this.restoreWebPanelButtonState);
+
+    this.addEventListener("popupshown", () =>
+      SidebarControllers.webPanelsShortcuts.disable(),
+    );
+    this.addEventListener("popuphidden", () =>
+      SidebarControllers.webPanelsShortcuts.enable(),
+    );
 
     return Panel.prototype.openPopup.call(this, webPanelController.button);
   }

@@ -589,6 +589,14 @@ export class WebPanelsController {
 
   /**
    *
+   * @returns {WebPanelController[]}
+   */
+  getAll() {
+    return [...this.webPanelControllers.values()];
+  }
+
+  /**
+   *
    * @param {string} uuid
    */
   delete(uuid) {
