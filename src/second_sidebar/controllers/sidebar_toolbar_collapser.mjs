@@ -40,17 +40,11 @@ export class SidebarToolbarCollapser {
       isInsideSidebarBox &&
       !target.hasClass("sb2-resizer") &&
       event.screenY < threshold;
-    const isInsidePopupMore =
-      SidebarElements.webPanelPopupMore.contains(target);
-    const isPopupMoreOpen = SidebarElements.webPanelPopupMore.isPanelOpen();
+    const isPopupMoreOpen = SidebarElements.sidebarToolbar.moreButton.isOpen();
     const isMovingWhilePopupMoreOpen =
       event.type === "mousemove" && isPopupMoreOpen;
 
-    if (
-      isInSidebarBoxUncollapseArea ||
-      isInsidePopupMore ||
-      isMovingWhilePopupMoreOpen
-    ) {
+    if (isInSidebarBoxUncollapseArea || isMovingWhilePopupMoreOpen) {
       clearTimeout(this.hideToolbarTimer);
       this.hideToolbarTimer = null;
       if (!this.showToolbarTimer) {
