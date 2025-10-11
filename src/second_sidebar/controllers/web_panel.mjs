@@ -469,6 +469,38 @@ export class WebPanelController {
    *
    * @returns {boolean}
    */
+  getShortcutEnabled() {
+    return this.#settings.shortcutEnabled;
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   */
+  setShortcutEnabled(value) {
+    this.#settings.shortcutEnabled = value;
+  }
+
+  /**
+   *
+   * @returns {string}
+   */
+  getShortcut() {
+    return this.#settings.shortcut;
+  }
+
+  /**
+   *
+   * @param {string} value
+   */
+  setShortcut(value) {
+    this.#settings.shortcut = value;
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
   getHideToolbar() {
     return this.#settings.hideToolbar;
   }

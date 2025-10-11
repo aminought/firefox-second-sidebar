@@ -29,8 +29,6 @@ import { fetchIconURL } from "../utils/icons.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
 
 const ICONS = {
-  DOWN: "chrome://global/skin/icons/arrow-down.svg",
-  UP: "chrome://global/skin/icons/arrow-up.svg",
   UNDO: "chrome://global/skin/icons/undo.svg",
   MINUS: "chrome://global/skin/icons/minus.svg",
   PLUS: "chrome://global/skin/icons/plus.svg",
@@ -68,6 +66,13 @@ export class WebPanelPopupEdit extends Panel {
     this.mobileToggle = new Toggle();
     this.loadOnStartupToggle = new Toggle();
     this.unloadOnCloseToggle = new Toggle();
+    this.shortcutToggle = new Toggle({ id: "sb2-popup-shortcut-toggle" });
+    this.shortcutInput = createInput({
+      placeholder: "Click here and press keys...",
+    });
+    this.shortcutResetButton = createSubviewIconicButton(ICONS.UNDO, {
+      tooltipText: "Reset shortcut",
+    });
     this.hideToolbarToggle = new Toggle();
     this.hideSoundIconToggle = new Toggle();
     this.hideNotificationBadgeToggle = new Toggle();
@@ -98,6 +103,27 @@ export class WebPanelPopupEdit extends Panel {
           .setValue(faviconURL)
           .dispatchEvent(new Event("input", { bubbles: true }));
       }
+    });
+
+    this.shortcutResetButton.addEventListener("click", (event) => {
+      if (isLeftMouseButton(event)) {
+        this.shortcutInput
+          .setValue("")
+          .dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    });
+
+    this.shortcutInput.addEventListener("keypress", (event) => {
+      event.preventDefault();
+      const parts = [];
+      if (event.altKey) parts.push("Alt");
+      if (event.ctrlKey) parts.push("Ctrl");
+      if (event.metaKey) parts.push("Meta");
+      if (event.shiftKey) parts.push("Shift");
+      parts.push(event.key.toUpperCase());
+      this.shortcutInput
+        .setValue(parts.join("+"))
+        .dispatchEvent(new Event("input", { bubbles: true }));
     });
   }
 
@@ -216,6 +242,13 @@ export class WebPanelPopupEdit extends Panel {
             new ToolbarSeparator(),
             createPopupGroup("Periodic reload", this.periodicReloadMenuList),
           ]),
+          createPopupSet("Keyboard shortcut", [
+            createPopupGroup("Enable", this.shortcutToggle),
+            new Div({ id: "sb2-popup-shortcut-items" }).appendChildren(
+              new ToolbarSeparator(),
+              createPopupRow(this.shortcutInput, this.shortcutResetButton),
+            ),
+          ]),
           createPopupSet("CSS selector", [
             createPopupGroup("Enable", this.selectorToggle),
             new Div({ id: "sb2-popup-css-selector-items" }).appendChildren(
@@ -243,8 +276,8 @@ export class WebPanelPopupEdit extends Panel {
    *
    * @param {object} callbacks
    * @param {function(string, string, number):void} callbacks.url
-   * @param {function(string, boolean, number):void} callbacks.selectorEnabled
-   * @param {function(string, string, number):void} callbacks.selector
+   * @param {function(string, boolean):void} callbacks.selectorEnabled
+   * @param {function(string, string):void} callbacks.selector
    * @param {function(string, string, number):void} callbacks.faviconURL
    * @param {function(string, boolean):void} callbacks.mobile
    * @param {function(string, boolean):void} callbacks.pinned
@@ -254,8 +287,11 @@ export class WebPanelPopupEdit extends Panel {
    * @param {function(string, string):void} callbacks.widthType
    * @param {function(string, string):void} callbacks.heightType
    * @param {function(string, string):void} callbacks.userContextId
+   * @param {function(string, boolean):void} callbacks.temporary
    * @param {function(string, boolean):void} callbacks.loadOnStartup
    * @param {function(string, boolean):void} callbacks.unloadOnClose
+   * @param {function(string, boolean):void} callbacks.shortcutEnabled
+   * @param {function(string, string):void} callbacks.shortcut
    * @param {function(string, boolean):void} callbacks.hideToolbar
    * @param {function(string, boolean):void} callbacks.hideSoundIcon
    * @param {function(string, boolean):void} callbacks.hideNotificationBadge
@@ -269,6 +305,7 @@ export class WebPanelPopupEdit extends Panel {
     selectorEnabled,
     selector,
     faviconURL,
+    mobile,
     pinned,
     anchor,
     offsetXType,
@@ -277,9 +314,10 @@ export class WebPanelPopupEdit extends Panel {
     heightType,
     userContextId,
     temporary,
-    mobile,
     loadOnStartup,
     unloadOnClose,
+    shortcutEnabled,
+    shortcut,
     hideToolbar,
     hideSoundIcon,
     hideNotificationBadge,
@@ -303,6 +341,8 @@ export class WebPanelPopupEdit extends Panel {
     this.onUserContextIdChange = userContextId;
     this.onLoadOnStartupChange = loadOnStartup;
     this.onUnloadOnCloseChange = unloadOnClose;
+    this.onShortcutEnabledChange = shortcutEnabled;
+    this.onShortcutChange = shortcut;
     this.onHideToolbar = hideToolbar;
     this.onHideSoundIcon = hideSoundIcon;
     this.onHideNotificationBadge = hideNotificationBadge;
@@ -355,6 +395,12 @@ export class WebPanelPopupEdit extends Panel {
     });
     this.unloadOnCloseToggle.addEventListener("toggle", () => {
       unloadOnClose(this.settings.uuid, this.unloadOnCloseToggle.getPressed());
+    });
+    this.shortcutToggle.addEventListener("toggle", () => {
+      shortcutEnabled(this.settings.uuid, this.shortcutToggle.getPressed());
+    });
+    this.shortcutInput.addEventListener("input", () => {
+      shortcut(this.settings.uuid, this.shortcutInput.getValue());
     });
     this.hideToolbarToggle.addEventListener("toggle", () => {
       hideToolbar(this.settings.uuid, this.hideToolbarToggle.getPressed());
@@ -462,6 +508,8 @@ export class WebPanelPopupEdit extends Panel {
     this.mobileToggle.setPressed(settings.mobile);
     this.loadOnStartupToggle.setPressed(settings.loadOnStartup);
     this.unloadOnCloseToggle.setPressed(settings.unloadOnClose);
+    this.shortcutToggle.setPressed(settings.shortcutEnabled);
+    this.shortcutInput.setValue(settings.shortcut);
     this.hideToolbarToggle.setPressed(settings.hideToolbar);
     this.hideSoundIconToggle.setPressed(settings.hideSoundIcon);
     this.hideNotificationBadgeToggle.setPressed(settings.hideNotificationBadge);
@@ -582,6 +630,15 @@ export class WebPanelPopupEdit extends Panel {
         this.settings.uuid,
         this.settings.unloadOnClose,
       );
+    }
+    if (this.shortcutToggle.getPressed() !== this.settings.shortcutEnabled) {
+      this.onShortcutEnabledChange(
+        this.settings.uuid,
+        this.settings.shortcutEnabled,
+      );
+    }
+    if (this.shortcutInput.getValue() !== this.settings.shortcut) {
+      this.onShortcutChange(this.settings.uuid, this.settings.shortcut);
     }
     if (this.hideToolbarToggle.getPressed() !== this.settings.hideToolbar) {
       this.onHideToolbar(this.settings.uuid, this.settings.hideToolbar);

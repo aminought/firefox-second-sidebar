@@ -186,4 +186,10 @@ export const POPUPS_CSS = `
       display: none;
     }
   }
+
+  .sb2-popup-body:has(#sb2-popup-shortcut-toggle:not([pressed])) {
+    #sb2-popup-shortcut-items {
+      display: none;
+    }
+  }
 `;

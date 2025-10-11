@@ -105,6 +105,18 @@ export class WebPanelEditController {
           unloadOnClose,
         });
       },
+      shortcutEnabled: (uuid, shortcutEnabled) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_SHORTCUT_ENABLED, {
+          uuid,
+          shortcutEnabled,
+        });
+      },
+      shortcut: (uuid, shortcut) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_SHORTCUT, {
+          uuid,
+          shortcut,
+        });
+      },
       hideToolbar: (uuid, hideToolbar) => {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_HIDE_TOOLBAR, {
           uuid,
