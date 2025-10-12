@@ -2,6 +2,7 @@ import { AppConstantsWrapper } from "../wrappers/app_constants.mjs";
 import { Browser } from "./base/browser.mjs";
 import { BrowserCommandsWrapper } from "../wrappers/browser_commands.mjs";
 import { ObserversWrapper } from "../wrappers/observers.mjs";
+import { PopupNotificationsPatcher } from "../patchers/popup_notifications_patcher.mjs";
 import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manager.mjs";
 import { SessionStoreWrapper } from "../wrappers/session_store.mjs";
 import { Style } from "./base/style.mjs";
@@ -100,6 +101,8 @@ export class WebPanelsBrowser extends Browser {
     const windowRoot = new XULElement({
       element: this.window.document.documentElement,
     });
+    windowRoot.setAttribute("chromehidden", "");
+
     const selectors = [
       "#PersonalToolbar",
       "#navigator-toolbox",
@@ -135,49 +138,20 @@ export class WebPanelsBrowser extends Browser {
       .querySelector("#tabbrowser-tabbox")
       .setProperty("height", "100%");
 
+    // Position popups
+    windowRoot.querySelector("#mainPopupSet").setProperty("margin-left", "8px");
+    windowRoot
+      .querySelector("#notification-popup")
+      .setProperty("margin-top", "8px");
+
     // Add class for userChrome.css
     windowRoot.addClass("sb2-webpanels-window");
 
     // Close first dialog window within first 5 seconds
     this.#listenToFirstDialogAndClose();
 
-    const parentWindow = window;
-    const childWindow = window[1];
-
-    ChromeUtils.defineLazyGetter(childWindow, "PopupNotifications", () => {
-      let { PopupNotifications } = ChromeUtils.importESModule(
-        "chrome://userchrome/content/fss/pn.mjs",
-      );
-      try {
-        let shouldSuppress = () => {
-          const urlBarEdited = parentWindow.isBlankPageURL(
-            parentWindow.gBrowser.currentURI.spec,
-          )
-            ? parentWindow.gURLBar.hasAttribute("usertyping")
-            : parentWindow.gURLBar.getAttribute("pageproxystate") != "valid";
-          return (
-            (urlBarEdited && parentWindow.gURLBar.focused) ||
-            (parentWindow.gURLBar.getAttribute("pageproxystate") != "valid" &&
-              parentWindow.gBrowser.selectedBrowser._awaitingSetURI) ||
-            parentWindow.shouldSuppressPopupNotifications()
-          );
-        };
-
-        const getVisibleAnchorElement = () => {
-          return parentWindow.document.getElementById("sb2-toolbar");
-        };
-
-        return new PopupNotifications(
-          parentWindow.gBrowser,
-          parentWindow.document.getElementById("notification-popup"),
-          parentWindow.document.getElementById("notification-popup-box"),
-          { shouldSuppress, getVisibleAnchorElement },
-        );
-      } catch (ex) {
-        console.error(ex);
-        return null;
-      }
-    });
+    // Patch PopupNotifications
+    PopupNotificationsPatcher.patch();
   }
 
   #listenToFirstDialogAndClose() {

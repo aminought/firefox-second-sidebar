@@ -1,42 +1,18 @@
-import { removeFile, writeFile } from "../utils/files.mjs";
-
 import { BrowserElements } from "../browser_elements.mjs";
 import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manager.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
+import { SidebarMainPatcher } from "../patchers/sidebar_main_patcher.mjs";
 import { XULElement } from "../xul/base/xul_element.mjs";
 import { gCustomizeModeWrapper } from "../wrappers/g_customize_mode.mjs";
 import { gNavToolboxWrapper } from "../wrappers/g_nav_toolbox.mjs";
 import { isRightMouseButton } from "../utils/buttons.mjs";
 
-const MODULE_URL = "chrome://browser/content/navigator-toolbox.js";
-const PATCHED_MODULE_RELATIVE_PATH = "fss/navigator-toolbox.mjs";
-
 export class SidebarMainController {
   constructor() {
     this.root = new XULElement({ element: document.documentElement });
-    this.#setupGlobalListeners();
+    SidebarMainPatcher.patch();
     this.#setupListeners();
-  }
-
-  #setupGlobalListeners() {
-    fetch(MODULE_URL).then(async (response) => {
-      const moduleSource = await response.text();
-      const matches = moduleSource.matchAll(/\s{4}function.*?^\s{4}}/gms);
-      const moduleText = Array.from(matches)
-        .map((match) => match[0].replace(/\s{4}function/gm, "export function"))
-        .join("\n");
-      const chromePath = await writeFile(
-        PATCHED_MODULE_RELATIVE_PATH,
-        moduleText,
-      );
-      const module = await import(chromePath);
-      for (const [funcName, func] of Object.entries(module)) {
-        const eventName = funcName.toLowerCase().replace(/^on/, "");
-        SidebarElements.sidebarMain.addEventListener(eventName, func);
-      }
-      await removeFile(PATCHED_MODULE_RELATIVE_PATH);
-    });
   }
 
   #setupListeners() {
