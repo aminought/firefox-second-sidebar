@@ -140,6 +140,44 @@ export class WebPanelsBrowser extends Browser {
 
     // Close first dialog window within first 5 seconds
     this.#listenToFirstDialogAndClose();
+
+    const parentWindow = window;
+    const childWindow = window[1];
+
+    ChromeUtils.defineLazyGetter(childWindow, "PopupNotifications", () => {
+      let { PopupNotifications } = ChromeUtils.importESModule(
+        "chrome://userchrome/content/fss/pn.mjs",
+      );
+      try {
+        let shouldSuppress = () => {
+          const urlBarEdited = parentWindow.isBlankPageURL(
+            parentWindow.gBrowser.currentURI.spec,
+          )
+            ? parentWindow.gURLBar.hasAttribute("usertyping")
+            : parentWindow.gURLBar.getAttribute("pageproxystate") != "valid";
+          return (
+            (urlBarEdited && parentWindow.gURLBar.focused) ||
+            (parentWindow.gURLBar.getAttribute("pageproxystate") != "valid" &&
+              parentWindow.gBrowser.selectedBrowser._awaitingSetURI) ||
+            parentWindow.shouldSuppressPopupNotifications()
+          );
+        };
+
+        const getVisibleAnchorElement = () => {
+          return parentWindow.document.getElementById("sb2-toolbar");
+        };
+
+        return new PopupNotifications(
+          parentWindow.gBrowser,
+          parentWindow.document.getElementById("notification-popup"),
+          parentWindow.document.getElementById("notification-popup-box"),
+          { shouldSuppress, getVisibleAnchorElement },
+        );
+      } catch (ex) {
+        console.error(ex);
+        return null;
+      }
+    });
   }
 
   #listenToFirstDialogAndClose() {
