@@ -1,4 +1,4 @@
-import { removeFile, writeFile } from "./utils/files.mjs";
+import { removeFile, writeFile } from "../utils/files.mjs";
 
 const MODULE_URLS = [
   "resource:///modules/CustomizeMode.sys.mjs",
@@ -9,11 +9,13 @@ const PATCHED_MODULE_RELATIVE_PATH = "fss/CustomizeMode.sys.mjs";
 export class CustomizeModePatcher {
   static patch() {
     for (const moduleUrl of MODULE_URLS) {
-      fetch(moduleUrl).then(async (response) => {
-        let moduleSource = await response.text();
-        moduleSource = this.#patchModuleSource(moduleSource);
-        await this.#replaceModule(moduleSource);
-      });
+      fetch(moduleUrl)
+        .then(async (response) => {
+          let moduleSource = await response.text();
+          moduleSource = this.#patchModuleSource(moduleSource);
+          await this.#replaceModule(moduleSource);
+        })
+        .catch(console.error);
     }
   }
 
@@ -45,10 +47,18 @@ export class CustomizeModePatcher {
       moduleText,
     );
     const module = await import(chromePath);
+    this.#defineLazyGetter(module);
+    removeFile(PATCHED_MODULE_RELATIVE_PATH);
+  }
+
+  /**
+   *
+   * @param {Object} module
+   */
+  static #defineLazyGetter(module) {
     ChromeUtils.defineLazyGetter(window, "gCustomizeMode", () => {
       return new module.CustomizeMode(window);
     });
-    removeFile(PATCHED_MODULE_RELATIVE_PATH);
   }
 }
 

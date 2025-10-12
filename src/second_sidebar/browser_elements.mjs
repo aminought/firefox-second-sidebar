@@ -15,4 +15,10 @@ export class BrowserElements {
       element: document.getElementById("customization-container"),
     });
   }
+
+  static get notificationPopup() {
+    return new XULElement({
+      element: document.getElementById("notification-popup"),
+    });
+  }
 }

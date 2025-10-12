@@ -6,7 +6,7 @@
 // ==/UserScript==
 
 import { ContextualIdentityServiceWrapper } from "./second_sidebar/wrappers/contextual_identity_service.mjs";
-import { CustomizeModePatcher } from "./second_sidebar/customize_mode_patcher.mjs";
+import { CustomizeModePatcher } from "./second_sidebar/patchers/customize_mode_patcher.mjs";
 import { SidebarDecorator } from "./second_sidebar/sidebar_decorator.mjs";
 import { SidebarInjector } from "./second_sidebar/sidebar_injector.mjs";
 

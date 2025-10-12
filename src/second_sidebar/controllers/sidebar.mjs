@@ -5,6 +5,7 @@ import {
   sendEvents,
 } from "./events.mjs";
 
+import { BrowserElements } from "../browser_elements.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { SidebarSettings } from "../settings/sidebar_settings.mjs";
@@ -39,7 +40,8 @@ export class SidebarController {
         !SidebarElements.webPanelPopupEdit.contains(target) &&
         !SidebarElements.sidebarMainPopupSettings.contains(target) &&
         !SidebarElements.sidebarMainMenuPopup.contains(target) &&
-        !SidebarElements.webPanelMenuPopup.contains(target)
+        !SidebarElements.webPanelMenuPopup.contains(target) &&
+        !BrowserElements.notificationPopup.contains(target)
       ) {
         this.close();
       }
