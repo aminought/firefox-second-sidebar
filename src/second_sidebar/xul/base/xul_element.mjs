@@ -146,6 +146,17 @@ export class XULElement {
 
   /**
    *
+   * @param {XULElement} node
+   * @param {XULElement} child
+   * @returns {XULElement}
+   */
+  insertAfter(node, child) {
+    this.element.insertBefore(node.getXUL(), child.getXUL().nextSibling);
+    return this;
+  }
+
+  /**
+   *
    * @param {string} name
    * @param {string|number} value
    * @returns {XULElement}

@@ -21,4 +21,10 @@ export class BrowserElements {
       element: document.getElementById("notification-popup"),
     });
   }
+
+  static get contentAreaContextMenu() {
+    return new XULElement({
+      element: document.getElementById("contentAreaContextMenu"),
+    });
+  }
 }

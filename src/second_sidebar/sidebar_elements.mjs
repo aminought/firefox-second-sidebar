@@ -3,6 +3,7 @@ import { CustomizableUIWrapper } from "./wrappers/customizable_ui.mjs";
 import { GeometryHint } from "./xul/geometry_hint.mjs";
 import { OpenLinkAsTempWebPanelMenuItem } from "./xul/open_link_as_temp_web_panel.mjs";
 import { OpenLinkAsWebPanelMenuItem } from "./xul/open_link_as_web_panel.mjs";
+import { SearchInWebPanelMenuItem } from "./xul/search_in_web_panel.mjs";
 import { SidebarBox } from "./xul/sidebar_box.mjs";
 import { SidebarBoxArea } from "./xul/sidebar_box_area.mjs";
 import { SidebarCollapseButton } from "./xul/sidebar_collapse_button.mjs";
@@ -124,12 +125,16 @@ export class SidebarElements {
   static #createContextMenuItems() {
     this.openLinkAsWebPanelMenuItem = new OpenLinkAsWebPanelMenuItem();
     this.openLinkAsTempWebPanelMenuItem = new OpenLinkAsTempWebPanelMenuItem();
+    this.searchInWebPanelMenuItem = new SearchInWebPanelMenuItem();
 
     const contentAreaContextMenu = new XULElement({
       element: document.getElementById("contentAreaContextMenu"),
     });
     const separator = new XULElement({
       element: document.getElementById("context-sep-open"),
+    });
+    const contextSearchSelect = new XULElement({
+      element: document.getElementById("context-searchselect"),
     });
 
     contentAreaContextMenu.insertBefore(
@@ -139,6 +144,10 @@ export class SidebarElements {
     contentAreaContextMenu.insertBefore(
       this.openLinkAsTempWebPanelMenuItem,
       separator,
+    );
+    contentAreaContextMenu.insertAfter(
+      this.searchInWebPanelMenuItem,
+      contextSearchSelect,
     );
   }
 }
