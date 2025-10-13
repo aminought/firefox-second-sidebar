@@ -5,12 +5,14 @@
 // @homepageURL     https://github.com/aminought/firefox-second-sidebar
 // ==/UserScript==
 
+import { BrowserElements } from "./second_sidebar/browser_elements.mjs";
 import { ContextualIdentityServiceWrapper } from "./second_sidebar/wrappers/contextual_identity_service.mjs";
 import { CustomizeModePatcher } from "./second_sidebar/patchers/customize_mode_patcher.mjs";
 import { SidebarDecorator } from "./second_sidebar/sidebar_decorator.mjs";
 import { SidebarInjector } from "./second_sidebar/sidebar_injector.mjs";
 
 const run = () => {
+  if (BrowserElements.root.hasClass("sb2-webpanels-window")) return;
   ContextualIdentityServiceWrapper.ensureDataReady();
   if (SidebarInjector.inject()) {
     SidebarDecorator.decorate();
