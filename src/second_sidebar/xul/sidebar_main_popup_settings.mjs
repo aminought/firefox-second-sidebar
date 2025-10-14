@@ -32,6 +32,7 @@ export class SidebarMainPopupSettings extends Panel {
     this.autoHideForwardToggle = new Toggle();
     this.defaultFloatingOffsetMenuList = this.#createPaddingMenuList();
     this.containerBorderMenuList = this.#createContainerBorderMenuList();
+    this.tooltipMenuList = this.#createTooltipMenuList();
     this.autoHideSidebarToggle = new Toggle();
     this.hideSidebarAnimatedToggle = new Toggle();
     this.hideToolbarAnimatedToggle = new Toggle();
@@ -93,6 +94,16 @@ export class SidebarMainPopupSettings extends Panel {
     return menuList;
   }
 
+  #createTooltipMenuList() {
+    const menuList = createMenuList();
+    menuList.appendItem("Title", "title");
+    menuList.appendItem("URL", "url");
+    menuList.appendItem("Last URL", "lasturl");
+    menuList.appendItem("Title and URL", "titleandurl");
+    menuList.appendItem("Title and last URL", "titleandlasturl");
+    return menuList;
+  }
+
   #compose() {
     this.appendChild(
       new PanelMultiView().appendChildren(
@@ -120,6 +131,8 @@ export class SidebarMainPopupSettings extends Panel {
               "Container indicator position",
               this.containerBorderMenuList,
             ),
+            new ToolbarSeparator(),
+            createPopupGroup("Tooltip", this.tooltipMenuList),
             new ToolbarSeparator(),
             createPopupGroup("Auto-hide back button", this.autoHideBackToggle),
             new ToolbarSeparator(),

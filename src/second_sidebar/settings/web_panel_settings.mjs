@@ -9,12 +9,16 @@ export class WebPanelSettings {
    * @param {string} defaultFloatingOffsetCSS
    * @param {string} uuid
    * @param {string} url
-   * @param {string} faviconURL
    * @param {object} params
+   * @param {boolean} params.overrideTitle
+   * @param {string} params.title
+   * @param {boolean} params.overrideFaviconUrl
+   * @param {string} params.faviconUrl
    * @param {boolean} params.pinned
    * @param {boolean} params.alwaysOnTop
    * @param {boolean} params.mobile
    * @param {number} params.zoom
+   * @param {boolean} params.loadLastUrl
    * @param {boolean} params.loadOnStartup
    * @param {boolean} params.unloadOnClose
    * @param {boolean} params.hideToolbar
@@ -34,8 +38,11 @@ export class WebPanelSettings {
     defaultFloatingOffsetCSS,
     uuid,
     url,
-    faviconURL,
     {
+      overrideTitle = false,
+      title = "",
+      overrideFaviconUrl = false,
+      faviconUrl = "",
       pinned = false,
       alwaysOnTop = false,
       mobile = false,
@@ -60,7 +67,10 @@ export class WebPanelSettings {
   ) {
     this.uuid = uuid;
     this.url = url;
-    this.faviconURL = faviconURL;
+    this.overrideTitle = overrideTitle;
+    this.title = title;
+    this.overrideFaviconUrl = overrideFaviconUrl;
+    this.faviconUrl = faviconUrl;
     this.pinned = pinned;
     this.alwaysOnTop = alwaysOnTop;
     this.mobile = mobile;
@@ -93,8 +103,11 @@ export class WebPanelSettings {
       defaultFloatingOffsetCSS,
       object.uuid,
       object.url,
-      object.faviconURL,
       {
+        overrideTitle: object.overrideTitle,
+        title: object.title,
+        overrideFaviconUrl: object.overrideFaviconURL,
+        faviconUrl: object.faviconURL,
         pinned: object.pinned,
         alwaysOnTop: object.alwaysOnTop,
         mobile: object.mobile,

@@ -179,6 +179,18 @@ export const POPUPS_CSS = `
     }
   }
 
+  .sb2-popup-body:has(#sb2-popup-override-title-toggle:not([pressed])) {
+    #sb2-popup-title-items {
+      display: none;
+    }
+  }
+
+  .sb2-popup-body:has(#sb2-popup-override-favicon-toggle:not([pressed])) {
+    #sb2-popup-favicon-items {
+      display: none;
+    }
+  }
+
   .sb2-popup-body:has(#sb2-popup-css-selector-toggle:not([pressed])) {
     #sb2-popup-css-selector-items {
       display: none;

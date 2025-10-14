@@ -13,7 +13,6 @@ import { WebPanelController } from "./web_panel.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { WebPanelsSettings } from "../settings/web_panels_settings.mjs";
 import { WindowWrapper } from "../wrappers/window.mjs";
-import { fetchIconURL } from "../utils/icons.mjs";
 import { gCustomizeModeWrapper } from "../wrappers/g_customize_mode.mjs";
 import { parseNotifications } from "../utils/string.mjs";
 
@@ -524,14 +523,12 @@ export class WebPanelsController {
       console.log("Invalid url:", error);
       return;
     }
-    const faviconURL = await fetchIconURL(url);
 
     const webPanelSettings = new WebPanelSettings(
       SidebarElements.sidebarWrapper.getPosition(),
       SidebarControllers.sidebarGeometry.getDefaultFloatingOffsetCSS(),
       uuid,
       url,
-      faviconURL,
       {
         userContextId,
         temporary,

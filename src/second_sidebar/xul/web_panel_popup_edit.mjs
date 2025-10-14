@@ -46,13 +46,23 @@ export class WebPanelPopupEdit extends Panel {
     });
     this.setType("arrow").setRole("group");
 
-    this.urlInput = createInput({ placeholder: "Web page URL" });
+    this.urlInput = createInput({ placeholder: "URL" });
     this.selectorToggle = new Toggle({ id: "sb2-popup-css-selector-toggle" });
     this.selectorInput = createInput({
       id: "sb2-popup-css-selector-input",
       placeholder: ".class-name, #id, tag-name, etc",
     });
-    this.faviconURLInput = createInput({ placeholder: "Favicon URL" });
+    this.overrideTitleToggle = new Toggle({
+      id: "sb2-popup-override-title-toggle",
+    });
+    this.titleInput = createInput({ placeholder: "Title" });
+    this.titleResetButton = createSubviewIconicButton(ICONS.UNDO, {
+      tooltipText: "Reset title",
+    });
+    this.overrideFaviconUrlToggle = new Toggle({
+      id: "sb2-popup-override-favicon-toggle",
+    });
+    this.faviconUrlInput = createInput({ placeholder: "Favicon URL" });
     this.faviconResetButton = createSubviewIconicButton(ICONS.UNDO, {
       tooltipText: "Request favicon",
     });
@@ -65,6 +75,7 @@ export class WebPanelPopupEdit extends Panel {
     this.containerMenuList = createMenuList({ id: "sb2-container-menu-list" });
     this.temporaryToggle = new Toggle();
     this.mobileToggle = new Toggle();
+    this.loadLastUrl = new Toggle();
     this.loadOnStartupToggle = new Toggle();
     this.unloadOnCloseToggle = new Toggle();
     this.shortcutInput = createInput({
@@ -99,7 +110,7 @@ export class WebPanelPopupEdit extends Panel {
     this.faviconResetButton.addEventListener("click", async (event) => {
       if (isLeftMouseButton(event)) {
         const faviconURL = await fetchIconURL(this.urlInput.getValue());
-        this.faviconURLInput
+        this.faviconUrlInput
           .setValue(faviconURL)
           .dispatchEvent(new Event("input", { bubbles: true }));
       }
@@ -222,8 +233,19 @@ export class WebPanelPopupEdit extends Panel {
               ),
             ),
           ]),
+          createPopupSet("Title", [
+            createPopupGroup("Override", this.overrideTitleToggle),
+            new Div({ id: "sb2-popup-title-items" }).appendChildren(
+              new ToolbarSeparator(),
+              createPopupRow(this.titleInput, this.titleResetButton),
+            ),
+          ]),
           createPopupSet("Favicon", [
-            createPopupRow(this.faviconURLInput, this.faviconResetButton),
+            createPopupGroup("Override", this.overrideFaviconUrlToggle),
+            new Div({ id: "sb2-popup-favicon-items" }).appendChildren(
+              new ToolbarSeparator(),
+              createPopupRow(this.faviconUrlInput, this.faviconResetButton),
+            ),
           ]),
           createPopupSet("Position and size", [
             createPopupGroup("Mode", this.pinnedMenuList),
@@ -243,6 +265,8 @@ export class WebPanelPopupEdit extends Panel {
             ),
           ]),
           createPopupSet("Loading", [
+            createPopupGroup("Restore last URL", this.loadLastUrl),
+            new ToolbarSeparator(),
             createPopupGroup(
               "Load into memory at startup",
               this.loadOnStartupToggle,
@@ -366,8 +390,8 @@ export class WebPanelPopupEdit extends Panel {
     this.selectorInput.addEventListener("input", () => {
       selector(this.settings.uuid, this.selectorInput.getValue(), 1000);
     });
-    this.faviconURLInput.addEventListener("input", () => {
-      faviconURL(this.settings.uuid, this.faviconURLInput.getValue(), 1000);
+    this.faviconUrlInput.addEventListener("input", () => {
+      faviconURL(this.settings.uuid, this.faviconUrlInput.getValue(), 1000);
     });
     this.pinnedMenuList.addEventListener("command", () => {
       pinned(this.settings.uuid, this.pinnedMenuList.getValue() === "true");
@@ -493,9 +517,12 @@ export class WebPanelPopupEdit extends Panel {
     const settings = webPanelController.dumpSettings();
     this.uuid = settings.uuid;
     this.urlInput.setValue(settings.url);
+    this.overrideTitleToggle.setPressed(settings.overrideTitle);
+    this.titleInput.setValue(settings.title);
+    this.overrideFaviconUrlToggle.setPressed(settings.overrideFaviconUrl);
+    this.faviconUrlInput.setValue(settings.faviconUrl);
     this.selectorToggle.setPressed(settings.selectorEnabled);
     this.selectorInput.setValue(settings.selector);
-    this.faviconURLInput.setValue(settings.faviconURL);
     this.pinnedMenuList.setValue(settings.pinned);
     this.floatingAnchorMenuList.setValue(settings.floatingGeometry.anchor);
     this.offsetXTypeMenuList.setValue(settings.floatingGeometry.offsetXType);
@@ -565,7 +592,7 @@ export class WebPanelPopupEdit extends Panel {
     if (this.selectorInput.getValue() !== this.settings.selector) {
       this.onSelectorChange(this.settings.uuid, this.settings.selector);
     }
-    if (this.faviconURLInput.getValue() !== this.settings.faviconURL) {
+    if (this.faviconUrlInput.getValue() !== this.settings.faviconURL) {
       this.onFaviconUrlChange(this.settings.uuid, this.settings.faviconURL);
     }
     if ((this.pinnedMenuList.getValue() === "true") !== this.settings.pinned) {
