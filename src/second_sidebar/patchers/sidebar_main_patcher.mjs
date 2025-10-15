@@ -7,6 +7,7 @@ const PATCHED_MODULE_RELATIVE_PATH = "fss/navigator-toolbox.mjs";
 
 export class SidebarMainPatcher {
   static patch() {
+    console.log("Patching #sb2-main...");
     fetch(MODULE_URL)
       .then(async (response) => {
         let moduleSource = await response.text();
@@ -14,6 +15,7 @@ export class SidebarMainPatcher {
         await this.#reuseModule(moduleSource);
       })
       .catch(console.error);
+    console.log("#sb2-main was patched");
   }
 
   /**

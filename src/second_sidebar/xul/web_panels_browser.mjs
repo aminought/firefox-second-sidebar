@@ -102,6 +102,7 @@ export class WebPanelsBrowser extends Browser {
     const windowRoot = new XULElement({
       element: this.window.document.documentElement,
     });
+    windowRoot.setAttribute("chromehidden", "");
 
     const selectors = [
       "#PersonalToolbar",

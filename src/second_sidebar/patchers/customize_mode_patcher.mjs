@@ -8,6 +8,7 @@ const PATCHED_MODULE_RELATIVE_PATH = "fss/CustomizeMode.sys.mjs";
 
 export class CustomizeModePatcher {
   static patch() {
+    console.log("Patching CustomizeMode.sys.mjs...");
     for (const moduleUrl of MODULE_URLS) {
       fetch(moduleUrl)
         .then(async (response) => {
@@ -17,6 +18,7 @@ export class CustomizeModePatcher {
         })
         .catch(console.error);
     }
+    console.log("CustomizeMode.sys.mjs was patched");
   }
 
   /**
