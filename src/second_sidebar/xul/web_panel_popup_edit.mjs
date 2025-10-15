@@ -44,7 +44,9 @@ export class WebPanelPopupEdit extends Panel {
       id: "sb2-web-panel-edit",
       classList: ["sb2-popup", "sb2-popup-with-header"],
     });
-    this.setType("arrow").setRole("group");
+    this.setType("arrow")
+      .setRole("group")
+      .setAttribute("no-open-on-anchor", "true");
 
     this.urlInput = createInput({ placeholder: "URL" });
     this.dynamicTitleToggle = new Toggle({
@@ -603,15 +605,6 @@ export class WebPanelPopupEdit extends Panel {
       this.removeEventListener("popuphidden", this.cancelOnPopupHidden);
     };
     this.addEventListener("popuphidden", this.cancelOnPopupHidden);
-
-    this.restoreWebPanelButtonState = (event) => {
-      if (event.target.id !== this.id) {
-        return;
-      }
-      webPanelController.button.setOpen(webPanelController.isActive());
-      this.removeEventListener("popuphidden", this.restoreWebPanelButtonState);
-    };
-    this.addEventListener("popuphidden", this.restoreWebPanelButtonState);
 
     this.addEventListener("popupshown", () =>
       SidebarControllers.webPanelsShortcuts.disable(),

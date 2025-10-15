@@ -13,6 +13,8 @@ export class WebPanelTooltip extends Panel {
     this.setType("arrow").setRole("tooltip").setAttributes({
       orient: "vertical",
       "no-open-on-anchor": "true",
+      norolluponanchor: "true",
+      consumeoutsideclicks: "false",
       animate: "open",
     });
 

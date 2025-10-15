@@ -68,6 +68,8 @@ export class WebPanelPopupNew extends Panel {
    */
   listenSaveButtonClick(callback) {
     this.input.addEventListener("keyup", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
       if (event.key === "Enter" || event.keyCode === 13) {
         callback(
           this.input.getValue(),
@@ -77,6 +79,8 @@ export class WebPanelPopupNew extends Panel {
       }
     });
     this.saveButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
       if (isLeftMouseButton(event)) {
         callback(
           this.input.getValue(),
