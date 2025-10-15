@@ -88,6 +88,7 @@ export class SidebarMainPopupSettings extends Panel {
    */
   #createContainerBorderMenuList() {
     const menuList = createMenuList();
+    menuList.appendItem("Off", "off");
     menuList.appendItem("Left", "left");
     menuList.appendItem("Right", "right");
     menuList.appendItem("Top", "top");
@@ -137,7 +138,7 @@ export class SidebarMainPopupSettings extends Panel {
           ]),
           createPopupSet("Web panel button", [
             createPopupGroup(
-              "Container indicator position",
+              "Container indicator",
               this.containerBorderMenuList,
             ),
             new ToolbarSeparator(),
