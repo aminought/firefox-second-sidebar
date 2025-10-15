@@ -60,6 +60,11 @@ export class WebPanelButton extends Widget {
         clearTimeout(this.timer);
         SidebarElements.webPanelTooltip.hidePopup();
       });
+
+      this.button.addEventListener("click", () => {
+        clearTimeout(this.timer);
+        SidebarElements.webPanelTooltip.hidePopup();
+      });
     });
   }
 
