@@ -33,6 +33,7 @@ export class SidebarMainPopupSettings extends Panel {
     this.defaultFloatingOffsetMenuList = this.#createPaddingMenuList();
     this.containerBorderMenuList = this.#createContainerBorderMenuList();
     this.tooltipMenuList = this.#createTooltipMenuList();
+    this.tooltipFullUrlToggle = new Toggle();
     this.autoHideSidebarToggle = new Toggle();
     this.hideSidebarAnimatedToggle = new Toggle();
     this.hideToolbarAnimatedToggle = new Toggle();
@@ -130,8 +131,6 @@ export class SidebarMainPopupSettings extends Panel {
               this.containerBorderMenuList,
             ),
             new ToolbarSeparator(),
-            createPopupGroup("Tooltip", this.tooltipMenuList),
-            new ToolbarSeparator(),
             createPopupGroup("Auto-hide back button", this.autoHideBackToggle),
             new ToolbarSeparator(),
             createPopupGroup(
@@ -142,6 +141,14 @@ export class SidebarMainPopupSettings extends Panel {
             createPopupGroup(
               "Show web panel geometry hint",
               this.enableSidebarBoxHintToggle,
+            ),
+          ]),
+          createPopupSet("Web panel tooltip", [
+            createPopupGroup("Tooltip type", this.tooltipMenuList),
+            new ToolbarSeparator(),
+            createPopupGroup(
+              "Show full URL in tooltip",
+              this.tooltipFullUrlToggle,
             ),
           ]),
           createPopupSet("Animations", [
@@ -173,6 +180,7 @@ export class SidebarMainPopupSettings extends Panel {
    * @param {function(boolean):void} callbacks.enableSidebarBoxHint
    * @param {function(string):void} callbacks.containerBorder
    * @param {function(string):void} callbacks.tooltip
+   * @param {function(boolean):void} callbacks.tooltipFullUrl
    * @param {function(boolean):void} callbacks.autoHideSidebar
    * @param {function(boolean):void} callbacks.hideSidebarAnimated
    * @param {function(boolean):void} callbacks.hideToolbarAnimated
@@ -187,6 +195,7 @@ export class SidebarMainPopupSettings extends Panel {
     enableSidebarBoxHint,
     containerBorder,
     tooltip,
+    tooltipFullUrl,
     autoHideSidebar,
     hideSidebarAnimated,
     hideToolbarAnimated,
@@ -200,6 +209,7 @@ export class SidebarMainPopupSettings extends Panel {
     this.onEnableSidebarBoxHintChange = enableSidebarBoxHint;
     this.onContainerBorderChange = containerBorder;
     this.onTooltipChange = tooltip;
+    this.onTooltipFullUrlChange = tooltipFullUrl;
     this.onAutoHideSidebarChange = autoHideSidebar;
     this.onAutoHideSidebarAnimatedChange = hideSidebarAnimated;
     this.onAutoHideToolbarAnimatedChange = hideToolbarAnimated;
@@ -230,6 +240,9 @@ export class SidebarMainPopupSettings extends Panel {
     );
     this.tooltipMenuList.addEventListener("command", () =>
       tooltip(this.tooltipMenuList.getValue()),
+    );
+    this.tooltipFullUrlToggle.addEventListener("toggle", () =>
+      tooltipFullUrl(this.tooltipFullUrlToggle.getPressed()),
     );
     this.autoHideSidebarToggle.addEventListener("toggle", () =>
       autoHideSidebar(this.autoHideSidebarToggle.getPressed()),
@@ -283,6 +296,7 @@ export class SidebarMainPopupSettings extends Panel {
     this.enableSidebarBoxHintToggle.setPressed(settings.enableSidebarBoxHint);
     this.containerBorderMenuList.setValue(settings.containerBorder);
     this.tooltipMenuList.setValue(settings.tooltip);
+    this.tooltipFullUrlToggle.setPressed(settings.tooltipFullUrl);
     this.autoHideSidebarToggle.setPressed(settings.autoHideSidebar);
     this.hideSidebarAnimatedToggle.setPressed(settings.hideSidebarAnimated);
     this.hideToolbarAnimatedToggle.setPressed(settings.hideToolbarAnimated);
@@ -344,6 +358,11 @@ export class SidebarMainPopupSettings extends Panel {
     }
     if (this.tooltipMenuList.getValue() !== this.settings.tooltip) {
       this.onTooltipChange(this.settings.tooltip);
+    }
+    if (
+      this.tooltipFullUrlToggle.getPressed() !== this.settings.tooltipFullUrl
+    ) {
+      this.onTooltipFullUrlChange(this.settings.tooltipFullUrl);
     }
     if (
       this.autoHideSidebarToggle.getPressed() !== this.settings.autoHideSidebar

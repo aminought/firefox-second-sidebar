@@ -1,9 +1,4 @@
-import {
-  SidebarEvents,
-  WebPanelEvents,
-  sendEvent,
-  sendEvents,
-} from "./events.mjs";
+import { SidebarEvents, sendEvents } from "./events.mjs";
 import {
   hideGeometryHint,
   showFloatingGeometryHint,
@@ -114,7 +109,7 @@ export class SidebarMover {
           uuid: webPanelController.getUUID(),
           geometry,
         });
-        sendEvent(WebPanelEvents.SAVE_WEB_PANELS);
+        SidebarControllers.webPanelsController.saveSettings();
       }
     }
   }

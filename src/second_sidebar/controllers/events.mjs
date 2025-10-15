@@ -28,14 +28,11 @@ export const WebPanelEvents = {
   EDIT_WEB_PANEL_OFFSET_Y_TYPE: "edit_web_panel_offset_y_type",
   EDIT_WEB_PANEL_WIDTH_TYPE: "edit_web_panel_width_type",
   EDIT_WEB_PANEL_HEIGHT_TYPE: "edit_web_panel_height_type",
-  EDIT_WEB_PANEL_TEMPORARY: "edit_web_panel_temporary",
   EDIT_WEB_PANEL_SHORTCUT_ENABLED: "edit_web_panel_shortcut_enabled",
   EDIT_WEB_PANEL_SHORTCUT: "edit_web_panel_shortcut",
   CREATE_WEB_PANEL: "create_web_panel",
   SWITCH_WEB_PANEL: "switch_web_panel",
   DELETE_WEB_PANEL: "delete_web_panel",
-  SAVE_WEB_PANELS: "save_web_panels",
-  OPEN_NEW_WEB_PANEL_POPUP: "open_new_web_panel_popup",
 };
 
 export const SidebarEvents = {
@@ -48,6 +45,7 @@ export const SidebarEvents = {
     "edit_sidebar_auto_hide_forward_button",
   EDIT_SIDEBAR_CONTAINER_BORDER: "edit_sidebar_container_border",
   EDIT_SIDEBAR_TOOLTIP: "edit_sidebar_tooltip",
+  EDIT_SIDEBAR_TOOLTIP_FULL_URL: "edit_sidebar_tooltip_full_url",
   EDIT_SIDEBAR_AUTO_HIDE: "edit_sidebar_auto_hide",
   EDIT_SIDEBAR_AUTO_HIDE_ANIMATED: "edit_sidebar_auto_hide_animated",
   EDIT_SIDEBAR_TOOLBAR_AUTO_HIDE_ANIMATED:
@@ -59,7 +57,6 @@ export const SidebarEvents = {
   RESET_SIDEBAR_FLOATING_WIDTH: "reset_sidebar_floating_width",
   RESET_SIDEBAR_FLOATING_HEIGHT: "reset_sidebar_floating_height",
   RESET_SIDEBAR_FLOATING_ALL: "reset_sidebar_floating_all",
-  SAVE_SIDEBAR: "save_sidebar",
   COLLAPSE_SIDEBAR: "collapse_sidebar",
 };
 

@@ -1,4 +1,4 @@
-import { WebPanelEvents, sendEvent, sendEvents } from "./events.mjs";
+import { WebPanelEvents, sendEvents } from "./events.mjs";
 
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
@@ -90,10 +90,9 @@ export class WebPanelEditController {
         });
       },
       temporary: (uuid, temporary) => {
-        sendEvent(WebPanelEvents.EDIT_WEB_PANEL_TEMPORARY, {
-          uuid,
-          temporary,
-        });
+        const webPanelController =
+          SidebarControllers.webPanelsController.get(uuid);
+        webPanelController.setTemporary(temporary);
       },
       mobile: (uuid, mobile) => {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_MOBILE, {
@@ -175,7 +174,7 @@ export class WebPanelEditController {
     );
 
     SidebarElements.webPanelPopupEdit.listenSaveButtonClick(() => {
-      sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
+      SidebarControllers.webPanelsController.saveSettings();
       this.hidePopup();
     });
   }

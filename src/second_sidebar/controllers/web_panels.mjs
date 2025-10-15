@@ -310,14 +310,6 @@ export class WebPanelsController {
       webPanelController.setAlwaysOnTop(alwaysOnTop);
     });
 
-    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_TEMPORARY, (event) => {
-      const uuid = event.detail.uuid;
-      const temporary = event.detail.temporary;
-
-      const webPanelController = this.get(uuid);
-      webPanelController.setTemporary(temporary);
-    });
-
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_MOBILE, (event) => {
       const uuid = event.detail.uuid;
       const mobile = event.detail.mobile;
@@ -410,13 +402,6 @@ export class WebPanelsController {
       webPanelController.setZoom(value);
     });
 
-    listenEvent(WebPanelEvents.SAVE_WEB_PANELS, (event) => {
-      const isActiveWindow = event.detail.isActiveWindow;
-      if (isActiveWindow) {
-        this.saveSettings();
-      }
-    });
-
     listenEvent(WebPanelEvents.SWITCH_WEB_PANEL, (event) => {
       const uuid = event.detail.uuid;
       const mouseEvent = event.detail.event;
@@ -443,10 +428,6 @@ export class WebPanelsController {
       }
       webPanelController.remove();
       this.delete(uuid);
-
-      if (event.detail.isActiveWindow) {
-        this.saveSettings();
-      }
     });
   }
 

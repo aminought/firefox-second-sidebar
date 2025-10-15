@@ -1,9 +1,4 @@
-import {
-  SidebarEvents,
-  WebPanelEvents,
-  sendEvent,
-  sendEvents,
-} from "./events.mjs";
+import { SidebarEvents, sendEvents } from "./events.mjs";
 import {
   hideGeometryHint,
   showPinnedGeometryHint,
@@ -37,7 +32,7 @@ export class SidebarSplitterController {
         uuid: webPanelController.getUUID(),
         width: width + "px",
       });
-      sendEvent(WebPanelEvents.SAVE_WEB_PANELS);
+      SidebarControllers.webPanelsController.saveSettings();
     });
 
     SidebarElements.sidebarSplitter.addEventListener("click", () => {

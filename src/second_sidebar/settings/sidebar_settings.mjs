@@ -14,6 +14,7 @@ export class SidebarSettings {
    * @param {boolean} params.autoHideForwardButton
    * @param {string} params.containerBorder
    * @param {string} params.tooltip
+   * @param {boolean} params.tooltipFullUrl
    * @param {boolean} params.autoHideSidebar
    * @param {boolean} params.hideSidebarAnimated
    * @param {boolean} params.hideToolbarAnimated
@@ -28,6 +29,7 @@ export class SidebarSettings {
     autoHideForwardButton = false,
     containerBorder = "left",
     tooltip = "titleandurl",
+    tooltipFullUrl = false,
     autoHideSidebar = false,
     hideSidebarAnimated = true,
     hideToolbarAnimated = true,
@@ -42,6 +44,7 @@ export class SidebarSettings {
     this.containerBorder = containerBorder;
     this.autoHideSidebar = autoHideSidebar;
     this.tooltip = tooltip;
+    this.tooltipFullUrl = tooltipFullUrl;
     this.hideSidebarAnimated = hideSidebarAnimated;
     this.hideToolbarAnimated = hideToolbarAnimated;
     this.enableSidebarBoxHint = enableSidebarBoxHint;
@@ -62,6 +65,7 @@ export class SidebarSettings {
       autoHideForwardButton: pref.autoHideForwardButton,
       containerBorder: pref.containerBorder,
       tooltip: pref.tooltip,
+      tooltipFullUrl: pref.tooltipFullUrl,
       autoHideSidebar: pref.autoHideSidebar,
       hideSidebarAnimated: pref.hideSidebarAnimated,
       hideToolbarAnimated: pref.hideToolbarAnimated,
@@ -79,6 +83,7 @@ export class SidebarSettings {
       autoHideForwardButton: this.autoHideForwardButton,
       containerBorder: this.containerBorder,
       tooltip: this.tooltip,
+      tooltipFullUrl: this.tooltipFullUrl,
       autoHideSidebar: this.autoHideSidebar,
       hideSidebarAnimated: this.hideSidebarAnimated,
       hideToolbarAnimated: this.hideToolbarAnimated,

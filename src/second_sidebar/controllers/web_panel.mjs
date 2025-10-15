@@ -2,6 +2,7 @@ import { WebPanelEvents, sendEvent } from "./events.mjs";
 
 import { ChromeUtilsWrapper } from "../wrappers/chrome_utils.mjs";
 import { FALLBACK_ICON } from "../utils/icons.mjs";
+import { NetUtilWrapper } from "../wrappers/net_utils.mjs";
 import { PinnedWebPanelGeometrySettings } from "../settings/pinned_web_panel_geometry_settings.mjs"; // eslint-disable-line no-unused-vars
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
@@ -165,8 +166,13 @@ export class WebPanelController {
    */
   getUrlForTooltip() {
     const tabUrl = this.getTabUrl();
-    const url = this.isTitleDynamic() && tabUrl ? tabUrl : this.#settings.url;
-    return url.replace(/^https?:\/\//, "").replace(/\/$/, "");
+    let url = this.isTitleDynamic() && tabUrl ? tabUrl : this.#settings.url;
+    if (SidebarControllers.sidebarController.getWebPanelTooltipFullUrl()) {
+      return url.replace(/^https?:\/\//, "").replace(/\/$/, "");
+    } else {
+      const uri = NetUtilWrapper.newURI(url);
+      return ["http", "https"].includes(uri.scheme) ? uri.host : url;
+    }
   }
 
   /**

@@ -83,7 +83,7 @@ export class SidebarController {
         uuid: webPanelController.getUUID(),
         pinned: !webPanelController.pinned(),
       });
-      sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
+      SidebarControllers.webPanelsController.saveSettings();
     });
 
     SidebarElements.sidebarToolbar.listenCloseButtonClick(() => {
@@ -136,6 +136,11 @@ export class SidebarController {
       this.setWebPanelTooltip(value);
     });
 
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_TOOLTIP_FULL_URL, (event) => {
+      const value = event.detail.value;
+      this.setWebPanelTooltipFullUrl(value);
+    });
+
     listenEvent(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE, (event) => {
       const value = event.detail.value;
       this.setAutoHideSidebar(value);
@@ -153,13 +158,6 @@ export class SidebarController {
         this.setHideToolbarAnimated(value);
       },
     );
-
-    listenEvent(SidebarEvents.SAVE_SIDEBAR, (event) => {
-      const isActiveWindow = event.detail.isActiveWindow;
-      if (isActiveWindow) {
-        this.saveSettings();
-      }
-    });
   }
 
   open() {
@@ -271,6 +269,22 @@ export class SidebarController {
 
   /**
    *
+   * @returns {boolean}
+   */
+  getWebPanelTooltipFullUrl() {
+    return this.tooltipFullUrl;
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   */
+  setWebPanelTooltipFullUrl(value) {
+    this.tooltipFullUrl = value;
+  }
+
+  /**
+   *
    * @param {boolean} value
    */
   setAutoHideSidebar(value) {
@@ -338,6 +352,7 @@ export class SidebarController {
     );
     this.setContainerBorder(settings.containerBorder);
     this.setWebPanelTooltip(settings.tooltip);
+    this.setWebPanelTooltipFullUrl(settings.tooltipFullUrl);
     this.setAutoHideSidebar(settings.autoHideSidebar);
     this.hideSidebarAnimated = settings.hideSidebarAnimated;
     this.setHideToolbarAnimated(settings.hideToolbarAnimated);
@@ -351,20 +366,26 @@ export class SidebarController {
    * @returns {SidebarSettings}
    */
   dumpSettings() {
-    return new SidebarSettings(
-      SidebarElements.sidebarWrapper.getPosition(),
-      SidebarControllers.sidebarMainController.getPadding(),
-      SidebarControllers.webPanelNewController.getNewWebPanelPosition(),
-      SidebarControllers.sidebarGeometry.getDefaultFloatingOffset(),
-      SidebarElements.sidebarToolbar.getAutoHideBackButton(),
-      SidebarElements.sidebarToolbar.getAutoHideForwardButton(),
-      this.containerBorder,
-      this.tooltip,
-      this.autoHideSidebar,
-      this.hideSidebarAnimated,
-      this.hideToolbarAnimated,
-      SidebarControllers.sidebarGeometry.getEnableSidebarBoxHint(),
-    );
+    return new SidebarSettings({
+      position: SidebarElements.sidebarWrapper.getPosition(),
+      padding: SidebarControllers.sidebarMainController.getPadding(),
+      newWebPanelPosition:
+        SidebarControllers.webPanelNewController.getNewWebPanelPosition(),
+      defaultFloatingOffset:
+        SidebarControllers.sidebarGeometry.getDefaultFloatingOffset(),
+      autoHideBackButton:
+        SidebarElements.sidebarToolbar.getAutoHideBackButton(),
+      autoHideForwardButton:
+        SidebarElements.sidebarToolbar.getAutoHideForwardButton(),
+      containerBorder: this.containerBorder,
+      tooltip: this.tooltip,
+      tooltipFullUrl: this.tooltipFullUrl,
+      autoHideSidebar: this.autoHideSidebar,
+      hideSidebarAnimated: this.hideSidebarAnimated,
+      hideToolbarAnimated: this.hideToolbarAnimated,
+      enableSidebarBoxHint:
+        SidebarControllers.sidebarGeometry.getEnableSidebarBoxHint(),
+    });
   }
 
   saveSettings() {
