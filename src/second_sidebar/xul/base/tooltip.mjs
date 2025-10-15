@@ -16,6 +16,7 @@ export class Tooltip extends Panel {
     this.setType("arrow").setRole("tooltip").setAttributes({
       orient: "vertical",
       "no-open-on-anchor": "true",
+      noautofocus: "true",
       norolluponanchor: "true",
       consumeoutsideclicks: "false",
       animate: "open",
