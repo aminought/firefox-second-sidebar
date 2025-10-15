@@ -12,12 +12,7 @@ export class WebPanelTooltip extends Panel {
     });
     this.setType("arrow").setRole("tooltip").setAttributes({
       orient: "vertical",
-      noautofocus: "true",
-      norolluponanchor: "true",
-      consumeoutsideclicks: "false",
-      flip: "both",
-      side: "bottom",
-      position: "bottomleft topleft",
+      "no-open-on-anchor": "true",
       animate: "open",
     });
 
