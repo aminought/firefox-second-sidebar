@@ -76,7 +76,7 @@ export class ToolbarButton extends XULElement {
    * @returns {boolean}
    */
   isOpen() {
-    return this.getAttribute("open") === "true";
+    return this.getAttributeBool("open");
   }
 
   /**
@@ -126,7 +126,7 @@ export class ToolbarButton extends XULElement {
    * @returns {boolean}
    */
   isDisabled() {
-    return this.getAttribute("disabled") === "true";
+    return this.getAttributeBool("disabled");
   }
 
   /**
@@ -148,7 +148,7 @@ export class ToolbarButton extends XULElement {
    * @returns {boolean}
    */
   isChecked() {
-    return this.getAttribute("checked") === "true";
+    return this.getAttributeBool("checked");
   }
 
   /**

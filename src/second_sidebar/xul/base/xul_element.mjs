@@ -87,7 +87,7 @@ export class XULElement {
    * @returns {boolean}
    */
   hidden() {
-    return this.getAttribute("hidden") === "true";
+    return this.getAttributeBool("hidden");
   }
 
   /**
@@ -194,6 +194,16 @@ export class XULElement {
    */
   getAttribute(name) {
     return this.element.getAttribute(name);
+  }
+
+  /**
+   *
+   * @param {string} name
+   * @returns {boolean}
+   */
+  getAttributeBool(name) {
+    const value = this.element.getAttribute(name);
+    return value === "true" || value === "";
   }
 
   /**

@@ -214,7 +214,7 @@ export class SidebarController {
    * @returns {boolean}
    */
   pinned() {
-    return SidebarElements.sidebarBox.getAttribute("pinned") == "true";
+    return SidebarElements.sidebarBox.getAttributeBool("pinned");
   }
 
   /**

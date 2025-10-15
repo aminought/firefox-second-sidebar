@@ -52,6 +52,14 @@ export class WebPanelTab extends Tab {
    *
    * @param {function():void} callback
    */
+  addTabBrowserInsertedListener(callback) {
+    this.addEventListener("TabBrowserInserted", () => callback());
+  }
+
+  /**
+   *
+   * @param {function():void} callback
+   */
   addTabCloseListener(callback) {
     this.addEventListener("TabClose", () => callback());
   }

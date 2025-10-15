@@ -259,8 +259,8 @@ export class WebPanelController {
       ? this.#tab.image
       : this.#settings.faviconURL;
     if (!image || image.length === 0) image = FALLBACK_ICON;
-    const busy = this.#tab.getAttribute("busy") === "true";
-    const progress = this.#tab.getAttribute("progress") === "true";
+    const busy = this.#tab.getAttributeBool("busy");
+    const progress = this.#tab.getAttributeBool("progress");
     if (busy || progress) {
       this.#button.setIcon("");
       this.#button.setAttribute("loading", "true");
@@ -330,7 +330,9 @@ export class WebPanelController {
     this.#tab.addTabAttrModifiedListener(
       (soundplaying, muted, image, busy, progress, label) => {
         if (soundplaying || muted) {
-          this.#button.setSoundIcon(soundplaying, muted);
+          const isSoundPlaying = this.#tab.getAttributeBool("soundplaying");
+          const isMuted = this.#tab.getAttributeBool("muted");
+          this.#button.setSoundIcon(isSoundPlaying, isMuted);
         }
         if (image || busy || progress) {
           this.updateFavicon();

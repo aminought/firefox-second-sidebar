@@ -215,7 +215,7 @@ export class WebPanelsBrowser extends Browser {
     tab.linkedBrowser.addProgressListener(progressListener);
 
     // We need to add progress listener when loading unloaded tab
-    tab.addEventListener("TabBrowserInserted", () => {
+    tab.addTabBrowserInsertedListener(() => {
       tab.linkedBrowser.addProgressListener(progressListener);
     });
 
