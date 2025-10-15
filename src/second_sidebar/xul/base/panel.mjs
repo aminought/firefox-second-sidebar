@@ -77,7 +77,7 @@ export class Panel extends XULElement {
    * @returns {boolean}
    */
   isPanelOpen() {
-    return this.element.getAttribute("panelopen") === "true";
+    return this.getAttributeBool("panelopen");
   }
 
   /**

@@ -9,12 +9,16 @@ export class WebPanelSettings {
    * @param {string} defaultFloatingOffsetCSS
    * @param {string} uuid
    * @param {string} url
-   * @param {string} faviconURL
    * @param {object} params
+   * @param {boolean} params.dynamicTitle
+   * @param {string} params.title
+   * @param {boolean} params.dynamicFavicon
+   * @param {string} params.faviconURL
    * @param {boolean} params.pinned
    * @param {boolean} params.alwaysOnTop
    * @param {boolean} params.mobile
    * @param {number} params.zoom
+   * @param {boolean} params.loadLastUrl
    * @param {boolean} params.loadOnStartup
    * @param {boolean} params.unloadOnClose
    * @param {boolean} params.hideToolbar
@@ -34,8 +38,11 @@ export class WebPanelSettings {
     defaultFloatingOffsetCSS,
     uuid,
     url,
-    faviconURL,
     {
+      dynamicTitle = true,
+      title = "",
+      dynamicFavicon = true,
+      faviconURL = "",
       pinned = false,
       alwaysOnTop = false,
       mobile = false,
@@ -60,6 +67,9 @@ export class WebPanelSettings {
   ) {
     this.uuid = uuid;
     this.url = url;
+    this.dynamicTitle = dynamicTitle;
+    this.title = title;
+    this.dynamicFavicon = dynamicFavicon;
     this.faviconURL = faviconURL;
     this.pinned = pinned;
     this.alwaysOnTop = alwaysOnTop;
@@ -93,8 +103,11 @@ export class WebPanelSettings {
       defaultFloatingOffsetCSS,
       object.uuid,
       object.url,
-      object.faviconURL,
       {
+        dynamicTitle: object.dynamicTitle,
+        title: object.title,
+        dynamicFavicon: object.dynamicFavicon,
+        faviconURL: object.faviconURL,
         pinned: object.pinned,
         alwaysOnTop: object.alwaysOnTop,
         mobile: object.mobile,
@@ -130,6 +143,9 @@ export class WebPanelSettings {
     return {
       uuid: this.uuid,
       url: this.url,
+      dynamicTitle: this.dynamicTitle,
+      title: this.title,
+      dynamicFavicon: this.dynamicFavicon,
       faviconURL: this.faviconURL,
       pinned: this.pinned,
       alwaysOnTop: this.alwaysOnTop,

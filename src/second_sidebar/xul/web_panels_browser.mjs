@@ -35,6 +35,7 @@ export class WebPanelsBrowser extends Browser {
       autoscroll: "false",
       tooltip: "aHTMLTooltip",
       autocompletepopup: "PopupAutoComplete",
+      chromehidden: "",
     });
 
     this.initialized = false;
@@ -167,18 +168,6 @@ export class WebPanelsBrowser extends Browser {
 
   /**
    *
-   * @param {function(WebPanelTab):void} callback
-   */
-  addPageTitleChangeListener(callback) {
-    this.window.gBrowser.addEventListener("pagetitlechanged", (event) => {
-      const browser = new Browser({ element: event.target });
-      const tab = this.window.gBrowser.getTabForBrowser(browser);
-      callback(WebPanelTab.fromTab(tab));
-    });
-  }
-
-  /**
-   *
    * @param {function():void} callback
    */
   addTabSelectListener(callback) {
@@ -221,7 +210,7 @@ export class WebPanelsBrowser extends Browser {
     tab.linkedBrowser.addProgressListener(progressListener);
 
     // We need to add progress listener when loading unloaded tab
-    tab.addEventListener("TabBrowserInserted", () => {
+    tab.addTabBrowserInsertedListener(() => {
       tab.linkedBrowser.addProgressListener(progressListener);
     });
 
@@ -241,7 +230,7 @@ export class WebPanelsBrowser extends Browser {
 
   /**
    *
-   * @returns {WebPanelTab}
+   * @returns {WebPanelTab?}
    */
   getActiveWebPanelTab() {
     return WebPanelTab.fromTab(this.window.gBrowser.selectedTab);

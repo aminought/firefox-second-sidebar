@@ -3,111 +3,51 @@ import { Settings } from "./settings.mjs";
 const PREF = "second-sidebar.settings";
 
 export class SidebarSettings {
-  /**@type {string} */
-  #position;
-  /**@type {string} */
-  #padding;
-  /**@type {string} */
-  #newWebPanelPosition;
-  /**@type {string} */
-  #defaultFloatingOffset;
-  /**@type {boolean} */
-  #autoHideBackButton;
-  /**@type {boolean} */
-  #autoHideForwardButton;
-  /**@type {string} */
-  #containerBorder;
-  /**@type {boolean} */
-  #autoHideSidebar;
-  /**@type {boolean} */
-  #hideSidebarAnimated;
-  /**@type {boolean} */
-  #hideToolbarAnimated;
-  /**@type {boolean} */
-  #enableSidebarBoxHint;
-
   /**
    *
-   * @param {string} position
-   * @param {string} padding
-   * @param {string} newWebPanelPosition
-   * @param {string} defaultFloatingOffset
-   * @param {boolean} autoHideBackButton
-   * @param {boolean} autoHideForwardButton
-   * @param {string} containerBorder
-   * @param {boolean} autoHideSidebar
-   * @param {boolean} hideSidebarAnimated
-   * @param {boolean} hideToolbarAnimated
-   * @param {boolean} enableSidebarBoxHint
+   * @param {object} params
+   * @param {string} params.position
+   * @param {string} params.padding
+   * @param {string} params.newWebPanelPosition
+   * @param {string} params.defaultFloatingOffset
+   * @param {boolean} params.autoHideBackButton
+   * @param {boolean} params.autoHideForwardButton
+   * @param {string} params.containerBorder
+   * @param {string} params.tooltip
+   * @param {boolean} params.tooltipFullUrl
+   * @param {boolean} params.autoHideSidebar
+   * @param {boolean} params.hideSidebarAnimated
+   * @param {boolean} params.hideToolbarAnimated
+   * @param {boolean} params.enableSidebarBoxHint
    */
-  constructor(
-    position,
-    padding,
-    newWebPanelPosition,
-    defaultFloatingOffset,
-    autoHideBackButton,
-    autoHideForwardButton,
-    containerBorder,
-    autoHideSidebar,
-    hideSidebarAnimated,
-    hideToolbarAnimated,
-    enableSidebarBoxHint,
-  ) {
-    this.#position = position;
-    this.#padding = padding;
-    this.#newWebPanelPosition = newWebPanelPosition;
-    this.#defaultFloatingOffset = defaultFloatingOffset;
-    this.#autoHideBackButton = autoHideBackButton;
-    this.#autoHideForwardButton = autoHideForwardButton;
-    this.#containerBorder = containerBorder;
-    this.#autoHideSidebar = autoHideSidebar;
-    this.#hideSidebarAnimated = hideSidebarAnimated;
-    this.#hideToolbarAnimated = hideToolbarAnimated;
-    this.#enableSidebarBoxHint = enableSidebarBoxHint;
-  }
-
-  get position() {
-    return this.#position;
-  }
-
-  get padding() {
-    return this.#padding;
-  }
-
-  get newWebPanelPosition() {
-    return this.#newWebPanelPosition;
-  }
-
-  get defaultFloatingOffset() {
-    return this.#defaultFloatingOffset;
-  }
-
-  get autoHideBackButton() {
-    return this.#autoHideBackButton;
-  }
-
-  get autoHideForwardButton() {
-    return this.#autoHideForwardButton;
-  }
-
-  get containerBorder() {
-    return this.#containerBorder;
-  }
-
-  get autoHideSidebar() {
-    return this.#autoHideSidebar;
-  }
-
-  get hideSidebarAnimated() {
-    return this.#hideSidebarAnimated;
-  }
-
-  get hideToolbarAnimated() {
-    return this.#hideToolbarAnimated;
-  }
-
-  get enableSidebarBoxHint() {
-    return this.#enableSidebarBoxHint;
+  constructor({
+    position = "right",
+    padding = "small",
+    newWebPanelPosition = "before",
+    defaultFloatingOffset = "small",
+    autoHideBackButton = false,
+    autoHideForwardButton = false,
+    containerBorder = "left",
+    tooltip = "titleandurl",
+    tooltipFullUrl = false,
+    autoHideSidebar = false,
+    hideSidebarAnimated = true,
+    hideToolbarAnimated = true,
+    enableSidebarBoxHint = false,
+  }) {
+    this.position = position;
+    this.padding = padding;
+    this.newWebPanelPosition = newWebPanelPosition;
+    this.defaultFloatingOffset = defaultFloatingOffset;
+    this.autoHideBackButton = autoHideBackButton;
+    this.autoHideForwardButton = autoHideForwardButton;
+    this.containerBorder = containerBorder;
+    this.autoHideSidebar = autoHideSidebar;
+    this.tooltip = tooltip;
+    this.tooltipFullUrl = tooltipFullUrl;
+    this.hideSidebarAnimated = hideSidebarAnimated;
+    this.hideToolbarAnimated = hideToolbarAnimated;
+    this.enableSidebarBoxHint = enableSidebarBoxHint;
   }
 
   /**
@@ -116,34 +56,38 @@ export class SidebarSettings {
    */
   static load() {
     const pref = Settings.load(PREF) ?? {};
-    return new SidebarSettings(
-      pref.position ?? "right",
-      pref.padding ?? "small",
-      pref.newWebPanelPosition ?? "before",
-      pref.defaultFloatingOffset ?? "small",
-      pref.autoHideBackButton ?? false,
-      pref.autoHideForwardButton ?? false,
-      pref.containerBorder ?? "left",
-      pref.autoHideSidebar ?? false,
-      pref.hideSidebarAnimated ?? true,
-      pref.hideToolbarAnimated ?? true,
-      pref.enableSidebarBoxHint ?? false,
-    );
+    return new SidebarSettings({
+      position: pref.position,
+      padding: pref.padding,
+      newWebPanelPosition: pref.newWebPanelPosition,
+      defaultFloatingOffset: pref.defaultFloatingOffset,
+      autoHideBackButton: pref.autoHideBackButton,
+      autoHideForwardButton: pref.autoHideForwardButton,
+      containerBorder: pref.containerBorder,
+      tooltip: pref.tooltip,
+      tooltipFullUrl: pref.tooltipFullUrl,
+      autoHideSidebar: pref.autoHideSidebar,
+      hideSidebarAnimated: pref.hideSidebarAnimated,
+      hideToolbarAnimated: pref.hideToolbarAnimated,
+      enableSidebarBoxHint: pref.enableSidebarBoxHint,
+    });
   }
 
   save() {
     Settings.save(PREF, {
-      position: this.#position,
-      padding: this.#padding,
-      newWebPanelPosition: this.#newWebPanelPosition,
-      defaultFloatingOffset: this.#defaultFloatingOffset,
-      autoHideBackButton: this.#autoHideBackButton,
-      autoHideForwardButton: this.#autoHideForwardButton,
-      containerBorder: this.#containerBorder,
-      autoHideSidebar: this.#autoHideSidebar,
-      hideSidebarAnimated: this.#hideSidebarAnimated,
-      hideToolbarAnimated: this.#hideToolbarAnimated,
-      enableSidebarBoxHint: this.#enableSidebarBoxHint,
+      position: this.position,
+      padding: this.padding,
+      newWebPanelPosition: this.newWebPanelPosition,
+      defaultFloatingOffset: this.defaultFloatingOffset,
+      autoHideBackButton: this.autoHideBackButton,
+      autoHideForwardButton: this.autoHideForwardButton,
+      containerBorder: this.containerBorder,
+      tooltip: this.tooltip,
+      tooltipFullUrl: this.tooltipFullUrl,
+      autoHideSidebar: this.autoHideSidebar,
+      hideSidebarAnimated: this.hideSidebarAnimated,
+      hideToolbarAnimated: this.hideToolbarAnimated,
+      enableSidebarBoxHint: this.enableSidebarBoxHint,
     });
   }
 }

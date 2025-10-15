@@ -1,9 +1,4 @@
-import {
-  WebPanelEvents,
-  listenEvent,
-  sendEvent,
-  sendEvents,
-} from "./events.mjs";
+import { WebPanelEvents, sendEvents } from "./events.mjs";
 
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { WindowWrapper } from "../wrappers/window.mjs";
@@ -11,13 +6,10 @@ import { isLeftMouseButton } from "../utils/buttons.mjs";
 
 export class WebPanelNewController {
   constructor() {
-    listenEvent(WebPanelEvents.OPEN_NEW_WEB_PANEL_POPUP, () => {
-      this.openPopup();
-    });
-
-    SidebarElements.webPanelNewButton.listenClick((event) => {
+    SidebarElements.webPanelNewButton.addEventListener("click", (event) => {
+      event.stopPropagation();
       if (isLeftMouseButton(event)) {
-        sendEvent(WebPanelEvents.OPEN_NEW_WEB_PANEL_POPUP);
+        this.openPopup();
       }
     });
 

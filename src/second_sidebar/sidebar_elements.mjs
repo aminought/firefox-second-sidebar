@@ -20,6 +20,7 @@ import { WebPanelPopupDelete } from "./xul/web_panel_popup_delete.mjs";
 import { WebPanelPopupEdit } from "./xul/web_panel_popup_edit.mjs";
 import { WebPanelPopupMore } from "./xul/web_panel_popup_more.mjs";
 import { WebPanelPopupNew } from "./xul/web_panel_popup_new.mjs";
+import { WebPanelTooltip } from "./xul/web_panel_tooltip.mjs";
 import { WebPanelsBrowser } from "./xul/web_panels_browser.mjs";
 import { XULElement } from "./xul/base/xul_element.mjs";
 
@@ -100,6 +101,7 @@ export class SidebarElements {
   }
 
   static #createPopups() {
+    this.webPanelTooltip = new WebPanelTooltip();
     this.webPanelMenuPopup = new WebPanelMenuPopup();
     this.webPanelPopupNew = new WebPanelPopupNew();
     this.webPanelPopupEdit = new WebPanelPopupEdit();
@@ -112,6 +114,7 @@ export class SidebarElements {
       element: document.getElementById("mainPopupSet"),
     });
     mainPopupSet.appendChildren(
+      this.webPanelTooltip,
       this.webPanelMenuPopup,
       this.webPanelPopupNew,
       this.webPanelPopupEdit,

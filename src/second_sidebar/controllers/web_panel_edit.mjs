@@ -1,4 +1,4 @@
-import { WebPanelEvents, sendEvent, sendEvents } from "./events.mjs";
+import { WebPanelEvents, sendEvents } from "./events.mjs";
 
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
@@ -18,6 +18,21 @@ export class WebPanelEditController {
           timeout,
         });
       },
+      title: (uuid, dynamicTitle, title) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_TITLE, {
+          uuid,
+          dynamicTitle,
+          title,
+        });
+      },
+      faviconURL: (uuid, dynamicFavicon, faviconURL, timeout = 0) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_FAVICON_URL, {
+          uuid,
+          dynamicFavicon,
+          faviconURL,
+          timeout,
+        });
+      },
       selectorEnabled: (uuid, selectorEnabled, timeout = 0) => {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_SELECTOR_ENABLED, {
           uuid,
@@ -29,13 +44,6 @@ export class WebPanelEditController {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_SELECTOR, {
           uuid,
           selector,
-          timeout,
-        });
-      },
-      faviconURL: (uuid, faviconURL, timeout = 0) => {
-        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_FAVICON_URL, {
-          uuid,
-          faviconURL,
           timeout,
         });
       },
@@ -82,10 +90,9 @@ export class WebPanelEditController {
         });
       },
       temporary: (uuid, temporary) => {
-        sendEvent(WebPanelEvents.EDIT_WEB_PANEL_TEMPORARY, {
-          uuid,
-          temporary,
-        });
+        const webPanelController =
+          SidebarControllers.webPanelsController.get(uuid);
+        webPanelController.setTemporary(temporary);
       },
       mobile: (uuid, mobile) => {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_MOBILE, {
@@ -167,7 +174,7 @@ export class WebPanelEditController {
     );
 
     SidebarElements.webPanelPopupEdit.listenSaveButtonClick(() => {
-      sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
+      SidebarControllers.webPanelsController.saveSettings();
       this.hidePopup();
     });
   }

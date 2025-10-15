@@ -1,5 +1,5 @@
 import { OPEN_URL_IN, openTrustedLinkInWrapper } from "../wrappers/global.mjs";
-import { WebPanelEvents, sendEvent, sendEvents } from "./events.mjs";
+import { WebPanelEvents, sendEvents } from "./events.mjs";
 
 import { ClipboardHelperWrapper } from "../wrappers/clipboard_helper.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
@@ -42,17 +42,16 @@ export class WebPanelMoreController {
           uuid,
           mobile,
         });
-        sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
+        SidebarControllers.webPanelsController.saveSettings();
       },
     );
 
     SidebarElements.webPanelPopupMore.listenTemporaryButtonClick(
       (uuid, temporary) => {
-        sendEvent(WebPanelEvents.EDIT_WEB_PANEL_TEMPORARY, {
-          uuid,
-          temporary,
-        });
-        sendEvent(WebPanelEvents.SAVE_WEB_PANELS);
+        const webPanelController =
+          SidebarControllers.webPanelsController.get(uuid);
+        webPanelController.setTemporary(temporary);
+        SidebarControllers.webPanelsController.saveSettings();
       },
     );
 
@@ -62,7 +61,7 @@ export class WebPanelMoreController {
           uuid,
           alwaysOnTop,
         });
-        sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
+        SidebarControllers.webPanelsController.saveSettings();
       },
     );
 
@@ -70,7 +69,7 @@ export class WebPanelMoreController {
       sendEvents(WebPanelEvents.EDIT_WEB_PANEL_ZOOM_OUT, {
         uuid,
       });
-      sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
+      SidebarControllers.webPanelsController.saveSettings();
 
       const webPanelController =
         SidebarControllers.webPanelsController.get(uuid);
@@ -81,7 +80,7 @@ export class WebPanelMoreController {
       sendEvents(WebPanelEvents.EDIT_WEB_PANEL_ZOOM_IN, {
         uuid,
       });
-      sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
+      SidebarControllers.webPanelsController.saveSettings();
 
       const webPanelController =
         SidebarControllers.webPanelsController.get(uuid);
@@ -93,7 +92,7 @@ export class WebPanelMoreController {
         uuid,
         value: 1,
       });
-      sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
+      SidebarControllers.webPanelsController.saveSettings();
 
       const webPanelController =
         SidebarControllers.webPanelsController.get(uuid);

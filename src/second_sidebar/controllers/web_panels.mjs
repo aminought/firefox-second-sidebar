@@ -4,7 +4,6 @@ import {
   listenEvent,
   sendEvents,
 } from "./events.mjs";
-import { isLeftMouseButton, isMiddleMouseButton } from "../utils/buttons.mjs";
 
 import { NetUtilWrapper } from "../wrappers/net_utils.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
@@ -13,9 +12,7 @@ import { WebPanelController } from "./web_panel.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { WebPanelsSettings } from "../settings/web_panels_settings.mjs";
 import { WindowWrapper } from "../wrappers/window.mjs";
-import { fetchIconURL } from "../utils/icons.mjs";
 import { gCustomizeModeWrapper } from "../wrappers/g_customize_mode.mjs";
-import { parseNotifications } from "../utils/string.mjs";
 
 export class WebPanelsController {
   constructor() {
@@ -144,6 +141,26 @@ export class WebPanelsController {
       }, timeout);
     });
 
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_TITLE, (event) => {
+      const { uuid, dynamicTitle, title } = event.detail;
+
+      const webPanelController = this.get(uuid);
+      webPanelController.setTitle(dynamicTitle, title);
+      webPanelController.updateTitle();
+    });
+
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_FAVICON_URL, (event) => {
+      const { uuid, dynamicFavicon, faviconURL, timeout } = event.detail;
+
+      const webPanelController = this.get(uuid);
+      webPanelController.setFaviconURL(dynamicFavicon, faviconURL);
+
+      clearTimeout(this.faviconURLTimeout);
+      this.faviconURLTimeout = setTimeout(() => {
+        webPanelController.updateFavicon();
+      }, timeout);
+    });
+
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_SELECTOR_ENABLED, (event) => {
       const uuid = event.detail.uuid;
       const selectorEnabled = event.detail.selectorEnabled;
@@ -177,36 +194,16 @@ export class WebPanelsController {
       }, timeout);
     });
 
-    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_FAVICON_URL, (event) => {
-      const uuid = event.detail.uuid;
-      const faviconURL = event.detail.faviconURL;
-      const timeout = event.detail.timeout;
-
-      const webPanelController = this.get(uuid);
-      const oldFaviconURL = webPanelController.getFaviconURL();
-      webPanelController.setWebPanelFaviconURL(faviconURL);
-
-      clearTimeout(this.faviconURLTimeout);
-      this.faviconURLTimeout = setTimeout(() => {
-        if (oldFaviconURL !== faviconURL) {
-          webPanelController.setWebPanelButtonFaviconURL(faviconURL);
-        }
-      }, timeout);
-    });
-
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_PINNED, (event) => {
       const uuid = event.detail.uuid;
       const pinned = event.detail.pinned;
 
       const webPanelController = this.get(uuid);
       pinned ? webPanelController.pin() : webPanelController.unpin();
+
       if (webPanelController.isActive()) {
-        pinned
-          ? SidebarControllers.sidebarController.pin()
-          : SidebarControllers.sidebarController.unpin();
-        if (webPanelController.getHideToolbar()) {
-          SidebarControllers.sidebarController.collapseToolbar();
-        }
+        SidebarControllers.sidebarController.updatePinState(webPanelController);
+        SidebarControllers.sidebarController.updateToolbar(webPanelController);
       }
     });
 
@@ -310,14 +307,6 @@ export class WebPanelsController {
       webPanelController.setAlwaysOnTop(alwaysOnTop);
     });
 
-    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_TEMPORARY, (event) => {
-      const uuid = event.detail.uuid;
-      const temporary = event.detail.temporary;
-
-      const webPanelController = this.get(uuid);
-      webPanelController.setTemporary(temporary);
-    });
-
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_MOBILE, (event) => {
       const uuid = event.detail.uuid;
       const mobile = event.detail.mobile;
@@ -410,30 +399,6 @@ export class WebPanelsController {
       webPanelController.setZoom(value);
     });
 
-    listenEvent(WebPanelEvents.SAVE_WEB_PANELS, (event) => {
-      const isActiveWindow = event.detail.isActiveWindow;
-      if (isActiveWindow) {
-        this.saveSettings();
-      }
-    });
-
-    listenEvent(WebPanelEvents.SWITCH_WEB_PANEL, (event) => {
-      const uuid = event.detail.uuid;
-      const mouseEvent = event.detail.event;
-
-      const webPanelController = this.get(uuid);
-      if (!webPanelController) return;
-
-      if (isLeftMouseButton(mouseEvent)) {
-        webPanelController.switchWebPanel();
-      } else if (isMiddleMouseButton(mouseEvent)) {
-        if (webPanelController.isActive()) {
-          SidebarControllers.sidebarController.close();
-        }
-        webPanelController.unload();
-      }
-    });
-
     listenEvent(WebPanelEvents.DELETE_WEB_PANEL, async (event) => {
       const uuid = event.detail.uuid;
 
@@ -443,24 +408,10 @@ export class WebPanelsController {
       }
       webPanelController.remove();
       this.delete(uuid);
-
-      if (event.detail.isActiveWindow) {
-        this.saveSettings();
-      }
     });
   }
 
   #setupWebPanelsBrowserListeners() {
-    // Change toolbar title when title of selected tab is changed
-    SidebarElements.webPanelsBrowser.addPageTitleChangeListener((tab) => {
-      const title = tab.linkedBrowser.getTitle();
-      if (tab.selected) {
-        SidebarElements.sidebarToolbar.setTitle(title);
-      }
-      const webPanelController = this.get(tab.uuid);
-      const notifications = parseNotifications(title);
-      webPanelController.button.setNotificationBadge(notifications);
-    });
     // Open/close corresponding web panel when tab is selected
     SidebarElements.webPanelsBrowser.addTabSelectListener(() => {
       const activeWebPanelTab =
@@ -524,14 +475,12 @@ export class WebPanelsController {
       console.log("Invalid url:", error);
       return;
     }
-    const faviconURL = await fetchIconURL(url);
 
     const webPanelSettings = new WebPanelSettings(
       SidebarElements.sidebarWrapper.getPosition(),
       SidebarControllers.sidebarGeometry.getDefaultFloatingOffsetCSS(),
       uuid,
       url,
-      faviconURL,
       {
         userContextId,
         temporary,
@@ -576,7 +525,7 @@ export class WebPanelsController {
    */
   getActive() {
     const tab = SidebarElements.webPanelsBrowser.getActiveWebPanelTab();
-    return tab.isEmpty() ? null : this.get(tab.uuid);
+    return tab && !tab.isEmpty() ? this.get(tab.uuid) : null;
   }
 
   /**

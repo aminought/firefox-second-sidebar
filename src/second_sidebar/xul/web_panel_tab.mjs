@@ -13,9 +13,10 @@ export class WebPanelTab extends Tab {
   /**
    *
    * @param {Tab} tab
-   * @returns {WebPanelTab}
+   * @returns {WebPanelTab?}
    */
   static fromTab(tab) {
+    if (!tab) return null;
     return new WebPanelTab(tab.getXUL());
   }
 
@@ -52,7 +53,32 @@ export class WebPanelTab extends Tab {
    *
    * @param {function():void} callback
    */
+  addTabBrowserInsertedListener(callback) {
+    this.addEventListener("TabBrowserInserted", () => callback());
+  }
+
+  /**
+   *
+   * @param {function():void} callback
+   */
   addTabCloseListener(callback) {
     this.addEventListener("TabClose", () => callback());
+  }
+
+  /**
+   *
+   * @param {function(boolean, boolean, boolean, boolean, boolean, boolean):void} callback
+   */
+  addTabAttrModifiedListener(callback) {
+    this.addEventListener("TabAttrModified", (event) => {
+      const changed = event.detail?.changed ?? [];
+      const soundplaying = changed.includes("soundplaying");
+      const muted = changed.includes("muted");
+      const image = changed.includes("image");
+      const busy = changed.includes("busy");
+      const progress = changed.includes("progress");
+      const label = changed.includes("label");
+      callback(soundplaying, muted, image, busy, progress, label);
+    });
   }
 }

@@ -43,6 +43,13 @@ export class Tab extends XULElement {
   }
 
   /**
+   * @returns {string}
+   */
+  get image() {
+    return this.element.image;
+  }
+
+  /**
    *
    * @returns {Tab}
    */

@@ -5,6 +5,7 @@ const PATCHED_MODULE_RELATIVE_PATH = "fss/PopupNotifications.sys.mjs";
 
 export class PopupNotificationsPatcher {
   static patch() {
+    console.log("Patching PopupNotifications.sys.mjs...");
     fetch(MODULE_URL)
       .then(async (response) => {
         let moduleSource = await response.text();
@@ -12,6 +13,7 @@ export class PopupNotificationsPatcher {
         await this.#replaceModule(moduleSource);
       })
       .catch(console.error);
+    console.log("PopupNotifications.sys.mjs was patched");
   }
 
   static #patchModuleSource(moduleSource) {

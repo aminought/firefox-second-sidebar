@@ -44,17 +44,29 @@ export class WebPanelPopupEdit extends Panel {
       id: "sb2-web-panel-edit",
       classList: ["sb2-popup", "sb2-popup-with-header"],
     });
-    this.setType("arrow").setRole("group");
+    this.setType("arrow")
+      .setRole("group")
+      .setAttribute("no-open-on-anchor", "true");
 
-    this.urlInput = createInput({ placeholder: "Web page URL" });
-    this.selectorToggle = new Toggle({ id: "sb2-popup-css-selector-toggle" });
-    this.selectorInput = createInput({
-      id: "sb2-popup-css-selector-input",
-      placeholder: ".class-name, #id, tag-name, etc",
+    this.urlInput = createInput({ placeholder: "URL" });
+    this.dynamicTitleToggle = new Toggle({
+      id: "sb2-popup-dynamic-title-toggle",
+    });
+    this.titleInput = createInput({ placeholder: "Title" });
+    this.titleResetButton = createSubviewIconicButton(ICONS.UNDO, {
+      tooltipText: "Reset title",
+    });
+    this.dynamicFaviconToggle = new Toggle({
+      id: "sb2-popup-dynamic-favicon-toggle",
     });
     this.faviconURLInput = createInput({ placeholder: "Favicon URL" });
     this.faviconResetButton = createSubviewIconicButton(ICONS.UNDO, {
       tooltipText: "Request favicon",
+    });
+    this.selectorToggle = new Toggle({ id: "sb2-popup-css-selector-toggle" });
+    this.selectorInput = createInput({
+      id: "sb2-popup-css-selector-input",
+      placeholder: ".class-name, #id, tag-name, etc",
     });
     this.pinnedMenuList = this.#createPinTypeMenuList();
     this.floatingAnchorMenuList = this.#createFloatingAnchorMenuList();
@@ -65,6 +77,7 @@ export class WebPanelPopupEdit extends Panel {
     this.containerMenuList = createMenuList({ id: "sb2-container-menu-list" });
     this.temporaryToggle = new Toggle();
     this.mobileToggle = new Toggle();
+    this.loadLastUrlToggle = new Toggle();
     this.loadOnStartupToggle = new Toggle();
     this.unloadOnCloseToggle = new Toggle();
     this.shortcutInput = createInput({
@@ -96,6 +109,14 @@ export class WebPanelPopupEdit extends Panel {
   }
 
   #setupListeners() {
+    this.titleResetButton.addEventListener("click", (event) => {
+      if (isLeftMouseButton(event)) {
+        this.titleInput
+          .setValue(this.webPanelController.getTabTitle())
+          .dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    });
+
     this.faviconResetButton.addEventListener("click", async (event) => {
       if (isLeftMouseButton(event)) {
         const faviconURL = await fetchIconURL(this.urlInput.getValue());
@@ -222,8 +243,19 @@ export class WebPanelPopupEdit extends Panel {
               ),
             ),
           ]),
+          createPopupSet("Title", [
+            createPopupGroup("Dynamic", this.dynamicTitleToggle),
+            new Div({ id: "sb2-popup-title-items" }).appendChildren(
+              new ToolbarSeparator(),
+              createPopupRow(this.titleInput, this.titleResetButton),
+            ),
+          ]),
           createPopupSet("Favicon", [
-            createPopupRow(this.faviconURLInput, this.faviconResetButton),
+            createPopupGroup("Dynamic", this.dynamicFaviconToggle),
+            new Div({ id: "sb2-popup-favicon-items" }).appendChildren(
+              new ToolbarSeparator(),
+              createPopupRow(this.faviconURLInput, this.faviconResetButton),
+            ),
           ]),
           createPopupSet("Position and size", [
             createPopupGroup("Mode", this.pinnedMenuList),
@@ -285,9 +317,10 @@ export class WebPanelPopupEdit extends Panel {
    *
    * @param {object} callbacks
    * @param {function(string, string, number):void} callbacks.url
+   * @param {function(string, boolean string):void} callbacks.title
+   * @param {function(string, boolean, string, number):void} callbacks.faviconURL
    * @param {function(string, boolean):void} callbacks.selectorEnabled
    * @param {function(string, string):void} callbacks.selector
-   * @param {function(string, string, number):void} callbacks.faviconURL
    * @param {function(string, boolean):void} callbacks.mobile
    * @param {function(string, boolean):void} callbacks.pinned
    * @param {function(string, string):void} callbacks.anchor
@@ -297,6 +330,7 @@ export class WebPanelPopupEdit extends Panel {
    * @param {function(string, string):void} callbacks.heightType
    * @param {function(string, string):void} callbacks.userContextId
    * @param {function(string, boolean):void} callbacks.temporary
+   * @param {function(string, boolean):void} callbacks.loadLastUrl
    * @param {function(string, boolean):void} callbacks.loadOnStartup
    * @param {function(string, boolean):void} callbacks.unloadOnClose
    * @param {function(string, string):void} callbacks.shortcut
@@ -310,9 +344,10 @@ export class WebPanelPopupEdit extends Panel {
    */
   listenChanges({
     url,
+    title,
+    faviconURL,
     selectorEnabled,
     selector,
-    faviconURL,
     mobile,
     pinned,
     anchor,
@@ -322,6 +357,7 @@ export class WebPanelPopupEdit extends Panel {
     heightType,
     userContextId,
     temporary,
+    loadLastUrl,
     loadOnStartup,
     unloadOnClose,
     shortcut,
@@ -334,9 +370,10 @@ export class WebPanelPopupEdit extends Panel {
     zoom,
   }) {
     this.onUrlChange = url;
+    this.onTitleChange = title;
+    this.onFaviconURLChange = faviconURL;
     this.onSelectorEnabledChange = selectorEnabled;
     this.onSelectorChange = selector;
-    this.onFaviconUrlChange = faviconURL;
     this.onTemporaryChange = temporary;
     this.onMobileChange = mobile;
     this.onPinnedChange = pinned;
@@ -346,6 +383,7 @@ export class WebPanelPopupEdit extends Panel {
     this.onWidthTypeChange = widthType;
     this.onHeightTypeChange = heightType;
     this.onUserContextIdChange = userContextId;
+    this.onLoadLastUrlChange = loadLastUrl;
     this.onLoadOnStartupChange = loadOnStartup;
     this.onUnloadOnCloseChange = unloadOnClose;
     this.onShortcutChange = shortcut;
@@ -360,14 +398,41 @@ export class WebPanelPopupEdit extends Panel {
     this.urlInput.addEventListener("input", () => {
       url(this.settings.uuid, this.urlInput.getValue(), 1000);
     });
+    this.dynamicTitleToggle.addEventListener("toggle", () => {
+      title(
+        this.settings.uuid,
+        this.dynamicTitleToggle.getPressed(),
+        this.titleInput.getValue(),
+      );
+    });
+    this.titleInput.addEventListener("input", () => {
+      title(
+        this.settings.uuid,
+        this.dynamicTitleToggle.getPressed(),
+        this.titleInput.getValue(),
+      );
+    });
+    this.dynamicFaviconToggle.addEventListener("toggle", () => {
+      faviconURL(
+        this.settings.uuid,
+        this.dynamicFaviconToggle.getPressed(),
+        this.faviconURLInput.getValue(),
+        1000,
+      );
+    });
+    this.faviconURLInput.addEventListener("input", () => {
+      faviconURL(
+        this.settings.uuid,
+        this.dynamicFaviconToggle.getPressed(),
+        this.faviconURLInput.getValue(),
+        1000,
+      );
+    });
     this.selectorToggle.addEventListener("toggle", () => {
       selectorEnabled(this.settings.uuid, this.selectorToggle.getPressed());
     });
     this.selectorInput.addEventListener("input", () => {
       selector(this.settings.uuid, this.selectorInput.getValue(), 1000);
-    });
-    this.faviconURLInput.addEventListener("input", () => {
-      faviconURL(this.settings.uuid, this.faviconURLInput.getValue(), 1000);
     });
     this.pinnedMenuList.addEventListener("command", () => {
       pinned(this.settings.uuid, this.pinnedMenuList.getValue() === "true");
@@ -395,6 +460,9 @@ export class WebPanelPopupEdit extends Panel {
     });
     this.mobileToggle.addEventListener("toggle", () => {
       mobile(this.settings.uuid, this.mobileToggle.getPressed());
+    });
+    this.loadLastUrlToggle.addEventListener("toggle", () => {
+      loadLastUrl(this.settings.uuid, this.loadLastUrlToggle.getPressed());
     });
     this.loadOnStartupToggle.addEventListener("toggle", () => {
       loadOnStartup(this.settings.uuid, this.loadOnStartupToggle.getPressed());
@@ -493,9 +561,12 @@ export class WebPanelPopupEdit extends Panel {
     const settings = webPanelController.dumpSettings();
     this.uuid = settings.uuid;
     this.urlInput.setValue(settings.url);
+    this.dynamicTitleToggle.setPressed(settings.dynamicTitle);
+    this.titleInput.setValue(settings.title);
+    this.dynamicFaviconToggle.setPressed(settings.dynamicFavicon);
+    this.faviconURLInput.setValue(settings.faviconURL);
     this.selectorToggle.setPressed(settings.selectorEnabled);
     this.selectorInput.setValue(settings.selector);
-    this.faviconURLInput.setValue(settings.faviconURL);
     this.pinnedMenuList.setValue(settings.pinned);
     this.floatingAnchorMenuList.setValue(settings.floatingGeometry.anchor);
     this.offsetXTypeMenuList.setValue(settings.floatingGeometry.offsetXType);
@@ -512,6 +583,7 @@ export class WebPanelPopupEdit extends Panel {
 
     this.temporaryToggle.setPressed(settings.temporary);
     this.mobileToggle.setPressed(settings.mobile);
+    this.loadLastUrlToggle.setPressed(settings.loadLastUrl);
     this.loadOnStartupToggle.setPressed(settings.loadOnStartup);
     this.unloadOnCloseToggle.setPressed(settings.unloadOnClose);
     this.shortcutInput.setValue(settings.shortcut).removeAttribute("error");
@@ -522,6 +594,7 @@ export class WebPanelPopupEdit extends Panel {
     this.#updateZoomButtons(settings.zoom);
     this.zoom = settings.zoom;
 
+    this.webPanelController = webPanelController;
     this.settings = settings;
 
     this.cancelOnPopupHidden = () => {
@@ -532,15 +605,6 @@ export class WebPanelPopupEdit extends Panel {
       this.removeEventListener("popuphidden", this.cancelOnPopupHidden);
     };
     this.addEventListener("popuphidden", this.cancelOnPopupHidden);
-
-    this.restoreWebPanelButtonState = (event) => {
-      if (event.target.id !== this.id) {
-        return;
-      }
-      webPanelController.button.setOpen(webPanelController.isActive());
-      this.removeEventListener("popuphidden", this.restoreWebPanelButtonState);
-    };
-    this.addEventListener("popuphidden", this.restoreWebPanelButtonState);
 
     this.addEventListener("popupshown", () =>
       SidebarControllers.webPanelsShortcuts.disable(),
@@ -556,6 +620,26 @@ export class WebPanelPopupEdit extends Panel {
     if (this.urlInput.getValue() !== this.settings.url) {
       this.onUrlChange(this.settings.uuid, this.settings.url);
     }
+    if (
+      this.dynamicTitleToggle.getPressed() !== this.settings.dynamicTitle ||
+      this.titleInput.getValue() !== this.settings.title
+    ) {
+      this.onTitleChange(
+        this.settings.uuid,
+        this.settings.dynamicTitle,
+        this.settings.title,
+      );
+    }
+    if (
+      this.dynamicFaviconToggle.getPressed() !== this.settings.dynamicFavicon ||
+      this.faviconURLInput.getValue() !== this.settings.faviconURL
+    ) {
+      this.onFaviconURLChange(
+        this.settings.uuid,
+        this.settings.dynamicFavicon,
+        this.settings.faviconURL,
+      );
+    }
     if (this.selectorToggle.getPressed() !== this.settings.selectorEnabled) {
       this.onSelectorEnabledChange(
         this.settings.uuid,
@@ -564,9 +648,6 @@ export class WebPanelPopupEdit extends Panel {
     }
     if (this.selectorInput.getValue() !== this.settings.selector) {
       this.onSelectorChange(this.settings.uuid, this.settings.selector);
-    }
-    if (this.faviconURLInput.getValue() !== this.settings.faviconURL) {
-      this.onFaviconUrlChange(this.settings.uuid, this.settings.faviconURL);
     }
     if ((this.pinnedMenuList.getValue() === "true") !== this.settings.pinned) {
       this.onPinnedChange(this.settings.uuid, this.settings.pinned);
@@ -630,6 +711,9 @@ export class WebPanelPopupEdit extends Panel {
     }
     if (this.mobileToggle.getPressed() !== this.settings.mobile) {
       this.onMobileChange(this.settings.uuid, this.settings.mobile);
+    }
+    if (this.loadLastUrlToggle.getPressed() !== this.settings.loadLastUrl) {
+      this.onLoadLastUrlChange(this.settings.uuid, this.settings.loadLastUrl);
     }
     if (this.loadOnStartupToggle.getPressed() !== this.settings.loadOnStartup) {
       this.onLoadOnStartupChange(

@@ -83,7 +83,7 @@ export class SidebarController {
         uuid: webPanelController.getUUID(),
         pinned: !webPanelController.pinned(),
       });
-      sendEvents(WebPanelEvents.SAVE_WEB_PANELS);
+      SidebarControllers.webPanelsController.saveSettings();
     });
 
     SidebarElements.sidebarToolbar.listenCloseButtonClick(() => {
@@ -131,6 +131,16 @@ export class SidebarController {
       this.setContainerBorder(value);
     });
 
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_TOOLTIP, (event) => {
+      const value = event.detail.value;
+      this.setWebPanelTooltip(value);
+    });
+
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_TOOLTIP_FULL_URL, (event) => {
+      const value = event.detail.value;
+      this.setWebPanelTooltipFullUrl(value);
+    });
+
     listenEvent(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE, (event) => {
       const value = event.detail.value;
       this.setAutoHideSidebar(value);
@@ -148,64 +158,19 @@ export class SidebarController {
         this.setHideToolbarAnimated(value);
       },
     );
-
-    listenEvent(SidebarEvents.SAVE_SIDEBAR, (event) => {
-      const isActiveWindow = event.detail.isActiveWindow;
-      if (isActiveWindow) {
-        this.saveSettings();
-      }
-    });
   }
 
-  /**
-   *
-   * @param {boolean} pinned
-   * @param {string?} anchor
-   * @param {string?} top
-   * @param {string?} left
-   * @param {string?} right
-   * @param {string?} bottom
-   * @param {string?} width
-   * @param {string?} height
-   * @param {string?} margin
-   * @param {boolean} canGoBack
-   * @param {boolean} canGoForward
-   * @param {string} title
-   * @param {boolean} hideToolbar
-   */
-  open(
-    pinned,
-    anchor,
-    top,
-    left,
-    right,
-    bottom,
-    width,
-    height,
-    margin,
-    canGoBack,
-    canGoForward,
-    title,
-    hideToolbar,
-  ) {
+  open() {
     SidebarControllers.sidebarToolbarCollapser.clearTimers();
-    SidebarControllers.sidebarGeometry.setFloatingGeometry(
-      anchor,
-      top,
-      left,
-      right,
-      bottom,
-      width,
-      height,
-      margin,
-    );
+
+    const webPanelController =
+      SidebarControllers.webPanelsController.getActive();
+    const floatingGeometry = webPanelController.getFloatingGeometry();
+    SidebarControllers.sidebarGeometry.setFloatingGeometry(floatingGeometry);
+
     SidebarElements.sidebarBox.show();
-    SidebarElements.sidebarToolbar
-      .toggleBackButton(!canGoBack)
-      .toggleForwardButton(!canGoForward)
-      .setTitle(title);
-    hideToolbar ? this.collapseToolbar() : this.uncollapseToolbar();
-    pinned ? this.pin() : this.unpin();
+    this.updateToolbar(webPanelController);
+    this.updatePinState(webPanelController);
   }
 
   close() {
@@ -249,7 +214,32 @@ export class SidebarController {
    * @returns {boolean}
    */
   pinned() {
-    return SidebarElements.sidebarBox.getAttribute("pinned") == "true";
+    return SidebarElements.sidebarBox.getAttributeBool("pinned");
+  }
+
+  /**
+   *
+   * @param {WebPanelController} webPanelController
+   */
+  updateToolbar(webPanelController) {
+    const title = webPanelController.getTitle();
+    const canGoBack = webPanelController.canGoBack();
+    const canGoForward = webPanelController.canGoForward();
+    SidebarElements.sidebarToolbar
+      .setTitle(title)
+      .toggleBackButton(!canGoBack)
+      .toggleForwardButton(!canGoForward);
+
+    const hideToolbar = webPanelController.getHideToolbar();
+    hideToolbar ? this.collapseToolbar() : this.uncollapseToolbar();
+  }
+
+  /**
+   *
+   * @param {WebPanelController} webPanelController
+   */
+  updatePinState(webPanelController) {
+    webPanelController.pinned() ? this.pin() : this.unpin();
   }
 
   /**
@@ -259,6 +249,38 @@ export class SidebarController {
   setContainerBorder(value) {
     this.containerBorder = value;
     changeContainerBorder(value);
+  }
+
+  /**
+   *
+   * @returns {string}
+   */
+  getWebPanelTooltip() {
+    return this.tooltip;
+  }
+
+  /**
+   *
+   * @param {string} value
+   */
+  setWebPanelTooltip(value) {
+    this.tooltip = value;
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  getWebPanelTooltipFullUrl() {
+    return this.tooltipFullUrl;
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   */
+  setWebPanelTooltipFullUrl(value) {
+    this.tooltipFullUrl = value;
   }
 
   /**
@@ -329,6 +351,8 @@ export class SidebarController {
       settings.autoHideForwardButton,
     );
     this.setContainerBorder(settings.containerBorder);
+    this.setWebPanelTooltip(settings.tooltip);
+    this.setWebPanelTooltipFullUrl(settings.tooltipFullUrl);
     this.setAutoHideSidebar(settings.autoHideSidebar);
     this.hideSidebarAnimated = settings.hideSidebarAnimated;
     this.setHideToolbarAnimated(settings.hideToolbarAnimated);
@@ -342,19 +366,26 @@ export class SidebarController {
    * @returns {SidebarSettings}
    */
   dumpSettings() {
-    return new SidebarSettings(
-      SidebarElements.sidebarWrapper.getPosition(),
-      SidebarControllers.sidebarMainController.getPadding(),
-      SidebarControllers.webPanelNewController.getNewWebPanelPosition(),
-      SidebarControllers.sidebarGeometry.getDefaultFloatingOffset(),
-      SidebarElements.sidebarToolbar.getAutoHideBackButton(),
-      SidebarElements.sidebarToolbar.getAutoHideForwardButton(),
-      this.containerBorder,
-      this.autoHideSidebar,
-      this.hideSidebarAnimated,
-      this.hideToolbarAnimated,
-      SidebarControllers.sidebarGeometry.getEnableSidebarBoxHint(),
-    );
+    return new SidebarSettings({
+      position: SidebarElements.sidebarWrapper.getPosition(),
+      padding: SidebarControllers.sidebarMainController.getPadding(),
+      newWebPanelPosition:
+        SidebarControllers.webPanelNewController.getNewWebPanelPosition(),
+      defaultFloatingOffset:
+        SidebarControllers.sidebarGeometry.getDefaultFloatingOffset(),
+      autoHideBackButton:
+        SidebarElements.sidebarToolbar.getAutoHideBackButton(),
+      autoHideForwardButton:
+        SidebarElements.sidebarToolbar.getAutoHideForwardButton(),
+      containerBorder: this.containerBorder,
+      tooltip: this.tooltip,
+      tooltipFullUrl: this.tooltipFullUrl,
+      autoHideSidebar: this.autoHideSidebar,
+      hideSidebarAnimated: this.hideSidebarAnimated,
+      hideToolbarAnimated: this.hideToolbarAnimated,
+      enableSidebarBoxHint:
+        SidebarControllers.sidebarGeometry.getEnableSidebarBoxHint(),
+    });
   }
 
   saveSettings() {

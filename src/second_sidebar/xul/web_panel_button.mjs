@@ -1,10 +1,11 @@
-import { FALLBACK_ICON, useAvailableIcon } from "../utils/icons.mjs";
+import { FALLBACK_ICON, fetchIconURL } from "../utils/icons.mjs";
 
 import { NotificationBadge } from "./notification_badge.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs"; // eslint-disable-line no-unused-vars
 import { WebPanelSoundIcon } from "./web_panel_sound_icon.mjs";
 import { Widget } from "./base/widget.mjs";
 import { applyContainerColor } from "../utils/containers.mjs";
+import { clearUrl } from "../utils/url.mjs";
 import { ellipsis } from "../utils/string.mjs";
 
 const URL_LABEL_LIMIT = 24;
@@ -32,29 +33,20 @@ export class WebPanelButton extends Widget {
       badgeStackXUL.appendChild(this.notificationBadge.element);
     });
 
-    this.setUserContextId(webPanelSettings.userContextId)
-      .setLabel(webPanelSettings.url)
-      .setTooltipText(webPanelSettings.url);
+    this.setUserContextId(webPanelSettings.userContextId).setLabel(
+      webPanelSettings.url,
+    );
 
     this.hideSoundIcon(webPanelSettings.hideSoundIcon);
     this.hideNotificationBadge(webPanelSettings.hideNotificationBadge);
 
-    useAvailableIcon(webPanelSettings.faviconURL, FALLBACK_ICON).then(
-      (faviconURL) => this.setIcon(faviconURL),
-    );
-  }
-
-  /**
-   *
-   * @param {function(MouseEvent):void} callback
-   * @returns {WebPanelButton}
-   */
-  listenClick(callback) {
-    this.setOnClick((event) => {
-      event.stopPropagation();
-      callback(event);
-    });
-    return this;
+    if (webPanelSettings.dynamicFavicon) {
+      fetchIconURL(webPanelSettings.url).then((faviconURL) => {
+        this.setIcon(faviconURL);
+      });
+    } else {
+      this.setIcon(webPanelSettings.faviconURL ?? FALLBACK_ICON);
+    }
   }
 
   /**
@@ -116,10 +108,7 @@ export class WebPanelButton extends Widget {
    * @returns {WebPanelButton}
    */
   setLabel(text) {
-    text = ellipsis(
-      text.replace(/http:\/\/|https:\/\/|\/$/g, ""),
-      URL_LABEL_LIMIT,
-    );
+    text = ellipsis(clearUrl(text), URL_LABEL_LIMIT);
     return Widget.prototype.setLabel.call(this, text);
   }
 
@@ -129,10 +118,7 @@ export class WebPanelButton extends Widget {
    * @returns {WebPanelButton}
    */
   setTooltipText(text) {
-    text = ellipsis(
-      text.replace(/http:\/\/|https:\/\/|\/$/g, ""),
-      URL_TOOLTIP_LIMIT,
-    );
+    text = ellipsis(clearUrl(text), URL_TOOLTIP_LIMIT);
     return Widget.prototype.setTooltipText.call(this, text);
   }
 

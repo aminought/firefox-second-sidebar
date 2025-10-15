@@ -6,6 +6,7 @@ import {
   createSaveButton,
 } from "../utils/xul.mjs";
 
+import { Div } from "./base/div.mjs";
 import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";
 import { PopupBody } from "./popup_body.mjs";
@@ -32,6 +33,8 @@ export class SidebarMainPopupSettings extends Panel {
     this.autoHideForwardToggle = new Toggle();
     this.defaultFloatingOffsetMenuList = this.#createPaddingMenuList();
     this.containerBorderMenuList = this.#createContainerBorderMenuList();
+    this.tooltipMenuList = this.#createTooltipMenuList();
+    this.tooltipFullUrlToggle = new Toggle();
     this.autoHideSidebarToggle = new Toggle();
     this.hideSidebarAnimatedToggle = new Toggle();
     this.hideToolbarAnimatedToggle = new Toggle();
@@ -93,6 +96,17 @@ export class SidebarMainPopupSettings extends Panel {
     return menuList;
   }
 
+  #createTooltipMenuList() {
+    const menuList = createMenuList({
+      id: "sb2-main-popup-settings-tooltip-menu-list",
+    });
+    menuList.appendItem("Off", "off");
+    menuList.appendItem("Title", "title");
+    menuList.appendItem("URL", "url");
+    menuList.appendItem("Title and URL", "titleandurl");
+    return menuList;
+  }
+
   #compose() {
     this.appendChild(
       new PanelMultiView().appendChildren(
@@ -105,7 +119,7 @@ export class SidebarMainPopupSettings extends Panel {
             new ToolbarSeparator(),
             createPopupGroup("Auto-hide sidebar", this.autoHideSidebarToggle),
           ]),
-          createPopupSet("Web panels", [
+          createPopupSet("Web panel", [
             createPopupGroup(
               "Default floating panel offset",
               this.defaultFloatingOffsetMenuList,
@@ -117,30 +131,40 @@ export class SidebarMainPopupSettings extends Panel {
             ),
             new ToolbarSeparator(),
             createPopupGroup(
+              "Show geometry hint",
+              this.enableSidebarBoxHintToggle,
+            ),
+          ]),
+          createPopupSet("Web panel button", [
+            createPopupGroup(
               "Container indicator position",
               this.containerBorderMenuList,
             ),
             new ToolbarSeparator(),
-            createPopupGroup("Auto-hide back button", this.autoHideBackToggle),
-            new ToolbarSeparator(),
+            createPopupGroup("Tooltip", this.tooltipMenuList),
+            new Div({
+              id: "sb2-main-popup-settings-tooltip-items",
+            }).appendChildren(
+              new ToolbarSeparator(),
+              createPopupGroup(
+                "Show full URL in tooltip",
+                this.tooltipFullUrlToggle,
+              ),
+            ),
+          ]),
+          createPopupSet("Web panel toolbar", [
             createPopupGroup(
               "Auto-hide forward button",
               this.autoHideForwardToggle,
             ),
             new ToolbarSeparator(),
-            createPopupGroup(
-              "Show web panel geometry hint",
-              this.enableSidebarBoxHintToggle,
-            ),
+            createPopupGroup("Auto-hide back button", this.autoHideBackToggle),
           ]),
           createPopupSet("Animations", [
-            createPopupGroup(
-              "Animate sidebar launcher",
-              this.hideSidebarAnimatedToggle,
-            ),
+            createPopupGroup("Animate sidebar", this.hideSidebarAnimatedToggle),
             new ToolbarSeparator(),
             createPopupGroup(
-              "Animate sidebar toolbar",
+              "Animate web panel toolbar",
               this.hideToolbarAnimatedToggle,
             ),
           ]),
@@ -160,7 +184,9 @@ export class SidebarMainPopupSettings extends Panel {
    * @param {function(boolean):void} callbacks.autoHideBackButton
    * @param {function(boolean):void} callbacks.autoHideForwardButton
    * @param {function(boolean):void} callbacks.enableSidebarBoxHint
-   * @param {function(boolean):void} callbacks.containerBorder
+   * @param {function(string):void} callbacks.containerBorder
+   * @param {function(string):void} callbacks.tooltip
+   * @param {function(boolean):void} callbacks.tooltipFullUrl
    * @param {function(boolean):void} callbacks.autoHideSidebar
    * @param {function(boolean):void} callbacks.hideSidebarAnimated
    * @param {function(boolean):void} callbacks.hideToolbarAnimated
@@ -174,6 +200,8 @@ export class SidebarMainPopupSettings extends Panel {
     autoHideForwardButton,
     enableSidebarBoxHint,
     containerBorder,
+    tooltip,
+    tooltipFullUrl,
     autoHideSidebar,
     hideSidebarAnimated,
     hideToolbarAnimated,
@@ -186,6 +214,8 @@ export class SidebarMainPopupSettings extends Panel {
     this.onAutoHideForwardButtonChange = autoHideForwardButton;
     this.onEnableSidebarBoxHintChange = enableSidebarBoxHint;
     this.onContainerBorderChange = containerBorder;
+    this.onTooltipChange = tooltip;
+    this.onTooltipFullUrlChange = tooltipFullUrl;
     this.onAutoHideSidebarChange = autoHideSidebar;
     this.onAutoHideSidebarAnimatedChange = hideSidebarAnimated;
     this.onAutoHideToolbarAnimatedChange = hideToolbarAnimated;
@@ -213,6 +243,12 @@ export class SidebarMainPopupSettings extends Panel {
     );
     this.containerBorderMenuList.addEventListener("command", () =>
       containerBorder(this.containerBorderMenuList.getValue()),
+    );
+    this.tooltipMenuList.addEventListener("command", () =>
+      tooltip(this.tooltipMenuList.getValue()),
+    );
+    this.tooltipFullUrlToggle.addEventListener("toggle", () =>
+      tooltipFullUrl(this.tooltipFullUrlToggle.getPressed()),
     );
     this.autoHideSidebarToggle.addEventListener("toggle", () =>
       autoHideSidebar(this.autoHideSidebarToggle.getPressed()),
@@ -265,6 +301,8 @@ export class SidebarMainPopupSettings extends Panel {
     this.autoHideForwardToggle.setPressed(settings.autoHideForwardButton);
     this.enableSidebarBoxHintToggle.setPressed(settings.enableSidebarBoxHint);
     this.containerBorderMenuList.setValue(settings.containerBorder);
+    this.tooltipMenuList.setValue(settings.tooltip);
+    this.tooltipFullUrlToggle.setPressed(settings.tooltipFullUrl);
     this.autoHideSidebarToggle.setPressed(settings.autoHideSidebar);
     this.hideSidebarAnimatedToggle.setPressed(settings.hideSidebarAnimated);
     this.hideToolbarAnimatedToggle.setPressed(settings.hideToolbarAnimated);
@@ -323,6 +361,14 @@ export class SidebarMainPopupSettings extends Panel {
       this.containerBorderMenuList.getValue() !== this.settings.containerBorder
     ) {
       this.onContainerBorderChange(this.settings.containerBorder);
+    }
+    if (this.tooltipMenuList.getValue() !== this.settings.tooltip) {
+      this.onTooltipChange(this.settings.tooltip);
+    }
+    if (
+      this.tooltipFullUrlToggle.getPressed() !== this.settings.tooltipFullUrl
+    ) {
+      this.onTooltipFullUrlChange(this.settings.tooltipFullUrl);
     }
     if (
       this.autoHideSidebarToggle.getPressed() !== this.settings.autoHideSidebar

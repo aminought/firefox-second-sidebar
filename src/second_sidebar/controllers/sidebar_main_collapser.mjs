@@ -40,7 +40,7 @@ export class SidebarMainCollapser {
       }
     });
 
-    SidebarElements.sidebarCollapseButton.listenClick(() => {
+    SidebarElements.sidebarCollapseButton.addEventListener("click", () => {
       sendEvents(SidebarEvents.COLLAPSE_SIDEBAR);
     });
 

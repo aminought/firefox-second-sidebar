@@ -31,31 +31,13 @@ export class SidebarGeometry {
     });
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_FLOATING_GEOMETRY, (event) => {
-      const { uuid, top, left, right, bottom, width, height, margin } =
-        event.detail;
+      const { uuid, geometry } = event.detail;
 
       const webPanelController =
         SidebarControllers.webPanelsController.get(uuid);
-      webPanelController.setFloatingGeometry(
-        top,
-        left,
-        right,
-        bottom,
-        width,
-        height,
-        margin,
-      );
+      webPanelController.setFloatingGeometry(geometry);
       if (webPanelController.isActive()) {
-        this.setFloatingGeometry(
-          webPanelController.getAnchor(),
-          top,
-          left,
-          right,
-          bottom,
-          width,
-          height,
-          margin,
-        );
+        this.setFloatingGeometry(geometry);
       }
     });
 
@@ -224,55 +206,43 @@ export class SidebarGeometry {
       height = convert(height, heightType, areaRect.height);
     }
 
-    webPanelController.setFloatingGeometry(
-      top,
-      left,
-      right,
-      bottom,
-      width,
-      height,
-      margin,
+    const geometry = new FloatingWebPanelGeometrySettings(
+      SidebarElements.sidebarWrapper.getPosition(),
+      this.getDefaultFloatingOffsetCSS(),
+      {
+        anchor,
+        offsetXType,
+        offsetYType,
+        widthType,
+        heightType,
+        top,
+        left,
+        right,
+        bottom,
+        width,
+        height,
+        margin,
+      },
     );
 
-    this.setFloatingGeometry(
-      anchor,
-      top,
-      left,
-      right,
-      bottom,
-      width,
-      height,
-      margin,
-    );
+    webPanelController.setFloatingGeometry(geometry);
+    this.setFloatingGeometry(geometry);
   }
 
   loadAndSetFloatingGeometry() {
     const webPanelController =
       SidebarControllers.webPanelsController.getActive();
     const geometry = webPanelController.getFloatingGeometry();
-    this.setFloatingGeometry(
-      geometry.anchor,
-      geometry.top,
-      geometry.left,
-      geometry.right,
-      geometry.bottom,
-      geometry.width,
-      geometry.height,
-      geometry.margin,
-    );
+    this.setFloatingGeometry(geometry);
   }
 
   /**
-   * @param {string} anchor
-   * @param {string} top
-   * @param {string} left
-   * @param {string} right
-   * @param {string} bottom
-   * @param {string} width
-   * @param {string} height
-   * @param {string} margin
+   *
+   * @param {FloatingWebPanelGeometrySettings} floatingGeometry
    */
-  setFloatingGeometry(anchor, top, left, right, bottom, width, height, margin) {
+  setFloatingGeometry(floatingGeometry) {
+    let { anchor, top, left, right, bottom, width, height, margin } =
+      floatingGeometry;
     if (anchor == "default") anchor = this.getDefaultAnchor();
     if (anchor == "topleft") right = bottom = "unset";
     else if (anchor == "topright") left = bottom = "unset";
@@ -333,30 +303,8 @@ export class SidebarGeometry {
       geometry.height = defaultGeometry.makeDefaultHeight(offset);
     }
 
-    webPanelController.setAnchor(geometry.anchor);
-    webPanelController.setOffsetXType(geometry.offsetXType);
-    webPanelController.setOffsetYType(geometry.offsetYType);
-    webPanelController.setWidthType(geometry.widthType);
-    webPanelController.setHeightType(geometry.heightType);
-    webPanelController.setFloatingGeometry(
-      geometry.top,
-      geometry.left,
-      geometry.right,
-      geometry.bottom,
-      geometry.width,
-      geometry.height,
-      geometry.margin,
-    );
-    this.setFloatingGeometry(
-      geometry.anchor,
-      geometry.top,
-      geometry.left,
-      geometry.right,
-      geometry.bottom,
-      geometry.width,
-      geometry.height,
-      geometry.margin,
-    );
+    webPanelController.setFloatingGeometry(geometry);
+    this.setFloatingGeometry(geometry);
     if (webPanelController.isActive()) {
       SidebarControllers.webPanelsController.saveSettings();
     }
