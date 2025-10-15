@@ -1,6 +1,7 @@
 import { FALLBACK_ICON, fetchIconURL } from "../utils/icons.mjs";
 
 import { NotificationBadge } from "./notification_badge.mjs";
+import { SidebarElements } from "../sidebar_elements.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs"; // eslint-disable-line no-unused-vars
 import { WebPanelSoundIcon } from "./web_panel_sound_icon.mjs";
 import { Widget } from "./base/widget.mjs";
@@ -32,9 +33,9 @@ export class WebPanelButton extends Widget {
       badgeStackXUL.appendChild(this.notificationBadge.element);
     });
 
-    this.setUserContextId(webPanelSettings.userContextId)
-      .setLabel(webPanelSettings.url)
-      .setTooltipText(webPanelSettings.url);
+    this.setUserContextId(webPanelSettings.userContextId).setLabel(
+      webPanelSettings.url,
+    );
 
     this.hideSoundIcon(webPanelSettings.hideSoundIcon);
     this.hideNotificationBadge(webPanelSettings.hideNotificationBadge);
@@ -47,6 +48,20 @@ export class WebPanelButton extends Widget {
     } else {
       this.setIcon(webPanelSettings.faviconURL ?? FALLBACK_ICON);
     }
+
+    this.timer = null;
+    this.doWhenButtonReady(() => {
+      this.button.addEventListener("mouseenter", () => {
+        this.timer = setTimeout(() => {
+          SidebarElements.webPanelTooltip.openPopup(this.button);
+        }, 500);
+      });
+
+      this.button.addEventListener("mouseleave", () => {
+        clearTimeout(this.timer);
+        SidebarElements.webPanelTooltip.hidePopup();
+      });
+    });
   }
 
   /**

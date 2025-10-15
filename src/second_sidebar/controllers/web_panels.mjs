@@ -139,7 +139,6 @@ export class WebPanelsController {
         if (!webPanelController.isUnloaded() && oldUrl !== url) {
           webPanelController.go(url);
         }
-        webPanelController.updateTooltip();
       }, timeout);
     });
 
@@ -148,7 +147,6 @@ export class WebPanelsController {
 
       const webPanelController = this.get(uuid);
       webPanelController.setTitle(dynamicTitle, title);
-      webPanelController.updateTooltip();
       if (webPanelController.isActive()) {
         SidebarControllers.sidebarController.updateToolbar(webPanelController);
       }

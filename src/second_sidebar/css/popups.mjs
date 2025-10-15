@@ -156,6 +156,31 @@ export const POPUPS_CSS = `
     }
   }
 
+  .sb2-tooltip {
+    width: 300px;
+
+    .sb2-tooltip-container {
+      display: flex;
+      flex-direction: column;
+      padding: var(--space-small);
+    }
+  }
+
+  #sb2-web-panel-tooltip {
+    #sb2-web-panel-tooltip-title {
+      overflow: hidden;
+      font-weight: bold;
+      -webkit-line-clamp: 2;
+    }
+
+    #sb2-web-panel-tooltip-url {
+      color: var(--text-color-deemphasized);
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+
   #sb2-main-popup-settings,
   #sb2-web-panel-new,
   #sb2-web-panel-edit {

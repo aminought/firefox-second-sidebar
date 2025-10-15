@@ -143,19 +143,12 @@ export class WebPanelController {
     return this.#settings.uuid;
   }
 
-  updateTooltip() {
-    // this.#button.setLabel(value).setTooltipText(value);
-    let tooltip = "";
-    if (this.#settings.dynamicTitle) {
-      tooltip = this.#settings.title;
-    } else {
-      tooltip = this.#settings.url;
-    }
-    this.#button.setLabel(tooltip).setTooltipText(tooltip);
-  }
-
+  /**
+   *
+   * @returns {string?}
+   */
   getTabUrl() {
-    return this.#tab.linkedBrowser.getCurrentUrl();
+    return this.#tab?.linkedBrowser?.getCurrentUrl();
   }
 
   /**
@@ -164,6 +157,16 @@ export class WebPanelController {
    */
   getURL() {
     return this.#settings.url;
+  }
+
+  /**
+   *
+   * @returns {string}
+   */
+  getUrlForTooltip() {
+    const tabUrl = this.getTabUrl();
+    const url = this.isTitleDynamic() && tabUrl ? tabUrl : this.#settings.url;
+    return url.replace(/^https?:\/\//, "").replace(/\/$/, "");
   }
 
   /**
@@ -198,7 +201,15 @@ export class WebPanelController {
    * @returns {string?}
    */
   getTabTitle() {
-    return this.#tab.linkedBrowser.getTitle();
+    return this.#tab?.linkedBrowser?.getTitle();
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  isTitleDynamic() {
+    return this.#settings.dynamicTitle;
   }
 
   /**
@@ -206,9 +217,7 @@ export class WebPanelController {
    * @returns {string?}
    */
   getTitle() {
-    return this.#settings.dynamicTitle
-      ? this.getTabTitle()
-      : this.#settings.title;
+    return this.isTitleDynamic() ? this.getTabTitle() : this.#settings.title;
   }
 
   /**

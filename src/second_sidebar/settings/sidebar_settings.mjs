@@ -27,7 +27,7 @@ export class SidebarSettings {
     autoHideBackButton = false,
     autoHideForwardButton = false,
     containerBorder = "left",
-    tooltip = "url",
+    tooltip = "titleandurl",
     autoHideSidebar = false,
     hideSidebarAnimated = true,
     hideToolbarAnimated = true,

@@ -131,6 +131,11 @@ export class SidebarController {
       this.setContainerBorder(value);
     });
 
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_TOOLTIP, (event) => {
+      const value = event.detail.value;
+      this.setWebPanelTooltip(value);
+    });
+
     listenEvent(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE, (event) => {
       const value = event.detail.value;
       this.setAutoHideSidebar(value);
@@ -250,6 +255,22 @@ export class SidebarController {
 
   /**
    *
+   * @returns {string}
+   */
+  getWebPanelTooltip() {
+    return this.tooltip;
+  }
+
+  /**
+   *
+   * @param {string} value
+   */
+  setWebPanelTooltip(value) {
+    this.tooltip = value;
+  }
+
+  /**
+   *
    * @param {boolean} value
    */
   setAutoHideSidebar(value) {
@@ -316,6 +337,7 @@ export class SidebarController {
       settings.autoHideForwardButton,
     );
     this.setContainerBorder(settings.containerBorder);
+    this.setWebPanelTooltip(settings.tooltip);
     this.setAutoHideSidebar(settings.autoHideSidebar);
     this.hideSidebarAnimated = settings.hideSidebarAnimated;
     this.setHideToolbarAnimated(settings.hideToolbarAnimated);
@@ -337,6 +359,7 @@ export class SidebarController {
       SidebarElements.sidebarToolbar.getAutoHideBackButton(),
       SidebarElements.sidebarToolbar.getAutoHideForwardButton(),
       this.containerBorder,
+      this.tooltip,
       this.autoHideSidebar,
       this.hideSidebarAnimated,
       this.hideToolbarAnimated,

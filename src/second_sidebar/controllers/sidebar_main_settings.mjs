@@ -32,6 +32,8 @@ export class SidebarMainSettingsController {
         sendEvents(SidebarEvents.EDIT_SIDEBAR_ENABLE_BOX_HINT, { value }),
       containerBorder: (value) =>
         sendEvents(SidebarEvents.EDIT_SIDEBAR_CONTAINER_BORDER, { value }),
+      tooltip: (value) =>
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_TOOLTIP, { value }),
       autoHideSidebar: (value) =>
         sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE, { value }),
       hideSidebarAnimated: (value) =>
