@@ -119,7 +119,7 @@ export class SidebarMainPopupSettings extends Panel {
             new ToolbarSeparator(),
             createPopupGroup("Auto-hide sidebar", this.autoHideSidebarToggle),
           ]),
-          createPopupSet("Web panels", [
+          createPopupSet("Web panel", [
             createPopupGroup(
               "Default floating panel offset",
               this.defaultFloatingOffsetMenuList,
@@ -131,39 +131,40 @@ export class SidebarMainPopupSettings extends Panel {
             ),
             new ToolbarSeparator(),
             createPopupGroup(
+              "Show geometry hint",
+              this.enableSidebarBoxHintToggle,
+            ),
+          ]),
+          createPopupSet("Web panel button", [
+            createPopupGroup(
               "Container indicator position",
               this.containerBorderMenuList,
             ),
             new ToolbarSeparator(),
-            createPopupGroup("Auto-hide back button", this.autoHideBackToggle),
-            new ToolbarSeparator(),
-            createPopupGroup(
-              "Auto-hide forward button",
-              this.autoHideForwardToggle,
-            ),
-            new ToolbarSeparator(),
-            createPopupGroup(
-              "Show web panel geometry hint",
-              this.enableSidebarBoxHintToggle,
-            ),
-          ]),
-          createPopupSet("Web panel tooltips", [
             createPopupGroup("Tooltip", this.tooltipMenuList),
             new Div({
               id: "sb2-main-popup-settings-tooltip-items",
             }).appendChildren(
               new ToolbarSeparator(),
-              createPopupGroup("Show full URL", this.tooltipFullUrlToggle),
+              createPopupGroup(
+                "Show full URL in tooltip",
+                this.tooltipFullUrlToggle,
+              ),
             ),
           ]),
-          createPopupSet("Animations", [
+          createPopupSet("Web panel toolbar", [
             createPopupGroup(
-              "Animate sidebar launcher",
-              this.hideSidebarAnimatedToggle,
+              "Auto-hide forward button",
+              this.autoHideForwardToggle,
             ),
             new ToolbarSeparator(),
+            createPopupGroup("Auto-hide back button", this.autoHideBackToggle),
+          ]),
+          createPopupSet("Animations", [
+            createPopupGroup("Animate sidebar", this.hideSidebarAnimatedToggle),
+            new ToolbarSeparator(),
             createPopupGroup(
-              "Animate sidebar toolbar",
+              "Animate web panel toolbar",
               this.hideToolbarAnimatedToggle,
             ),
           ]),
