@@ -18,6 +18,21 @@ export class WebPanelEditController {
           timeout,
         });
       },
+      title: (uuid, dynamicTitle, title) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_TITLE, {
+          uuid,
+          dynamicTitle,
+          title,
+        });
+      },
+      faviconURL: (uuid, dynamicFavicon, faviconURL, timeout = 0) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_FAVICON_URL, {
+          uuid,
+          dynamicFavicon,
+          faviconURL,
+          timeout,
+        });
+      },
       selectorEnabled: (uuid, selectorEnabled, timeout = 0) => {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_SELECTOR_ENABLED, {
           uuid,
@@ -29,13 +44,6 @@ export class WebPanelEditController {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_SELECTOR, {
           uuid,
           selector,
-          timeout,
-        });
-      },
-      faviconURL: (uuid, faviconURL, timeout = 0) => {
-        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_FAVICON_URL, {
-          uuid,
-          faviconURL,
           timeout,
         });
       },

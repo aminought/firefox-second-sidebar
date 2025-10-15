@@ -98,9 +98,7 @@ export class SidebarMainPopupSettings extends Panel {
     const menuList = createMenuList();
     menuList.appendItem("Title", "title");
     menuList.appendItem("URL", "url");
-    menuList.appendItem("Last URL", "lasturl");
     menuList.appendItem("Title and URL", "titleandurl");
-    menuList.appendItem("Title and last URL", "titleandlasturl");
     return menuList;
   }
 

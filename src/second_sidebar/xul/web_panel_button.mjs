@@ -1,4 +1,4 @@
-import { FALLBACK_ICON, useAvailableIcon } from "../utils/icons.mjs";
+import { FALLBACK_ICON, fetchIconURL } from "../utils/icons.mjs";
 
 import { NotificationBadge } from "./notification_badge.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs"; // eslint-disable-line no-unused-vars
@@ -39,9 +39,14 @@ export class WebPanelButton extends Widget {
     this.hideSoundIcon(webPanelSettings.hideSoundIcon);
     this.hideNotificationBadge(webPanelSettings.hideNotificationBadge);
 
-    useAvailableIcon(webPanelSettings.faviconURL, FALLBACK_ICON).then(
-      (faviconURL) => this.setIcon(faviconURL),
-    );
+    if (webPanelSettings.dynamicFavicon) {
+      fetchIconURL(webPanelSettings.url).then((faviconURL) => {
+        console.log("faviconURL", faviconURL);
+        this.setIcon(faviconURL);
+      });
+    } else {
+      this.setIcon(webPanelSettings.faviconURL ?? FALLBACK_ICON);
+    }
   }
 
   /**

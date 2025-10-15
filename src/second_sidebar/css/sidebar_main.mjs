@@ -116,8 +116,12 @@ export const SIDEBAR_MAIN_CSS = `
     background-color: var(--attention-dot-color) !important;
   }
 
-  .sb2-main-button .toolbarbutton-icon:not(:has([src])) {
+  .sb2-main-button:not([image]):not([loading]) .toolbarbutton-icon {
     list-style-image: url("chrome://global/skin/icons/security.svg");
+  }
+
+  .sb2-main-button[loading] .toolbarbutton-icon {
+    list-style-image: url("chrome://global/skin/icons/loading.svg");
   }
 
   .sb2-main-button[unloaded="true"] {

@@ -1,7 +1,7 @@
-import { FALLBACK_ICON, useAvailableIcon } from "../utils/icons.mjs";
 import { WebPanelEvents, sendEvent } from "./events.mjs";
 
 import { ChromeUtilsWrapper } from "../wrappers/chrome_utils.mjs";
+import { FALLBACK_ICON } from "../utils/icons.mjs";
 import { PinnedWebPanelGeometrySettings } from "../settings/pinned_web_panel_geometry_settings.mjs"; // eslint-disable-line no-unused-vars
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
@@ -9,6 +9,7 @@ import { WebPanelButton } from "../xul/web_panel_button.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
 import { WebPanelTab } from "../xul/web_panel_tab.mjs"; // eslint-disable-line no-unused-vars
 import { ZoomManagerWrapper } from "../wrappers/zoom_manager.mjs";
+import { parseNotifications } from "../utils/string.mjs";
 
 const DEFAULT_ZOOM = 1;
 
@@ -34,20 +35,13 @@ export class WebPanelController {
     this.#settings = settings;
     this.#button = this.#createWebPanelButton(settings, loaded, position);
 
-    if (loaded) {
-      this.load();
-    }
+    if (loaded) this.load();
   }
 
   #createProgressListener() {
     const callback = () => {
       if (this.isActive()) {
-        const title = this.#tab.linkedBrowser.getTitle();
-        const canGoBack = this.#tab.linkedBrowser.canGoBack();
-        const canGoForward = this.#tab.linkedBrowser.canGoForward();
-        SidebarElements.sidebarToolbar.setTitle(title);
-        SidebarElements.sidebarToolbar.toggleBackButton(!canGoBack);
-        SidebarElements.sidebarToolbar.toggleForwardButton(!canGoForward);
+        SidebarControllers.sidebarController.updateToolbar(this);
       }
     };
     const onStateChange = (aWebProgress, aRequest, aFlag) => {
@@ -149,6 +143,21 @@ export class WebPanelController {
     return this.#settings.uuid;
   }
 
+  updateTooltip() {
+    // this.#button.setLabel(value).setTooltipText(value);
+    let tooltip = "";
+    if (this.#settings.dynamicTitle) {
+      tooltip = this.#settings.title;
+    } else {
+      tooltip = this.#settings.url;
+    }
+    this.#button.setLabel(tooltip).setTooltipText(tooltip);
+  }
+
+  getTabUrl() {
+    return this.#tab.linkedBrowser.getCurrentUrl();
+  }
+
   /**
    *
    * @returns {string}
@@ -163,7 +172,6 @@ export class WebPanelController {
    */
   setURL(value) {
     this.#settings.url = value;
-    this.#button.setLabel(value).setTooltipText(value);
   }
 
   /**
@@ -187,6 +195,34 @@ export class WebPanelController {
 
   /**
    *
+   * @returns {string?}
+   */
+  getTabTitle() {
+    return this.#tab.linkedBrowser.getTitle();
+  }
+
+  /**
+   *
+   * @returns {string?}
+   */
+  getTitle() {
+    return this.#settings.dynamicTitle
+      ? this.getTabTitle()
+      : this.#settings.title;
+  }
+
+  /**
+   *
+   * @param {boolean} dynamicTitle
+   * @param {string} title
+   */
+  setTitle(dynamicTitle, title) {
+    this.#settings.dynamicTitle = dynamicTitle;
+    this.#settings.title = title;
+  }
+
+  /**
+   *
    * @returns {string}
    */
   getFaviconURL() {
@@ -195,20 +231,28 @@ export class WebPanelController {
 
   /**
    *
+   * @param {boolean} dynamicFavicon
    * @param {string} faviconURL
    */
-  setWebPanelFaviconURL(faviconURL) {
+  setFaviconURL(dynamicFavicon, faviconURL) {
+    this.#settings.dynamicFavicon = dynamicFavicon;
     this.#settings.faviconURL = faviconURL;
   }
 
-  /**
-   *
-   * @param {string} faviconURL
-   */
-  setWebPanelButtonFaviconURL(faviconURL) {
-    useAvailableIcon(faviconURL, FALLBACK_ICON).then((url) =>
-      this.#button.setIcon(url),
-    );
+  updateFavicon() {
+    let image = this.#settings.dynamicFavicon
+      ? this.#tab.image
+      : this.#settings.faviconURL;
+    if (!image || image.length === 0) image = FALLBACK_ICON;
+    const busy = this.#tab.getAttribute("busy") === "true";
+    const progress = this.#tab.getAttribute("progress") === "true";
+    if (busy || progress) {
+      this.#button.setIcon("");
+      this.#button.setAttribute("loading", "true");
+    } else {
+      this.#button.setIcon(image);
+      this.#button.removeAttribute("busy");
+    }
   }
 
   /**
@@ -246,21 +290,7 @@ export class WebPanelController {
     this.setZoom(this.#settings.zoom);
 
     // Open sidebar if it was closed and configure
-    SidebarControllers.sidebarController.open(
-      this.#settings.pinned,
-      this.#settings.floatingGeometry.anchor,
-      this.#settings.floatingGeometry.top,
-      this.#settings.floatingGeometry.left,
-      this.#settings.floatingGeometry.right,
-      this.#settings.floatingGeometry.bottom,
-      this.#settings.floatingGeometry.width,
-      this.#settings.floatingGeometry.height,
-      this.#settings.floatingGeometry.margin,
-      this.#tab.linkedBrowser.canGoBack(),
-      this.#tab.linkedBrowser.canGoForward(),
-      this.#tab.linkedBrowser.getTitle(),
-      this.#settings.hideToolbar,
-    );
+    SidebarControllers.sidebarController.open();
   }
 
   close() {
@@ -282,9 +312,24 @@ export class WebPanelController {
       this.#progressListener,
     );
     this.#tab.addTabCloseListener(() => this.unload(false));
-    this.#tab.addEventListener("TabAttrModified", () => {
-      this.#button.setSoundIcon(this.#tab.soundPlaying, this.#tab.muted);
-    });
+    this.#tab.addTabAttrModifiedListener(
+      (soundplaying, muted, image, busy, progress, label) => {
+        if (soundplaying || muted) {
+          this.#button.setSoundIcon(soundplaying, muted);
+        }
+        if (image || busy || progress) {
+          this.updateFavicon();
+        }
+        if (label) {
+          if (this.isActive()) {
+            SidebarControllers.sidebarController.updateToolbar(this);
+          }
+          const title = this.getTabTitle();
+          const notifications = parseNotifications(title);
+          this.#button.setNotificationBadge(notifications);
+        }
+      },
+    );
     this.#button.setUnloaded(false);
     this.#startTimer();
   }
@@ -342,7 +387,22 @@ export class WebPanelController {
 
   reload() {
     this.#tab.linkedBrowser.reload();
-    this.setWebPanelButtonFaviconURL(this.#settings.faviconURL);
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  canGoBack() {
+    return this.#tab.linkedBrowser.canGoBack();
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  canGoForward() {
+    return this.#tab.linkedBrowser.canGoForward();
   }
 
   goBack() {
@@ -655,22 +715,10 @@ export class WebPanelController {
 
   /**
    *
-   * @param {string} top
-   * @param {string} left
-   * @param {string} right
-   * @param {string} bottom
-   * @param {string} width
-   * @param {string} height
-   * @param {string} margin
+   * @param {FloatingWebPanelGeometrySettings} geometry
    */
-  setFloatingGeometry(top, left, right, bottom, width, height, margin) {
-    this.#settings.floatingGeometry.top = top;
-    this.#settings.floatingGeometry.left = left;
-    this.#settings.floatingGeometry.right = right;
-    this.#settings.floatingGeometry.bottom = bottom;
-    this.#settings.floatingGeometry.width = width;
-    this.#settings.floatingGeometry.height = height;
-    this.#settings.floatingGeometry.margin = margin;
+  setFloatingGeometry(geometry) {
+    this.#settings.floatingGeometry = geometry;
   }
 
   /**

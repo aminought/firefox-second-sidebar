@@ -35,6 +35,9 @@ export class WebPanelsBrowser extends Browser {
       autoscroll: "false",
       tooltip: "aHTMLTooltip",
       autocompletepopup: "PopupAutoComplete",
+      contextmenu: "contentAreaContextMenu",
+      message: "true",
+      manualactiveness: "true",
     });
 
     this.initialized = false;
@@ -101,7 +104,10 @@ export class WebPanelsBrowser extends Browser {
     const windowRoot = new XULElement({
       element: this.window.document.documentElement,
     });
-    windowRoot.setAttribute("chromehidden", "");
+    windowRoot
+      .setAttribute("chromehidden", "")
+      .setAttribute("contextmenu", "contentAreaContextMenu")
+      .setAttribute("type", "content");
 
     const selectors = [
       "#PersonalToolbar",
@@ -163,18 +169,6 @@ export class WebPanelsBrowser extends Browser {
     setTimeout(() => {
       this.window.removeEventListener(DIALOG_OPEN_EVENT, closeDialog);
     }, 5000);
-  }
-
-  /**
-   *
-   * @param {function(WebPanelTab):void} callback
-   */
-  addPageTitleChangeListener(callback) {
-    this.window.gBrowser.addEventListener("pagetitlechanged", (event) => {
-      const browser = new Browser({ element: event.target });
-      const tab = this.window.gBrowser.getTabForBrowser(browser);
-      callback(WebPanelTab.fromTab(tab));
-    });
   }
 
   /**

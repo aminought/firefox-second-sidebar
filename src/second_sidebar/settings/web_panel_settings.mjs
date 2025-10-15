@@ -10,10 +10,10 @@ export class WebPanelSettings {
    * @param {string} uuid
    * @param {string} url
    * @param {object} params
-   * @param {boolean} params.overrideTitle
+   * @param {boolean} params.dynamicTitle
    * @param {string} params.title
-   * @param {boolean} params.overrideFaviconUrl
-   * @param {string} params.faviconUrl
+   * @param {boolean} params.dynamicFavicon
+   * @param {string} params.faviconURL
    * @param {boolean} params.pinned
    * @param {boolean} params.alwaysOnTop
    * @param {boolean} params.mobile
@@ -39,10 +39,10 @@ export class WebPanelSettings {
     uuid,
     url,
     {
-      overrideTitle = false,
+      dynamicTitle = true,
       title = "",
-      overrideFaviconUrl = false,
-      faviconUrl = "",
+      dynamicFavicon = true,
+      faviconURL = "",
       pinned = false,
       alwaysOnTop = false,
       mobile = false,
@@ -67,10 +67,10 @@ export class WebPanelSettings {
   ) {
     this.uuid = uuid;
     this.url = url;
-    this.overrideTitle = overrideTitle;
+    this.dynamicTitle = dynamicTitle;
     this.title = title;
-    this.overrideFaviconUrl = overrideFaviconUrl;
-    this.faviconUrl = faviconUrl;
+    this.dynamicFavicon = dynamicFavicon;
+    this.faviconURL = faviconURL;
     this.pinned = pinned;
     this.alwaysOnTop = alwaysOnTop;
     this.mobile = mobile;
@@ -104,10 +104,10 @@ export class WebPanelSettings {
       object.uuid,
       object.url,
       {
-        overrideTitle: object.overrideTitle,
+        dynamicTitle: object.dynamicTitle,
         title: object.title,
-        overrideFaviconUrl: object.overrideFaviconURL,
-        faviconUrl: object.faviconURL,
+        dynamicFavicon: object.dynamicFavicon,
+        faviconURL: object.faviconURL,
         pinned: object.pinned,
         alwaysOnTop: object.alwaysOnTop,
         mobile: object.mobile,
@@ -143,6 +143,9 @@ export class WebPanelSettings {
     return {
       uuid: this.uuid,
       url: this.url,
+      dynamicTitle: this.dynamicTitle,
+      title: this.title,
+      dynamicFavicon: this.dynamicFavicon,
       faviconURL: this.faviconURL,
       pinned: this.pinned,
       alwaysOnTop: this.alwaysOnTop,
