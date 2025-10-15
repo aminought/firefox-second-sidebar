@@ -42,7 +42,6 @@ export class WebPanelButton extends Widget {
 
     if (webPanelSettings.dynamicFavicon) {
       fetchIconURL(webPanelSettings.url).then((faviconURL) => {
-        console.log("faviconURL", faviconURL);
         this.setIcon(faviconURL);
       });
     } else {
