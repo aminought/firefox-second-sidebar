@@ -49,11 +49,12 @@ export class WebPanelTooltip extends Panel {
     this.urlLabel.setText(url).hide();
 
     const tooltip = SidebarControllers.sidebarController.getWebPanelTooltip();
+    tooltip === "off" ? this.hide() : this.show();
     if (tooltip === "title" && title) {
       this.titleLabel.show();
     } else if (tooltip === "url") {
       this.urlLabel.show();
-    } else {
+    } else if (tooltip === "titleandurl") {
       this.titleLabel.show();
       this.urlLabel.show();
     }

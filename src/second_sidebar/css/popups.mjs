@@ -233,4 +233,11 @@ export const POPUPS_CSS = `
       display: none;
     }
   }
+
+  .sb2-popup:has(#sb2-main-popup-settings-tooltip-menu-list[value="off"]),
+  .sb2-popup:has(#sb2-main-popup-settings-tooltip-menu-list[value="title"]) {
+    #sb2-main-popup-settings-tooltip-items {
+      display: none;
+    }
+  }
 `;

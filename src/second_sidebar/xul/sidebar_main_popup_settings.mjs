@@ -6,6 +6,7 @@ import {
   createSaveButton,
 } from "../utils/xul.mjs";
 
+import { Div } from "./base/div.mjs";
 import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";
 import { PopupBody } from "./popup_body.mjs";
@@ -96,7 +97,10 @@ export class SidebarMainPopupSettings extends Panel {
   }
 
   #createTooltipMenuList() {
-    const menuList = createMenuList();
+    const menuList = createMenuList({
+      id: "sb2-main-popup-settings-tooltip-menu-list",
+    });
+    menuList.appendItem("Off", "off");
     menuList.appendItem("Title", "title");
     menuList.appendItem("URL", "url");
     menuList.appendItem("Title and URL", "titleandurl");
@@ -143,12 +147,13 @@ export class SidebarMainPopupSettings extends Panel {
               this.enableSidebarBoxHintToggle,
             ),
           ]),
-          createPopupSet("Web panel tooltip", [
-            createPopupGroup("Tooltip type", this.tooltipMenuList),
-            new ToolbarSeparator(),
-            createPopupGroup(
-              "Show full URL in tooltip",
-              this.tooltipFullUrlToggle,
+          createPopupSet("Web panel tooltips", [
+            createPopupGroup("Tooltip", this.tooltipMenuList),
+            new Div({
+              id: "sb2-main-popup-settings-tooltip-items",
+            }).appendChildren(
+              new ToolbarSeparator(),
+              createPopupGroup("Show full URL", this.tooltipFullUrlToggle),
             ),
           ]),
           createPopupSet("Animations", [
