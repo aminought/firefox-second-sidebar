@@ -4,7 +4,6 @@ import {
   listenEvent,
   sendEvents,
 } from "./events.mjs";
-import { isLeftMouseButton, isMiddleMouseButton } from "../utils/buttons.mjs";
 
 import { NetUtilWrapper } from "../wrappers/net_utils.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
@@ -147,9 +146,7 @@ export class WebPanelsController {
 
       const webPanelController = this.get(uuid);
       webPanelController.setTitle(dynamicTitle, title);
-      if (webPanelController.isActive()) {
-        SidebarControllers.sidebarController.updateToolbar(webPanelController);
-      }
+      webPanelController.updateTitle();
     });
 
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_FAVICON_URL, (event) => {
@@ -402,23 +399,6 @@ export class WebPanelsController {
       webPanelController.setZoom(value);
     });
 
-    listenEvent(WebPanelEvents.SWITCH_WEB_PANEL, (event) => {
-      const uuid = event.detail.uuid;
-      const mouseEvent = event.detail.event;
-
-      const webPanelController = this.get(uuid);
-      if (!webPanelController) return;
-
-      if (isLeftMouseButton(mouseEvent)) {
-        webPanelController.switchWebPanel();
-      } else if (isMiddleMouseButton(mouseEvent)) {
-        if (webPanelController.isActive()) {
-          SidebarControllers.sidebarController.close();
-        }
-        webPanelController.unload();
-      }
-    });
-
     listenEvent(WebPanelEvents.DELETE_WEB_PANEL, async (event) => {
       const uuid = event.detail.uuid;
 
@@ -545,7 +525,7 @@ export class WebPanelsController {
    */
   getActive() {
     const tab = SidebarElements.webPanelsBrowser.getActiveWebPanelTab();
-    return tab.isEmpty() ? null : this.get(tab.uuid);
+    return tab && !tab.isEmpty() ? this.get(tab.uuid) : null;
   }
 
   /**

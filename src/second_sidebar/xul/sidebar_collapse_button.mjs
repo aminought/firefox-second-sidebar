@@ -8,13 +8,4 @@ export class SidebarCollapseButton extends Widget {
       tooltipText: "Second Sidebar",
     });
   }
-
-  /**
-   *
-   * @param {function(MouseEvent):void} callback
-   * @returns {WebPanelNewButton}
-   */
-  listenClick(callback) {
-    return this.setOnClick(callback);
-  }
 }

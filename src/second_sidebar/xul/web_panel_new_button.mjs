@@ -11,13 +11,4 @@ export class WebPanelNewButton extends Widget {
       iconURL: ICON,
     });
   }
-
-  /**
-   *
-   * @param {function(MouseEvent):void} callback
-   * @returns {WebPanelNewButton}
-   */
-  listenClick(callback) {
-    return this.setOnClick(callback);
-  }
 }

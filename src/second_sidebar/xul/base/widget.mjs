@@ -125,12 +125,14 @@ export class Widget {
 
   /**
    *
+   * @param {string} event
    * @param {function(MouseEvent):void} callback
    * @returns {Widget}
    */
-  setOnClick(callback) {
-    this.onClick = callback;
-    return this;
+  addEventListener(event, callback) {
+    return this.doWhenButtonReady(() => {
+      this.button.addEventListener(event, callback);
+    });
   }
 
   /**
@@ -139,11 +141,10 @@ export class Widget {
    * @returns {Widget}
    */
   setIcon(iconURL) {
-    this.doWhenButtonReady(() => {
+    return this.doWhenButtonReady(() => {
       this.iconURL = iconURL;
       this.button.setIcon(iconURL);
     });
-    return this;
   }
 
   /**

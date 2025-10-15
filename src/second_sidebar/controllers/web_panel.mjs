@@ -1,8 +1,8 @@
-import { WebPanelEvents, sendEvent } from "./events.mjs";
+import { clearUrl, extractHostname } from "../utils/url.mjs";
+import { isLeftMouseButton, isMiddleMouseButton } from "../utils/buttons.mjs";
 
 import { ChromeUtilsWrapper } from "../wrappers/chrome_utils.mjs";
 import { FALLBACK_ICON } from "../utils/icons.mjs";
-import { NetUtilWrapper } from "../wrappers/net_utils.mjs";
 import { PinnedWebPanelGeometrySettings } from "../settings/pinned_web_panel_geometry_settings.mjs"; // eslint-disable-line no-unused-vars
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
@@ -40,11 +40,7 @@ export class WebPanelController {
   }
 
   #createProgressListener() {
-    const callback = () => {
-      if (this.isActive()) {
-        SidebarControllers.sidebarController.updateToolbar(this);
-      }
-    };
+    const callback = () => this.updateTitle();
     const onStateChange = (aWebProgress, aRequest, aFlag) => {
       callback();
       const STATE_STOP = Ci.nsIWebProgressListener2.STATE_STOP;
@@ -119,11 +115,31 @@ export class WebPanelController {
     button.setUnloaded(!loaded);
     button.setAttribute("temporary", settings.temporary);
 
-    button.listenClick((event) => {
-      sendEvent(WebPanelEvents.SWITCH_WEB_PANEL, {
-        uuid: this.#settings.uuid,
-        event,
-      });
+    let tooltipTimer = null;
+
+    button.addEventListener("mouseenter", () => {
+      tooltipTimer = setTimeout(() => {
+        SidebarControllers.webPanelTooltipController.openPopup(this);
+      }, 500);
+    });
+
+    button.addEventListener("mouseleave", () => {
+      clearTimeout(tooltipTimer);
+      SidebarControllers.webPanelTooltipController.hidePopup();
+    });
+
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      clearTimeout(tooltipTimer);
+      SidebarControllers.webPanelTooltipController.hidePopup();
+      if (isLeftMouseButton(event)) {
+        this.switchWebPanel();
+      } else if (isMiddleMouseButton(event)) {
+        if (this.isActive()) {
+          SidebarControllers.sidebarController.close();
+        }
+        this.unload();
+      }
     });
 
     return button;
@@ -166,13 +182,10 @@ export class WebPanelController {
    */
   getUrlForTooltip() {
     const tabUrl = this.getTabUrl();
-    let url = this.isTitleDynamic() && tabUrl ? tabUrl : this.#settings.url;
-    if (SidebarControllers.sidebarController.getWebPanelTooltipFullUrl()) {
-      return url.replace(/^https?:\/\//, "").replace(/\/$/, "");
-    } else {
-      const uri = NetUtilWrapper.newURI(url);
-      return ["http", "https"].includes(uri.scheme) ? uri.host : url;
-    }
+    const url = this.isTitleDynamic() && tabUrl ? tabUrl : this.#settings.url;
+    const fullUrlSetting =
+      SidebarControllers.sidebarController.getWebPanelTooltipFullUrl();
+    return fullUrlSetting ? clearUrl(url) : extractHostname(url);
   }
 
   /**
@@ -272,6 +285,29 @@ export class WebPanelController {
 
   /**
    *
+   * @returns {boolean}
+   */
+  isActive() {
+    return this.#tab && this.#tab.selected;
+  }
+
+  updateTitle() {
+    if (this.isActive()) {
+      SidebarControllers.sidebarController.updateToolbar(this);
+    }
+    const title = this.getTabTitle();
+    const notifications = parseNotifications(title);
+    this.#button.setNotificationBadge(notifications);
+  }
+
+  updateSoundIcon() {
+    const soundplaying = this.#tab.getAttributeBool("soundplaying");
+    const muted = this.#tab.getAttributeBool("muted");
+    this.#button.setSoundIcon(soundplaying, muted);
+  }
+
+  /**
+   *
    * @returns {string}
    */
   getCurrentUrl() {
@@ -329,22 +365,9 @@ export class WebPanelController {
     this.#tab.addTabCloseListener(() => this.unload(false));
     this.#tab.addTabAttrModifiedListener(
       (soundplaying, muted, image, busy, progress, label) => {
-        if (soundplaying || muted) {
-          const isSoundPlaying = this.#tab.getAttributeBool("soundplaying");
-          const isMuted = this.#tab.getAttributeBool("muted");
-          this.#button.setSoundIcon(isSoundPlaying, isMuted);
-        }
-        if (image || busy || progress) {
-          this.updateFavicon();
-        }
-        if (label) {
-          if (this.isActive()) {
-            SidebarControllers.sidebarController.updateToolbar(this);
-          }
-          const title = this.getTabTitle();
-          const notifications = parseNotifications(title);
-          this.#button.setNotificationBadge(notifications);
-        }
+        if (soundplaying || muted) this.updateSoundIcon();
+        if (image || busy || progress) this.updateFavicon();
+        if (label) this.updateTitle();
       },
     );
     this.#button.setUnloaded(false);
@@ -776,14 +799,6 @@ export class WebPanelController {
    */
   go(url) {
     this.#tab.linkedBrowser.go(url);
-  }
-
-  /**
-   *
-   * @returns {boolean}
-   */
-  isActive() {
-    return this.#tab && this.#tab.selected;
   }
 
   /**

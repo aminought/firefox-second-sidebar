@@ -6,7 +6,8 @@ import { isLeftMouseButton } from "../utils/buttons.mjs";
 
 export class WebPanelNewController {
   constructor() {
-    SidebarElements.webPanelNewButton.listenClick((event) => {
+    SidebarElements.webPanelNewButton.addEventListener("click", (event) => {
+      event.stopPropagation();
       if (isLeftMouseButton(event)) {
         this.openPopup();
       }

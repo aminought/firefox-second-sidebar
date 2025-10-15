@@ -41,9 +41,10 @@ export class TabBrowserWrapper {
   }
 
   /**
-   * @returns {Tab}
+   * @returns {Tab?}
    */
   get selectedTab() {
+    if (!this.raw?.selectedTab) return null;
     return new Tab({ element: this.raw.selectedTab });
   }
 

@@ -12,6 +12,7 @@ import { WebPanelDeleteController } from "./controllers/web_panel_delete.mjs";
 import { WebPanelEditController } from "./controllers/web_panel_edit.mjs";
 import { WebPanelMoreController } from "./controllers/web_panel_more.mjs";
 import { WebPanelNewController } from "./controllers/web_panel_new.mjs";
+import { WebPanelTooltipController } from "./controllers/web_panel_tooltip.mjs";
 import { WebPanelsController } from "./controllers/web_panels.mjs";
 import { WebPanelsShortcuts } from "./controllers/web_panels_shortcuts.mjs";
 
@@ -26,6 +27,7 @@ export class SidebarControllers {
     this.sidebarMover = new SidebarMover();
     this.sidebarResizer = new SidebarResizer();
     this.sidebarSplitterController = new SidebarSplitterController();
+    this.webPanelTooltipController = new WebPanelTooltipController();
     this.webPanelsController = new WebPanelsController();
     this.webPanelsShortcuts = new WebPanelsShortcuts();
     this.webPanelNewController = new WebPanelNewController();

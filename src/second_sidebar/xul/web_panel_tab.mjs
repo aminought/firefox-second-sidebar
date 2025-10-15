@@ -13,9 +13,10 @@ export class WebPanelTab extends Tab {
   /**
    *
    * @param {Tab} tab
-   * @returns {WebPanelTab}
+   * @returns {WebPanelTab?}
    */
   static fromTab(tab) {
+    if (!tab) return null;
     return new WebPanelTab(tab.getXUL());
   }
 

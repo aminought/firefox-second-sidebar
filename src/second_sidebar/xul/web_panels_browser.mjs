@@ -35,9 +35,7 @@ export class WebPanelsBrowser extends Browser {
       autoscroll: "false",
       tooltip: "aHTMLTooltip",
       autocompletepopup: "PopupAutoComplete",
-      contextmenu: "contentAreaContextMenu",
-      message: "true",
-      manualactiveness: "true",
+      chromehidden: "",
     });
 
     this.initialized = false;
@@ -104,10 +102,6 @@ export class WebPanelsBrowser extends Browser {
     const windowRoot = new XULElement({
       element: this.window.document.documentElement,
     });
-    windowRoot
-      .setAttribute("chromehidden", "")
-      .setAttribute("contextmenu", "contentAreaContextMenu")
-      .setAttribute("type", "content");
 
     const selectors = [
       "#PersonalToolbar",
@@ -235,7 +229,7 @@ export class WebPanelsBrowser extends Browser {
 
   /**
    *
-   * @returns {WebPanelTab}
+   * @returns {WebPanelTab?}
    */
   getActiveWebPanelTab() {
     return WebPanelTab.fromTab(this.window.gBrowser.selectedTab);

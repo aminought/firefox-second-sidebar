@@ -1,26 +1,12 @@
-import { Div } from "./base/div.mjs";
 import { Label } from "./base/label.mjs";
-import { Panel } from "./base/panel.mjs";
-import { SidebarControllers } from "../sidebar_controllers.mjs";
-import { ToolbarButton } from "./base/toolbar_button.mjs"; // eslint-disable-line no-unused-vars
+import { Tooltip } from "./base/tooltip.mjs";
 
-export class WebPanelTooltip extends Panel {
+export class WebPanelTooltip extends Tooltip {
   constructor() {
     super({
       id: "sb2-web-panel-tooltip",
-      classList: ["sb2-tooltip"],
-    });
-    this.setType("arrow").setRole("tooltip").setAttributes({
-      orient: "vertical",
-      "no-open-on-anchor": "true",
-      norolluponanchor: "true",
-      consumeoutsideclicks: "false",
-      animate: "open",
     });
 
-    this.container = new Div({
-      classList: ["sb2-tooltip-container"],
-    });
     this.titleLabel = new Label({
       id: "sb2-web-panel-tooltip-title",
     });
@@ -28,37 +14,58 @@ export class WebPanelTooltip extends Panel {
       id: "sb2-web-panel-tooltip-url",
     });
 
-    this.appendChild(
-      this.container.appendChildren(this.titleLabel, this.urlLabel),
-    );
+    this.#compose();
+  }
+
+  #compose() {
+    this.appendItems(this.titleLabel, this.urlLabel);
   }
 
   /**
    *
-   * @param {ToolbarButton} target
-   * @returns {Panel}
+   * @param {string} title
+   * @returns {WebPanelTooltip}
    */
-  openPopup(target) {
-    const uuid = target.id;
-    const webPanelController = SidebarControllers.webPanelsController.get(uuid);
+  setTitle(title) {
+    this.titleLabel.setText(title);
+    return this;
+  }
 
-    const title = webPanelController.getTitle();
-    const url = webPanelController.getUrlForTooltip();
+  /**
+   *
+   * @param {string} url
+   * @returns {WebPanelTooltip}
+   */
+  setUrl(url) {
+    this.urlLabel.setText(url);
+    return this;
+  }
 
-    this.titleLabel.setText(title).hide();
-    this.urlLabel.setText(url).hide();
+  /**
+   *
+   * @returns {WebPanelTooltip}
+   */
+  hideContent() {
+    this.titleLabel.hide();
+    this.urlLabel.hide();
+    return this;
+  }
 
-    const tooltip = SidebarControllers.sidebarController.getWebPanelTooltip();
-    tooltip === "off" ? this.hide() : this.show();
-    if (tooltip === "title" && title) {
-      this.titleLabel.show();
-    } else if (tooltip === "url") {
-      this.urlLabel.show();
-    } else if (tooltip === "titleandurl") {
-      this.titleLabel.show();
-      this.urlLabel.show();
-    }
+  /**
+   *
+   * @returns {WebPanelTooltip}
+   */
+  showTitle() {
+    this.titleLabel.show();
+    return this;
+  }
 
-    return Panel.prototype.openPopup.call(this, target);
+  /**
+   *
+   * @returns {WebPanelTooltip}
+   */
+  showUrl() {
+    this.urlLabel.show();
+    return this;
   }
 }
