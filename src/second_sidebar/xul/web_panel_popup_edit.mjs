@@ -273,8 +273,6 @@ export class WebPanelPopupEdit extends Panel {
             ),
           ]),
           createPopupSet("Loading", [
-            createPopupGroup("Restore last URL", this.loadLastUrlToggle),
-            new ToolbarSeparator(),
             createPopupGroup(
               "Load into memory at startup",
               this.loadOnStartupToggle,
