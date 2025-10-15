@@ -12,20 +12,18 @@ export class WebPanelTooltipController {
     const title = webPanelController.getTitle();
     const url = webPanelController.getUrlForTooltip();
 
-    SidebarElements.webPanelTooltip.hideContent();
-    SidebarElements.webPanelTooltip.setTitle(title);
-    SidebarElements.webPanelTooltip.setUrl(url);
+    SidebarElements.webPanelTooltip.setTitle(title).setUrl(url).hideContent();
 
     const tooltipSetting =
       SidebarControllers.sidebarController.getWebPanelTooltip();
-    tooltipSetting === "off" ? tooltip.hide() : tooltip.show();
     if (tooltipSetting === "title" && title) {
-      tooltip.showTitle();
+      tooltip.showTitle().show();
     } else if (tooltipSetting === "url") {
-      tooltip.showUrl();
+      tooltip.showUrl().show();
     } else if (tooltipSetting === "titleandurl") {
-      tooltip.showTitle();
-      tooltip.showUrl();
+      tooltip.showTitle().showUrl().show();
+    } else {
+      tooltip.hide();
     }
     SidebarElements.webPanelTooltip.openPopup(webPanelController.button.button);
   }
