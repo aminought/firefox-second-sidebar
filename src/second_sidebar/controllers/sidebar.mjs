@@ -41,7 +41,10 @@ export class SidebarController {
         !SidebarElements.sidebarMainPopupSettings.contains(target) &&
         !SidebarElements.sidebarMainMenuPopup.contains(target) &&
         !SidebarElements.webPanelMenuPopup.contains(target) &&
-        !BrowserElements.notificationPopup.contains(target)
+        !BrowserElements.notificationPopup.contains(target) &&
+        !event.view.location.href.startsWith("about:devtools") &&
+        !event.view.location.href.startsWith("chrome://devtools") &&
+        !BrowserElements.menuApiPopup?.contains(target)
       ) {
         this.close();
       }
