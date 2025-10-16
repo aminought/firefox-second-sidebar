@@ -27,4 +27,10 @@ export class BrowserElements {
       element: document.getElementById("contentAreaContextMenu"),
     });
   }
+
+  static get menuApiPopup() {
+    return new XULElement({
+      element: document.querySelector('menupopup[menu-api="true"]'),
+    });
+  }
 }
