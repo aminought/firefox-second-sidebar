@@ -19,7 +19,7 @@ export class WebPanelController {
   #progressListener = this.#createProgressListener();
   /**@type {WebPanelSettings} */
   #settings;
-  /**@type {WebPanelState?} */
+  /**@type {WebPanelState} */
   #state;
   /**@type {WebPanelButton} */
   #button;
@@ -31,7 +31,7 @@ export class WebPanelController {
   /**
    *
    * @param {WebPanelSettings} settings
-   * @param {WebPanelState?} state
+   * @param {WebPanelState} state
    * @param {object?} params
    * @param {boolean?} params.loaded
    * @param {string?} params.position
