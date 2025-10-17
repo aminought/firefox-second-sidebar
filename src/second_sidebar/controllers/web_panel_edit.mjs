@@ -106,6 +106,12 @@ export class WebPanelEditController {
           loadOnStartup,
         });
       },
+      loadLastUrl: (uuid, loadLastUrl) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_LOAD_LAST_URL, {
+          uuid,
+          loadLastUrl,
+        });
+      },
       unloadOnClose: (uuid, unloadOnClose) => {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_UNLOAD_ON_CLOSE, {
           uuid,

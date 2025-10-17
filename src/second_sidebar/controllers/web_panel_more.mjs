@@ -24,7 +24,7 @@ export class WebPanelMoreController {
         const webPanelController =
           SidebarControllers.webPanelsController.get(uuid);
         openTrustedLinkInWrapper(
-          webPanelController.getCurrentUrl(),
+          webPanelController.getTabUrl(),
           event.ctrlKey ? OPEN_URL_IN.BACKGROUND_TAB : OPEN_URL_IN.TAB,
         );
       },
@@ -33,7 +33,7 @@ export class WebPanelMoreController {
     SidebarElements.webPanelPopupMore.listenCopyPageUrlButtonClick((uuid) => {
       const webPanelController =
         SidebarControllers.webPanelsController.get(uuid);
-      ClipboardHelperWrapper.copyString(webPanelController.getCurrentUrl());
+      ClipboardHelperWrapper.copyString(webPanelController.getTabUrl());
     });
 
     SidebarElements.webPanelPopupMore.listenMobileButtonClick(

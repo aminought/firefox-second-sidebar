@@ -8,6 +8,7 @@ import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { WebPanelButton } from "../xul/web_panel_button.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
+import { WebPanelState } from "../settings/web_panel_state.mjs";
 import { WebPanelTab } from "../xul/web_panel_tab.mjs"; // eslint-disable-line no-unused-vars
 import { ZoomManagerWrapper } from "../wrappers/zoom_manager.mjs";
 import { parseNotifications } from "../utils/string.mjs";
@@ -18,6 +19,8 @@ export class WebPanelController {
   #progressListener = this.#createProgressListener();
   /**@type {WebPanelSettings} */
   #settings;
+  /**@type {WebPanelState?} */
+  #state;
   /**@type {WebPanelButton} */
   #button;
   /**@type {WebPanelTab?} */
@@ -28,12 +31,14 @@ export class WebPanelController {
   /**
    *
    * @param {WebPanelSettings} settings
+   * @param {WebPanelState?} state
    * @param {object?} params
    * @param {boolean?} params.loaded
    * @param {string?} params.position
    */
-  constructor(settings, { loaded = false, position = null } = {}) {
+  constructor(settings, state, { loaded = false, position = null } = {}) {
     this.#settings = settings;
+    this.#state = state;
     this.#button = this.#createWebPanelButton(settings, loaded, position);
 
     if (loaded) this.load();
@@ -50,6 +55,8 @@ export class WebPanelController {
         aFlag & STATE_STOP &&
         aFlag & STATE_IS_WINDOW
       ) {
+        this.#state.lastUrl = this.getTabUrl();
+        SidebarControllers.webPanelsController.saveState();
         if (this.getSelectorEnabled()) {
           setTimeout(() => this.#applySelector(), 100);
         }
@@ -308,14 +315,6 @@ export class WebPanelController {
 
   /**
    *
-   * @returns {string}
-   */
-  getCurrentUrl() {
-    return this.#tab.linkedBrowser.getCurrentUrl();
-  }
-
-  /**
-   *
    * @param {object} params
    * @param {boolean} params.forceOpen
    */
@@ -360,6 +359,7 @@ export class WebPanelController {
   load() {
     this.#tab = SidebarElements.webPanelsBrowser.addWebPanelTab(
       this.#settings,
+      this.#state,
       this.#progressListener,
     );
     this.#tab.addTabCloseListener(() => this.unload(false));
@@ -478,7 +478,7 @@ export class WebPanelController {
       } else {
         this.#tab.linkedBrowser.unsetMobileUserAgent();
       }
-      this.goHome();
+      this.reload();
     }
   }
 
@@ -547,6 +547,14 @@ export class WebPanelController {
    */
   setLoadOnStartup(value) {
     this.#settings.loadOnStartup = value;
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   */
+  setLoadLastUrl(value) {
+    this.#settings.loadLastUrl = value;
   }
 
   /**
@@ -830,6 +838,14 @@ export class WebPanelController {
       SidebarControllers.sidebarGeometry.getDefaultFloatingOffsetCSS(),
       this.#settings.toObject(),
     );
+  }
+
+  /**
+   *
+   * @returns {WebPanelState}
+   */
+  dumpState() {
+    return WebPanelState.fromObject(this.#state.toObject());
   }
 
   /**

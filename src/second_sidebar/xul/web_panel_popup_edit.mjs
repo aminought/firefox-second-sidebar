@@ -77,8 +77,8 @@ export class WebPanelPopupEdit extends Panel {
     this.containerMenuList = createMenuList({ id: "sb2-container-menu-list" });
     this.temporaryToggle = new Toggle();
     this.mobileToggle = new Toggle();
-    this.loadLastUrlToggle = new Toggle();
     this.loadOnStartupToggle = new Toggle();
+    this.loadLastUrlToggle = new Toggle();
     this.unloadOnCloseToggle = new Toggle();
     this.shortcutInput = createInput({
       placeholder: "Click here and press keys...",
@@ -281,6 +281,11 @@ export class WebPanelPopupEdit extends Panel {
             ),
             new ToolbarSeparator(),
             createPopupGroup(
+              "Restore last opened page",
+              this.loadLastUrlToggle,
+            ),
+            new ToolbarSeparator(),
+            createPopupGroup(
               "Unload from memory after closing",
               this.unloadOnCloseToggle,
             ),
@@ -330,8 +335,8 @@ export class WebPanelPopupEdit extends Panel {
    * @param {function(string, string):void} callbacks.heightType
    * @param {function(string, string):void} callbacks.userContextId
    * @param {function(string, boolean):void} callbacks.temporary
-   * @param {function(string, boolean):void} callbacks.loadLastUrl
    * @param {function(string, boolean):void} callbacks.loadOnStartup
+   * @param {function(string, boolean):void} callbacks.loadLastUrl
    * @param {function(string, boolean):void} callbacks.unloadOnClose
    * @param {function(string, string):void} callbacks.shortcut
    * @param {function(string, boolean):void} callbacks.hideToolbar
@@ -357,8 +362,8 @@ export class WebPanelPopupEdit extends Panel {
     heightType,
     userContextId,
     temporary,
-    loadLastUrl,
     loadOnStartup,
+    loadLastUrl,
     unloadOnClose,
     shortcut,
     hideToolbar,
@@ -383,8 +388,8 @@ export class WebPanelPopupEdit extends Panel {
     this.onWidthTypeChange = widthType;
     this.onHeightTypeChange = heightType;
     this.onUserContextIdChange = userContextId;
-    this.onLoadLastUrlChange = loadLastUrl;
     this.onLoadOnStartupChange = loadOnStartup;
+    this.onLoadLastUrlChange = loadLastUrl;
     this.onUnloadOnCloseChange = unloadOnClose;
     this.onShortcutChange = shortcut;
     this.onHideToolbar = hideToolbar;
@@ -461,11 +466,11 @@ export class WebPanelPopupEdit extends Panel {
     this.mobileToggle.addEventListener("toggle", () => {
       mobile(this.settings.uuid, this.mobileToggle.getPressed());
     });
-    this.loadLastUrlToggle.addEventListener("toggle", () => {
-      loadLastUrl(this.settings.uuid, this.loadLastUrlToggle.getPressed());
-    });
     this.loadOnStartupToggle.addEventListener("toggle", () => {
       loadOnStartup(this.settings.uuid, this.loadOnStartupToggle.getPressed());
+    });
+    this.loadLastUrlToggle.addEventListener("toggle", () => {
+      loadLastUrl(this.settings.uuid, this.loadLastUrlToggle.getPressed());
     });
     this.unloadOnCloseToggle.addEventListener("toggle", () => {
       unloadOnClose(this.settings.uuid, this.unloadOnCloseToggle.getPressed());
@@ -583,8 +588,8 @@ export class WebPanelPopupEdit extends Panel {
 
     this.temporaryToggle.setPressed(settings.temporary);
     this.mobileToggle.setPressed(settings.mobile);
-    this.loadLastUrlToggle.setPressed(settings.loadLastUrl);
     this.loadOnStartupToggle.setPressed(settings.loadOnStartup);
+    this.loadLastUrlToggle.setPressed(settings.loadLastUrl);
     this.unloadOnCloseToggle.setPressed(settings.unloadOnClose);
     this.shortcutInput.setValue(settings.shortcut).removeAttribute("error");
     this.hideToolbarToggle.setPressed(settings.hideToolbar);
@@ -712,14 +717,14 @@ export class WebPanelPopupEdit extends Panel {
     if (this.mobileToggle.getPressed() !== this.settings.mobile) {
       this.onMobileChange(this.settings.uuid, this.settings.mobile);
     }
-    if (this.loadLastUrlToggle.getPressed() !== this.settings.loadLastUrl) {
-      this.onLoadLastUrlChange(this.settings.uuid, this.settings.loadLastUrl);
-    }
     if (this.loadOnStartupToggle.getPressed() !== this.settings.loadOnStartup) {
       this.onLoadOnStartupChange(
         this.settings.uuid,
         this.settings.loadOnStartup,
       );
+    }
+    if (this.loadLastUrlToggle.getPressed() !== this.settings.loadLastUrl) {
+      this.onLoadLastUrlChange(this.settings.uuid, this.settings.loadLastUrl);
     }
     if (this.unloadOnCloseToggle.getPressed() !== this.settings.unloadOnClose) {
       this.onUnloadOnCloseChange(

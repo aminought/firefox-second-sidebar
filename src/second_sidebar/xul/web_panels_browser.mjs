@@ -7,6 +7,7 @@ import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manage
 import { SessionStoreWrapper } from "../wrappers/session_store.mjs";
 import { Style } from "./base/style.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs"; // eslint-disable-line no-unused-vars
+import { WebPanelState } from "../settings/web_panel_state.mjs"; // eslint-disable-line no-unused-vars
 import { WebPanelTab } from "./web_panel_tab.mjs";
 import { WindowWatcherWrapper } from "../wrappers/window_watcher.mjs";
 import { WindowWrapper } from "../wrappers/window.mjs"; // eslint-disable-line no-unused-vars
@@ -196,12 +197,16 @@ export class WebPanelsBrowser extends Browser {
   /**
    *
    * @param {WebPanelSettings} webPanelSettings
+   * @param {WebPanelState?} webPanelState
    * @param {object} progressListener
    * @returns {WebPanelTab}
    */
-  addWebPanelTab(webPanelSettings, progressListener) {
+  addWebPanelTab(webPanelSettings, webPanelState, progressListener) {
+    const url = webPanelSettings.loadLastUrl
+      ? (webPanelState?.lastUrl ?? webPanelSettings.url)
+      : webPanelSettings.url;
     const tab = WebPanelTab.fromTab(
-      this.window.gBrowser.addTab(webPanelSettings.url, {
+      this.window.gBrowser.addTab(url, {
         triggeringPrincipal: ScriptSecurityManagerWrapper.getSystemPrincipal(),
         userContextId: webPanelSettings.userContextId,
       }),
@@ -220,7 +225,7 @@ export class WebPanelsBrowser extends Browser {
     } else {
       tab.linkedBrowser.unsetMobileUserAgent();
     }
-    tab.linkedBrowser.go(webPanelSettings.url);
+    tab.linkedBrowser.go(url);
 
     // Set zoom
     tab.linkedBrowser.setZoom(webPanelSettings.zoom);
