@@ -280,7 +280,10 @@ export class WebPanelPopupEdit extends Panel {
               this.loadOnStartupToggle,
             ),
             new ToolbarSeparator(),
-            createPopupGroup("Restore last page", this.loadLastUrlToggle),
+            createPopupGroup(
+              "Restore last opened page",
+              this.loadLastUrlToggle,
+            ),
             new ToolbarSeparator(),
             createPopupGroup(
               "Unload from memory after closing",
