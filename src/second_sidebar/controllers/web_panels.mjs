@@ -588,8 +588,9 @@ export class WebPanelsController {
         webPanelsStateMap.set(webPanelState.uuid, webPanelState);
       }
       for (const webPanelSettings of webPanelsSettings.webPanels) {
+        const uuid = webPanelSettings.uuid;
         const webPanelState =
-          webPanelsStateMap.get(webPanelSettings.uuid) ?? null;
+          webPanelsStateMap.get(uuid) ?? new WebPanelState(uuid);
         const webPanelController = new WebPanelController(
           webPanelSettings,
           webPanelState,
