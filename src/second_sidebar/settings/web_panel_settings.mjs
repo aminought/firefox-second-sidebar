@@ -48,6 +48,7 @@ export class WebPanelSettings {
       mobile = false,
       zoom = 1,
       loadOnStartup = true,
+      loadLastUrl = false,
       unloadOnClose = false,
       hideToolbar = false,
       userContextId = ScriptSecurityManagerWrapper.DEFAULT_USER_CONTEXT_ID,
@@ -76,6 +77,7 @@ export class WebPanelSettings {
     this.mobile = mobile;
     this.zoom = zoom;
     this.loadOnStartup = loadOnStartup;
+    this.loadLastUrl = loadLastUrl;
     this.unloadOnClose = unloadOnClose;
     this.hideToolbar = hideToolbar;
     this.userContextId = userContextId;
@@ -113,6 +115,7 @@ export class WebPanelSettings {
         mobile: object.mobile,
         zoom: object.zoom,
         loadOnStartup: object.loadOnStartup,
+        loadLastUrl: object.loadLastUrl,
         unloadOnClose: object.unloadOnClose,
         hideToolbar: object.hideToolbar,
         userContextId: object.userContextId,
@@ -152,6 +155,7 @@ export class WebPanelSettings {
       mobile: this.mobile,
       zoom: this.zoom,
       loadOnStartup: this.loadOnStartup,
+      loadLastUrl: this.loadLastUrl,
       unloadOnClose: this.unloadOnClose,
       hideToolbar: this.hideToolbar,
       userContextId: this.userContextId,

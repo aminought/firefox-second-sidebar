@@ -10,7 +10,9 @@ import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { WebPanelController } from "./web_panel.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs";
+import { WebPanelState } from "../settings/web_panel_state.mjs";
 import { WebPanelsSettings } from "../settings/web_panels_settings.mjs";
+import { WebPanelsState } from "../settings/web_panels_state.mjs";
 import { WindowWrapper } from "../wrappers/window.mjs";
 import { gCustomizeModeWrapper } from "../wrappers/g_customize_mode.mjs";
 
@@ -323,6 +325,14 @@ export class WebPanelsController {
       webPanelController.setLoadOnStartup(loadOnStartup);
     });
 
+    listenEvent(WebPanelEvents.EDIT_WEB_PANEL_LOAD_LAST_URL, (event) => {
+      const uuid = event.detail.uuid;
+      const loadLastUrl = event.detail.loadLastUrl;
+
+      const webPanelController = this.get(uuid);
+      webPanelController.setLoadLastUrl(loadLastUrl);
+    });
+
     listenEvent(WebPanelEvents.EDIT_WEB_PANEL_UNLOAD_ON_CLOSE, (event) => {
       const uuid = event.detail.uuid;
       const unloadOnClose = event.detail.unloadOnClose;
@@ -486,10 +496,16 @@ export class WebPanelsController {
         temporary,
       },
     );
-    const webPanelController = new WebPanelController(webPanelSettings, {
-      loaded: isActiveWindow,
-      position: newWebPanelPosition,
-    });
+    const webPanelState = new WebPanelState(uuid);
+
+    const webPanelController = new WebPanelController(
+      webPanelSettings,
+      webPanelState,
+      {
+        loaded: isActiveWindow,
+        position: newWebPanelPosition,
+      },
+    );
     this.add(webPanelController);
 
     if (isActiveWindow) {
@@ -551,8 +567,9 @@ export class WebPanelsController {
   /**
    *
    * @param {WebPanelsSettings} webPanelsSettings
+   * @param {WebPanelsState} webPanelsState
    */
-  loadSettings(webPanelsSettings) {
+  loadSettingsAndState(webPanelsSettings, webPanelsState) {
     console.log("Loading web panels...");
 
     // We need to display web panels window for a while to initialize it and
@@ -566,10 +583,20 @@ export class WebPanelsController {
       // Setup web panels window listeners
       this.#setupWebPanelsBrowserListeners();
       // Load startup web panels
+      const webPanelsStateMap = new Map();
+      for (const webPanelState of webPanelsState.webPanelsState) {
+        webPanelsStateMap.set(webPanelState.uuid, webPanelState);
+      }
       for (const webPanelSettings of webPanelsSettings.webPanels) {
-        const webPanelController = new WebPanelController(webPanelSettings, {
-          loaded: webPanelSettings.loadOnStartup,
-        });
+        const webPanelState =
+          webPanelsStateMap.get(webPanelSettings.uuid) ?? null;
+        const webPanelController = new WebPanelController(
+          webPanelSettings,
+          webPanelState,
+          {
+            loaded: webPanelSettings.loadOnStartup,
+          },
+        );
         this.add(webPanelController);
       }
       // Hide web panels window after initialization
@@ -591,5 +618,17 @@ export class WebPanelsController {
 
   saveSettings() {
     this.dumpSettings().save();
+  }
+
+  dumpState() {
+    return new WebPanelsState(
+      Array.from(this.webPanelControllers.values(), (webPanelController) =>
+        webPanelController.dumpState(),
+      ),
+    );
+  }
+
+  saveState() {
+    this.dumpState().save();
   }
 }

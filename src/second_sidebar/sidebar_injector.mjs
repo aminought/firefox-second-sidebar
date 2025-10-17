@@ -2,6 +2,7 @@ import { SidebarControllers } from "./sidebar_controllers.mjs";
 import { SidebarElements } from "./sidebar_elements.mjs";
 import { SidebarSettings } from "./settings/sidebar_settings.mjs";
 import { WebPanelsSettings } from "./settings/web_panels_settings.mjs";
+import { WebPanelsState } from "./settings/web_panels_state.mjs";
 import { isPopupWindow } from "./utils/windows.mjs";
 
 export class SidebarInjector {
@@ -24,6 +25,9 @@ export class SidebarInjector {
       sidebarSettings.defaultFloatingOffset,
     );
 
+    console.log("Loading web panel state...");
+    const webPanelsState = WebPanelsState.load();
+
     console.log("Elements creation...");
     SidebarElements.create();
 
@@ -32,7 +36,10 @@ export class SidebarInjector {
 
     console.log("Applying settings...");
     SidebarControllers.sidebarController.loadSettings(sidebarSettings);
-    SidebarControllers.webPanelsController.loadSettings(webPanelsSettings);
+    SidebarControllers.webPanelsController.loadSettingsAndState(
+      webPanelsSettings,
+      webPanelsState,
+    );
 
     console.log("Second Sidebar loaded");
     return true;
