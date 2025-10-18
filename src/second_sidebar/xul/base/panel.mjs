@@ -10,6 +10,7 @@ export class Panel extends XULElement {
    */
   constructor({ id = null, classList = [] } = {}) {
     super({ tag: "panel", id, classList: [...classList, "panel-no-padding"] });
+    this.setAttribute("level", "top");
   }
 
   /**
