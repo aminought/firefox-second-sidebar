@@ -197,16 +197,12 @@ export class WebPanelsBrowser extends Browser {
   /**
    *
    * @param {WebPanelSettings} webPanelSettings
-   * @param {WebPanelState?} webPanelState
    * @param {object} progressListener
    * @returns {WebPanelTab}
    */
-  addWebPanelTab(webPanelSettings, webPanelState, progressListener) {
-    const url = webPanelSettings.loadLastUrl
-      ? (webPanelState?.lastUrl ?? webPanelSettings.url)
-      : webPanelSettings.url;
+  addWebPanelTab(webPanelSettings, progressListener) {
     const tab = WebPanelTab.fromTab(
-      this.window.gBrowser.addTab(url, {
+      this.window.gBrowser.addTab("about:blank", {
         triggeringPrincipal: ScriptSecurityManagerWrapper.getSystemPrincipal(),
         userContextId: webPanelSettings.userContextId,
       }),
@@ -219,13 +215,12 @@ export class WebPanelsBrowser extends Browser {
       tab.linkedBrowser.addProgressListener(progressListener);
     });
 
-    // Set user agent and reload
+    // Set user agent
     if (webPanelSettings.mobile) {
       tab.linkedBrowser.setMobileUserAgent();
     } else {
       tab.linkedBrowser.unsetMobileUserAgent();
     }
-    tab.linkedBrowser.go(url);
 
     // Set zoom
     tab.linkedBrowser.setZoom(webPanelSettings.zoom);

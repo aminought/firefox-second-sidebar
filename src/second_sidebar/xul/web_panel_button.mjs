@@ -134,4 +134,27 @@ export class WebPanelButton extends Widget {
       ),
     );
   }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  getLoading() {
+    return this.button.hasAttribute("loading");
+  }
+
+  /**
+   *
+   * @param {boolean} loading
+   * @returns {WebPanelButton}
+   */
+  setLoading(loading) {
+    return this.doWhenButtonReady(() => {
+      if (loading) {
+        this.button.setAttribute("loading", true);
+      } else {
+        this.button.removeAttribute("loading");
+      }
+    });
+  }
 }
