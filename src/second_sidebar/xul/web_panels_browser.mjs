@@ -6,6 +6,7 @@ import { PopupNotificationsPatcher } from "../patchers/popup_notifications_patch
 import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manager.mjs";
 import { SessionStoreWrapper } from "../wrappers/session_store.mjs";
 import { Style } from "./base/style.mjs";
+import { UrlbarInputPatcher } from "../patchers/urlbar_input_patcher.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs"; // eslint-disable-line no-unused-vars
 import { WebPanelState } from "../settings/web_panel_state.mjs"; // eslint-disable-line no-unused-vars
 import { WebPanelTab } from "./web_panel_tab.mjs";
@@ -154,6 +155,9 @@ export class WebPanelsBrowser extends Browser {
 
     // Patch PopupNotifications
     PopupNotificationsPatcher.patch();
+
+    // Patch #urlbar-input
+    UrlbarInputPatcher.patch();
   }
 
   #listenToFirstDialogAndClose() {
