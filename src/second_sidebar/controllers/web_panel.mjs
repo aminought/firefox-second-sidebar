@@ -1,8 +1,8 @@
+import { FALLBACK_ICON, fetchIconURL } from "../utils/icons.mjs";
 import { clearUrl, extractHostname } from "../utils/url.mjs";
 import { isLeftMouseButton, isMiddleMouseButton } from "../utils/buttons.mjs";
 
 import { ChromeUtilsWrapper } from "../wrappers/chrome_utils.mjs";
-import { FALLBACK_ICON } from "../utils/icons.mjs";
 import { PinnedWebPanelGeometrySettings } from "../settings/pinned_web_panel_geometry_settings.mjs"; // eslint-disable-line no-unused-vars
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
@@ -282,11 +282,9 @@ export class WebPanelController {
     const busy = this.#tab.getAttributeBool("busy");
     const progress = this.#tab.getAttributeBool("progress");
     if (busy || progress) {
-      this.#button.setIcon("");
-      this.#button.setAttribute("loading", "true");
+      this.#button.setLoading(true).setIcon("");
     } else {
-      this.#button.setIcon(image);
-      this.#button.removeAttribute("busy");
+      this.#button.setLoading(false).setIcon(image);
     }
   }
 
@@ -359,7 +357,6 @@ export class WebPanelController {
   load() {
     this.#tab = SidebarElements.webPanelsBrowser.addWebPanelTab(
       this.#settings,
-      this.#state,
       this.#progressListener,
     );
     this.#tab.addTabCloseListener(() => this.unload(false));
@@ -372,6 +369,11 @@ export class WebPanelController {
     );
     this.#button.setUnloaded(false);
     this.#startTimer();
+
+    const url = this.#settings.loadLastUrl
+      ? (this.#state?.lastUrl ?? this.#settings.url)
+      : this.#settings.url;
+    this.go(url);
   }
 
   /**
@@ -395,6 +397,13 @@ export class WebPanelController {
       .setNotificationBadge(0)
       .setOpen(false)
       .setUnloaded(true);
+
+    if (this.#button.getLoading()) {
+      fetchIconURL(this.#settings.url).then((faviconUrl) => {
+        this.#button.setLoading(false).setIcon(faviconUrl);
+      });
+    }
+
     this.#tab = null;
   }
 

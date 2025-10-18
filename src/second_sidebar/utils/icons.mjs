@@ -73,8 +73,7 @@ export async function isIconAvailable(url) {
   try {
     const response = await fetch(url, { credentials: "include" });
     return response.status === 200;
-  } catch (error) {
-    console.log(`Failed to fetch icon ${url}:`, error);
+  } catch {
     return false;
   }
 }
