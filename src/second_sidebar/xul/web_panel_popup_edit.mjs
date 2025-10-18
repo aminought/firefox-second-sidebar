@@ -63,6 +63,9 @@ export class WebPanelPopupEdit extends Panel {
     this.faviconResetButton = createSubviewIconicButton(ICONS.UNDO, {
       tooltipText: "Request favicon",
     });
+    this.alwaysOnTopToggle = new Toggle({
+      id: "sb2-popup-always-on-top-toggle",
+    });
     this.selectorToggle = new Toggle({ id: "sb2-popup-css-selector-toggle" });
     this.selectorInput = createInput({
       id: "sb2-popup-css-selector-input",
@@ -263,6 +266,8 @@ export class WebPanelPopupEdit extends Panel {
               id: "sb2-popup-floating-items",
             }).appendChildren(
               new ToolbarSeparator(),
+              createPopupGroup("Always on top", this.alwaysOnTopToggle),
+              new ToolbarSeparator(),
               createPopupGroup("Position anchor", this.floatingAnchorMenuList),
               new ToolbarSeparator(),
               createPopupGroup("Horizontal offset", this.offsetXTypeMenuList),
@@ -328,6 +333,7 @@ export class WebPanelPopupEdit extends Panel {
    * @param {function(string, string):void} callbacks.selector
    * @param {function(string, boolean):void} callbacks.mobile
    * @param {function(string, boolean):void} callbacks.pinned
+   * @param {function(string, boolean):void} callbacks.alwaysOnTop
    * @param {function(string, string):void} callbacks.anchor
    * @param {function(string, string):void} callbacks.offsetXType
    * @param {function(string, string):void} callbacks.offsetYType
@@ -354,6 +360,7 @@ export class WebPanelPopupEdit extends Panel {
     selectorEnabled,
     selector,
     mobile,
+    alwaysOnTop,
     pinned,
     anchor,
     offsetXType,
@@ -382,6 +389,7 @@ export class WebPanelPopupEdit extends Panel {
     this.onTemporaryChange = temporary;
     this.onMobileChange = mobile;
     this.onPinnedChange = pinned;
+    this.onAlwaysOnTopChange = alwaysOnTop;
     this.onFloatingAnchorChange = anchor;
     this.onOffsetXTypeChange = offsetXType;
     this.onOffsetYTypeChange = offsetYType;
@@ -438,6 +446,9 @@ export class WebPanelPopupEdit extends Panel {
     });
     this.selectorInput.addEventListener("input", () => {
       selector(this.settings.uuid, this.selectorInput.getValue(), 1000);
+    });
+    this.alwaysOnTopToggle.addEventListener("toggle", () => {
+      alwaysOnTop(this.settings.uuid, this.alwaysOnTopToggle.getPressed());
     });
     this.pinnedMenuList.addEventListener("command", () => {
       pinned(this.settings.uuid, this.pinnedMenuList.getValue() === "true");
@@ -572,6 +583,7 @@ export class WebPanelPopupEdit extends Panel {
     this.faviconURLInput.setValue(settings.faviconURL);
     this.selectorToggle.setPressed(settings.selectorEnabled);
     this.selectorInput.setValue(settings.selector);
+    this.alwaysOnTopToggle.setPressed(settings.alwaysOnTop);
     this.pinnedMenuList.setValue(settings.pinned);
     this.floatingAnchorMenuList.setValue(settings.floatingGeometry.anchor);
     this.offsetXTypeMenuList.setValue(settings.floatingGeometry.offsetXType);
@@ -656,6 +668,9 @@ export class WebPanelPopupEdit extends Panel {
     }
     if ((this.pinnedMenuList.getValue() === "true") !== this.settings.pinned) {
       this.onPinnedChange(this.settings.uuid, this.settings.pinned);
+    }
+    if (this.alwaysOnTopToggle.getPressed() !== this.settings.alwaysOnTop) {
+      this.onAlwaysOnTopChange(this.settings.uuid, this.settings.alwaysOnTop);
     }
     if (
       this.floatingAnchorMenuList.getValue() !==

@@ -47,6 +47,12 @@ export class WebPanelEditController {
           timeout,
         });
       },
+      alwaysOnTop: (uuid, alwaysOnTop) => {
+        sendEvents(WebPanelEvents.EDIT_WEB_PANEL_ALWAYS_ON_TOP, {
+          uuid,
+          alwaysOnTop,
+        });
+      },
       pinned: (uuid, pinned) => {
         sendEvents(WebPanelEvents.EDIT_WEB_PANEL_PINNED, {
           uuid,
