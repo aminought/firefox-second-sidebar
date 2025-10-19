@@ -26,26 +26,7 @@ export class SidebarController {
   #setupListeners() {
     /** @param {MouseEvent} event */
     this.onClickOutsideWhileFloating = (event) => {
-      const target = new XULElement({ element: event.target });
-      const webPanelController =
-        SidebarControllers.webPanelsController.getActive();
-
-      if (
-        webPanelController &&
-        isLeftMouseButton(event) &&
-        !webPanelController.getAlwaysOnTop() &&
-        !SidebarElements.webPanelsBrowser.activeWebPanelContains(target) &&
-        !SidebarElements.sidebarBox.contains(target) &&
-        !SidebarElements.sidebarSplitter.contains(target) &&
-        !SidebarElements.webPanelPopupEdit.contains(target) &&
-        !SidebarElements.sidebarMainPopupSettings.contains(target) &&
-        !SidebarElements.sidebarMainMenuPopup.contains(target) &&
-        !SidebarElements.webPanelMenuPopup.contains(target) &&
-        !BrowserElements.notificationPopup.contains(target) &&
-        !event.view.location.href.startsWith("about:devtools") &&
-        !event.view.location.href.startsWith("chrome://devtools") &&
-        !BrowserElements.menuApiPopup?.contains(target)
-      ) {
+      if (isLeftMouseButton(event) && this.isClickOutsideWhileFloating(event)) {
         this.close();
       }
     };
@@ -163,6 +144,36 @@ export class SidebarController {
     );
   }
 
+  /**
+   *
+   * @param {MouseEvent} event
+   * @returns {boolean}
+   */
+  isClickOutsideWhileFloating(event) {
+    const target = new XULElement({ element: event.target });
+    const webPanelController =
+      SidebarControllers.webPanelsController.getActive();
+
+    return (
+      webPanelController &&
+      !webPanelController.pinned() &&
+      !webPanelController.getAlwaysOnTop() &&
+      !SidebarElements.webPanelsBrowser.activeWebPanelContains(target) &&
+      !SidebarElements.sidebarMain.contains(target) &&
+      !SidebarElements.sidebarBox.contains(target) &&
+      !SidebarElements.sidebarSplitter.contains(target) &&
+      !SidebarElements.webPanelPopupEdit.contains(target) &&
+      !SidebarElements.sidebarMainPopupSettings.contains(target) &&
+      !SidebarElements.sidebarMainMenuPopup.contains(target) &&
+      !SidebarElements.webPanelMenuPopup.contains(target) &&
+      !SidebarElements.sidebarCollapseButton.button.contains(target) &&
+      !BrowserElements.notificationPopup.contains(target) &&
+      !event.view.location.href.startsWith("about:devtools") &&
+      !event.view.location.href.startsWith("chrome://devtools") &&
+      !BrowserElements.menuApiPopup?.contains(target)
+    );
+  }
+
   open() {
     SidebarControllers.sidebarToolbarCollapser.clearTimers();
 
@@ -180,6 +191,7 @@ export class SidebarController {
     SidebarControllers.sidebarToolbarCollapser.clearTimers();
     SidebarElements.sidebarBox.hide();
     SidebarElements.sidebarSplitter.hide();
+    SidebarElements.afterSplitter.hide();
     SidebarControllers.webPanelsController.close();
   }
 

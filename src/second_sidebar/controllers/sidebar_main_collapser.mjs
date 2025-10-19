@@ -1,5 +1,3 @@
-import { SidebarEvents, listenEvent, sendEvents } from "./events.mjs";
-
 import { BrowserElements } from "../browser_elements.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
@@ -8,62 +6,29 @@ import { XULElement } from "../xul/base/xul_element.mjs";
 
 const FULLSCREEN_ANIMATE_ATTRIBUTE = "fullscreenShouldAnimate";
 const ANIMATE_ATTRIBUTE = "shouldAnimate";
+const HIDE_DELAY = 500;
+const SHOW_DELAY = 200;
 
 export class SidebarMainCollapser {
   constructor() {
+    this.window = new WindowWrapper();
+    this.lastOpenedWebPanel = null;
+    this.showSidebarTimer = null;
+    this.hideSidebarTimer = null;
     this.#setupListeners();
   }
 
   #setupListeners() {
+    BrowserElements.root.addEventListener("click", this);
     BrowserElements.root.addEventListener("mousemove", this);
-
-    const window = new WindowWrapper();
-    window.addEventListener("fullscreen", () => {
-      if (window.fullScreen) {
-        // Show sidebar and then immediately hide with fullscreen animation
-        this.uncollapse();
-        setTimeout(() => {
-          this.collapse(false, true);
-        }, 0);
-      } else {
-        if (SidebarControllers.sidebarController.autoHideSidebar) {
-          // Show sidebar and then immediately hide with fullscreen animation
-          this.uncollapse();
-          setTimeout(() => {
-            this.collapse(false, true);
-          });
-        } else {
-          this.uncollapse(
-            SidebarControllers.sidebarController.hideSidebarAnimated,
-          );
-        }
-      }
-    });
-
-    SidebarElements.sidebarCollapseButton.addEventListener("click", () => {
-      sendEvents(SidebarEvents.COLLAPSE_SIDEBAR);
-    });
-
-    listenEvent(SidebarEvents.COLLAPSE_SIDEBAR, (event) => {
-      const isActiveWindow = event.detail.isActiveWindow;
-
-      if (!isActiveWindow) {
-        return;
-      }
-
-      if (SidebarControllers.sidebarController.autoHideSidebar) {
-        return;
-      }
-      if (this.collapsed()) {
-        this.uncollapse(
-          SidebarControllers.sidebarController.hideSidebarAnimated,
-        );
-        SidebarElements.sidebarCollapseButton.setOpen(true);
-      } else {
-        this.collapse(SidebarControllers.sidebarController.hideSidebarAnimated);
-        SidebarElements.sidebarCollapseButton.setOpen(false);
-      }
-    });
+    BrowserElements.root.addEventListener("dragover", this);
+    BrowserElements.root.addEventListener("dragleave", this);
+    BrowserElements.root.addEventListener("drop", this);
+    BrowserElements.root.addEventListener("mouseleave", this);
+    window.addEventListener("fullscreen", () => this.onWindowFullscreen());
+    SidebarElements.sidebarCollapseButton.addEventListener("click", () =>
+      this.onSidebarCollapseButtonClick(),
+    );
   }
 
   /**
@@ -85,6 +50,51 @@ export class SidebarMainCollapser {
     );
   }
 
+  onWindowFullscreen() {
+    if (window.fullScreen) {
+      // Show sidebar and then immediately hide with fullscreen animation
+      this.uncollapse({ delay: 0 });
+      setTimeout(() => {
+        this.collapse({ animate: false, fullScreenAnimate: true, delay: 0 });
+      }, 0);
+    } else {
+      if (SidebarControllers.sidebarController.autoHideSidebar) {
+        // Show sidebar and then immediately hide with fullscreen animation
+        this.uncollapse({ delay: 0 });
+        setTimeout(() => {
+          this.collapse({
+            animate: false,
+            fullScreenAnimate: true,
+            delay: 0,
+          });
+        });
+      } else {
+        this.uncollapse(
+          SidebarControllers.sidebarController.hideSidebarAnimated,
+        );
+      }
+    }
+  }
+
+  onSidebarCollapseButtonClick() {
+    if (SidebarControllers.sidebarController.autoHideSidebar) {
+      return;
+    }
+    if (this.collapsed()) {
+      this.uncollapse({
+        animate: SidebarControllers.sidebarController.hideSidebarAnimated,
+        delay: 0,
+      });
+      SidebarElements.sidebarCollapseButton.setOpen(true);
+    } else {
+      this.collapse({
+        animate: SidebarControllers.sidebarController.hideSidebarAnimated,
+        delay: 0,
+      });
+      SidebarElements.sidebarCollapseButton.setOpen(false);
+    }
+  }
+
   /**
    *
    * @param {MouseEvent} event
@@ -98,27 +108,47 @@ export class SidebarMainCollapser {
     ) {
       return;
     }
+
+    if (
+      event.type === "click" &&
+      SidebarControllers.sidebarController.isClickOutsideWhileFloating(event)
+    ) {
+      this.collapse({
+        animate: SidebarControllers.sidebarController.hideSidebarAnimated,
+        delay: 0,
+      });
+      return;
+    }
+
+    if (
+      event.type === "mouseleave" &&
+      SidebarControllers.sidebarController.closed()
+    ) {
+      this.collapse({
+        animate: SidebarControllers.sidebarController.hideSidebarAnimated,
+      });
+      return;
+    }
+
     const position = SidebarElements.sidebarWrapper.getPosition();
     const root = new XULElement({ element: window.document.documentElement });
     const rootRect = root.getBoundingClientRect();
     const sidebarRect = SidebarElements.sidebarMain.getBoundingClientRect();
     const leftEdge = window.mozInnerScreenX;
     const rightEdge = leftEdge + rootRect.width;
-    if (
-      this.collapsed() &&
-      ((position === "right" &&
-        event.screenX > rightEdge - sidebarRect.width) ||
-        (position === "left" && event.screenX < leftEdge + sidebarRect.width))
-    ) {
-      this.uncollapse(SidebarControllers.sidebarController.hideSidebarAnimated);
-    } else if (
-      !this.collapsed() &&
-      ((position === "right" &&
-        event.screenX < rightEdge - 2 * sidebarRect.width) ||
-        (position === "left" &&
-          event.screenX > leftEdge + 2 * sidebarRect.width))
-    ) {
-      this.collapse(SidebarControllers.sidebarController.hideSidebarAnimated);
+
+    const isInUncollapseArea =
+      (position === "right" && event.screenX > rightEdge - sidebarRect.width) ||
+      (position === "left" && event.screenX < leftEdge + sidebarRect.width);
+
+    if (isInUncollapseArea) {
+      this.uncollapse({
+        animate: SidebarControllers.sidebarController.hideSidebarAnimated,
+      });
+    } else if (SidebarControllers.sidebarController.closed()) {
+      this.collapse({
+        animate: SidebarControllers.sidebarController.hideSidebarAnimated,
+      });
     }
   }
 
@@ -132,23 +162,62 @@ export class SidebarMainCollapser {
 
   /**
    *
-   * @param {boolean} animate
-   * @param {boolean} fullScreenAnimate
+   * @param {object} params
+   * @param {boolean} params.animate
+   * @param {boolean} params.fullScreenAnimate
+   * @param {number} params.delay
    */
-  collapse(animate = false, fullScreenAnimate = false) {
-    this.shouldAnimate(animate);
-    this.fullScreenShouldAnimate(fullScreenAnimate);
-    SidebarControllers.sidebarMainController.collapse();
+  collapse({
+    animate = false,
+    fullScreenAnimate = false,
+    delay = HIDE_DELAY,
+  } = {}) {
+    clearTimeout(this.showSidebarTimer);
+    this.showSidebarTimer = null;
+    if (!this.hideSidebarTimer) {
+      this.hideSidebarTimer = setTimeout(() => {
+        this.shouldAnimate(animate);
+        this.fullScreenShouldAnimate(fullScreenAnimate);
+        SidebarControllers.sidebarMainController.collapse();
+        const webPanelController =
+          SidebarControllers.webPanelsController.getActive();
+        if (webPanelController) {
+          this.lastOpenedWebPanel = webPanelController.getUUID();
+          SidebarControllers.sidebarController.close();
+        }
+        this.hideSidebarTimer = null;
+      }, delay);
+    }
   }
 
   /**
    *
-   * @param {boolean} animate
-   * @param {boolean} fullScreenAnimate
+   * @param {object} animate
+   * @param {boolean} params.animate
+   * @param {boolean} params.fullScreenAnimate
+   * @param {number} params.delay
    */
-  uncollapse(animate = false, fullScreenAnimate = false) {
-    this.shouldAnimate(animate);
-    this.fullScreenShouldAnimate(fullScreenAnimate);
-    SidebarControllers.sidebarMainController.uncollapse();
+  uncollapse({
+    animate = false,
+    fullScreenAnimate = false,
+    delay = SHOW_DELAY,
+  } = {}) {
+    clearTimeout(this.hideSidebarTimer);
+    this.hideSidebarTimer = null;
+    if (!this.showSidebarTimer) {
+      this.showSidebarTimer = setTimeout(() => {
+        this.shouldAnimate(animate);
+        this.fullScreenShouldAnimate(fullScreenAnimate);
+        SidebarControllers.sidebarMainController.uncollapse();
+        if (this.lastOpenedWebPanel) {
+          const webPanelController = SidebarControllers.webPanelsController.get(
+            this.lastOpenedWebPanel,
+          );
+          webPanelController.switchWebPanel();
+          this.lastOpenedWebPanel = null;
+        }
+        this.showSidebarTimer = null;
+      }, delay);
+    }
   }
 }
