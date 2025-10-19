@@ -33,10 +33,12 @@ export class SidebarDecorator {
   }
 
   static #collapse() {
-    setTimeout(() => {
-      if (SidebarControllers.sidebarController.autoHideSidebar) {
-        SidebarControllers.sidebarMainCollapser.collapse(false, true);
-      }
-    }, 100);
+    if (SidebarControllers.sidebarController.autoHideSidebar) {
+      SidebarControllers.sidebarMainCollapser.collapse({
+        animate: false,
+        fullScreenAnimate: true,
+        delay: 100,
+      });
+    }
   }
 }
