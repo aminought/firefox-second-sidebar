@@ -330,7 +330,7 @@ export class WebPanelPopupEdit extends Panel {
    * @param {function(string, boolean string):void} callbacks.title
    * @param {function(string, boolean, string, number):void} callbacks.faviconURL
    * @param {function(string, boolean):void} callbacks.selectorEnabled
-   * @param {function(string, string):void} callbacks.selector
+   * @param {function(string, string, number):void} callbacks.selector
    * @param {function(string, boolean):void} callbacks.mobile
    * @param {function(string, boolean):void} callbacks.pinned
    * @param {function(string, boolean):void} callbacks.alwaysOnTop
