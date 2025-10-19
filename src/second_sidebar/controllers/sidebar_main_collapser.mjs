@@ -69,9 +69,10 @@ export class SidebarMainCollapser {
           });
         });
       } else {
-        this.uncollapse(
-          SidebarControllers.sidebarController.hideSidebarAnimated,
-        );
+        this.uncollapse({
+          animate: SidebarControllers.sidebarController.hideSidebarAnimated,
+          delay: 0,
+        });
       }
     }
   }
