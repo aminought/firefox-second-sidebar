@@ -17,4 +17,12 @@ export class MenuPopup extends XULElement {
       this.toggleAttribute("panelopen", false),
     );
   }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  isPanelOpen() {
+    return this.getAttributeBool("panelopen");
+  }
 }
