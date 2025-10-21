@@ -14,6 +14,7 @@ export const SIDEBAR_MAIN_CSS = `
       position: absolute;
       z-index: 9999;
       background-color: var(--toolbox-bgcolor);
+      box-shadow: var(--content-area-shadow);
     }
 
     toolbarpaletteitem[place="panel"][id^="wrapper-customizableui-special-spring"], toolbarspring {
