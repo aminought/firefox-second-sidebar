@@ -121,7 +121,9 @@ export class SidebarMainCollapser {
     }
 
     if (event.type === "mouseleave") {
-      this.collapse();
+      if (event.explicitOriginalTarget?.id === "main-window") {
+        this.collapse();
+      }
       return;
     }
 

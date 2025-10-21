@@ -15,6 +15,11 @@ export const SIDEBAR_MAIN_CSS = `
       z-index: 9999;
       background-color: var(--toolbox-bgcolor);
       box-shadow: var(--content-area-shadow);
+
+      @media (-moz-windows-mica) {
+        backdrop-filter: blur(32px);
+        background-color: light-dark(rgba(255, 255, 255, 0.6), rgba(0, 0, 0, 0.6));
+      }
     }
 
     toolbarpaletteitem[place="panel"][id^="wrapper-customizableui-special-spring"], toolbarspring {
