@@ -240,4 +240,16 @@ export const POPUPS_CSS = `
       display: none;
     }
   }
+
+  .sb2-popup:has(#sb2-main-popup-settings-auto-hide-sidebar-toggle:not([pressed])) {
+    #sb2-main-popup-settings-auto-hide-sidebar-items {
+      display: none;
+    }
+  }
+
+  .sb2-popup:has(#sb2-main-popup-settings-auto-hide-sidebar-toggle[pressed]) {
+    #sb2-main-popup-settings-sidebar-widget-items {
+      display: none;
+    }
+  }
 `;

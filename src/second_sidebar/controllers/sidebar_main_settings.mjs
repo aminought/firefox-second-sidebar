@@ -36,8 +36,18 @@ export class SidebarMainSettingsController {
         sendEvents(SidebarEvents.EDIT_SIDEBAR_TOOLTIP, { value }),
       tooltipFullUrl: (value) =>
         sendEvents(SidebarEvents.EDIT_SIDEBAR_TOOLTIP_FULL_URL, { value }),
-      autoHideSidebar: (value) =>
-        sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE, { value }),
+      visibility: (
+        autoHideSidebar,
+        autoHideSidebarBehavior,
+        sidebarWidgetHideWebPanel,
+        sidebarWidgetShortcut,
+      ) =>
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_VISIBILITY, {
+          autoHideSidebar,
+          autoHideSidebarBehavior,
+          sidebarWidgetHideWebPanel,
+          sidebarWidgetShortcut,
+        }),
       hideSidebarAnimated: (value) =>
         sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_ANIMATED, { value }),
       hideToolbarAnimated: (value) =>

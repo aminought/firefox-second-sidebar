@@ -6,6 +6,7 @@ import { XULElement } from "../xul/base/xul_element.mjs";
 
 const FULLSCREEN_ANIMATE_ATTRIBUTE = "fullscreenShouldAnimate";
 const ANIMATE_ATTRIBUTE = "shouldAnimate";
+const TRIGGER_WIDTH = 16;
 const HIDE_DELAY = 500;
 const SHOW_DELAY = 200;
 
@@ -85,12 +86,16 @@ export class SidebarMainCollapser {
       this.uncollapse({
         animate: SidebarControllers.sidebarController.hideSidebarAnimated,
         delay: 0,
+        restoreLastOpenedWebPanel:
+          SidebarControllers.sidebarController.sidebarWidgetHideWebPanel,
       });
       SidebarElements.sidebarCollapseButton.setOpen(true);
     } else {
       this.collapse({
         animate: SidebarControllers.sidebarController.hideSidebarAnimated,
         delay: 0,
+        saveLastOpenedWebPanel:
+          SidebarControllers.sidebarController.sidebarWidgetHideWebPanel,
       });
       SidebarElements.sidebarCollapseButton.setOpen(false);
     }
@@ -121,10 +126,7 @@ export class SidebarMainCollapser {
       return;
     }
 
-    if (
-      event.type === "mouseleave" &&
-      SidebarControllers.sidebarController.closed()
-    ) {
+    if (event.type === "mouseleave") {
       this.collapse({
         animate: SidebarControllers.sidebarController.hideSidebarAnimated,
       });
@@ -132,6 +134,9 @@ export class SidebarMainCollapser {
     }
 
     const position = SidebarElements.sidebarWrapper.getPosition();
+    const isLeft = position === "left";
+    const isRight = position === "right";
+    const collapsed = this.collapsed();
     const root = new XULElement({ element: window.document.documentElement });
     const rootRect = root.getBoundingClientRect();
     const sidebarRect = SidebarElements.sidebarMain.getBoundingClientRect();
@@ -139,14 +144,18 @@ export class SidebarMainCollapser {
     const rightEdge = leftEdge + rootRect.width;
 
     const isInUncollapseArea =
-      (position === "right" && event.screenX > rightEdge - sidebarRect.width) ||
-      (position === "left" && event.screenX < leftEdge + sidebarRect.width);
+      (collapsed &&
+        ((isRight && event.screenX > rightEdge - TRIGGER_WIDTH) ||
+          (isLeft && event.screenX < leftEdge + TRIGGER_WIDTH))) ||
+      (!collapsed &&
+        ((isRight && event.screenX > rightEdge - sidebarRect.width) ||
+          (isLeft && event.screenX < leftEdge + sidebarRect.width)));
 
     if (isInUncollapseArea) {
       this.uncollapse({
         animate: SidebarControllers.sidebarController.hideSidebarAnimated,
       });
-    } else if (SidebarControllers.sidebarController.closed()) {
+    } else {
       this.collapse({
         animate: SidebarControllers.sidebarController.hideSidebarAnimated,
       });
@@ -167,11 +176,13 @@ export class SidebarMainCollapser {
    * @param {boolean} params.animate
    * @param {boolean} params.fullScreenAnimate
    * @param {number} params.delay
+   * @param {boolean} params.saveLastOpenedWebPanel
    */
   collapse({
     animate = false,
     fullScreenAnimate = false,
     delay = HIDE_DELAY,
+    saveLastOpenedWebPanel = false,
   } = {}) {
     clearTimeout(this.showSidebarTimer);
     this.showSidebarTimer = null;
@@ -180,11 +191,13 @@ export class SidebarMainCollapser {
         this.shouldAnimate(animate);
         this.fullScreenShouldAnimate(fullScreenAnimate);
         SidebarControllers.sidebarMainController.collapse();
-        const webPanelController =
-          SidebarControllers.webPanelsController.getActive();
-        if (webPanelController) {
-          this.lastOpenedWebPanel = webPanelController.getUUID();
-          SidebarControllers.sidebarController.close();
+        if (saveLastOpenedWebPanel) {
+          const webPanelController =
+            SidebarControllers.webPanelsController.getActive();
+          if (webPanelController) {
+            this.lastOpenedWebPanel = webPanelController.getUUID();
+            SidebarControllers.sidebarController.close();
+          }
         }
         this.hideSidebarTimer = null;
       }, delay);
@@ -197,11 +210,13 @@ export class SidebarMainCollapser {
    * @param {boolean} params.animate
    * @param {boolean} params.fullScreenAnimate
    * @param {number} params.delay
+   * @param {boolean} params.restoreLastOpenedWebPanel
    */
   uncollapse({
     animate = false,
     fullScreenAnimate = false,
     delay = SHOW_DELAY,
+    restoreLastOpenedWebPanel = false,
   } = {}) {
     clearTimeout(this.hideSidebarTimer);
     this.hideSidebarTimer = null;
@@ -210,7 +225,7 @@ export class SidebarMainCollapser {
         this.shouldAnimate(animate);
         this.fullScreenShouldAnimate(fullScreenAnimate);
         SidebarControllers.sidebarMainController.uncollapse();
-        if (this.lastOpenedWebPanel) {
+        if (restoreLastOpenedWebPanel && this.lastOpenedWebPanel) {
           const webPanelController = SidebarControllers.webPanelsController.get(
             this.lastOpenedWebPanel,
           );

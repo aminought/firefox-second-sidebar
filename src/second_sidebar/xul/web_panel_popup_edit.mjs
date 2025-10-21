@@ -144,10 +144,11 @@ export class WebPanelPopupEdit extends Panel {
       const parts =
         SidebarControllers.webPanelsShortcuts.getShortcutPartsFromEvent(event);
       const shortcut = parts.join("+");
-      const isBisy = SidebarControllers.webPanelsShortcuts.isShortcutBusy(
-        this.uuid,
-        shortcut,
-      );
+      const isBisy =
+        SidebarControllers.webPanelsShortcuts.isWebPanelShortcutBusy(
+          this.uuid,
+          shortcut,
+        );
 
       if (isBisy) {
         this.shortcutInput
