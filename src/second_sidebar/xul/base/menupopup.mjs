@@ -9,6 +9,7 @@ export class MenuPopup extends XULElement {
    */
   constructor({ id = null, classList = [] } = {}) {
     super({ tag: "menupopup", id, classList });
+    this.setAttribute("consumeoutsideclicks", false);
 
     this.addEventListener("popupshowing", () =>
       this.toggleAttribute("panelopen", true),
@@ -16,5 +17,13 @@ export class MenuPopup extends XULElement {
     this.addEventListener("popuphiding", () =>
       this.toggleAttribute("panelopen", false),
     );
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  isPanelOpen() {
+    return this.getAttributeBool("panelopen");
   }
 }

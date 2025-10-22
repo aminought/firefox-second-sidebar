@@ -105,6 +105,20 @@ export class XULElement {
 
   /**
    *
+   * @param {string} selector
+   * @returns {XULElement[]}
+   */
+  querySelectorAll(selector) {
+    const elements = this.element.querySelectorAll(selector);
+    let xulElements = [];
+    for (const element of elements) {
+      xulElements.push(new XULElement({ element }));
+    }
+    return xulElements;
+  }
+
+  /**
+   *
    * @param {XULElement} child
    * @returns {XULElement}
    */

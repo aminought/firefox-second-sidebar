@@ -125,9 +125,13 @@ export class SidebarController {
       this.setWebPanelTooltipFullUrl(value);
     });
 
-    listenEvent(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE, (event) => {
-      const value = event.detail.value;
-      this.setAutoHideSidebar(value);
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_VISIBILITY, (event) => {
+      this.setVisibilitySettings(
+        event.detail.autoHideSidebar,
+        event.detail.autoHideSidebarBehavior,
+        event.detail.sidebarWidgetHideWebPanel,
+        event.detail.sidebarWidgetShortcut,
+      );
     });
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_ANIMATED, (event) => {
@@ -300,13 +304,33 @@ export class SidebarController {
 
   /**
    *
-   * @param {boolean} value
+   * @param {boolean} autoHideSidebar
+   * @param {string} autoHideSidebarBehavior
+   * @param {boolean} sidebarWidgetHideWebPanel
+   * @param {string} sidebarWidgetShortcut
    */
-  setAutoHideSidebar(value) {
-    this.autoHideSidebar = value;
+  setVisibilitySettings(
+    autoHideSidebar,
+    autoHideSidebarBehavior,
+    sidebarWidgetHideWebPanel,
+    sidebarWidgetShortcut,
+  ) {
+    // auto-hide
+    this.autoHideSidebar = autoHideSidebar;
     SidebarElements.sidebarCollapseButton
-      .setDisabled(value)
+      .setDisabled(autoHideSidebar)
       .setOpen(!SidebarControllers.sidebarMainCollapser.collapsed());
+    // auto-hide behavior
+    this.autoHideSidebarBehavior = autoHideSidebarBehavior;
+    if (autoHideSidebar && autoHideSidebarBehavior === "overlay") {
+      SidebarElements.sidebarMain.setAttribute("overlay", true);
+    } else {
+      SidebarElements.sidebarMain.removeAttribute("overlay");
+    }
+    // hide web panel when sidebar is hidden
+    this.sidebarWidgetHideWebPanel = sidebarWidgetHideWebPanel;
+    // shortcut for widget
+    this.sidebarWidgetShortcut = sidebarWidgetShortcut;
   }
 
   /**
@@ -368,7 +392,12 @@ export class SidebarController {
     this.setContainerBorder(settings.containerBorder);
     this.setWebPanelTooltip(settings.tooltip);
     this.setWebPanelTooltipFullUrl(settings.tooltipFullUrl);
-    this.setAutoHideSidebar(settings.autoHideSidebar);
+    this.setVisibilitySettings(
+      settings.autoHideSidebar,
+      settings.autoHideSidebarBehavior,
+      settings.sidebarWidgetHideWebPanel,
+      settings.sidebarWidgetShortcut,
+    );
     this.hideSidebarAnimated = settings.hideSidebarAnimated;
     this.setHideToolbarAnimated(settings.hideToolbarAnimated);
     SidebarControllers.sidebarGeometry.setEnableSidebarBoxHint(
@@ -396,6 +425,9 @@ export class SidebarController {
       tooltip: this.tooltip,
       tooltipFullUrl: this.tooltipFullUrl,
       autoHideSidebar: this.autoHideSidebar,
+      autoHideSidebarBehavior: this.autoHideSidebarBehavior,
+      sidebarWidgetHideWebPanel: this.sidebarWidgetHideWebPanel,
+      sidebarWidgetShortcut: this.sidebarWidgetShortcut,
       hideSidebarAnimated: this.hideSidebarAnimated,
       hideToolbarAnimated: this.hideToolbarAnimated,
       enableSidebarBoxHint:

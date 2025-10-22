@@ -4,9 +4,23 @@ export const SIDEBAR_MAIN_CSS = `
     flex-direction: column;
     justify-content: var(--sb2-main-web-panel-buttons-position);
     gap: var(--space-small);
+    top: 0;
+    height: 100%;
     padding: 0 var(--sb2-main-padding) var(--space-small) var(--sb2-main-padding);
     overflow-y: scroll;
     scrollbar-width: none;
+
+    &[overlay="true"] {
+      position: absolute;
+      z-index: 9999;
+      background-color: var(--toolbox-bgcolor);
+      box-shadow: var(--content-area-shadow);
+
+      @media (-moz-windows-mica) {
+        backdrop-filter: blur(32px);
+        background-color: light-dark(rgba(255, 255, 255, 0.6), rgba(0, 0, 0, 0.6));
+      }
+    }
 
     toolbarpaletteitem[place="panel"][id^="wrapper-customizableui-special-spring"], toolbarspring {
       flex: 1;
@@ -32,17 +46,6 @@ export const SIDEBAR_MAIN_CSS = `
 
   #sb2-main[shouldAnimate] {
     transition: 0.2s margin-right ease-out, 0.2s margin-left ease-out;
-  }
-
-  #browser:has(#sb2-box:not([hidden])), 
-  #browser:has(#sb2-main toolbarbutton[open]),
-  #main-window:has(#sb2-main-popup-settings[panelopen]),
-  #main-window:has(#sb2-main-menupopup[panelopen]),
-  #main-window:has(#sb2-web-panel-button-menupopup[panelopen]) {
-    #sb2-main {
-      margin-left: 0px !important;
-      margin-right: 0px !important;
-    }
   }
 
   :root[customizing] {
@@ -135,12 +138,20 @@ export const SIDEBAR_MAIN_CSS = `
   }
 
   :root:has(#sb2-wrapper[position="left"]) {
+    #sb2-main {
+      left: 0;
+    }
+
     #sb2-collapse-button {
       list-style-image: url("chrome://userscripts/content/second_sidebar/icons/sidebar-left.svg");
     }
   }
 
   :root:has(#sb2-wrapper[position="right"]) {
+    #sb2-main {
+      right: 0;
+    }
+
     #sb2-collapse-button {
       list-style-image: url("chrome://userscripts/content/second_sidebar/icons/sidebar-right.svg");
     }

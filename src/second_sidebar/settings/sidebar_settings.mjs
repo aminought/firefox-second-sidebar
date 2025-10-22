@@ -16,6 +16,9 @@ export class SidebarSettings {
    * @param {string} params.tooltip
    * @param {boolean} params.tooltipFullUrl
    * @param {boolean} params.autoHideSidebar
+   * @param {string} params.autoHideSidebarBehavior
+   * @param {boolean} params.sidebarWidgetHideWebPanel
+   * @param {string} params.sidebarWidgetShortcut
    * @param {boolean} params.hideSidebarAnimated
    * @param {boolean} params.hideToolbarAnimated
    * @param {boolean} params.enableSidebarBoxHint
@@ -31,6 +34,9 @@ export class SidebarSettings {
     tooltip = "titleandurl",
     tooltipFullUrl = false,
     autoHideSidebar = false,
+    autoHideSidebarBehavior = "inline",
+    sidebarWidgetHideWebPanel = false,
+    sidebarWidgetShortcut = "",
     hideSidebarAnimated = true,
     hideToolbarAnimated = true,
     enableSidebarBoxHint = false,
@@ -43,6 +49,9 @@ export class SidebarSettings {
     this.autoHideForwardButton = autoHideForwardButton;
     this.containerBorder = containerBorder;
     this.autoHideSidebar = autoHideSidebar;
+    this.autoHideSidebarBehavior = autoHideSidebarBehavior;
+    this.sidebarWidgetHideWebPanel = sidebarWidgetHideWebPanel;
+    this.sidebarWidgetShortcut = sidebarWidgetShortcut;
     this.tooltip = tooltip;
     this.tooltipFullUrl = tooltipFullUrl;
     this.hideSidebarAnimated = hideSidebarAnimated;
@@ -67,6 +76,9 @@ export class SidebarSettings {
       tooltip: pref.tooltip,
       tooltipFullUrl: pref.tooltipFullUrl,
       autoHideSidebar: pref.autoHideSidebar,
+      autoHideSidebarBehavior: pref.autoHideSidebarBehavior,
+      sidebarWidgetHideWebPanel: pref.sidebarWidgetHideWebPanel,
+      sidebarWidgetShortcut: pref.sidebarWidgetShortcut,
       hideSidebarAnimated: pref.hideSidebarAnimated,
       hideToolbarAnimated: pref.hideToolbarAnimated,
       enableSidebarBoxHint: pref.enableSidebarBoxHint,
@@ -85,6 +97,9 @@ export class SidebarSettings {
       tooltip: this.tooltip,
       tooltipFullUrl: this.tooltipFullUrl,
       autoHideSidebar: this.autoHideSidebar,
+      autoHideSidebarBehavior: this.autoHideSidebarBehavior,
+      sidebarWidgetHideWebPanel: this.sidebarWidgetHideWebPanel,
+      sidebarWidgetShortcut: this.sidebarWidgetShortcut,
       hideSidebarAnimated: this.hideSidebarAnimated,
       hideToolbarAnimated: this.hideToolbarAnimated,
       enableSidebarBoxHint: this.enableSidebarBoxHint,

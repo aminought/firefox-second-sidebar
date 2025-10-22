@@ -1,9 +1,12 @@
 import {
   createCancelButton,
+  createInput,
   createMenuList,
   createPopupGroup,
+  createPopupRow,
   createPopupSet,
   createSaveButton,
+  createSubviewIconicButton,
 } from "../utils/xul.mjs";
 
 import { Div } from "./base/div.mjs";
@@ -12,10 +15,15 @@ import { PanelMultiView } from "./base/panel_multi_view.mjs";
 import { PopupBody } from "./popup_body.mjs";
 import { PopupFooter } from "./popup_footer.mjs";
 import { PopupHeader } from "./popup_header.mjs";
+import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarSettings } from "../settings/sidebar_settings.mjs"; // eslint-disable-line no-unused-vars
 import { Toggle } from "./base/toggle.mjs";
 import { ToolbarSeparator } from "./base/toolbar_separator.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
+
+const ICONS = {
+  UNDO: "chrome://global/skin/icons/undo.svg",
+};
 
 export class SidebarMainPopupSettings extends Panel {
   constructor() {
@@ -35,13 +43,64 @@ export class SidebarMainPopupSettings extends Panel {
     this.containerBorderMenuList = this.#createContainerBorderMenuList();
     this.tooltipMenuList = this.#createTooltipMenuList();
     this.tooltipFullUrlToggle = new Toggle();
-    this.autoHideSidebarToggle = new Toggle();
+    this.autoHideSidebarToggle = new Toggle({
+      id: "sb2-main-popup-settings-auto-hide-sidebar-toggle",
+    });
+    this.autoHideSidebarBehaviorMenuList =
+      this.#createAutoHideSidebarBehaviorMenuList();
+    this.sidebarWidgetHideWebPanelToggle = new Toggle();
+    this.sidebarWidgetShortcutInput = createInput({
+      placeholder: "Click here and press keys...",
+    });
+    this.sidebarWidgetShortcutResetButton = createSubviewIconicButton(
+      ICONS.UNDO,
+      {
+        tooltipText: "Reset shortcut",
+      },
+    );
     this.hideSidebarAnimatedToggle = new Toggle();
     this.hideToolbarAnimatedToggle = new Toggle();
     this.enableSidebarBoxHintToggle = new Toggle();
     this.saveButton = createSaveButton();
     this.cancelButton = createCancelButton();
+    this.#setupListeners();
     this.#compose();
+  }
+
+  #setupListeners() {
+    this.sidebarWidgetShortcutResetButton.addEventListener("click", (event) => {
+      if (isLeftMouseButton(event)) {
+        this.sidebarWidgetShortcutInput
+          .setValue("")
+          .removeAttribute("error")
+          .dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    });
+
+    this.sidebarWidgetShortcutInput.addEventListener("keypress", (event) => {
+      event.preventDefault();
+
+      const parts =
+        SidebarControllers.webPanelsShortcuts.getShortcutPartsFromEvent(event);
+      const shortcut = parts.join("+");
+      const isBisy =
+        SidebarControllers.webPanelsShortcuts.isSidebarWidgetShortcutBusy(
+          shortcut,
+        );
+
+      if (isBisy) {
+        this.sidebarWidgetShortcutInput
+          .setValue(`Shortcut ${shortcut} is busy`)
+          .setAttribute("error", true)
+          .dispatchEvent(new Event("error", { bubbles: true }));
+        return;
+      }
+
+      this.sidebarWidgetShortcutInput.removeAttribute("error");
+      this.sidebarWidgetShortcutInput
+        .setValue(parts.join("+"))
+        .dispatchEvent(new Event("input", { bubbles: true }));
+    });
   }
 
   /**
@@ -108,6 +167,13 @@ export class SidebarMainPopupSettings extends Panel {
     return menuList;
   }
 
+  #createAutoHideSidebarBehaviorMenuList() {
+    const menuList = createMenuList();
+    menuList.appendItem("Inline", "inline");
+    menuList.appendItem("Overlay", "overlay");
+    return menuList;
+  }
+
   #compose() {
     this.appendChild(
       new PanelMultiView().appendChildren(
@@ -117,8 +183,31 @@ export class SidebarMainPopupSettings extends Panel {
             createPopupGroup("Sidebar position", this.positionMenuList),
             new ToolbarSeparator(),
             createPopupGroup("Sidebar width", this.paddingMenuList),
-            new ToolbarSeparator(),
+          ]),
+          createPopupSet("Visibility", [
             createPopupGroup("Auto-hide sidebar", this.autoHideSidebarToggle),
+            new ToolbarSeparator(),
+            new Div({
+              id: "sb2-main-popup-settings-auto-hide-sidebar-items",
+            }).appendChildren(
+              createPopupGroup(
+                "Auto-hide behavior",
+                this.autoHideSidebarBehaviorMenuList,
+              ),
+            ),
+            new Div({
+              id: "sb2-main-popup-settings-sidebar-widget-items",
+            }).appendChildren(
+              createPopupGroup(
+                "Hide web panel when sidebar is hidden",
+                this.sidebarWidgetHideWebPanelToggle,
+              ),
+              new ToolbarSeparator(),
+              createPopupRow(
+                this.sidebarWidgetShortcutInput,
+                this.sidebarWidgetShortcutResetButton,
+              ),
+            ),
           ]),
           createPopupSet("Web panel", [
             createPopupGroup(
@@ -187,8 +276,7 @@ export class SidebarMainPopupSettings extends Panel {
    * @param {function(boolean):void} callbacks.enableSidebarBoxHint
    * @param {function(string):void} callbacks.containerBorder
    * @param {function(string):void} callbacks.tooltip
-   * @param {function(boolean):void} callbacks.tooltipFullUrl
-   * @param {function(boolean):void} callbacks.autoHideSidebar
+   * @param {function(boolean):void} callbacks.tooltipFullUrl * @param {function(boolean, string, boolean, string):void} callbacks.visibility
    * @param {function(boolean):void} callbacks.hideSidebarAnimated
    * @param {function(boolean):void} callbacks.hideToolbarAnimated
    */
@@ -203,7 +291,7 @@ export class SidebarMainPopupSettings extends Panel {
     containerBorder,
     tooltip,
     tooltipFullUrl,
-    autoHideSidebar,
+    visibility,
     hideSidebarAnimated,
     hideToolbarAnimated,
   }) {
@@ -217,7 +305,7 @@ export class SidebarMainPopupSettings extends Panel {
     this.onContainerBorderChange = containerBorder;
     this.onTooltipChange = tooltip;
     this.onTooltipFullUrlChange = tooltipFullUrl;
-    this.onAutoHideSidebarChange = autoHideSidebar;
+    this.onVisibilityChange = visibility;
     this.onAutoHideSidebarAnimatedChange = hideSidebarAnimated;
     this.onAutoHideToolbarAnimatedChange = hideToolbarAnimated;
 
@@ -252,7 +340,36 @@ export class SidebarMainPopupSettings extends Panel {
       tooltipFullUrl(this.tooltipFullUrlToggle.getPressed()),
     );
     this.autoHideSidebarToggle.addEventListener("toggle", () =>
-      autoHideSidebar(this.autoHideSidebarToggle.getPressed()),
+      visibility(
+        this.autoHideSidebarToggle.getPressed(),
+        this.autoHideSidebarBehaviorMenuList.getValue(),
+        this.sidebarWidgetHideWebPanelToggle.getPressed(),
+        this.sidebarWidgetShortcutInput.getValue(),
+      ),
+    );
+    this.autoHideSidebarBehaviorMenuList.addEventListener("command", () =>
+      visibility(
+        this.autoHideSidebarToggle.getPressed(),
+        this.autoHideSidebarBehaviorMenuList.getValue(),
+        this.sidebarWidgetHideWebPanelToggle.getPressed(),
+        this.sidebarWidgetShortcutInput.getValue(),
+      ),
+    );
+    this.sidebarWidgetHideWebPanelToggle.addEventListener("toggle", () =>
+      visibility(
+        this.autoHideSidebarToggle.getPressed(),
+        this.autoHideSidebarBehaviorMenuList.getValue(),
+        this.sidebarWidgetHideWebPanelToggle.getPressed(),
+        this.sidebarWidgetShortcutInput.getValue(),
+      ),
+    );
+    this.sidebarWidgetShortcutInput.addEventListener("input", () =>
+      visibility(
+        this.autoHideSidebarToggle.getPressed(),
+        this.autoHideSidebarBehaviorMenuList.getValue(),
+        this.sidebarWidgetHideWebPanelToggle.getPressed(),
+        this.sidebarWidgetShortcutInput.getValue(),
+      ),
     );
     this.hideSidebarAnimatedToggle.addEventListener("toggle", () =>
       hideSidebarAnimated(this.hideSidebarAnimatedToggle.getPressed()),
@@ -281,7 +398,7 @@ export class SidebarMainPopupSettings extends Panel {
   listenSaveButtonClick(callback) {
     this.saveButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
-        this.removeEventListener("popuphidden", this.onPopupHidden);
+        this.removeEventListener("popuphidden", this.cancelOnPopupHidden);
         callback();
       }
     });
@@ -305,19 +422,33 @@ export class SidebarMainPopupSettings extends Panel {
     this.tooltipMenuList.setValue(settings.tooltip);
     this.tooltipFullUrlToggle.setPressed(settings.tooltipFullUrl);
     this.autoHideSidebarToggle.setPressed(settings.autoHideSidebar);
+    this.autoHideSidebarBehaviorMenuList.setValue(
+      settings.autoHideSidebarBehavior,
+    );
+    this.sidebarWidgetHideWebPanelToggle.setPressed(
+      settings.sidebarWidgetHideWebPanel,
+    );
+    this.sidebarWidgetShortcutInput.setValue(settings.sidebarWidgetShortcut);
     this.hideSidebarAnimatedToggle.setPressed(settings.hideSidebarAnimated);
     this.hideToolbarAnimatedToggle.setPressed(settings.hideToolbarAnimated);
 
     this.settings = settings;
 
-    this.onPopupHidden = () => {
+    this.cancelOnPopupHidden = () => {
       if (this.getState() !== "closed") {
         return;
       }
       this.#cancelChanges();
-      this.removeEventListener("popuphidden", this.onPopupHidden);
+      this.removeEventListener("popuphidden", this.cancelOnPopupHidden);
     };
-    this.addEventListener("popuphidden", this.onPopupHidden);
+    this.addEventListener("popuphidden", this.cancelOnPopupHidden);
+
+    this.addEventListener("popupshown", () =>
+      SidebarControllers.webPanelsShortcuts.disable(),
+    );
+    this.addEventListener("popuphidden", () =>
+      SidebarControllers.webPanelsShortcuts.enable(),
+    );
 
     Panel.prototype.openPopupAtScreen.call(this, screenX, screenY);
   }
@@ -372,9 +503,21 @@ export class SidebarMainPopupSettings extends Panel {
       this.onTooltipFullUrlChange(this.settings.tooltipFullUrl);
     }
     if (
-      this.autoHideSidebarToggle.getPressed() !== this.settings.autoHideSidebar
+      this.autoHideSidebarToggle.getPressed() !==
+        this.settings.autoHideSidebar ||
+      this.autoHideSidebarBehaviorMenuList.getValue() !==
+        this.settings.autoHideSidebarBehavior ||
+      this.sidebarWidgetHideWebPanelToggle.getPressed() !==
+        this.settings.sidebarWidgetHideWebPanel ||
+      this.sidebarWidgetShortcutInput.getValue() !==
+        this.settings.sidebarWidgetShortcut
     ) {
-      this.onAutoHideSidebarChange(this.settings.autoHideSidebar);
+      this.onVisibilityChange(
+        this.settings.autoHideSidebar,
+        this.settings.autoHideSidebarBehavior,
+        this.settings.sidebarWidgetHideWebPanel,
+        this.settings.sidebarWidgetShortcut,
+      );
     }
     if (
       this.hideSidebarAnimatedToggle.getPressed() !==

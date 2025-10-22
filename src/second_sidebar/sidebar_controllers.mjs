@@ -1,4 +1,5 @@
 import { ContextMenuItemsController } from "./controllers/context_menu_items.mjs";
+import { Shortcuts } from "./controllers/shortcuts.mjs";
 import { SidebarController } from "./controllers/sidebar.mjs";
 import { SidebarGeometry } from "./controllers/sidebar_geometry.mjs";
 import { SidebarMainCollapser } from "./controllers/sidebar_main_collapser.mjs";
@@ -14,7 +15,6 @@ import { WebPanelMoreController } from "./controllers/web_panel_more.mjs";
 import { WebPanelNewController } from "./controllers/web_panel_new.mjs";
 import { WebPanelTooltipController } from "./controllers/web_panel_tooltip.mjs";
 import { WebPanelsController } from "./controllers/web_panels.mjs";
-import { WebPanelsShortcuts } from "./controllers/web_panels_shortcuts.mjs";
 
 export class SidebarControllers {
   static create() {
@@ -29,7 +29,7 @@ export class SidebarControllers {
     this.sidebarSplitterController = new SidebarSplitterController();
     this.webPanelTooltipController = new WebPanelTooltipController();
     this.webPanelsController = new WebPanelsController();
-    this.webPanelsShortcuts = new WebPanelsShortcuts();
+    this.webPanelsShortcuts = new Shortcuts();
     this.webPanelNewController = new WebPanelNewController();
     this.webPanelEditController = new WebPanelEditController();
     this.webPanelMoreController = new WebPanelMoreController();

@@ -3,9 +3,11 @@ import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { WindowWrapper } from "../wrappers/window.mjs";
 import { XULElement } from "../xul/base/xul_element.mjs";
+import { gNavToolboxWrapper } from "../wrappers/g_nav_toolbox.mjs";
 
 const FULLSCREEN_ANIMATE_ATTRIBUTE = "fullscreenShouldAnimate";
 const ANIMATE_ATTRIBUTE = "shouldAnimate";
+const TRIGGER_WIDTH = 16;
 const HIDE_DELAY = 500;
 const SHOW_DELAY = 200;
 
@@ -29,6 +31,18 @@ export class SidebarMainCollapser {
     SidebarElements.sidebarCollapseButton.addEventListener("click", () =>
       this.onSidebarCollapseButtonClick(),
     );
+
+    gNavToolboxWrapper.addEventListener("customizationready", () => {
+      SidebarElements.sidebarMain.removeAttribute("overlay");
+    });
+
+    gNavToolboxWrapper.addEventListener("aftercustomization", () => {
+      const { autoHideSidebar, autoHideSidebarBehavior } =
+        SidebarControllers.sidebarController;
+      if (autoHideSidebar && autoHideSidebarBehavior === "overlay") {
+        SidebarElements.sidebarMain.setAttribute("overlay", true);
+      }
+    });
   }
 
   /**
@@ -53,14 +67,14 @@ export class SidebarMainCollapser {
   onWindowFullscreen() {
     if (window.fullScreen) {
       // Show sidebar and then immediately hide with fullscreen animation
-      this.uncollapse({ delay: 0 });
+      this.uncollapse({ animate: false, delay: 0 });
       setTimeout(() => {
         this.collapse({ animate: false, fullScreenAnimate: true, delay: 0 });
       }, 0);
     } else {
       if (SidebarControllers.sidebarController.autoHideSidebar) {
         // Show sidebar and then immediately hide with fullscreen animation
-        this.uncollapse({ delay: 0 });
+        this.uncollapse({ animate: false, delay: 0 });
         setTimeout(() => {
           this.collapse({
             animate: false,
@@ -69,10 +83,7 @@ export class SidebarMainCollapser {
           });
         });
       } else {
-        this.uncollapse({
-          animate: SidebarControllers.sidebarController.hideSidebarAnimated,
-          delay: 0,
-        });
+        this.uncollapse({ delay: 0 });
       }
     }
   }
@@ -83,14 +94,16 @@ export class SidebarMainCollapser {
     }
     if (this.collapsed()) {
       this.uncollapse({
-        animate: SidebarControllers.sidebarController.hideSidebarAnimated,
         delay: 0,
+        restoreLastOpenedWebPanel:
+          SidebarControllers.sidebarController.sidebarWidgetHideWebPanel,
       });
       SidebarElements.sidebarCollapseButton.setOpen(true);
     } else {
       this.collapse({
-        animate: SidebarControllers.sidebarController.hideSidebarAnimated,
         delay: 0,
+        saveLastOpenedWebPanel:
+          SidebarControllers.sidebarController.sidebarWidgetHideWebPanel,
       });
       SidebarElements.sidebarCollapseButton.setOpen(false);
     }
@@ -110,28 +123,33 @@ export class SidebarMainCollapser {
       return;
     }
 
-    if (
-      event.type === "click" &&
-      SidebarControllers.sidebarController.isClickOutsideWhileFloating(event)
-    ) {
-      this.collapse({
-        animate: SidebarControllers.sidebarController.hideSidebarAnimated,
-        delay: 0,
-      });
+    const openedButtons = SidebarElements.sidebarMain.querySelectorAll(
+      "toolbarbutton:not(.sb2-main-web-panel-button)[open]",
+    );
+    if (openedButtons.length > 0) {
+      return;
+    }
+
+    if (event.type === "mouseleave") {
+      if (event.explicitOriginalTarget?.id === "main-window") {
+        this.collapse();
+      }
       return;
     }
 
     if (
-      event.type === "mouseleave" &&
-      SidebarControllers.sidebarController.closed()
+      event.type === "click" &&
+      !this.isEventInsidePanel(event) &&
+      !this.isEventInsideSidebarMain(event)
     ) {
-      this.collapse({
-        animate: SidebarControllers.sidebarController.hideSidebarAnimated,
-      });
+      this.collapse({ delay: 0 });
       return;
     }
 
     const position = SidebarElements.sidebarWrapper.getPosition();
+    const isLeft = position === "left";
+    const isRight = position === "right";
+    const collapsed = this.collapsed();
     const root = new XULElement({ element: window.document.documentElement });
     const rootRect = root.getBoundingClientRect();
     const sidebarRect = SidebarElements.sidebarMain.getBoundingClientRect();
@@ -139,18 +157,58 @@ export class SidebarMainCollapser {
     const rightEdge = leftEdge + rootRect.width;
 
     const isInUncollapseArea =
-      (position === "right" && event.screenX > rightEdge - sidebarRect.width) ||
-      (position === "left" && event.screenX < leftEdge + sidebarRect.width);
+      (collapsed &&
+        ((isRight && event.screenX > rightEdge - TRIGGER_WIDTH) ||
+          (isLeft && event.screenX < leftEdge + TRIGGER_WIDTH))) ||
+      (!collapsed &&
+        ((isRight && event.screenX > rightEdge - sidebarRect.width) ||
+          (isLeft && event.screenX < leftEdge + sidebarRect.width)));
 
     if (isInUncollapseArea) {
-      this.uncollapse({
-        animate: SidebarControllers.sidebarController.hideSidebarAnimated,
-      });
-    } else if (SidebarControllers.sidebarController.closed()) {
-      this.collapse({
-        animate: SidebarControllers.sidebarController.hideSidebarAnimated,
-      });
+      this.uncollapse();
+    } else if (!this.isPanelOpened()) {
+      this.collapse();
     }
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  isPanelOpened() {
+    return (
+      SidebarElements.sidebarMainMenuPopup.isPanelOpen() ||
+      SidebarElements.sidebarMainPopupSettings.isPanelOpen() ||
+      SidebarElements.webPanelMenuPopup.isPanelOpen() ||
+      SidebarElements.webPanelPopupNew.isPanelOpen() ||
+      SidebarElements.webPanelPopupEdit.isPanelOpen() ||
+      SidebarElements.webPanelPopupDelete.isPanelOpen()
+    );
+  }
+
+  /**
+   *
+   * @param {MouseEvent} event
+   */
+  isEventInsidePanel(event) {
+    const target = new XULElement({ element: event.target });
+    return (
+      SidebarElements.sidebarMainMenuPopup.contains(target) ||
+      SidebarElements.sidebarMainPopupSettings.contains(target) ||
+      SidebarElements.webPanelMenuPopup.contains(target) ||
+      SidebarElements.webPanelPopupNew.contains(target) ||
+      SidebarElements.webPanelPopupEdit.contains(target) ||
+      SidebarElements.webPanelPopupDelete.contains(target)
+    );
+  }
+
+  /**
+   *
+   * @param {MouseEvent} event
+   */
+  isEventInsideSidebarMain(event) {
+    const target = new XULElement({ element: event.target });
+    return SidebarElements.sidebarMain.contains(target);
   }
 
   /**
@@ -167,11 +225,13 @@ export class SidebarMainCollapser {
    * @param {boolean} params.animate
    * @param {boolean} params.fullScreenAnimate
    * @param {number} params.delay
+   * @param {boolean} params.saveLastOpenedWebPanel
    */
   collapse({
-    animate = false,
+    animate = SidebarControllers.sidebarController.hideSidebarAnimated,
     fullScreenAnimate = false,
     delay = HIDE_DELAY,
+    saveLastOpenedWebPanel = false,
   } = {}) {
     clearTimeout(this.showSidebarTimer);
     this.showSidebarTimer = null;
@@ -180,11 +240,13 @@ export class SidebarMainCollapser {
         this.shouldAnimate(animate);
         this.fullScreenShouldAnimate(fullScreenAnimate);
         SidebarControllers.sidebarMainController.collapse();
-        const webPanelController =
-          SidebarControllers.webPanelsController.getActive();
-        if (webPanelController) {
-          this.lastOpenedWebPanel = webPanelController.getUUID();
-          SidebarControllers.sidebarController.close();
+        if (saveLastOpenedWebPanel) {
+          const webPanelController =
+            SidebarControllers.webPanelsController.getActive();
+          if (webPanelController) {
+            this.lastOpenedWebPanel = webPanelController.getUUID();
+            SidebarControllers.sidebarController.close();
+          }
         }
         this.hideSidebarTimer = null;
       }, delay);
@@ -197,11 +259,13 @@ export class SidebarMainCollapser {
    * @param {boolean} params.animate
    * @param {boolean} params.fullScreenAnimate
    * @param {number} params.delay
+   * @param {boolean} params.restoreLastOpenedWebPanel
    */
   uncollapse({
-    animate = false,
+    animate = SidebarControllers.sidebarController.hideSidebarAnimated,
     fullScreenAnimate = false,
     delay = SHOW_DELAY,
+    restoreLastOpenedWebPanel = false,
   } = {}) {
     clearTimeout(this.hideSidebarTimer);
     this.hideSidebarTimer = null;
@@ -210,7 +274,7 @@ export class SidebarMainCollapser {
         this.shouldAnimate(animate);
         this.fullScreenShouldAnimate(fullScreenAnimate);
         SidebarControllers.sidebarMainController.uncollapse();
-        if (this.lastOpenedWebPanel) {
+        if (restoreLastOpenedWebPanel && this.lastOpenedWebPanel) {
           const webPanelController = SidebarControllers.webPanelsController.get(
             this.lastOpenedWebPanel,
           );
