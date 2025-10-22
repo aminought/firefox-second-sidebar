@@ -3,6 +3,7 @@ import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarElements } from "../sidebar_elements.mjs";
 import { WindowWrapper } from "../wrappers/window.mjs";
 import { XULElement } from "../xul/base/xul_element.mjs";
+import { gNavToolboxWrapper } from "../wrappers/g_nav_toolbox.mjs";
 
 const FULLSCREEN_ANIMATE_ATTRIBUTE = "fullscreenShouldAnimate";
 const ANIMATE_ATTRIBUTE = "shouldAnimate";
@@ -30,6 +31,18 @@ export class SidebarMainCollapser {
     SidebarElements.sidebarCollapseButton.addEventListener("click", () =>
       this.onSidebarCollapseButtonClick(),
     );
+
+    gNavToolboxWrapper.addEventListener("customizationready", () => {
+      SidebarElements.sidebarMain.removeAttribute("overlay");
+    });
+
+    gNavToolboxWrapper.addEventListener("aftercustomization", () => {
+      const { autoHideSidebar, autoHideSidebarBehavior } =
+        SidebarControllers.sidebarController;
+      if (autoHideSidebar && autoHideSidebarBehavior === "overlay") {
+        SidebarElements.sidebarMain.setAttribute("overlay", true);
+      }
+    });
   }
 
   /**
