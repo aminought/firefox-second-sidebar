@@ -105,18 +105,15 @@ export class SidebarMainCollapser {
     if (
       (!window.fullScreen &&
         !SidebarControllers.sidebarController.autoHideSidebar) ||
-      window.document.fullscreenElement ||
-      SidebarElements.sidebarMainMenuPopup.isPanelOpen() ||
-      SidebarElements.sidebarMainPopupSettings.isPanelOpen() ||
-      SidebarElements.webPanelMenuPopup.isPanelOpen() ||
-      SidebarElements.webPanelPopupNew.isPanelOpen() ||
-      SidebarElements.webPanelPopupDelete.isPanelOpen()
+      window.document.fullscreenElement
     ) {
       return;
     }
 
-    if (event.type === "click") {
-      this.collapse({ delay: 0 });
+    const openedButtons = SidebarElements.sidebarMain.querySelectorAll(
+      "toolbarbutton:not(.sb2-main-web-panel-button)[open]",
+    );
+    if (openedButtons.length > 0) {
       return;
     }
 
@@ -124,6 +121,15 @@ export class SidebarMainCollapser {
       if (event.explicitOriginalTarget?.id === "main-window") {
         this.collapse();
       }
+      return;
+    }
+
+    if (
+      event.type === "click" &&
+      !this.isEventInsidePanel(event) &&
+      !this.isEventInsideSidebarMain(event)
+    ) {
+      this.collapse({ delay: 0 });
       return;
     }
 
@@ -145,7 +151,51 @@ export class SidebarMainCollapser {
         ((isRight && event.screenX > rightEdge - sidebarRect.width) ||
           (isLeft && event.screenX < leftEdge + sidebarRect.width)));
 
-    isInUncollapseArea ? this.uncollapse() : this.collapse();
+    if (isInUncollapseArea) {
+      this.uncollapse();
+    } else if (!this.isPanelOpened()) {
+      this.collapse();
+    }
+  }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  isPanelOpened() {
+    return (
+      SidebarElements.sidebarMainMenuPopup.isPanelOpen() ||
+      SidebarElements.sidebarMainPopupSettings.isPanelOpen() ||
+      SidebarElements.webPanelMenuPopup.isPanelOpen() ||
+      SidebarElements.webPanelPopupNew.isPanelOpen() ||
+      SidebarElements.webPanelPopupEdit.isPanelOpen() ||
+      SidebarElements.webPanelPopupDelete.isPanelOpen()
+    );
+  }
+
+  /**
+   *
+   * @param {MouseEvent} event
+   */
+  isEventInsidePanel(event) {
+    const target = new XULElement({ element: event.target });
+    return (
+      SidebarElements.sidebarMainMenuPopup.contains(target) ||
+      SidebarElements.sidebarMainPopupSettings.contains(target) ||
+      SidebarElements.webPanelMenuPopup.contains(target) ||
+      SidebarElements.webPanelPopupNew.contains(target) ||
+      SidebarElements.webPanelPopupEdit.contains(target) ||
+      SidebarElements.webPanelPopupDelete.contains(target)
+    );
+  }
+
+  /**
+   *
+   * @param {MouseEvent} event
+   */
+  isEventInsideSidebarMain(event) {
+    const target = new XULElement({ element: event.target });
+    return SidebarElements.sidebarMain.contains(target);
   }
 
   /**
