@@ -180,9 +180,9 @@ export class SidebarMainPopupSettings extends Panel {
         new PopupHeader("Sidebar Settings"),
         new PopupBody().appendChildren(
           createPopupSet("", [
-            createPopupGroup("Sidebar position", this.positionMenuList),
+            createPopupGroup("Position", this.positionMenuList),
             new ToolbarSeparator(),
-            createPopupGroup("Sidebar width", this.paddingMenuList),
+            createPopupGroup("Width", this.paddingMenuList),
           ]),
           createPopupSet("Visibility", [
             createPopupGroup("Auto-hide sidebar", this.autoHideSidebarToggle),
