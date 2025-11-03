@@ -17,12 +17,12 @@ https://github.com/user-attachments/assets/cd79d644-ca2c-4a30-ae8e-c265f41768b6
 - Actions: `Show` • `Hide`
 - Customize via [Customize Toolbar...](https://support.mozilla.org/en-US/kb/customize-firefox-controls-buttons-and-toolbars)
 - Settings:
-    - General: `Position (Left / Right)` • `Width`
-    - Visibility: `Auto-hide sidebar` • `Auto-hide behaiour (Inline / Overlay)` • `Hide web panel when sidebar is hidden` • `Set shortcut to hide/show sidebar`
-    - Web panel: `Default floating panel offset` • `New panel position (Before plus button / After plus button)` • `Show geometry hint`
-    - Web panel button: `Container indicator (Off / Left / Right / Top / Bottom / Around)` • `Tooltip (Off / Title / URL / Title and URL)` • `Show full URL in tooltip`
-    - Web panel toolbar: `Auto-hide forward button` • `Auto-hide back button`
-    - Animations: `Animate sidebar` • `Animate web panel toolbar`
+  - General: `Position (Left / Right)` • `Width`
+  - Visibility: `Auto-hide sidebar` • `Auto-hide behaiour (Inline / Overlay)` • `Hide web panel when sidebar is hidden` • `Set shortcut to hide/show sidebar`
+  - Web panel: `Default floating panel offset` • `New panel position (Before plus button / After plus button)` • `Show geometry hint`
+  - Web panel button: `Container indicator (Off / Left / Right / Top / Bottom / Around)` • `Tooltip (Off / Title / URL / Title and URL)` • `Show full URL in tooltip`
+  - Web panel toolbar: `Auto-hide forward button` • `Auto-hide back button`
+  - Animations: `Animate sidebar` • `Animate web panel toolbar`
 
 ### Web panels
 
@@ -30,14 +30,14 @@ https://github.com/user-attachments/assets/cd79d644-ca2c-4a30-ae8e-c265f41768b6
 - Extensions support
 - Popup notifications support (permissions to use microphone/camera/location, etc.)
 - Settings:
-    - General: `URL` • `Multi-Account Container` • `Temporary` • `Mobile view` • `Zoom`
-    - Title: `Dynamic` • `Set static title`
-    - Favicon: `Dynamic` • `Set static favicon`
-    - Position and size: `Mode (Floating / Pinned)` • `Always on top` • `Position anchor` • `Horizontal offset` • `Vertical offset` • `Width` • `Height`
-    - Loading: `Load into memory at startup` • `Restore last opened page` • `Unload from memory after closing` • `Periodic reload`
-    - Keyboard shortcut: `Set shortcut to hide/show web panel`
-    - CSS selector: `Enable` • `Set CSS selector`
-    - Hide elements: `Hide toolbar` • `Hide sound icon` • `Hide notification badge`
+  - General: `URL` • `Multi-Account Container` • `Temporary` • `Mobile view` • `Zoom`
+  - Title: `Dynamic` • `Set static title`
+  - Favicon: `Dynamic` • `Set static favicon`
+  - Position and size: `Mode (Floating / Pinned)` • `Always on top` • `Position anchor` • `Horizontal offset` • `Vertical offset` • `Width` • `Height`
+  - Loading: `Load into memory at startup` • `Restore last opened page` • `Unload from memory after closing` • `Periodic reload`
+  - Keyboard shortcut: `Set shortcut to hide/show web panel`
+  - CSS selector: `Enable` • `Set CSS selector`
+  - Hide elements: `Hide toolbar` • `Hide sound icon` • `Hide notification badge`
 
 ### Widgets
 
