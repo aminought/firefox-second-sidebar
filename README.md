@@ -1,8 +1,6 @@
-# Second Sidebar for Firefox
+A Firefox userChrome.js script that brings a second sidebar with web panels like in Vivaldi/Edge/Floorp/Zen but better.
 
-A Firefox userChrome.js script for adding a second sidebar with web panels like in Vivaldi/Edge/Floorp/Zen but better.
-
-![promo-rounded](https://github.com/user-attachments/assets/2eb261b0-0942-4c74-a8c9-087d7455bfbd)
+<img width="2200" height="2131" alt="promo-rounded" src="https://github.com/user-attachments/assets/020ee8cf-1f3d-4184-98fe-889be89d6145" />
 
 ## Motivation
 
@@ -10,7 +8,7 @@ I've tried various browsers, such as Vivaldi, Edge, Floorp, and Zen, and they al
 
 ## Demo
 
-https://github.com/user-attachments/assets/e4a2c01a-0d32-463d-84da-ffa6b090508c
+https://github.com/user-attachments/assets/7ef81461-8015-4270-a10a-3cca55e59941
 
 ## Features
 
