@@ -8,7 +8,7 @@ I've tried various browsers, such as Vivaldi, Edge, Floorp, and Zen, and they al
 
 ## Demo
 
-https://github.com/user-attachments/assets/7ef81461-8015-4270-a10a-3cca55e59941
+https://github.com/user-attachments/assets/cd79d644-ca2c-4a30-ae8e-c265f41768b6
 
 ## Features
 
@@ -47,7 +47,7 @@ https://github.com/user-attachments/assets/7ef81461-8015-4270-a10a-3cca55e59941
 
 1. Install [fx-autoconfig](https://github.com/MrOtherGuy/fx-autoconfig).
 2. Copy the contents of the `src/` directory (`second_sidebar/` and `second_sidebar.uc.mjs`) into `chrome/JS/`.
-3. Enable `dom.allow_scripts_to_close_windows` in `about:config`.
+3. Enable `toolkit.legacyUserProfileCustomizations.stylesheets` and `dom.allow_scripts_to_close_windows` in `about:config`.
 4. [Clear](https://github.com/MrOtherGuy/fx-autoconfig?tab=readme-ov-file#deleting-startup-cache) startup-cache.
 5. Have fun!
 
