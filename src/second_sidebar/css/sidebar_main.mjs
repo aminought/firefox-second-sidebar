@@ -65,14 +65,14 @@ export const SIDEBAR_MAIN_CSS = `
       display: none;
       height: 16px;
       width: 16px;
-      top: calc(var(--toolbarbutton-inner-padding) + 2px);
-      right: calc(-1 * var(--toolbarbutton-inner-padding) - 2px);
+      top: calc(var(--toolbarbutton-inner-padding, var(--toolbarbutton-padding-inner)) + 2px);
+      right: calc(-1 * var(--toolbarbutton-inner-padding, var(--toolbarbutton-padding-inner)) - 2px);
       padding: 2px;
       background-position: center;
       background-repeat: no-repeat;
       border-radius: var(--border-radius-circle);
-      background-color: color-mix(in srgb, var(--toolbar-bgcolor) 50%, transparent);
-      fill: var(--toolbar-color);
+      background-color: color-mix(in srgb, var(--toolbar-bgcolor, var(--toolbar-background-color)) 50%, transparent);
+      fill: var(--toolbar-color, var(--toolbar-text-color));
 
       &[soundplaying] {
         display: flex;
@@ -96,10 +96,10 @@ export const SIDEBAR_MAIN_CSS = `
       align-items: center;
       width: 16px;
       height: 16px;
-      top: calc(-1 * var(--toolbarbutton-inner-padding) - 2px);
-      right: calc(-1 * var(--toolbarbutton-inner-padding) - 2px);
+      top: calc(-1 * var(--toolbarbutton-inner-padding, var(--toolbarbutton-padding-inner)) - 2px);
+      right: calc(-1 * var(--toolbarbutton-inner-padding, var(--toolbarbutton-padding-inner)) - 2px);
       border-radius: var(--border-radius-circle);
-      background-color: color-mix(in srgb, var(--toolbar-bgcolor) 50%, transparent);
+      background-color: color-mix(in srgb, var(--toolbar-bgcolor, var(--toolbar-background-color)) 50%, transparent);
 
       &[value] {
         display: flex;
@@ -110,7 +110,7 @@ export const SIDEBAR_MAIN_CSS = `
       }
 
       span {
-        color: var(--toolbar-color);
+        color: var(--toolbar-color, var(--toolbar-text-color));
       }
     }
   }
@@ -129,7 +129,7 @@ export const SIDEBAR_MAIN_CSS = `
 
   .sb2-main-button[unloaded="true"] {
     .toolbarbutton-icon {
-      opacity: var(--toolbarbutton-disabled-opacity);
+      opacity: var(--toolbarbutton-disabled-opacity, var(--toolbarbutton-opacity-disabled));
     }
   }
 
@@ -154,6 +154,12 @@ export const SIDEBAR_MAIN_CSS = `
 
     #sb2-collapse-button {
       list-style-image: url("chrome://userscripts/content/second_sidebar/icons/sidebar-right.svg");
+    }
+  }
+
+  @media -moz-pref("browser.nova.enabled") {
+    #sb2-main {
+      background-color: var(--toolbar-background-color);
     }
   }
 `;

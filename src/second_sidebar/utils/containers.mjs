@@ -69,7 +69,7 @@ export function fillContainerMenuList(containerMenuList) {
  */
 export function changeContainerBorder(containerBorder) {
   let shadowParts = Array(4).fill("0px");
-  let paddingParts = Array(4).fill("var(--toolbarbutton-inner-padding)");
+  let paddingParts = Array(4).fill("var(--toolbarbutton-inner-padding, var(--toolbarbutton-padding-inner))");
 
   if (containerBorder === "left") {
     shadowParts[0] = "1px";

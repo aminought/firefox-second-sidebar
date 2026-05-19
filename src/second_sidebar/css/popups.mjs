@@ -38,8 +38,8 @@ export const POPUPS_CSS = `
 
         .sb2-popup-set-body {
           display: flex;
-          background-color: var(--toolbar-bgcolor);
-          color: var(--toolbar-color);
+          background-color: var(--toolbar-bgcolor, var(--toolbar-background-color));
+          color: var(--toolbar-color, var(--toolbar-text-color));
           border: solid 1px var(--border-color-deemphasized);
           border-radius: var(--border-radius-medium);
           padding: var(--space-small);
@@ -131,7 +131,7 @@ export const POPUPS_CSS = `
       box-sizing: border-box;
       height: 32px;
       background-color: var(--toolbar-field-background-color);
-      color: var(--toolbar-field-color);
+      color: var(--toolbar-field-color, var(--toolbar-field-text-color));
       border: solid 1px var(--toolbar-field-border-color);
       outline: unset;
 

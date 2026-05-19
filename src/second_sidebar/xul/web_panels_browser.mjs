@@ -133,6 +133,16 @@ export class WebPanelsBrowser extends Browser {
     `);
     windowRoot.appendChild(style);
 
+    // Fix nova styles for inner window
+    windowRoot.querySelector("#browser").setProperty("padding", "0px");
+    const browserContainerStyle = new Style(`
+      .browserContainer {
+        overflow: unset !important;
+        border: none !important;
+      }
+    `);
+    windowRoot.appendChild(browserContainerStyle);
+
     // Shrink to fit
     windowRoot.setProperty("min-width", "0px");
 
