@@ -57,7 +57,7 @@ export const SIDEBAR_BOX_CSS = `
       color: inherit;
       flex-direction: row;
       flex: 1;
-      min-height: calc(2 * var(--toolbarbutton-inner-padding) + 16px);
+      min-height: calc(2 * var(--toolbarbutton-inner-padding, var(--toolbarbutton-padding-inner)) + 16px);
       gap: 4px;
       padding: 1px;
       overflow: scroll;
