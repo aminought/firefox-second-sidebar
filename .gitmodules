@@ -1,0 +1,3 @@
+[submodule "fx-autoconfig"]
+	path = fx-autoconfig
+	url = https://github.com/MrOtherGuy/fx-autoconfig.git

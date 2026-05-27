@@ -1,3 +1,4 @@
+import { L } from "../i18n/index.mjs";
 import { MenuItem } from "./base/menuitem.mjs";
 import { MenuPopup } from "./base/menupopup.mjs";
 import { MenuSeparator } from "./base/menuseparator.mjs";
@@ -9,8 +10,8 @@ export class SidebarMainMenuPopup extends MenuPopup {
       classList: ["sb2-menupopup"],
     });
 
-    this.settingsItem = new MenuItem().setLabel("Sidebar settings");
-    this.customizeItem = new MenuItem().setLabel("Customize Toolbar...");
+    this.settingsItem = new MenuItem().setLabel(L.mainMenu.settings);
+    this.customizeItem = new MenuItem().setLabel(L.mainMenu.customize);
     this.#compose();
   }
 

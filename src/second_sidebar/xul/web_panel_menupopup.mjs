@@ -1,3 +1,4 @@
+import { L } from "../i18n/index.mjs";
 import { Menu } from "./base/menu.mjs";
 import { MenuItem } from "./base/menuitem.mjs";
 import { MenuPopup } from "./base/menupopup.mjs";
@@ -12,17 +13,17 @@ export class WebPanelMenuPopup extends MenuPopup {
       classList: ["sb2-menupopup"],
     });
 
-    this.unloadItem = new MenuItem().setLabel("Unload web panel");
+    this.unloadItem = new MenuItem().setLabel(L.webPanelMenu.unload);
     this.muteItem = new MenuItem();
-    this.resetMenu = new Menu().setLabel("Reset web panel");
+    this.resetMenu = new Menu().setLabel(L.webPanelMenu.reset);
     this.resetMenuPopup = new MenuPopup();
-    this.resetPositionItem = new MenuItem().setLabel("Reset position");
-    this.resetWidthItem = new MenuItem().setLabel("Reset width");
-    this.resetHeightItem = new MenuItem().setLabel("Reset height");
-    this.resetAllItem = new MenuItem().setLabel("Reset all");
-    this.editItem = new MenuItem().setLabel("Edit web panel");
-    this.deleteItem = new MenuItem().setLabel("Delete web panel");
-    this.customizeItem = new MenuItem().setLabel("Customize Toolbar...");
+    this.resetPositionItem = new MenuItem().setLabel(L.webPanelMenu.resetPosition);
+    this.resetWidthItem = new MenuItem().setLabel(L.webPanelMenu.resetWidth);
+    this.resetHeightItem = new MenuItem().setLabel(L.webPanelMenu.resetHeight);
+    this.resetAllItem = new MenuItem().setLabel(L.webPanelMenu.resetAll);
+    this.editItem = new MenuItem().setLabel(L.webPanelMenu.edit);
+    this.deleteItem = new MenuItem().setLabel(L.webPanelMenu.delete);
+    this.customizeItem = new MenuItem().setLabel(L.webPanelMenu.customize);
     this.#compose();
 
     this.addEventListener("popupshowing", () => {
@@ -47,7 +48,7 @@ export class WebPanelMenuPopup extends MenuPopup {
       } else {
         this.muteItem.show();
         this.muteItem.setLabel(
-          `${this.webPanelController.isMuted() ? "Unmute" : "Mute"} web panel`,
+          this.webPanelController.isMuted() ? L.webPanelMenu.unmute : L.webPanelMenu.mute,
         );
       }
       // resetting

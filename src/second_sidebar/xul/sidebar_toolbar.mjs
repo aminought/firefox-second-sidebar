@@ -1,3 +1,4 @@
+import { L } from "../i18n/index.mjs";
 import { Div } from "./base/div.mjs";
 import { HBox } from "./base/hbox.mjs";
 import { Label } from "./base/label.mjs";
@@ -31,10 +32,10 @@ export class SidebarToolbar extends Toolbar {
     this.autoHideForwardButton = false;
 
     // Navigation buttons
-    this.backButton = this.#createButton("Back", ICONS.BACK);
-    this.forwardButton = this.#createButton("Forward", ICONS.FORWARD);
-    this.reloadButton = this.#createButton("Reload", ICONS.RELOAD);
-    this.homeButton = this.#createButton("Home", ICONS.HOME);
+    this.backButton = this.#createButton(L.toolbar.back, ICONS.BACK);
+    this.forwardButton = this.#createButton(L.toolbar.forward, ICONS.FORWARD);
+    this.reloadButton = this.#createButton(L.toolbar.reload, ICONS.RELOAD);
+    this.homeButton = this.#createButton(L.toolbar.home, ICONS.HOME);
     this.navButtons = this.#createNavButtons();
 
     // Title
@@ -44,9 +45,9 @@ export class SidebarToolbar extends Toolbar {
     );
 
     // Sidebar buttons
-    this.moreButton = this.#createMenuButton("More", ICONS.MORE);
+    this.moreButton = this.#createMenuButton(L.toolbar.more, ICONS.MORE);
     this.pinButton = this.#createButton();
-    this.closeButton = this.#createButton("Unload", ICONS.CLOSE);
+    this.closeButton = this.#createButton(L.toolbar.unload, ICONS.CLOSE);
     this.sidebarButtons = this.#createSidebarButtons();
   }
 
@@ -198,7 +199,7 @@ export class SidebarToolbar extends Toolbar {
           ? await useAvailableIcon(ICONS.PINNED, ICONS.PINNED_ALT)
           : await useAvailableIcon(ICONS.FLOATING, ICONS.FLOATING_ALT),
       )
-      .setTooltipText(pinned ? "Unpin" : "Pin");
+      .setTooltipText(pinned ? L.toolbar.unpin : L.toolbar.pin);
     return this;
   }
 

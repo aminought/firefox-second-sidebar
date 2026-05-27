@@ -1,3 +1,4 @@
+import { L } from "../i18n/index.mjs";
 import {
   createCancelButton,
   createDeleteButton,
@@ -29,13 +30,13 @@ export class WebPanelPopupDelete extends Panel {
   #compose() {
     this.appendChild(
       new PanelMultiView().appendChildren(
-        new PopupHeader("Delete Web Panel"),
+        new PopupHeader(L.popupDelete.header),
         new PopupBody().appendChildren(
           createPopupSet(
             null,
             [
               new Label().setText(
-                "Are you sure? This action cannot be undone.",
+                L.popupDelete.confirm,
               ),
             ],
             { classList: ["sb2-popup-warning"] },

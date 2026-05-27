@@ -1,3 +1,4 @@
+import { L } from "../i18n/index.mjs";
 import { HBox } from "../xul/base/hbox.mjs";
 import { Header } from "../xul/base/header.mjs";
 import { Input } from "../xul/base/input.mjs";
@@ -130,7 +131,7 @@ export function createMozButton(label, type = null) {
  * @returns {MozButton}
  */
 export function createCreateButton() {
-  return createMozButton("Create", "primary");
+  return createMozButton(L.buttons.create, "primary");
 }
 
 /**
@@ -138,7 +139,7 @@ export function createCreateButton() {
  * @returns {MozButton}
  */
 export function createSaveButton() {
-  return createMozButton("Save", "primary");
+  return createMozButton(L.buttons.save, "primary");
 }
 
 /**
@@ -146,7 +147,7 @@ export function createSaveButton() {
  * @returns {MozButton}
  */
 export function createDeleteButton() {
-  return createMozButton("Delete", "destructive");
+  return createMozButton(L.buttons.delete, "destructive");
 }
 
 /**
@@ -154,7 +155,7 @@ export function createDeleteButton() {
  * @returns {MozButton}
  */
 export function createCancelButton() {
-  return createMozButton("Cancel");
+  return createMozButton(L.buttons.cancel);
 }
 
 /**

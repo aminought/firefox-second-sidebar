@@ -1,3 +1,4 @@
+import { L } from "../i18n/index.mjs";
 import {
   createCancelButton,
   createInput,
@@ -50,12 +51,12 @@ export class SidebarMainPopupSettings extends Panel {
       this.#createAutoHideSidebarBehaviorMenuList();
     this.sidebarWidgetHideWebPanelToggle = new Toggle();
     this.sidebarWidgetShortcutInput = createInput({
-      placeholder: "Click here and press keys...",
+      placeholder: L.popupSettings.shortcutPlaceholder,
     });
     this.sidebarWidgetShortcutResetButton = createSubviewIconicButton(
       ICONS.UNDO,
       {
-        tooltipText: "Reset shortcut",
+        tooltipText: L.popupSettings.shortcutReset,
       },
     );
     this.hideSidebarAnimatedToggle = new Toggle();
@@ -90,7 +91,7 @@ export class SidebarMainPopupSettings extends Panel {
 
       if (isBisy) {
         this.sidebarWidgetShortcutInput
-          .setValue(`Shortcut ${shortcut} is busy`)
+          .setValue(L.popupSettings.shortcutBusy(shortcut))
           .setAttribute("error", true)
           .dispatchEvent(new Event("error", { bubbles: true }));
         return;
@@ -109,8 +110,8 @@ export class SidebarMainPopupSettings extends Panel {
    */
   #createPositionMenuList() {
     const menuList = createMenuList();
-    menuList.appendItem("Left", "left");
-    menuList.appendItem("Right", "right");
+    menuList.appendItem(L.popupSettings.left, "left");
+    menuList.appendItem(L.popupSettings.right, "right");
     return menuList;
   }
 
@@ -120,13 +121,13 @@ export class SidebarMainPopupSettings extends Panel {
    */
   #createPaddingMenuList() {
     const menuList = createMenuList();
-    menuList.appendItem("Extra Extra Small", "xxsmall");
-    menuList.appendItem("Extra Small", "xsmall");
-    menuList.appendItem("Small", "small");
-    menuList.appendItem("Medium", "medium");
-    menuList.appendItem("Large", "large");
-    menuList.appendItem("Extra Large", "xlarge");
-    menuList.appendItem("Extra Extra Large", "xxlarge");
+    menuList.appendItem(L.popupSettings.padding.xxsmall, "xxsmall");
+    menuList.appendItem(L.popupSettings.padding.xsmall, "xsmall");
+    menuList.appendItem(L.popupSettings.padding.small, "small");
+    menuList.appendItem(L.popupSettings.padding.medium, "medium");
+    menuList.appendItem(L.popupSettings.padding.large, "large");
+    menuList.appendItem(L.popupSettings.padding.xlarge, "xlarge");
+    menuList.appendItem(L.popupSettings.padding.xxlarge, "xxlarge");
     return menuList;
   }
 
@@ -136,8 +137,8 @@ export class SidebarMainPopupSettings extends Panel {
    */
   #createNewWebPanelPositionMenuList() {
     const menuList = createMenuList();
-    menuList.appendItem("Before Plus Button", "before");
-    menuList.appendItem("After Plus Button", "after");
+    menuList.appendItem(L.popupSettings.beforePlus, "before");
+    menuList.appendItem(L.popupSettings.afterPlus, "after");
     return menuList;
   }
 
@@ -147,12 +148,12 @@ export class SidebarMainPopupSettings extends Panel {
    */
   #createContainerBorderMenuList() {
     const menuList = createMenuList();
-    menuList.appendItem("Off", "off");
-    menuList.appendItem("Left", "left");
-    menuList.appendItem("Right", "right");
-    menuList.appendItem("Top", "top");
-    menuList.appendItem("Bottom", "bottom");
-    menuList.appendItem("Around", "around");
+    menuList.appendItem(L.popupSettings.containerBorder.off, "off");
+    menuList.appendItem(L.popupSettings.containerBorder.left, "left");
+    menuList.appendItem(L.popupSettings.containerBorder.right, "right");
+    menuList.appendItem(L.popupSettings.containerBorder.top, "top");
+    menuList.appendItem(L.popupSettings.containerBorder.bottom, "bottom");
+    menuList.appendItem(L.popupSettings.containerBorder.around, "around");
     return menuList;
   }
 
@@ -160,38 +161,38 @@ export class SidebarMainPopupSettings extends Panel {
     const menuList = createMenuList({
       id: "sb2-main-popup-settings-tooltip-menu-list",
     });
-    menuList.appendItem("Off", "off");
-    menuList.appendItem("Title", "title");
-    menuList.appendItem("URL", "url");
-    menuList.appendItem("Title and URL", "titleandurl");
+    menuList.appendItem(L.popupSettings.off, "off");
+    menuList.appendItem(L.popupSettings.title, "title");
+    menuList.appendItem(L.popupSettings.url, "url");
+    menuList.appendItem(L.popupSettings.titleAndUrl, "titleandurl");
     return menuList;
   }
 
   #createAutoHideSidebarBehaviorMenuList() {
     const menuList = createMenuList();
-    menuList.appendItem("Inline", "inline");
-    menuList.appendItem("Overlay", "overlay");
+    menuList.appendItem(L.popupSettings.inline, "inline");
+    menuList.appendItem(L.popupSettings.overlay, "overlay");
     return menuList;
   }
 
   #compose() {
     this.appendChild(
       new PanelMultiView().appendChildren(
-        new PopupHeader("Sidebar Settings"),
+        new PopupHeader(L.popupSettings.header),
         new PopupBody().appendChildren(
           createPopupSet("", [
-            createPopupGroup("Position", this.positionMenuList),
+            createPopupGroup(L.popupSettings.position, this.positionMenuList),
             new ToolbarSeparator(),
-            createPopupGroup("Width", this.paddingMenuList),
+            createPopupGroup(L.popupSettings.width, this.paddingMenuList),
           ]),
-          createPopupSet("Visibility", [
-            createPopupGroup("Auto-hide sidebar", this.autoHideSidebarToggle),
+          createPopupSet(L.popupSettings.visibility, [
+            createPopupGroup(L.popupSettings.autoHideSidebar, this.autoHideSidebarToggle),
             new ToolbarSeparator(),
             new Div({
               id: "sb2-main-popup-settings-auto-hide-sidebar-items",
             }).appendChildren(
               createPopupGroup(
-                "Auto-hide behavior",
+                L.popupSettings.autoHideBehavior,
                 this.autoHideSidebarBehaviorMenuList,
               ),
             ),
@@ -199,7 +200,7 @@ export class SidebarMainPopupSettings extends Panel {
               id: "sb2-main-popup-settings-sidebar-widget-items",
             }).appendChildren(
               createPopupGroup(
-                "Hide web panel when sidebar is hidden",
+                L.popupSettings.hideWebPanelWhenSidebarHidden,
                 this.sidebarWidgetHideWebPanelToggle,
               ),
               new ToolbarSeparator(),
@@ -209,52 +210,52 @@ export class SidebarMainPopupSettings extends Panel {
               ),
             ),
           ]),
-          createPopupSet("Web panel", [
+          createPopupSet(L.popupSettings.webPanel, [
             createPopupGroup(
-              "Default floating panel offset",
+              L.popupSettings.defaultFloatingOffset,
               this.defaultFloatingOffsetMenuList,
             ),
             new ToolbarSeparator(),
             createPopupGroup(
-              "New panel position",
+              L.popupSettings.newWebPanelPosition,
               this.newWebPanelPositionMenuList,
             ),
             new ToolbarSeparator(),
             createPopupGroup(
-              "Show geometry hint",
+              L.popupSettings.showGeometryHint,
               this.enableSidebarBoxHintToggle,
             ),
           ]),
-          createPopupSet("Web panel button", [
+          createPopupSet(L.popupSettings.webPanelButton, [
             createPopupGroup(
-              "Container indicator",
+              L.popupSettings.containerIndicator,
               this.containerBorderMenuList,
             ),
             new ToolbarSeparator(),
-            createPopupGroup("Tooltip", this.tooltipMenuList),
+            createPopupGroup(L.popupSettings.tooltip, this.tooltipMenuList),
             new Div({
               id: "sb2-main-popup-settings-tooltip-items",
             }).appendChildren(
               new ToolbarSeparator(),
               createPopupGroup(
-                "Show full URL in tooltip",
+                L.popupSettings.tooltipFullUrl,
                 this.tooltipFullUrlToggle,
               ),
             ),
           ]),
-          createPopupSet("Web panel toolbar", [
+          createPopupSet(L.popupSettings.webPanelToolbar, [
             createPopupGroup(
-              "Auto-hide forward button",
+              L.popupSettings.autoHideForward,
               this.autoHideForwardToggle,
             ),
             new ToolbarSeparator(),
-            createPopupGroup("Auto-hide back button", this.autoHideBackToggle),
+            createPopupGroup(L.popupSettings.autoHideBack, this.autoHideBackToggle),
           ]),
-          createPopupSet("Animations", [
-            createPopupGroup("Animate sidebar", this.hideSidebarAnimatedToggle),
+          createPopupSet(L.popupSettings.animation, [
+            createPopupGroup(L.popupSettings.sidebarAnimation, this.hideSidebarAnimatedToggle),
             new ToolbarSeparator(),
             createPopupGroup(
-              "Animate web panel toolbar",
+              L.popupSettings.toolbarAnimation,
               this.hideToolbarAnimatedToggle,
             ),
           ]),

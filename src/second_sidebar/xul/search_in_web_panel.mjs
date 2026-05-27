@@ -1,3 +1,4 @@
+import { L } from "../i18n/index.mjs";
 import { MenuItem } from "./base/menuitem.mjs";
 import { ellipsis } from "../utils/string.mjs";
 
@@ -12,7 +13,7 @@ export class SearchInWebPanelMenuItem extends MenuItem {
    * @returns {SearchInWebPanelMenuItem}
    */
   setSearchQuery(query) {
-    this.setLabel(`Search "${ellipsis(query, 18)}" in Second Sidebar`);
+    this.setLabel(L.contextMenu.searchInWebPanel(ellipsis(query, 18)));
     return this;
   }
 }

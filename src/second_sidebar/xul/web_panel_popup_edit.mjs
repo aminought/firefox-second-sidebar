@@ -1,3 +1,4 @@
+import { L } from "../i18n/index.mjs";
 import {
   applyContainerColor,
   fillContainerMenuList,
@@ -48,20 +49,20 @@ export class WebPanelPopupEdit extends Panel {
       .setRole("group")
       .setAttribute("no-open-on-anchor", "true");
 
-    this.urlInput = createInput({ placeholder: "URL" });
+    this.urlInput = createInput({ placeholder: L.popupEdit.urlPlaceholder });
     this.dynamicTitleToggle = new Toggle({
       id: "sb2-popup-dynamic-title-toggle",
     });
-    this.titleInput = createInput({ placeholder: "Title" });
+    this.titleInput = createInput({ placeholder: L.popupEdit.title });
     this.titleResetButton = createSubviewIconicButton(ICONS.UNDO, {
-      tooltipText: "Reset title",
+      tooltipText: L.popupEdit.titleReset,
     });
     this.dynamicFaviconToggle = new Toggle({
       id: "sb2-popup-dynamic-favicon-toggle",
     });
-    this.faviconURLInput = createInput({ placeholder: "Favicon URL" });
+    this.faviconURLInput = createInput({ placeholder: L.popupEdit.faviconUrlPlaceholder });
     this.faviconResetButton = createSubviewIconicButton(ICONS.UNDO, {
-      tooltipText: "Request favicon",
+      tooltipText: L.popupEdit.faviconReset,
     });
     this.alwaysOnTopToggle = new Toggle({
       id: "sb2-popup-always-on-top-toggle",
@@ -69,7 +70,7 @@ export class WebPanelPopupEdit extends Panel {
     this.selectorToggle = new Toggle({ id: "sb2-popup-css-selector-toggle" });
     this.selectorInput = createInput({
       id: "sb2-popup-css-selector-input",
-      placeholder: ".class-name, #id, tag-name, etc",
+      placeholder: L.popupEdit.selectorPlaceholder,
     });
     this.pinnedMenuList = this.#createPinTypeMenuList();
     this.floatingAnchorMenuList = this.#createFloatingAnchorMenuList();
@@ -84,24 +85,24 @@ export class WebPanelPopupEdit extends Panel {
     this.loadLastUrlToggle = new Toggle();
     this.unloadOnCloseToggle = new Toggle();
     this.shortcutInput = createInput({
-      placeholder: "Click here and press keys...",
+      placeholder: L.popupEdit.shortcutPlaceholder,
     });
     this.shortcutResetButton = createSubviewIconicButton(ICONS.UNDO, {
-      tooltipText: "Reset shortcut",
+      tooltipText: L.popupEdit.shortcutReset,
     });
     this.hideToolbarToggle = new Toggle();
     this.hideSoundIconToggle = new Toggle();
     this.hideNotificationBadgeToggle = new Toggle();
     this.periodicReloadMenuList = this.#createPeriodicReloadMenuList();
     this.zoomOutButton = createSubviewIconicButton(ICONS.MINUS, {
-      tooltipText: "Zoom Out",
+      tooltipText: L.popupEdit.zoomOut,
     });
     this.resetZoomButton = createSubviewButton("100%", {
       id: "sb2-zoom-button",
-      tooltipText: "Reset Zoom",
+      tooltipText: L.popupEdit.resetZoom,
     });
     this.zoomInButton = createSubviewIconicButton(ICONS.PLUS, {
-      tooltipText: "Zoom In",
+      tooltipText: L.popupEdit.zoomIn,
     });
     this.cancelButton = createCancelButton();
     this.saveButton = createSaveButton();
@@ -152,7 +153,7 @@ export class WebPanelPopupEdit extends Panel {
 
       if (isBisy) {
         this.shortcutInput
-          .setValue(`Shortcut ${shortcut} is busy`)
+          .setValue(L.popupEdit.shortcutBusy(shortcut))
           .setAttribute("error", true)
           .dispatchEvent(new Event("error", { bubbles: true }));
         return;
@@ -173,8 +174,8 @@ export class WebPanelPopupEdit extends Panel {
     const pinTypeMenuList = createMenuList({
       id: "sb2-popup-pin-type-menu-list",
     });
-    pinTypeMenuList.appendItem("Pinned", true);
-    pinTypeMenuList.appendItem("Floating", false);
+    pinTypeMenuList.appendItem(L.popupEdit.pinned, true);
+    pinTypeMenuList.appendItem(L.popupEdit.floating, false);
     return pinTypeMenuList;
   }
 
@@ -184,12 +185,12 @@ export class WebPanelPopupEdit extends Panel {
    */
   #createFloatingAnchorMenuList() {
     const menuList = createMenuList();
-    menuList.appendItem("Default", "default");
-    menuList.appendItem("Top-left", "topleft");
-    menuList.appendItem("Top-right", "topright");
-    menuList.appendItem("Bottom-left", "bottomleft");
-    menuList.appendItem("Bottom-right", "bottomright");
-    menuList.appendItem("Center", "center");
+    menuList.appendItem(L.popupEdit.anchorDefault, "default");
+    menuList.appendItem(L.popupEdit.anchorTopLeft, "topleft");
+    menuList.appendItem(L.popupEdit.anchorTopRight, "topright");
+    menuList.appendItem(L.popupEdit.anchorBottomLeft, "bottomleft");
+    menuList.appendItem(L.popupEdit.anchorBottomRight, "bottomright");
+    menuList.appendItem(L.popupEdit.anchorCenter, "center");
     return menuList;
   }
 
@@ -199,8 +200,8 @@ export class WebPanelPopupEdit extends Panel {
    */
   #createDimensionTypeMenuList() {
     const menuList = createMenuList();
-    menuList.appendItem("Absolute", "absolute");
-    menuList.appendItem("Relative", "relative");
+    menuList.appendItem(L.popupEdit.absolute, "absolute");
+    menuList.appendItem(L.popupEdit.relative, "relative");
     return menuList;
   }
 
@@ -210,36 +211,36 @@ export class WebPanelPopupEdit extends Panel {
    */
   #createPeriodicReloadMenuList() {
     const menuList = createMenuList();
-    menuList.appendItem("Never", 0);
-    menuList.appendItem("5 seconds", 5 * SECOND);
-    menuList.appendItem("10 seconds", 10 * SECOND);
-    menuList.appendItem("30 seconds", 30 * SECOND);
-    menuList.appendItem("1 minute", MINUTE);
-    menuList.appendItem("2 minutes", 2 * MINUTE);
-    menuList.appendItem("5 minutes", 5 * MINUTE);
-    menuList.appendItem("10 minutes", 10 * MINUTE);
-    menuList.appendItem("30 minutes", 30 * MINUTE);
-    menuList.appendItem("60 minutes", 60 * MINUTE);
-    menuList.appendItem("90 minutes", 90 * MINUTE);
+    menuList.appendItem(L.periodicReload.never, 0);
+    menuList.appendItem(L.periodicReload.sec5, 5 * SECOND);
+    menuList.appendItem(L.periodicReload.sec10, 10 * SECOND);
+    menuList.appendItem(L.periodicReload.sec30, 30 * SECOND);
+    menuList.appendItem(L.periodicReload.min1, MINUTE);
+    menuList.appendItem(L.periodicReload.min2, 2 * MINUTE);
+    menuList.appendItem(L.periodicReload.min5, 5 * MINUTE);
+    menuList.appendItem(L.periodicReload.min10, 10 * MINUTE);
+    menuList.appendItem(L.periodicReload.min30, 30 * MINUTE);
+    menuList.appendItem(L.periodicReload.min60, 60 * MINUTE);
+    menuList.appendItem(L.periodicReload.min90, 90 * MINUTE);
     return menuList;
   }
 
   #compose() {
     this.appendChildren(
       new PanelMultiView().appendChildren(
-        new PopupHeader("Edit Web Panel"),
+        new PopupHeader(L.popupEdit.header),
         new PopupBody().appendChildren(
           createPopupSet("", [
             createPopupRow(this.urlInput),
             new ToolbarSeparator(),
-            createPopupGroup("Multi-Account Container", this.containerMenuList),
+            createPopupGroup(L.popupNew.container, this.containerMenuList),
             new ToolbarSeparator(),
-            createPopupGroup("Temporary", this.temporaryToggle),
+            createPopupGroup(L.popupNew.temporary, this.temporaryToggle),
             new ToolbarSeparator(),
-            createPopupGroup("Mobile View", this.mobileToggle),
+            createPopupGroup(L.popupMore.mobileView, this.mobileToggle),
             new ToolbarSeparator(),
             createPopupGroup(
-              "Zoom",
+              L.popupEdit.zoom,
               createZoomButtons(
                 this.zoomOutButton,
                 this.resetZoomButton,
@@ -247,74 +248,74 @@ export class WebPanelPopupEdit extends Panel {
               ),
             ),
           ]),
-          createPopupSet("Title", [
-            createPopupGroup("Dynamic", this.dynamicTitleToggle),
+          createPopupSet(L.popupEdit.title, [
+            createPopupGroup(L.popupEdit.dynamic, this.dynamicTitleToggle),
             new Div({ id: "sb2-popup-title-items" }).appendChildren(
               new ToolbarSeparator(),
               createPopupRow(this.titleInput, this.titleResetButton),
             ),
           ]),
-          createPopupSet("Favicon", [
-            createPopupGroup("Dynamic", this.dynamicFaviconToggle),
+          createPopupSet(L.popupEdit.icon, [
+            createPopupGroup(L.popupEdit.dynamic, this.dynamicFaviconToggle),
             new Div({ id: "sb2-popup-favicon-items" }).appendChildren(
               new ToolbarSeparator(),
               createPopupRow(this.faviconURLInput, this.faviconResetButton),
             ),
           ]),
-          createPopupSet("Position and size", [
-            createPopupGroup("Mode", this.pinnedMenuList),
+          createPopupSet(L.popupEdit.positionAndSize, [
+            createPopupGroup(L.popupEdit.mode, this.pinnedMenuList),
             new Div({
               id: "sb2-popup-floating-items",
             }).appendChildren(
               new ToolbarSeparator(),
-              createPopupGroup("Always on top", this.alwaysOnTopToggle),
+              createPopupGroup(L.popupEdit.alwaysOnTop, this.alwaysOnTopToggle),
               new ToolbarSeparator(),
-              createPopupGroup("Position anchor", this.floatingAnchorMenuList),
+              createPopupGroup(L.popupEdit.anchor, this.floatingAnchorMenuList),
               new ToolbarSeparator(),
-              createPopupGroup("Horizontal offset", this.offsetXTypeMenuList),
+              createPopupGroup(L.popupEdit.offsetX, this.offsetXTypeMenuList),
               new ToolbarSeparator(),
-              createPopupGroup("Vertical offset", this.offsetYTypeMenuList),
+              createPopupGroup(L.popupEdit.offsetY, this.offsetYTypeMenuList),
               new ToolbarSeparator(),
-              createPopupGroup("Width", this.widthTypeMenuList),
+              createPopupGroup(L.popupEdit.width, this.widthTypeMenuList),
               new ToolbarSeparator(),
-              createPopupGroup("Height", this.heightTypeMenuList),
+              createPopupGroup(L.popupEdit.height, this.heightTypeMenuList),
             ),
           ]),
-          createPopupSet("Loading", [
+          createPopupSet(L.popupEdit.loading, [
             createPopupGroup(
-              "Load into memory at startup",
+              L.popupEdit.loadOnStartup,
               this.loadOnStartupToggle,
             ),
             new ToolbarSeparator(),
             createPopupGroup(
-              "Restore last opened page",
+              L.popupEdit.loadLastUrl,
               this.loadLastUrlToggle,
             ),
             new ToolbarSeparator(),
             createPopupGroup(
-              "Unload from memory after closing",
+              L.popupEdit.unloadOnClose,
               this.unloadOnCloseToggle,
             ),
             new ToolbarSeparator(),
-            createPopupGroup("Periodic reload", this.periodicReloadMenuList),
+            createPopupGroup(L.popupEdit.periodicReload, this.periodicReloadMenuList),
           ]),
-          createPopupSet("Keyboard shortcut", [
+          createPopupSet(L.popupEdit.shortcut, [
             createPopupRow(this.shortcutInput, this.shortcutResetButton),
           ]),
-          createPopupSet("CSS selector", [
-            createPopupGroup("Enable", this.selectorToggle),
+          createPopupSet(L.popupEdit.cssSelector, [
+            createPopupGroup(L.popupEdit.enable, this.selectorToggle),
             new Div({ id: "sb2-popup-css-selector-items" }).appendChildren(
               new ToolbarSeparator(),
               createPopupRow(this.selectorInput),
             ),
           ]),
-          createPopupSet("Hide elements", [
-            createPopupGroup("Hide toolbar", this.hideToolbarToggle),
+          createPopupSet(L.popupEdit.hideElements, [
+            createPopupGroup(L.popupEdit.hideToolbar, this.hideToolbarToggle),
             new ToolbarSeparator(),
-            createPopupGroup("Hide sound icon", this.hideSoundIconToggle),
+            createPopupGroup(L.popupEdit.hideSoundIcon, this.hideSoundIconToggle),
             new ToolbarSeparator(),
             createPopupGroup(
-              "Hide notification badge",
+              L.popupEdit.hideNotificationBadge,
               this.hideNotificationBadgeToggle,
             ),
           ]),

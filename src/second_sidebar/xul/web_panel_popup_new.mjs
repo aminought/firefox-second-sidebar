@@ -1,3 +1,4 @@
+import { L } from "../i18n/index.mjs";
 import {
   applyContainerColor,
   fillContainerMenuList,
@@ -30,7 +31,7 @@ export class WebPanelPopupNew extends Panel {
     });
     this.setType("arrow").setRole("group");
 
-    this.input = createInput({ placeholder: "Web page URL" });
+    this.input = createInput({ placeholder: L.popupNew.urlPlaceholder });
     this.containerMenuList = createMenuList({ id: "sb2-container-menu-list" });
     this.temporaryToggle = new Toggle();
 
@@ -46,14 +47,14 @@ export class WebPanelPopupNew extends Panel {
   #compose() {
     this.appendChild(
       new PanelMultiView().appendChildren(
-        new PopupHeader("New Web Panel"),
+        new PopupHeader(L.popupNew.header),
         new PopupBody().appendChildren(
           createPopupSet("", [
             createPopupRow(this.input),
             new ToolbarSeparator(),
-            createPopupGroup("Multi-Account Container", this.containerMenuList),
+            createPopupGroup(L.popupNew.container, this.containerMenuList),
             new ToolbarSeparator(),
-            createPopupGroup("Temporary", this.temporaryToggle),
+            createPopupGroup(L.popupNew.temporary, this.temporaryToggle),
           ]),
         ),
         new PopupFooter().appendChildren(this.cancelButton, this.saveButton),

@@ -1,3 +1,4 @@
+import { L } from "../i18n/index.mjs";
 import { ContextualIdentityServiceWrapper } from "../wrappers/contextual_identity_service.mjs";
 import { MenuList } from "../xul/base/menulist.mjs"; // eslint-disable-line no-unused-vars
 import { ScriptSecurityManagerWrapper } from "../wrappers/script_security_manager.mjs";
@@ -42,7 +43,7 @@ export function applyContainerColor(userContextId, element) {
 export function fillContainerMenuList(containerMenuList) {
   containerMenuList.removeAllItems();
   containerMenuList.appendItem(
-    "No Container",
+    L.container.none,
     ScriptSecurityManagerWrapper.DEFAULT_USER_CONTEXT_ID,
   );
 

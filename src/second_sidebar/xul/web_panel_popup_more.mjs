@@ -1,3 +1,4 @@
+import { L } from "../i18n/index.mjs";
 import {
   createPopupSet,
   createSubviewButton,
@@ -26,22 +27,22 @@ export class WebPanelPopupMore extends Panel {
     });
     this.setType("arrow");
 
-    this.openInNewTabButton = createSubviewButton("Open in New Tab");
-    this.copyPageUrlButton = createSubviewButton("Copy Page URL");
-    this.temporaryButton = createSubviewButton("Temporary", {
+    this.openInNewTabButton = createSubviewButton(L.popupMore.openInNewTab);
+    this.copyPageUrlButton = createSubviewButton(L.popupMore.copyPageUrl);
+    this.temporaryButton = createSubviewButton(L.popupMore.temporary, {
       type: "checkbox",
     });
-    this.mobileButton = createSubviewButton("Mobile View", {
+    this.mobileButton = createSubviewButton(L.popupMore.mobileView, {
       type: "checkbox",
     });
-    this.alwaysOnTopButton = createSubviewButton("Always On Top", {
+    this.alwaysOnTopButton = createSubviewButton(L.popupMore.alwaysOnTop, {
       type: "checkbox",
     });
-    this.zoomOutButton = createSubviewIconicButton(ICONS.MINUS, "Zoom Out");
-    this.zoomInButton = createSubviewIconicButton(ICONS.PLUS, "Zoom In");
+    this.zoomOutButton = createSubviewIconicButton(ICONS.MINUS, L.popupMore.zoomOut);
+    this.zoomInButton = createSubviewIconicButton(ICONS.PLUS, L.popupMore.zoomIn);
     this.resetZoomButton = createSubviewButton("100%", {
       id: "sb2-zoom-button",
-      tooltipText: "Reset Zoom",
+      tooltipText: L.popupMore.resetZoom,
     });
     this.#compose();
   }
