@@ -1,3 +1,5 @@
+import { L } from "../i18n/index.mjs";
+
 export const CONTEXT_ITEM_CSS = `
   #contentAreaContextMenu:has(#context-openlink[hidden="true"]) {
     #context-openlinkaswebpanel, #context-openlinkastempwebpanel, #context-sep-open {
@@ -5,7 +7,7 @@ export const CONTEXT_ITEM_CSS = `
     }
   }
 
-  menuitem[label="Reset Zoom [100%]"] {
+  menuitem[label="${L.contextMenu.resetZoom}"] {
     display: none;
   }
 `;
