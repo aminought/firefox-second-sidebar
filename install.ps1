@@ -1,7 +1,3 @@
-param(
-  [switch]$Uninstall
-)
-
 $ErrorActionPreference = "Stop"
 
 $FX_AUTOCONFIG_URL = "https://github.com/MrOtherGuy/fx-autoconfig/archive/refs/heads/master.zip"
@@ -10,11 +6,7 @@ $TEMP_DIR = Join-Path $env:TEMP "second-sidebar-install"
 
 if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
   $scriptPath = $MyInvocation.MyCommand.Path
-  if ($Uninstall) {
-    Start-Process powershell -Verb RunAs -ArgumentList "-ExecutionPolicy Bypass -File `"$scriptPath`" -Uninstall"
-  } else {
-    Start-Process powershell -Verb RunAs -ArgumentList "-ExecutionPolicy Bypass -File `"$scriptPath`""
-  }
+  Start-Process powershell -Verb RunAs -ArgumentList "-ExecutionPolicy Bypass -File `"$scriptPath`""
   exit 0
 }
 
@@ -131,43 +123,6 @@ function Test-FileExists {
     Write-Host "  [FAIL] $Label" -ForegroundColor Red
     return $false
   }
-}
-
-# ============================================================
-# Uninstall
-# ============================================================
-if ($Uninstall) {
-  Write-Host ""
-  Write-Host "=== Second Sidebar Uninstall ===" -ForegroundColor Yellow
-  Write-Host ""
-
-  $profiles = Find-FirefoxProfiles
-  $selected = Select-Profile $profiles
-  $profilePath = $selected.FullName
-  Write-Host "  Profile: $profilePath" -ForegroundColor Cyan
-
-  $chromeJS = Join-Path $profilePath "chrome\JS"
-  $ucFile = Join-Path $chromeJS "second_sidebar.uc.mjs"
-  $sidebarDir = Join-Path $chromeJS "second_sidebar"
-
-  if (-not (Test-Path $ucFile)) {
-    Write-Host "Second Sidebar is not installed in this profile." -ForegroundColor Yellow
-    Read-Host "Press Enter to exit"
-    exit 0
-  }
-
-  Write-Host ""
-  Write-Host "Removing..." -ForegroundColor Yellow
-  if (Test-Path $sidebarDir) { Remove-Item -Path $sidebarDir -Recurse -Force }
-  if (Test-Path $ucFile) { Remove-Item -Path $ucFile -Force }
-  Write-Host "  Removed: chrome/JS/second_sidebar/" -ForegroundColor DarkGray
-  Write-Host "  Removed: chrome/JS/second_sidebar.uc.mjs" -ForegroundColor DarkGray
-
-  Write-Host ""
-  Write-Host "Uninstall complete!" -ForegroundColor Green
-  Write-Host "Note: fx-autoconfig program files (config.js) must be removed manually from Firefox install dir." -ForegroundColor DarkGray
-  Read-Host "Press Enter to exit"
-  exit 0
 }
 
 # ============================================================
@@ -330,5 +285,5 @@ Write-Host "Troubleshooting:" -ForegroundColor DarkGray
 Write-Host "  - Clear startup cache: about:support -> Clear startup cache" -ForegroundColor DarkGray
 Write-Host "  - Check about:config: toolkit.legacyUserProfileCustomizations.stylesheets = true" -ForegroundColor DarkGray
 Write-Host ""
-Write-Host "Uninstall: .\install.ps1 -Uninstall" -ForegroundColor DarkGray
+Write-Host "Uninstall: irm https://raw.githubusercontent.com/mitcehub/firefox-second-sidebar/master/uninstall.ps1 | iex" -ForegroundColor DarkGray
 Read-Host "Press Enter to exit"

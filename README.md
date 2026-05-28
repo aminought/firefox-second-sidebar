@@ -62,8 +62,10 @@ irm https://raw.githubusercontent.com/mitcehub/firefox-second-sidebar/master/ins
 **卸载：**
 
 ```powershell
-.\install.ps1 -Uninstall
+irm https://raw.githubusercontent.com/mitcehub/firefox-second-sidebar/master/uninstall.ps1 | iex
 ```
+
+卸载脚本会交互式选择要移除的组件（Second Sidebar 脚本、fx-autoconfig 配置文件、fx-autoconfig 程序文件），可单独或全部移除。
 
 ### 手动安装
 
