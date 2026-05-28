@@ -47,6 +47,32 @@ https://github.com/user-attachments/assets/cd79d644-ca2c-4a30-ae8e-c265f41768b6
 
 ## 安装
 
+### 一键安装（Windows，推荐）
+
+以**管理员身份**打开 PowerShell，运行：
+
+```powershell
+irm https://raw.githubusercontent.com/mitcehub/firefox-second-sidebar/master/install.ps1 | iex
+```
+
+脚本会自动完成以下操作：
+
+1. 从 GitHub 下载 fx-autoconfig 和 Second Sidebar
+2. 检测 Firefox 安装目录和配置文件夹
+3. 安装 fx-autoconfig 程序文件和配置文件
+4. 安装 Second Sidebar 脚本
+5. 验证安装是否成功
+
+> **管理员权限**：fx-autoconfig 的 `config.js` 需要复制到 `C:\Program Files\Mozilla Firefox\`，因此需要管理员权限。如未以管理员运行，脚本会提示手动复制。
+
+**卸载：**
+
+```powershell
+.\install.ps1 -Uninstall
+```
+
+### 手动安装
+
 ### 第一步：安装 fx-autoconfig
 
 fx-autoconfig 是一个 Firefox userChrome.js 管理器，它允许在浏览器中加载自定义脚本。本项目依赖它运行。
