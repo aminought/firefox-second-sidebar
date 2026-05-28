@@ -186,7 +186,10 @@ export class SidebarMainPopupSettings extends Panel {
             createPopupGroup(L.popupSettings.width, this.paddingMenuList),
           ]),
           createPopupSet(L.popupSettings.visibility, [
-            createPopupGroup(L.popupSettings.autoHideSidebar, this.autoHideSidebarToggle),
+            createPopupGroup(
+              L.popupSettings.autoHideSidebar,
+              this.autoHideSidebarToggle,
+            ),
             new ToolbarSeparator(),
             new Div({
               id: "sb2-main-popup-settings-auto-hide-sidebar-items",
@@ -249,10 +252,16 @@ export class SidebarMainPopupSettings extends Panel {
               this.autoHideForwardToggle,
             ),
             new ToolbarSeparator(),
-            createPopupGroup(L.popupSettings.autoHideBack, this.autoHideBackToggle),
+            createPopupGroup(
+              L.popupSettings.autoHideBack,
+              this.autoHideBackToggle,
+            ),
           ]),
           createPopupSet(L.popupSettings.animation, [
-            createPopupGroup(L.popupSettings.sidebarAnimation, this.hideSidebarAnimatedToggle),
+            createPopupGroup(
+              L.popupSettings.sidebarAnimation,
+              this.hideSidebarAnimatedToggle,
+            ),
             new ToolbarSeparator(),
             createPopupGroup(
               L.popupSettings.toolbarAnimation,

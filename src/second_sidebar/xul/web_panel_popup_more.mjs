@@ -38,8 +38,14 @@ export class WebPanelPopupMore extends Panel {
     this.alwaysOnTopButton = createSubviewButton(L.popupMore.alwaysOnTop, {
       type: "checkbox",
     });
-    this.zoomOutButton = createSubviewIconicButton(ICONS.MINUS, L.popupMore.zoomOut);
-    this.zoomInButton = createSubviewIconicButton(ICONS.PLUS, L.popupMore.zoomIn);
+    this.zoomOutButton = createSubviewIconicButton(
+      ICONS.MINUS,
+      L.popupMore.zoomOut,
+    );
+    this.zoomInButton = createSubviewIconicButton(
+      ICONS.PLUS,
+      L.popupMore.zoomIn,
+    );
     this.resetZoomButton = createSubviewButton("100%", {
       id: "sb2-zoom-button",
       tooltipText: L.popupMore.resetZoom,

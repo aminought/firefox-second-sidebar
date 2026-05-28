@@ -17,7 +17,9 @@ export class WebPanelMenuPopup extends MenuPopup {
     this.muteItem = new MenuItem();
     this.resetMenu = new Menu().setLabel(L.webPanelMenu.reset);
     this.resetMenuPopup = new MenuPopup();
-    this.resetPositionItem = new MenuItem().setLabel(L.webPanelMenu.resetPosition);
+    this.resetPositionItem = new MenuItem().setLabel(
+      L.webPanelMenu.resetPosition,
+    );
     this.resetWidthItem = new MenuItem().setLabel(L.webPanelMenu.resetWidth);
     this.resetHeightItem = new MenuItem().setLabel(L.webPanelMenu.resetHeight);
     this.resetAllItem = new MenuItem().setLabel(L.webPanelMenu.resetAll);
@@ -48,7 +50,9 @@ export class WebPanelMenuPopup extends MenuPopup {
       } else {
         this.muteItem.show();
         this.muteItem.setLabel(
-          this.webPanelController.isMuted() ? L.webPanelMenu.unmute : L.webPanelMenu.mute,
+          this.webPanelController.isMuted()
+            ? L.webPanelMenu.unmute
+            : L.webPanelMenu.mute,
         );
       }
       // resetting

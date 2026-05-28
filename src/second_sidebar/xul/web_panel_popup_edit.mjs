@@ -60,7 +60,9 @@ export class WebPanelPopupEdit extends Panel {
     this.dynamicFaviconToggle = new Toggle({
       id: "sb2-popup-dynamic-favicon-toggle",
     });
-    this.faviconURLInput = createInput({ placeholder: L.popupEdit.faviconUrlPlaceholder });
+    this.faviconURLInput = createInput({
+      placeholder: L.popupEdit.faviconUrlPlaceholder,
+    });
     this.faviconResetButton = createSubviewIconicButton(ICONS.UNDO, {
       tooltipText: L.popupEdit.faviconReset,
     });
@@ -287,17 +289,17 @@ export class WebPanelPopupEdit extends Panel {
               this.loadOnStartupToggle,
             ),
             new ToolbarSeparator(),
-            createPopupGroup(
-              L.popupEdit.loadLastUrl,
-              this.loadLastUrlToggle,
-            ),
+            createPopupGroup(L.popupEdit.loadLastUrl, this.loadLastUrlToggle),
             new ToolbarSeparator(),
             createPopupGroup(
               L.popupEdit.unloadOnClose,
               this.unloadOnCloseToggle,
             ),
             new ToolbarSeparator(),
-            createPopupGroup(L.popupEdit.periodicReload, this.periodicReloadMenuList),
+            createPopupGroup(
+              L.popupEdit.periodicReload,
+              this.periodicReloadMenuList,
+            ),
           ]),
           createPopupSet(L.popupEdit.shortcut, [
             createPopupRow(this.shortcutInput, this.shortcutResetButton),
@@ -312,7 +314,10 @@ export class WebPanelPopupEdit extends Panel {
           createPopupSet(L.popupEdit.hideElements, [
             createPopupGroup(L.popupEdit.hideToolbar, this.hideToolbarToggle),
             new ToolbarSeparator(),
-            createPopupGroup(L.popupEdit.hideSoundIcon, this.hideSoundIconToggle),
+            createPopupGroup(
+              L.popupEdit.hideSoundIcon,
+              this.hideSoundIconToggle,
+            ),
             new ToolbarSeparator(),
             createPopupGroup(
               L.popupEdit.hideNotificationBadge,

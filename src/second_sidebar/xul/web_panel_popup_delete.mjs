@@ -32,15 +32,9 @@ export class WebPanelPopupDelete extends Panel {
       new PanelMultiView().appendChildren(
         new PopupHeader(L.popupDelete.header),
         new PopupBody().appendChildren(
-          createPopupSet(
-            null,
-            [
-              new Label().setText(
-                L.popupDelete.confirm,
-              ),
-            ],
-            { classList: ["sb2-popup-warning"] },
-          ),
+          createPopupSet(null, [new Label().setText(L.popupDelete.confirm)], {
+            classList: ["sb2-popup-warning"],
+          }),
         ),
         new PopupFooter().appendChildren(this.cancelButton, this.deleteButton),
       ),
