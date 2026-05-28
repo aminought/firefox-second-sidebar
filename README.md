@@ -2,12 +2,6 @@
 
 一个 Firefox userChrome.js 脚本，为 Firefox 带来带有网页面板的第二侧边栏，功能类似 Vivaldi/Edge/Floorp 但更强大。
 
-<img width="2200" height="2131" alt="promo-rounded" src="https://github.com/user-attachments/assets/020ee8cf-1f3d-4184-98fe-889be89d6145" />
-
-## 动机
-
-我尝试过各种浏览器，如 Vivaldi、Edge、Floorp 和 Zen，它们都有一个共同点——我无法想象没有侧边栏的浏览器。可惜的是，Firefox 虽然最符合我的精神需求和功能期望，但它的侧边栏实在不尽如人意。因此，我决定自己动手做一个，黑杰克和女郎也安排上！
-
 ## 演示
 
 https://github.com/user-attachments/assets/cd79d644-ca2c-4a30-ae8e-c265f41768b6
@@ -19,7 +13,7 @@ https://github.com/user-attachments/assets/cd79d644-ca2c-4a30-ae8e-c265f41768b6
 - 操作：`显示` • `隐藏`
 - 通过[自定义工具栏](https://support.mozilla.org/zh-CN/kb/customize-firefox-controls-buttons-and-toolbars)定制按钮
 - 设置：
-  - 通用：`位置（左侧 / 右侧）` • `宽度`
+  - 通用：`位置（左侧 / 右侧）` • `宽度` 
   - 可见性：`自动隐藏侧边栏` • `自动隐藏行为（内联 / 覆盖）` • `侧边栏隐藏时隐藏网页面板` • `设置快捷键显示/隐藏侧边栏`
   - 网页面板：`默认浮动面板偏移` • `新建面板位置（加号按钮之前 / 加号按钮之后）` • `显示几何提示`
   - 网页面板按钮：`容器指示器（关闭 / 左侧 / 右侧 / 顶部 / 底部 / 四周）` • `工具提示（关闭 / 标题 / 网址 / 标题和网址）` • `工具提示显示完整网址`
