@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name            Second Sidebar for Firefox
 // @description     A Firefox userChrome.js script that brings a second sidebar with web panels like in Vivaldi/Edge/Floorp but better
-// @author          aminought
-// @homepageURL     https://github.com/aminought/firefox-second-sidebar
+// @author          mitcehub
+// @homepageURL     https://github.com/mitcehub/firefox-second-sidebar
 // ==/UserScript==
 
 import { BrowserElements } from "./second_sidebar/browser_elements.mjs";

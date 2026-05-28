@@ -52,7 +52,7 @@ https://github.com/user-attachments/assets/cd79d644-ca2c-4a30-ae8e-c265f41768b6
 Open PowerShell as **Administrator** and run:
 
 ```powershell
-irm https://raw.githubusercontent.com/aminought/firefox-second-sidebar/master/install.ps1 | iex
+irm https://raw.githubusercontent.com/mitcehub/firefox-second-sidebar/master/install.ps1 | iex
 ```
 
 The script will automatically:
@@ -68,7 +68,7 @@ The script will automatically:
 **Uninstall:**
 
 ```powershell
-irm https://raw.githubusercontent.com/aminought/firefox-second-sidebar/master/uninstall.ps1 | iex
+irm https://raw.githubusercontent.com/mitcehub/firefox-second-sidebar/master/uninstall.ps1 | iex
 ```
 
 The uninstall script lets you interactively choose which components to remove (Second Sidebar script, fx-autoconfig profile files, fx-autoconfig program files).
@@ -130,7 +130,6 @@ At startup, `index.mjs` detects the browser language via `Services.locale.reques
 1. Copy `en-US.mjs` to a new file (e.g., `it.mjs`)
 2. Replace the English values with translations, keeping the keys unchanged
 3. Import and register the new language in `index.mjs`
-4. Submit a PR
 
 ### Switching language
 
