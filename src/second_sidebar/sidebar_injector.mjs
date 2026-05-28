@@ -1,4 +1,3 @@
-import { L } from "./i18n/index.mjs";
 import { SidebarControllers } from "./sidebar_controllers.mjs";
 import { SidebarElements } from "./sidebar_elements.mjs";
 import { SidebarSettings } from "./settings/sidebar_settings.mjs";
