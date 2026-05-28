@@ -1,4 +1,4 @@
-﻿param(
+param(
   [switch]$Uninstall
 )
 
@@ -7,6 +7,16 @@ $ErrorActionPreference = "Stop"
 $FX_AUTOCONFIG_URL = "https://github.com/MrOtherGuy/fx-autoconfig/archive/refs/heads/master.zip"
 $SECOND_SIDEBAR_URL = "https://github.com/mitcehub/firefox-second-sidebar/archive/refs/heads/master.zip"
 $TEMP_DIR = Join-Path $env:TEMP "second-sidebar-install"
+
+if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+  $scriptPath = $MyInvocation.MyCommand.Path
+  if ($Uninstall) {
+    Start-Process powershell -Verb RunAs -ArgumentList "-ExecutionPolicy Bypass -File `"$scriptPath`" -Uninstall"
+  } else {
+    Start-Process powershell -Verb RunAs -ArgumentList "-ExecutionPolicy Bypass -File `"$scriptPath`""
+  }
+  exit 0
+}
 
 function Find-FirefoxInstallDir {
   $candidates = @(
@@ -43,6 +53,7 @@ function Select-Profile {
   if ($Profiles.Count -eq 0) {
     Write-Host "[ERROR] No Firefox profile found." -ForegroundColor Red
     Write-Host "Please start Firefox at least once." -ForegroundColor Yellow
+    Read-Host "Press Enter to exit"
     exit 1
   }
   if ($Profiles.Count -eq 1) { return $Profiles[0] }
@@ -56,6 +67,7 @@ function Select-Profile {
   $idx = [int]$choice
   if ($idx -lt 0 -or $idx -ge $Profiles.Count) {
     Write-Host "[ERROR] Invalid selection." -ForegroundColor Red
+    Read-Host "Press Enter to exit"
     exit 1
   }
   return $Profiles[$idx]
@@ -68,6 +80,7 @@ function Download-Zip {
     Invoke-WebRequest -Uri $Url -OutFile $OutFile -UseBasicParsing
   } catch {
     Write-Host "[ERROR] Download failed: $_" -ForegroundColor Red
+    Read-Host "Press Enter to exit"
     exit 1
   }
 }
@@ -139,6 +152,7 @@ if ($Uninstall) {
 
   if (-not (Test-Path $ucFile)) {
     Write-Host "Second Sidebar is not installed in this profile." -ForegroundColor Yellow
+    Read-Host "Press Enter to exit"
     exit 0
   }
 
@@ -152,6 +166,7 @@ if ($Uninstall) {
   Write-Host ""
   Write-Host "Uninstall complete!" -ForegroundColor Green
   Write-Host "Note: fx-autoconfig program files (config.js) must be removed manually from Firefox install dir." -ForegroundColor DarkGray
+  Read-Host "Press Enter to exit"
   exit 0
 }
 
@@ -172,6 +187,7 @@ if (-not $firefoxDir) {
   $firefoxDir = Read-Host "Enter Firefox install path (e.g. C:\Program Files\Mozilla Firefox)"
   if (-not (Test-Path "$firefoxDir\firefox.exe")) {
     Write-Host "[ERROR] firefox.exe not found at: $firefoxDir" -ForegroundColor Red
+    Read-Host "Press Enter to exit"
     exit 1
   }
 }
@@ -204,6 +220,7 @@ $ssDir = Get-ChildItem "$TEMP_DIR\firefox-second-sidebar-*" -Directory | Select-
 
 if (-not $fxDir -or -not $ssDir) {
   Write-Host "[ERROR] Failed to extract downloaded files." -ForegroundColor Red
+  Read-Host "Press Enter to exit"
   exit 1
 }
 Write-Host "  Download complete." -ForegroundColor Green
@@ -211,7 +228,6 @@ Write-Host "  Download complete." -ForegroundColor Green
 # --- Step 3: Install fx-autoconfig program files ---
 Write-Host ""
 Write-Host "[3/5] Installing fx-autoconfig (program files)..." -ForegroundColor Yellow
-Write-Host "  This requires admin privileges for Program Files." -ForegroundColor DarkGray
 
 $programFailed = $false
 try {
@@ -221,9 +237,9 @@ try {
   Write-Host "  defaults/pref/config-prefs.js -> OK" -ForegroundColor DarkGray
 } catch {
   $programFailed = $true
-  Write-Host "  [ERROR] Copy failed - admin privileges required." -ForegroundColor Red
+  Write-Host "  [ERROR] Copy failed: $_" -ForegroundColor Red
   Write-Host ""
-  Write-Host "  Please run this script as Administrator, or manually copy:" -ForegroundColor Yellow
+  Write-Host "  Please manually copy:" -ForegroundColor Yellow
   Write-Host "    $($fxDir.FullName)\program\config.js" -ForegroundColor White
   Write-Host "    -> $firefoxDir\config.js" -ForegroundColor White
   Write-Host ""
@@ -231,7 +247,10 @@ try {
   Write-Host "    -> $firefoxDir\defaults\pref\config-prefs.js" -ForegroundColor White
   Write-Host ""
   $cont = Read-Host "Copied manually? Continue? (y/n)"
-  if ($cont -ne "y") { exit 1 }
+  if ($cont -ne "y") {
+    Read-Host "Press Enter to exit"
+    exit 1
+  }
 }
 
 # --- Step 4: Install fx-autoconfig profile + Second Sidebar ---
@@ -312,3 +331,4 @@ Write-Host "  - Clear startup cache: about:support -> Clear startup cache" -Fore
 Write-Host "  - Check about:config: toolkit.legacyUserProfileCustomizations.stylesheets = true" -ForegroundColor DarkGray
 Write-Host ""
 Write-Host "Uninstall: .\install.ps1 -Uninstall" -ForegroundColor DarkGray
+Read-Host "Press Enter to exit"
