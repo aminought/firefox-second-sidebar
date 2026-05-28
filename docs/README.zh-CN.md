@@ -1,4 +1,4 @@
-[English](README.md) | **中文（简体）**
+﻿[English](../README.md) | **中文（简体）**
 
 一个 Firefox userChrome.js 脚本，为 Firefox 带来带有网页面板的第二侧边栏，功能类似 Vivaldi/Edge/Floorp 但更强大。
 
@@ -87,17 +87,17 @@ irm https://raw.githubusercontent.com/aminought/firefox-second-sidebar/master/un
 
 ### 支持的语言
 
-| 语言 | 代码 | 状态 |
-|------|------|------|
-| English | `en-US` | ✅ 完整 |
-| 中文（简体） | `zh-CN` | ✅ 完整 |
-| 日本語 | `ja` | ✅ 完整 |
-| 한국어 | `ko` | ✅ 完整 |
-| Deutsch | `de` | ✅ 完整 |
-| Français | `fr` | ✅ 完整 |
-| Español | `es` | ✅ 完整 |
+| 语言               | 代码    | 状态    |
+| ------------------ | ------- | ------- |
+| English            | `en-US` | ✅ 完整 |
+| 中文（简体）       | `zh-CN` | ✅ 完整 |
+| 日本語             | `ja`    | ✅ 完整 |
+| 한국어             | `ko`    | ✅ 完整 |
+| Deutsch            | `de`    | ✅ 完整 |
+| Français           | `fr`    | ✅ 完整 |
+| Español            | `es`    | ✅ 完整 |
 | Português (Brasil) | `pt-BR` | ✅ 完整 |
-| Русский | `ru` | ✅ 完整 |
+| Русский            | `ru`    | ✅ 完整 |
 
 ### 语言文件结构
 

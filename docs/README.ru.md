@@ -1,4 +1,4 @@
-[English](README.md) | **Русский**
+﻿[English](../README.md) | **Русский**
 
 Скрипт Firefox userChrome.js, добавляющий вторую боковую панель с веб-панелями как в Vivaldi/Edge/Floorp, но лучше.
 

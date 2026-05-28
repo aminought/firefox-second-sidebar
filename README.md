@@ -1,4 +1,4 @@
-**English** | [中文（简体）](README.zh-CN.md) | [日本語](README.ja.md) | [한국어](README.ko.md) | [Deutsch](README.de.md) | [Français](README.fr.md) | [Español](README.es.md) | [Português (Brasil)](README.pt-BR.md) | [Русский](README.ru.md)
+**English** | [中文（简体）](docs/README.zh-CN.md) | [日本語](docs/README.ja.md) | [한국어](docs/README.ko.md) | [Deutsch](docs/README.de.md) | [Français](docs/README.fr.md) | [Español](docs/README.es.md) | [Português (Brasil)](docs/README.pt-BR.md) | [Русский](docs/README.ru.md)
 
 A Firefox userChrome.js script that brings a second sidebar with web panels like in Vivaldi/Edge/Floorp but better.
 
@@ -87,17 +87,17 @@ The script supports multiple languages and automatically displays the UI in the 
 
 ### Supported languages
 
-| Language            | Code    | Status |
-| ------------------- | ------- | ------ |
-| English             | `en-US` | ✅ Full |
-| 中文（简体）        | `zh-CN` | ✅ Full |
-| 日本語              | `ja`    | ✅ Full |
-| 한국어              | `ko`    | ✅ Full |
-| Deutsch             | `de`    | ✅ Full |
-| Français            | `fr`    | ✅ Full |
-| Español             | `es`    | ✅ Full |
-| Português (Brasil)  | `pt-BR` | ✅ Full |
-| Русский             | `ru`    | ✅ Full |
+| Language           | Code    | Status  |
+| ------------------ | ------- | ------- |
+| English            | `en-US` | ✅ Full |
+| 中文（简体）       | `zh-CN` | ✅ Full |
+| 日本語             | `ja`    | ✅ Full |
+| 한국어             | `ko`    | ✅ Full |
+| Deutsch            | `de`    | ✅ Full |
+| Français           | `fr`    | ✅ Full |
+| Español            | `es`    | ✅ Full |
+| Português (Brasil) | `pt-BR` | ✅ Full |
+| Русский            | `ru`    | ✅ Full |
 
 ### Language file structure
 

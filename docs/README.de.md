@@ -1,4 +1,4 @@
-[English](README.md) | **Deutsch**
+﻿[English](../README.md) | **Deutsch**
 
 Ein Firefox userChrome.js-Skript, das eine zweite Seitenleiste mit Web-Panels wie in Vivaldi/Edge/Floorp bringt – nur besser.
 

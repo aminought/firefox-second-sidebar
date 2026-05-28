@@ -1,4 +1,4 @@
-[English](README.md) | **Português (Brasil)**
+﻿[English](../README.md) | **Português (Brasil)**
 
 Um script Firefox userChrome.js que traz uma segunda barra lateral com painéis web como no Vivaldi/Edge/Floorp, só que melhor.
 

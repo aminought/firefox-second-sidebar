@@ -1,4 +1,4 @@
-[English](README.md) | **한국어**
+﻿[English](../README.md) | **한국어**
 
 Vivaldi/Edge/Floorp처럼 웹 패널이 있는 두 번째 사이드바를 Firefox에 제공하는 userChrome.js 스크립트입니다.
 
@@ -87,17 +87,17 @@ irm https://raw.githubusercontent.com/aminought/firefox-second-sidebar/master/un
 
 ### 지원 언어
 
-| 언어 | 코드 | 상태 |
-|------|------|------|
-| English | `en-US` | ✅ 완전 |
-| 中文（简体） | `zh-CN` | ✅ 완전 |
-| 日本語 | `ja` | ✅ 완전 |
-| 한국어 | `ko` | ✅ 완전 |
-| Deutsch | `de` | ✅ 완전 |
-| Français | `fr` | ✅ 완전 |
-| Español | `es` | ✅ 완전 |
+| 언어               | 코드    | 상태    |
+| ------------------ | ------- | ------- |
+| English            | `en-US` | ✅ 완전 |
+| 中文（简体）       | `zh-CN` | ✅ 완전 |
+| 日本語             | `ja`    | ✅ 완전 |
+| 한국어             | `ko`    | ✅ 완전 |
+| Deutsch            | `de`    | ✅ 완전 |
+| Français           | `fr`    | ✅ 완전 |
+| Español            | `es`    | ✅ 완전 |
 | Português (Brasil) | `pt-BR` | ✅ 완전 |
-| Русский | `ru` | ✅ 완전 |
+| Русский            | `ru`    | ✅ 완전 |
 
 ### 새 언어 추가
 

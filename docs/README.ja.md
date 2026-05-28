@@ -1,4 +1,4 @@
-[English](README.md) | **日本語**
+﻿[English](../README.md) | **日本語**
 
 Firefox userChrome.js スクリプト。Vivaldi/Edge/Floorp のような、ウェブパネル付きのセカンドサイドバーを Firefox にもたらします。
 
@@ -87,17 +87,17 @@ irm https://raw.githubusercontent.com/aminought/firefox-second-sidebar/master/un
 
 ### 対応言語
 
-| 言語 | コード | 状態 |
-|------|--------|------|
-| English | `en-US` | ✅ 完全 |
-| 中文（简体） | `zh-CN` | ✅ 完全 |
-| 日本語 | `ja` | ✅ 完全 |
-| 한국어 | `ko` | ✅ 完全 |
-| Deutsch | `de` | ✅ 完全 |
-| Français | `fr` | ✅ 完全 |
-| Español | `es` | ✅ 完全 |
+| 言語               | コード  | 状態    |
+| ------------------ | ------- | ------- |
+| English            | `en-US` | ✅ 完全 |
+| 中文（简体）       | `zh-CN` | ✅ 完全 |
+| 日本語             | `ja`    | ✅ 完全 |
+| 한국어             | `ko`    | ✅ 完全 |
+| Deutsch            | `de`    | ✅ 完全 |
+| Français           | `fr`    | ✅ 完全 |
+| Español            | `es`    | ✅ 完全 |
 | Português (Brasil) | `pt-BR` | ✅ 完全 |
-| Русский | `ru` | ✅ 完全 |
+| Русский            | `ru`    | ✅ 完全 |
 
 ### 新しい言語の追加
 
