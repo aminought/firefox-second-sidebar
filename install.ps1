@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 
 $FX_AUTOCONFIG_URL = "https://github.com/MrOtherGuy/fx-autoconfig/archive/refs/heads/master.zip"
-$SECOND_SIDEBAR_URL = "https://github.com/mitcehub/firefox-second-sidebar/archive/refs/heads/master.zip"
+$SECOND_SIDEBAR_URL = "https://github.com/aminought/firefox-second-sidebar/archive/refs/heads/master.zip"
 $TEMP_DIR = Join-Path $env:TEMP "second-sidebar-install"
 
 if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
@@ -285,5 +285,5 @@ Write-Host "Troubleshooting:" -ForegroundColor DarkGray
 Write-Host "  - Clear startup cache: about:support -> Clear startup cache" -ForegroundColor DarkGray
 Write-Host "  - Check about:config: toolkit.legacyUserProfileCustomizations.stylesheets = true" -ForegroundColor DarkGray
 Write-Host ""
-Write-Host "Uninstall: irm https://raw.githubusercontent.com/mitcehub/firefox-second-sidebar/master/uninstall.ps1 | iex" -ForegroundColor DarkGray
+Write-Host "Uninstall: irm https://raw.githubusercontent.com/aminought/firefox-second-sidebar/master/uninstall.ps1 | iex" -ForegroundColor DarkGray
 Read-Host "Press Enter to exit"
