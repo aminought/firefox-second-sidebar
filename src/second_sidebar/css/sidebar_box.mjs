@@ -60,7 +60,7 @@ export const SIDEBAR_BOX_CSS = `
       min-height: calc(2 * var(--toolbarbutton-inner-padding, var(--toolbarbutton-padding-inner)) + 16px);
       gap: 4px;
       padding: 1px;
-      overflow: scroll;
+      overflow: hidden;
       -moz-window-dragging: no-drag;
 
       &[shouldAnimate="true"] {

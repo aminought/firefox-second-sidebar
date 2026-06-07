@@ -15,7 +15,7 @@ export const CUSTOMIZATION_CSS = `
     }
 
     toolbarpaletteitem::after {
-      overflow-x: scroll;
+      overflow: hidden;
       text-overflow: ellipsis;
     }
   }
