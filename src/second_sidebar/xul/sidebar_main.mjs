@@ -8,4 +8,21 @@ export class SidebarMain extends Toolbar {
       .setAttribute("customizable", "true")
       .setAttribute("fullscreentoolbar", "true");
   }
+
+  /**
+   *
+   * @returns {boolean}
+   */
+  getAllowWindowDragging() {
+    return !this.hasAttribute("nowindowdrag");
+  }
+
+  /**
+   *
+   * @param {boolean} value
+   * @returns {SidebarMain}
+   */
+  setAllowWindowDragging(value) {
+    return this.toggleAttribute("nowindowdrag", !value);
+  }
 }

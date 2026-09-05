@@ -35,6 +35,9 @@ export class SidebarMainPopupSettings extends Panel {
 
     this.positionMenuList = this.#createPositionMenuList();
     this.paddingMenuList = this.#createPaddingMenuList();
+    this.allowWindowDraggingToggle = new Toggle({
+      id: "sb2-main-popup-settings-allow-window-dragging-toggle",
+    });
     this.newWebPanelPositionMenuList =
       this.#createNewWebPanelPositionMenuList();
     this.autoHideBackToggle = new Toggle();
@@ -183,6 +186,11 @@ export class SidebarMainPopupSettings extends Panel {
             createPopupGroup("Position", this.positionMenuList),
             new ToolbarSeparator(),
             createPopupGroup("Width", this.paddingMenuList),
+            new ToolbarSeparator(),
+            createPopupGroup(
+              "Allow window dragging",
+              this.allowWindowDraggingToggle,
+            ),
           ]),
           createPopupSet("Visibility", [
             createPopupGroup("Auto-hide sidebar", this.autoHideSidebarToggle),
@@ -269,6 +277,7 @@ export class SidebarMainPopupSettings extends Panel {
    * @param {object} callbacks
    * @param {function(string):void} callbacks.position
    * @param {function(string):void} callbacks.padding
+   * @param {function(boolean):void} callbacks.allowWindowDragging
    * @param {function(string):void} callbacks.newWebPanelPosition
    * @param {function(string):void} callbacks.defaultFloatingOffset
    * @param {function(boolean):void} callbacks.autoHideBackButton
@@ -283,6 +292,7 @@ export class SidebarMainPopupSettings extends Panel {
   listenChanges({
     position,
     padding,
+    allowWindowDragging,
     newWebPanelPosition,
     defaultFloatingOffset,
     autoHideBackButton,
@@ -297,6 +307,7 @@ export class SidebarMainPopupSettings extends Panel {
   }) {
     this.onPositionChange = position;
     this.onPaddingChange = padding;
+    this.onAllowWindowDraggingChange = allowWindowDragging;
     this.onNewWebPanelPositionChange = newWebPanelPosition;
     this.onDefaultFloatingOffsetChange = defaultFloatingOffset;
     this.onAutoHideBackButtonChange = autoHideBackButton;
@@ -314,6 +325,9 @@ export class SidebarMainPopupSettings extends Panel {
     );
     this.paddingMenuList.addEventListener("command", () =>
       padding(this.paddingMenuList.getValue()),
+    );
+    this.allowWindowDraggingToggle.addEventListener("toggle", () =>
+      allowWindowDragging(this.allowWindowDraggingToggle.getPressed()),
     );
     this.newWebPanelPositionMenuList.addEventListener("command", () =>
       newWebPanelPosition(this.newWebPanelPositionMenuList.getValue()),
@@ -413,6 +427,7 @@ export class SidebarMainPopupSettings extends Panel {
   openPopupAtScreen(screenX, screenY, settings) {
     this.positionMenuList.setValue(settings.position);
     this.paddingMenuList.setValue(settings.padding);
+    this.allowWindowDraggingToggle.setPressed(settings.allowWindowDragging);
     this.newWebPanelPositionMenuList.setValue(settings.newWebPanelPosition);
     this.defaultFloatingOffsetMenuList.setValue(settings.defaultFloatingOffset);
     this.autoHideBackToggle.setPressed(settings.autoHideBackButton);
@@ -459,6 +474,12 @@ export class SidebarMainPopupSettings extends Panel {
     }
     if (this.paddingMenuList.getValue() !== this.settings.padding) {
       this.onPaddingChange(this.settings.padding);
+    }
+    if (
+      this.allowWindowDraggingToggle.getPressed() !==
+      this.settings.allowWindowDragging
+    ) {
+      this.onAllowWindowDraggingChange(this.settings.allowWindowDragging);
     }
     if (
       this.newWebPanelPositionMenuList.getValue() !==

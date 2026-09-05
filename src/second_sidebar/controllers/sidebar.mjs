@@ -88,6 +88,10 @@ export class SidebarController {
       SidebarControllers.sidebarMainController.setPadding(value);
     });
 
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_ALLOW_WINDOW_DRAGGING, (event) => {
+      SidebarElements.sidebarMain.setAllowWindowDragging(event.detail.value);
+    });
+
     listenEvent(SidebarEvents.EDIT_SIDEBAR_NEW_WEB_PANEL_POSITION, (event) => {
       const value = event.detail.value;
       SidebarControllers.webPanelNewController.setNewWebPanelPosition(value);
@@ -377,6 +381,9 @@ export class SidebarController {
   loadSettings(settings) {
     SidebarElements.sidebarWrapper.setPosition(settings.position);
     SidebarControllers.sidebarMainController.setPadding(settings.padding);
+    SidebarElements.sidebarMain.setAllowWindowDragging(
+      settings.allowWindowDragging,
+    );
     SidebarControllers.webPanelNewController.setNewWebPanelPosition(
       settings.newWebPanelPosition,
     );
@@ -413,6 +420,7 @@ export class SidebarController {
     return new SidebarSettings({
       position: SidebarElements.sidebarWrapper.getPosition(),
       padding: SidebarControllers.sidebarMainController.getPadding(),
+      allowWindowDragging: SidebarElements.sidebarMain.getAllowWindowDragging(),
       newWebPanelPosition:
         SidebarControllers.webPanelNewController.getNewWebPanelPosition(),
       defaultFloatingOffset:
