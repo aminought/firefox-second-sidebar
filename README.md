@@ -24,8 +24,6 @@ https://github.com/user-attachments/assets/cd79d644-ca2c-4a30-ae8e-c265f41768b6
   - Web panel toolbar: `Auto-hide forward button` • `Auto-hide back button`
   - Animations: `Animate sidebar` • `Animate web panel toolbar`
 
-Disable `Allow window dragging` to prevent dragging or double-clicking empty sidebar space from moving or maximizing/restoring the Firefox window.
-
 ### Web panels
 
 - Actions: `Create` • `Delete` • `Edit` • `Change position and size` • `Reset position and size` • `Unload` • `Mute` • `Unmute` • `Pin` • `Unpin` • `Change zoom` • `Go back` • `Go forward` • `Reload` • `Go home`
