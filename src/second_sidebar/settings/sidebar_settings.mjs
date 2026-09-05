@@ -8,6 +8,7 @@ export class SidebarSettings {
    * @param {object} params
    * @param {string} params.position
    * @param {string} params.padding
+   * @param {boolean} params.allowWindowDragging
    * @param {string} params.newWebPanelPosition
    * @param {string} params.defaultFloatingOffset
    * @param {boolean} params.autoHideBackButton
@@ -26,6 +27,7 @@ export class SidebarSettings {
   constructor({
     position = "right",
     padding = "small",
+    allowWindowDragging = true,
     newWebPanelPosition = "before",
     defaultFloatingOffset = "small",
     autoHideBackButton = false,
@@ -43,6 +45,7 @@ export class SidebarSettings {
   }) {
     this.position = position;
     this.padding = padding;
+    this.allowWindowDragging = allowWindowDragging;
     this.newWebPanelPosition = newWebPanelPosition;
     this.defaultFloatingOffset = defaultFloatingOffset;
     this.autoHideBackButton = autoHideBackButton;
@@ -68,6 +71,7 @@ export class SidebarSettings {
     return new SidebarSettings({
       position: pref.position,
       padding: pref.padding,
+      allowWindowDragging: pref.allowWindowDragging,
       newWebPanelPosition: pref.newWebPanelPosition,
       defaultFloatingOffset: pref.defaultFloatingOffset,
       autoHideBackButton: pref.autoHideBackButton,
@@ -89,6 +93,7 @@ export class SidebarSettings {
     Settings.save(PREF, {
       position: this.position,
       padding: this.padding,
+      allowWindowDragging: this.allowWindowDragging,
       newWebPanelPosition: this.newWebPanelPosition,
       defaultFloatingOffset: this.defaultFloatingOffset,
       autoHideBackButton: this.autoHideBackButton,

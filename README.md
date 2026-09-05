@@ -17,12 +17,14 @@ https://github.com/user-attachments/assets/cd79d644-ca2c-4a30-ae8e-c265f41768b6
 - Actions: `Show` • `Hide`
 - Customize via [Customize Toolbar...](https://support.mozilla.org/en-US/kb/customize-firefox-controls-buttons-and-toolbars)
 - Settings:
-  - General: `Position (Left / Right)` • `Width`
+  - General: `Position (Left / Right)` • `Width` • `Allow window dragging`
   - Visibility: `Auto-hide sidebar` • `Auto-hide behaiour (Inline / Overlay)` • `Hide web panel when sidebar is hidden` • `Set shortcut to hide/show sidebar`
   - Web panel: `Default floating panel offset` • `New panel position (Before plus button / After plus button)` • `Show geometry hint`
   - Web panel button: `Container indicator (Off / Left / Right / Top / Bottom / Around)` • `Tooltip (Off / Title / URL / Title and URL)` • `Show full URL in tooltip`
   - Web panel toolbar: `Auto-hide forward button` • `Auto-hide back button`
   - Animations: `Animate sidebar` • `Animate web panel toolbar`
+
+Disable `Allow window dragging` to prevent dragging or double-clicking empty sidebar space from moving or maximizing/restoring the Firefox window.
 
 ### Web panels
 
