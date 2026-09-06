@@ -25,6 +25,23 @@ const PREDEFINED_ICONS = {
 
 export const FALLBACK_ICON = "chrome://global/skin/icons/defaultFavicon.svg";
 
+// Hosts pointing at loopback, link-local (incl. cloud metadata) or private
+// network ranges must never be reachable from a user-supplied web panel URL.
+const UNSAFE_HOST_PATTERN =
+  /^(localhost|127\.|10\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.|169\.254\.|0\.0\.0\.0|\[?::1\]?)/i;
+
+/**
+ *
+ * @param {import("../wrappers/net_utils.mjs").URI} uri
+ * @returns {boolean}
+ */
+function isSafeIconURI(uri) {
+  return (
+    (uri.scheme === "http" || uri.scheme === "https") &&
+    !UNSAFE_HOST_PATTERN.test(uri.host)
+  );
+}
+
 /**
  *
  * @param {string} url
@@ -35,6 +52,11 @@ export function fetchIconURL(url) {
     const uri = NetUtilWrapper.newURI(url);
     if (uri.specIgnoringRef in PREDEFINED_ICONS) {
       resolve(PREDEFINED_ICONS[uri.specIgnoringRef]);
+    }
+
+    if (!isSafeIconURI(uri)) {
+      resolve(FALLBACK_ICON);
+      return;
     }
 
     FaviconsWrapper.setDefaultIconURIPreferredSize(32);
