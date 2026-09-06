@@ -74,7 +74,9 @@ export class SidebarController {
       const webPanelController =
         SidebarControllers.webPanelsController.getActive();
       this.close();
-      webPanelController.unload();
+      if (!webPanelController.isUnloaded()) {
+        webPanelController.unload();
+      }
     });
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_POSITION, (event) => {

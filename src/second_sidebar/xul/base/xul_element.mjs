@@ -84,6 +84,15 @@ export class XULElement {
 
   /**
    *
+   * @param {boolean} [force]
+   * @returns {XULElement}
+   */
+  toggleHidden(force) {
+    return this.toggleAttribute("hidden", force);
+  }
+
+  /**
+   *
    * @returns {boolean}
    */
   hidden() {

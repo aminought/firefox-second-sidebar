@@ -116,7 +116,10 @@ export const SIDEBAR_MAIN_CSS = `
   }
 
   .sb2-main-button[temporary="true"] > stack.toolbarbutton-badge-stack {
-    background-color: var(--attention-dot-color) !important;
+    background-color: var(
+      --attention-dot-color,
+      var(--button-attention-dot-color, var(--color-accent-attention, AccentColor))
+    ) !important;
   }
 
   .sb2-main-button:not([image]):not([loading]) .toolbarbutton-icon {
