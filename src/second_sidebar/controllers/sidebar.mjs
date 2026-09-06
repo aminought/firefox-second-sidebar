@@ -198,6 +198,7 @@ export class SidebarController {
   close() {
     SidebarControllers.sidebarToolbarCollapser.clearTimers();
     SidebarElements.sidebarBox.hide();
+    SidebarElements.sidebarToolbar.setPeriodicReloadPanelUUID(null);
     SidebarElements.sidebarSplitter.hide();
     SidebarElements.afterSplitter.hide();
     SidebarControllers.webPanelsController.close();
@@ -251,7 +252,8 @@ export class SidebarController {
     SidebarElements.sidebarToolbar
       .setTitle(title)
       .toggleBackButton(!canGoBack)
-      .toggleForwardButton(!canGoForward);
+      .toggleForwardButton(!canGoForward)
+      .setPeriodicReloadPanelUUID(webPanelController.getUUID());
 
     const hideToolbar = webPanelController.getHideToolbar();
     hideToolbar ? this.collapseToolbar() : this.uncollapseToolbar();

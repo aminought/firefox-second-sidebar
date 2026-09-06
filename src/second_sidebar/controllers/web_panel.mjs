@@ -25,8 +25,10 @@ export class WebPanelController {
   #button;
   /**@type {WebPanelTab?} */
   #tab = null;
-  /**@type {number} */
-  #interval = null;
+  /**@type {number?} */
+  #reloadTimer = null;
+  /**@type {number?} */
+  #nextReloadAt = null;
 
   /**
    *
@@ -409,21 +411,45 @@ export class WebPanelController {
 
   #startTimer() {
     this.#stopTimer();
-    if (this.#settings.periodicReload == 0) {
+    const interval = Number(this.#settings.periodicReload);
+    if (this.isUnloaded() || !Number.isFinite(interval) || interval <= 0) {
       return;
     }
-    this.#log("start timer", this.#settings.periodicReload);
-    this.#interval = setInterval(() => {
-      this.#log("periodic reload");
-      this.reload();
-    }, this.#settings.periodicReload);
+    this.#log("start timer", interval);
+    this.#nextReloadAt = Date.now() + interval;
+    this.#reloadTimer = setTimeout(
+      () => {
+        this.#reloadTimer = null;
+        this.#log("periodic reload");
+        this.reload();
+      },
+      Math.max(0, this.#nextReloadAt - Date.now()),
+    );
+    this.#refreshPeriodicReloadIndicator();
   }
 
   #stopTimer() {
-    if (this.#interval) {
+    if (this.#reloadTimer !== null) {
       this.#log("stop timer");
-      clearInterval(this.#interval);
+      clearTimeout(this.#reloadTimer);
     }
+    this.#reloadTimer = null;
+    this.#nextReloadAt = null;
+    this.#refreshPeriodicReloadIndicator();
+  }
+
+  #refreshPeriodicReloadIndicator() {
+    SidebarElements.sidebarToolbar.refreshPeriodicReload(this.getUUID());
+  }
+
+  /**
+   *
+   * @returns {number?}
+   */
+  getPeriodicReloadRemaining() {
+    return this.#nextReloadAt === null
+      ? null
+      : Math.max(0, this.#nextReloadAt - Date.now());
   }
 
   /**
@@ -435,6 +461,10 @@ export class WebPanelController {
   }
 
   reload() {
+    if (this.isUnloaded()) {
+      return;
+    }
+    this.#startTimer();
     this.#tab.linkedBrowser.reload();
   }
 
@@ -831,6 +861,7 @@ export class WebPanelController {
   }
 
   remove() {
+    this.#stopTimer();
     if (this.#tab) {
       SidebarElements.webPanelsBrowser.removeWebPanelTab(this.#tab);
     }
