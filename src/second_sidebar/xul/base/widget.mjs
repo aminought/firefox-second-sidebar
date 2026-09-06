@@ -3,6 +3,17 @@ import { ToolbarButton } from "./toolbar_button.mjs";
 import { XULElement } from "./xul_element.mjs"; // eslint-disable-line no-unused-vars
 
 export class Widget {
+  #readyCleanups = new Set();
+  #removed = false;
+
+  #clearReadyCallbacks = () => {
+    this.#removed = true;
+    for (const cleanup of this.#readyCleanups) {
+      cleanup();
+    }
+    this.#readyCleanups.clear();
+  };
+
   /**
    *
    * @param {object} params
@@ -36,6 +47,9 @@ export class Widget {
     this.unloaded = unloaded;
     this.context = context;
     this.onClick = null;
+    window.addEventListener("unload", this.#clearReadyCallbacks, {
+      once: true,
+    });
     try {
       this.wrapper = CustomizableUIWrapper.createWidget({
         id,
@@ -266,6 +280,8 @@ export class Widget {
    * @returns {Widget}
    */
   remove() {
+    this.#clearReadyCallbacks();
+    window.removeEventListener("unload", this.#clearReadyCallbacks);
     CustomizableUIWrapper.destroyWidget(this.id);
     return this;
   }
@@ -276,25 +292,39 @@ export class Widget {
    * @returns {Widget}
    */
   doWhenButtonReady(callback) {
+    if (this.#removed) return this;
     const interval = setInterval(() => {
       if (!this.button) return;
-      clearInterval(interval);
+      cleanup();
+      this.#readyCleanups.delete(cleanup);
       callback();
     }, 100);
+    const cleanup = () => clearInterval(interval);
+    this.#readyCleanups.add(cleanup);
     return this;
   }
 
   /**
    *
-   * @param {function():void} callback
+   * @param {function(HTMLElement):void} callback
    * @returns {Widget}
    */
-  doWhenButtonImageReady(callback) {
-    const interval = setInterval(() => {
-      if (!this.button.getImageXUL()) return;
-      clearInterval(interval);
-      callback();
-    }, 100);
-    return this;
+  doWhenBadgeStackReady(callback) {
+    return this.doWhenButtonReady(() => {
+      const button = this.button;
+      const onReady = () => {
+        const badgeStack = button.getBadgeStackXUL();
+        if (!badgeStack) return;
+        cleanup();
+        this.#readyCleanups.delete(cleanup);
+        callback(badgeStack);
+      };
+      const observer = new MutationObserver(onReady);
+      const cleanup = () => observer.disconnect();
+      this.#readyCleanups.add(cleanup);
+      // Firefox renders a button's children only after insertion or popup opening.
+      observer.observe(button.element, { childList: true });
+      onReady();
+    });
   }
 }
