@@ -36,14 +36,8 @@ export class ContextMenuItemsController {
 
   #onPopupShowing() {
     const hideLinkItems = !gContextMenu.onSaveableLink;
-    SidebarElements.openLinkAsWebPanelMenuItem.toggleAttribute(
-      "hidden",
-      hideLinkItems,
-    );
-    SidebarElements.openLinkAsTempWebPanelMenuItem.toggleAttribute(
-      "hidden",
-      hideLinkItems,
-    );
+    SidebarElements.openLinkAsWebPanelMenuItem.toggleHidden(hideLinkItems);
+    SidebarElements.openLinkAsTempWebPanelMenuItem.toggleHidden(hideLinkItems);
     gContextMenu.showItem(
       "context-sep-open",
       gContextMenu.shouldShowSeparator("context-sep-open"),
