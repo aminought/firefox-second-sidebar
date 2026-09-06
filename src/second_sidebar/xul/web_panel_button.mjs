@@ -27,8 +27,7 @@ export class WebPanelButton extends Widget {
 
     this.soundIcon = new WebPanelSoundIcon();
     this.notificationBadge = new NotificationBadge();
-    this.doWhenButtonReady(() => {
-      const badgeStackXUL = this.button.getBadgeStackXUL();
+    this.doWhenBadgeStackReady((badgeStackXUL) => {
       badgeStackXUL.appendChild(this.soundIcon.element);
       badgeStackXUL.appendChild(this.notificationBadge.element);
     });
@@ -128,10 +127,8 @@ export class WebPanelButton extends Widget {
    * @returns {WebPanelButton}
    */
   setUserContextId(userContextId) {
-    return this.doWhenButtonReady(() =>
-      this.doWhenButtonImageReady(() =>
-        applyContainerColor(userContextId, this.button.getBadgeStackXUL()),
-      ),
+    return this.doWhenBadgeStackReady((badgeStackXUL) =>
+      applyContainerColor(userContextId, badgeStackXUL),
     );
   }
 
