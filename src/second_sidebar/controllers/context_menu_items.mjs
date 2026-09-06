@@ -13,7 +13,10 @@ export class ContextMenuItemsController {
   #setupListeners() {
     BrowserElements.contentAreaContextMenu.addEventListener(
       "popupshowing",
-      () => this.#onPopupShowing(),
+      (event) => {
+        if (event.target !== event.currentTarget) return;
+        this.#onPopupShowing();
+      },
     );
 
     SidebarElements.openLinkAsWebPanelMenuItem.addEventListener("command", () =>
@@ -32,6 +35,16 @@ export class ContextMenuItemsController {
   }
 
   #onPopupShowing() {
+    const hideLinkItems = !gContextMenu.onSaveableLink;
+    SidebarElements.openLinkAsWebPanelMenuItem.toggleAttribute(
+      "hidden",
+      hideLinkItems,
+    );
+    SidebarElements.openLinkAsTempWebPanelMenuItem.toggleAttribute(
+      "hidden",
+      hideLinkItems,
+    );
+
     this.searchQuery = gContextMenu.selectedText || gContextMenu.linkTextStr;
     SidebarElements.searchInWebPanelMenuItem.setSearchQuery(this.searchQuery);
   }

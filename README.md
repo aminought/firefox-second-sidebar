@@ -28,6 +28,7 @@ https://github.com/user-attachments/assets/cd79d644-ca2c-4a30-ae8e-c265f41768b6
 
 - Actions: `Create` • `Delete` • `Edit` • `Change position and size` • `Reset position and size` • `Unload` • `Mute` • `Unmute` • `Pin` • `Unpin` • `Change zoom` • `Go back` • `Go forward` • `Reload` • `Go home`
 - Extensions support
+- Link context menu: `Open Link in Second Sidebar` • `Preview Link in Second Sidebar` (shown only for links that Firefox can open in a tab)
 - Popup notifications support (permissions to use microphone/camera/location, etc.)
 - Settings:
   - General: `URL` • `Multi-Account Container` • `Temporary` • `Mobile view` • `Zoom`
