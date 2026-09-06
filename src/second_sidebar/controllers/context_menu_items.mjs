@@ -44,6 +44,10 @@ export class ContextMenuItemsController {
       "hidden",
       hideLinkItems,
     );
+    gContextMenu.showItem(
+      "context-sep-open",
+      gContextMenu.shouldShowSeparator("context-sep-open"),
+    );
 
     this.searchQuery = gContextMenu.selectedText || gContextMenu.linkTextStr;
     SidebarElements.searchInWebPanelMenuItem.setSearchQuery(this.searchQuery);
