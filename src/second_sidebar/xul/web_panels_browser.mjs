@@ -167,7 +167,7 @@ export class WebPanelsBrowser extends Browser {
     this.#listenToFirstDialogAndClose();
 
     // Patch PopupNotifications
-    PopupNotificationsPatcher.patch(this.window.raw);
+    PopupNotificationsPatcher.patch();
 
     // Patch #urlbar-input
     UrlbarInputPatcher.patch();
