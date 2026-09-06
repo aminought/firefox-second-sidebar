@@ -167,7 +167,7 @@ export class WebPanelsBrowser extends Browser {
     this.#listenToFirstDialogAndClose();
 
     // Patch PopupNotifications
-    PopupNotificationsPatcher.patch();
+    PopupNotificationsPatcher.patch(this.window.raw);
 
     // Patch #urlbar-input
     UrlbarInputPatcher.patch();
@@ -280,8 +280,10 @@ export class WebPanelsBrowser extends Browser {
    */
   activeWebPanelContains(element) {
     const webPanelTab = this.getActiveWebPanelTab();
+    // Permission buttons can be detached before the click reaches the outer
+    // window. Their owner document still identifies them as panel chrome.
     return (
-      this.window.documentElement?.contains(element) ||
+      this.window.document === element.ownerDocument ||
       webPanelTab.linkedBrowser.contentDocument === element.ownerDocument
     );
   }
