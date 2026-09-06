@@ -86,6 +86,31 @@ export const SIDEBAR_BOX_CSS = `
           cursor: inherit;
         }
       }
+
+      #sb2-toolbar-reload {
+        position: relative;
+      }
+
+      #sb2-toolbar-periodic-reload {
+        position: absolute;
+        z-index: 1;
+        bottom: 1px;
+        inset-inline: 0;
+        width: max-content;
+        min-width: 4ch;
+        margin: 0 auto;
+        padding: 0 2px;
+        border-radius: var(--border-radius-small, 3px);
+        background-color: Canvas;
+        color: CanvasText;
+        box-shadow: 0 0 0 1px color-mix(in srgb, CanvasText 25%, Canvas);
+        font-size: 9px;
+        line-height: 11px;
+        font-variant-numeric: tabular-nums;
+        text-align: center;
+        white-space: nowrap;
+        pointer-events: none;
+      }
     }
   }
 

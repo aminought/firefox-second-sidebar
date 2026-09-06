@@ -1,6 +1,8 @@
 import { Div } from "./base/div.mjs";
 import { HBox } from "./base/hbox.mjs";
 import { Label } from "./base/label.mjs";
+import { PeriodicReloadBadge } from "./periodic_reload_badge.mjs";
+import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { Toolbar } from "./base/toolbar.mjs";
 import { ToolbarButton } from "./base/toolbar_button.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
@@ -22,6 +24,12 @@ const ICONS = {
 };
 
 export class SidebarToolbar extends Toolbar {
+  /**@type {string?} */
+  #periodicReloadPanelUUID = null;
+  /** @type {number?} */
+  #countdownUpdateInterval = null;
+  #destroyed = false;
+
   constructor() {
     super({ id: "sb2-toolbar" });
     this.setMode("icons").setAttribute("fullscreentoolbar", "true");
@@ -34,6 +42,8 @@ export class SidebarToolbar extends Toolbar {
     this.backButton = this.#createButton("Back", ICONS.BACK);
     this.forwardButton = this.#createButton("Forward", ICONS.FORWARD);
     this.reloadButton = this.#createButton("Reload", ICONS.RELOAD);
+    this.periodicReloadBadge = new PeriodicReloadBadge();
+    this.reloadButtonWrapper = this.#createReloadButtonWrapper();
     this.homeButton = this.#createButton("Home", ICONS.HOME);
     this.navButtons = this.#createNavButtons();
 
@@ -48,6 +58,28 @@ export class SidebarToolbar extends Toolbar {
     this.pinButton = this.#createButton();
     this.closeButton = this.#createButton("Unload", ICONS.CLOSE);
     this.sidebarButtons = this.#createSidebarButtons();
+    this.#setupCountdownListeners();
+  }
+
+  #setupCountdownListeners() {
+    const onVisibilityChange = () => this.refreshPeriodicReload();
+    const observer = new MutationObserver(onVisibilityChange);
+    observer.observe(this.element, {
+      attributes: true,
+      attributeFilter: ["style"],
+    });
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener(
+      "unload",
+      () => {
+        this.#destroyed = true;
+        this.#periodicReloadPanelUUID = null;
+        this.#stopCountdownUpdates();
+        observer.disconnect();
+        document.removeEventListener("visibilitychange", onVisibilityChange);
+      },
+      { once: true },
+    );
   }
 
   /**
@@ -82,11 +114,21 @@ export class SidebarToolbar extends Toolbar {
     const toolbarButtons = new HBox({ id: "sb2-toolbar-nav-buttons" })
       .appendChild(this.backButton)
       .appendChild(this.forwardButton)
-      .appendChild(this.reloadButton)
+      .appendChild(this.reloadButtonWrapper)
       .appendChild(this.homeButton);
 
     this.appendChild(toolbarButtons);
     return toolbarButtons;
+  }
+
+  /**
+   *
+   * @returns {HBox}
+   */
+  #createReloadButtonWrapper() {
+    return new HBox({ id: "sb2-toolbar-reload" })
+      .appendChild(this.reloadButton)
+      .appendChild(this.periodicReloadBadge);
   }
 
   /**
@@ -184,6 +226,75 @@ export class SidebarToolbar extends Toolbar {
   setTitle(title) {
     this.toolbarTitle.setText(title);
     return this;
+  }
+
+  /**
+   *
+   * @param {string?} uuid
+   * @returns {SidebarToolbar}
+   */
+  setPeriodicReloadPanelUUID(uuid) {
+    if (!this.#destroyed) {
+      this.#periodicReloadPanelUUID = uuid;
+      this.refreshPeriodicReload();
+    }
+    return this;
+  }
+
+  /**
+   * Update the displayed panel's countdown without changing the toolbar.
+   * @param {string?} uuid
+   * @returns {SidebarToolbar}
+   */
+  refreshPeriodicReload(uuid = null) {
+    if (uuid !== null && uuid !== this.#periodicReloadPanelUUID) {
+      return this;
+    }
+
+    const collapsed = !["0px", ""].includes(this.getProperty("margin-top"));
+    const remaining =
+      this.#destroyed || collapsed || document.hidden
+        ? null
+        : (SidebarControllers.webPanelsController
+            ?.get(this.#periodicReloadPanelUUID)
+            ?.getPeriodicReloadRemaining() ?? null);
+    this.#updatePeriodicReloadBadge(remaining);
+    if (remaining === null) {
+      this.#stopCountdownUpdates();
+    } else if (this.#countdownUpdateInterval === null) {
+      this.#countdownUpdateInterval = setInterval(
+        () => this.refreshPeriodicReload(),
+        1000,
+      );
+    }
+    return this;
+  }
+
+  #stopCountdownUpdates() {
+    clearInterval(this.#countdownUpdateInterval);
+    this.#countdownUpdateInterval = null;
+  }
+
+  /**
+   *
+   * @param {number?} remaining
+   */
+  #updatePeriodicReloadBadge(remaining) {
+    const previousText = this.periodicReloadBadge.getText();
+    this.periodicReloadBadge.setRemaining(remaining);
+    const text = this.periodicReloadBadge.getText();
+    if (text === previousText) {
+      return;
+    }
+
+    if (text === null) {
+      this.reloadButton.removeAttribute("aria-label");
+    } else {
+      this.reloadButton.setAttribute(
+        "aria-label",
+        `Reload; automatic reload in ${text}`,
+      );
+    }
   }
 
   /**
