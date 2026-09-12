@@ -130,9 +130,19 @@ export const POPUPS_CSS = `
     }
 
     input:focus-visible {
-      background-color: var(--toolbar-field-focus-background-color);
-      color: var(--toolbar-field-focus-color);
-      border: solid 1px var(--toolbar-field-focus-border-color);
+      background-color: var(
+        --toolbar-field-background-color-focus,
+        var(--toolbar-field-focus-background-color, var(--toolbar-field-background-color))
+      );
+      color: var(
+        --toolbar-field-text-color-focus,
+        var(--toolbar-field-focus-color, var(--toolbar-field-color, var(--toolbar-field-text-color)))
+      );
+      border: solid 1px
+        var(
+          --toolbar-field-border-color-focus,
+          var(--toolbar-field-focus-border-color, var(--toolbar-field-border-color))
+        );
     }
 
     .sb2-button-iconic .toolbarbutton-text {
