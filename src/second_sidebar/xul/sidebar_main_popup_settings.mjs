@@ -259,7 +259,7 @@ export class SidebarMainPopupSettings extends Panel {
               this.enableSidebarBoxHintToggle,
             ),
           ]),
-          createPopupSet("Last opened web panel shortcut", [
+          createPopupSet("Open/close last active web panel", [
             createPopupRow(
               this.lastWebPanelShortcutInput,
               this.lastWebPanelShortcutResetButton,
