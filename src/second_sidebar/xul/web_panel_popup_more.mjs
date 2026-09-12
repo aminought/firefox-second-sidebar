@@ -9,11 +9,14 @@ import {
 import { MenuSeparator } from "./base/menuseparator.mjs";
 import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";
+import { ToolbarButton } from "./base/toolbar_button.mjs"; // eslint-disable-line no-unused-vars
 import { PopupBody } from "./popup_body.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs"; // eslint-disable-line no-unused-vars
 import { isLeftMouseButton } from "../utils/buttons.mjs";
 
 const ICONS = {
+  CHECK: "chrome://global/skin/icons/check.svg",
+  CLOSE: "chrome://global/skin/icons/close.svg",
   MINUS: "chrome://global/skin/icons/minus.svg",
   PLUS: "chrome://global/skin/icons/plus.svg",
 };
@@ -28,15 +31,9 @@ export class WebPanelPopupMore extends Panel {
 
     this.openInNewTabButton = createSubviewButton("Open in New Tab");
     this.copyPageUrlButton = createSubviewButton("Copy Page URL");
-    this.temporaryButton = createSubviewButton("Temporary", {
-      type: "checkbox",
-    });
-    this.mobileButton = createSubviewButton("Mobile View", {
-      type: "checkbox",
-    });
-    this.alwaysOnTopButton = createSubviewButton("Always On Top", {
-      type: "checkbox",
-    });
+    this.temporaryButton = this.#createFlagButton("Temporary");
+    this.mobileButton = this.#createFlagButton("Mobile View");
+    this.alwaysOnTopButton = this.#createFlagButton("Always On Top");
     this.zoomOutButton = createSubviewIconicButton(ICONS.MINUS, "Zoom Out");
     this.zoomInButton = createSubviewIconicButton(ICONS.PLUS, "Zoom In");
     this.resetZoomButton = createSubviewButton("100%", {
@@ -109,11 +106,7 @@ export class WebPanelPopupMore extends Panel {
    * @param {function(string, boolean):void} callback
    */
   listenMobileButtonClick(callback) {
-    this.mobileButton.addEventListener("click", (event) => {
-      if (isLeftMouseButton(event)) {
-        callback(this.settings.uuid, this.mobileButton.isChecked());
-      }
-    });
+    this.#listenFlagButtonClick(this.mobileButton, callback);
   }
 
   /**
@@ -121,11 +114,7 @@ export class WebPanelPopupMore extends Panel {
    * @param {function(string, boolean):void} callback
    */
   listenTemporaryButtonClick(callback) {
-    this.temporaryButton.addEventListener("click", (event) => {
-      if (isLeftMouseButton(event)) {
-        callback(this.settings.uuid, this.temporaryButton.isChecked());
-      }
-    });
+    this.#listenFlagButtonClick(this.temporaryButton, callback);
   }
 
   /**
@@ -133,11 +122,42 @@ export class WebPanelPopupMore extends Panel {
    * @param {function(string, boolean):void} callback
    */
   listenAlwaysOnTopButtonClick(callback) {
-    this.alwaysOnTopButton.addEventListener("click", (event) => {
+    this.#listenFlagButtonClick(this.alwaysOnTopButton, callback);
+  }
+
+  /**
+   *
+   * @param {string} label
+   * @returns {ToolbarButton}
+   */
+  #createFlagButton(label) {
+    return createSubviewButton(label).setAttribute("role", "checkbox");
+  }
+
+  /**
+   *
+   * @param {ToolbarButton} button
+   * @param {function(string, boolean):void} callback
+   */
+  #listenFlagButtonClick(button, callback) {
+    button.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
-        callback(this.settings.uuid, this.alwaysOnTopButton.isChecked());
+        const checked = !button.isChecked();
+        this.#setFlagButtonChecked(button, checked);
+        callback(this.settings.uuid, checked);
       }
     });
+  }
+
+  /**
+   *
+   * @param {ToolbarButton} button
+   * @param {boolean} checked
+   */
+  #setFlagButtonChecked(button, checked) {
+    button.setChecked(checked);
+    button.setAttribute("aria-checked", checked);
+    button.setIcon(checked ? ICONS.CHECK : ICONS.CLOSE);
   }
 
   /**
@@ -197,9 +217,9 @@ export class WebPanelPopupMore extends Panel {
    * @param {WebPanelSettings} settings
    */
   setDefaults(settings) {
-    this.mobileButton.setChecked(settings.mobile);
-    this.temporaryButton.setChecked(settings.temporary);
-    this.alwaysOnTopButton.setChecked(settings.alwaysOnTop);
+    this.#setFlagButtonChecked(this.mobileButton, settings.mobile);
+    this.#setFlagButtonChecked(this.temporaryButton, settings.temporary);
+    this.#setFlagButtonChecked(this.alwaysOnTopButton, settings.alwaysOnTop);
     this.#updateZoomButtons(settings.zoom);
 
     this.settings = settings;
