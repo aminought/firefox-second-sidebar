@@ -278,7 +278,7 @@ export class SidebarMainCollapser {
           const webPanelController = SidebarControllers.webPanelsController.get(
             this.lastOpenedWebPanel,
           );
-          webPanelController.switchWebPanel();
+          webPanelController?.switchWebPanel({ forceOpen: true });
           this.lastOpenedWebPanel = null;
         }
         this.showSidebarTimer = null;

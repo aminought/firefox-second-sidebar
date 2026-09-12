@@ -148,6 +148,7 @@ export class WebPanelPopupEdit extends Panel {
         SidebarControllers.webPanelsShortcuts.isWebPanelShortcutBusy(
           this.uuid,
           shortcut,
+          event,
         );
 
       if (isBisy) {

@@ -20,6 +20,8 @@ export class WebPanelsController {
   constructor() {
     /**@type {Map<string, WebPanelController>} */
     this.webPanelControllers = new Map();
+    /**@type {string?} */
+    this.lastOpenedWebPanelUUID = null;
     this.#setupListeners();
   }
 
@@ -428,6 +430,8 @@ export class WebPanelsController {
         SidebarElements.webPanelsBrowser.getActiveWebPanelTab();
       if (activeWebPanelTab.isEmpty()) {
         SidebarControllers.sidebarController.close();
+      } else {
+        this.lastOpenedWebPanelUUID = activeWebPanelTab.uuid;
       }
       for (const [uuid, webPanelController] of this.webPanelControllers) {
         if (uuid === activeWebPanelTab.uuid) {
@@ -558,10 +562,19 @@ export class WebPanelsController {
    */
   delete(uuid) {
     this.webPanelControllers.delete(uuid);
+    if (this.lastOpenedWebPanelUUID === uuid) {
+      this.lastOpenedWebPanelUUID = null;
+    }
   }
 
   close() {
     SidebarElements.webPanelsBrowser.deselectWebPanelTab();
+  }
+
+  switchLastWebPanel() {
+    if (!this.lastOpenedWebPanelUUID) return;
+    const webPanelController = this.get(this.lastOpenedWebPanelUUID);
+    webPanelController?.switchWebPanel();
   }
 
   /**

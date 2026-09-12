@@ -19,6 +19,7 @@ export class SidebarController {
 
     this.containerBorder = "left";
     this.autoHideSidebar = false;
+    this.lastWebPanelShortcut = "";
     this.hideSidebarAnimated = false;
     this.hideToolbarAnimated = true;
   }
@@ -138,6 +139,10 @@ export class SidebarController {
         event.detail.sidebarWidgetHideWebPanel,
         event.detail.sidebarWidgetShortcut,
       );
+    });
+
+    listenEvent(SidebarEvents.EDIT_SIDEBAR_LAST_WEB_PANEL_SHORTCUT, (event) => {
+      this.lastWebPanelShortcut = event.detail.value;
     });
 
     listenEvent(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_ANIMATED, (event) => {
@@ -409,6 +414,7 @@ export class SidebarController {
       settings.sidebarWidgetHideWebPanel,
       settings.sidebarWidgetShortcut,
     );
+    this.lastWebPanelShortcut = settings.lastWebPanelShortcut;
     this.hideSidebarAnimated = settings.hideSidebarAnimated;
     this.setHideToolbarAnimated(settings.hideToolbarAnimated);
     SidebarControllers.sidebarGeometry.setEnableSidebarBoxHint(
@@ -440,6 +446,7 @@ export class SidebarController {
       autoHideSidebarBehavior: this.autoHideSidebarBehavior,
       sidebarWidgetHideWebPanel: this.sidebarWidgetHideWebPanel,
       sidebarWidgetShortcut: this.sidebarWidgetShortcut,
+      lastWebPanelShortcut: this.lastWebPanelShortcut,
       hideSidebarAnimated: this.hideSidebarAnimated,
       hideToolbarAnimated: this.hideToolbarAnimated,
       enableSidebarBoxHint:

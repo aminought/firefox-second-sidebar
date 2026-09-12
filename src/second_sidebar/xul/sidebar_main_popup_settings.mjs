@@ -61,6 +61,15 @@ export class SidebarMainPopupSettings extends Panel {
         tooltipText: "Reset shortcut",
       },
     );
+    this.lastWebPanelShortcutInput = createInput({
+      placeholder: "Click here and press keys...",
+    });
+    this.lastWebPanelShortcutResetButton = createSubviewIconicButton(
+      ICONS.UNDO,
+      {
+        tooltipText: "Reset shortcut",
+      },
+    );
     this.hideSidebarAnimatedToggle = new Toggle();
     this.hideToolbarAnimatedToggle = new Toggle();
     this.enableSidebarBoxHintToggle = new Toggle();
@@ -71,36 +80,53 @@ export class SidebarMainPopupSettings extends Panel {
   }
 
   #setupListeners() {
-    this.sidebarWidgetShortcutResetButton.addEventListener("click", (event) => {
+    this.#setupShortcutListeners(
+      this.sidebarWidgetShortcutInput,
+      this.sidebarWidgetShortcutResetButton,
+      (shortcut, event) =>
+        SidebarControllers.webPanelsShortcuts.isSidebarWidgetShortcutBusy(
+          shortcut,
+          event,
+        ),
+    );
+    this.#setupShortcutListeners(
+      this.lastWebPanelShortcutInput,
+      this.lastWebPanelShortcutResetButton,
+      (shortcut, event) =>
+        SidebarControllers.webPanelsShortcuts.isLastWebPanelShortcutBusy(
+          shortcut,
+          event,
+        ),
+    );
+  }
+
+  #setupShortcutListeners(input, resetButton, isShortcutBusy) {
+    resetButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
-        this.sidebarWidgetShortcutInput
+        input
           .setValue("")
           .removeAttribute("error")
           .dispatchEvent(new Event("input", { bubbles: true }));
       }
     });
 
-    this.sidebarWidgetShortcutInput.addEventListener("keypress", (event) => {
+    input.addEventListener("keypress", (event) => {
       event.preventDefault();
 
       const parts =
         SidebarControllers.webPanelsShortcuts.getShortcutPartsFromEvent(event);
       const shortcut = parts.join("+");
-      const isBisy =
-        SidebarControllers.webPanelsShortcuts.isSidebarWidgetShortcutBusy(
-          shortcut,
-        );
 
-      if (isBisy) {
-        this.sidebarWidgetShortcutInput
+      if (isShortcutBusy(shortcut, event)) {
+        input
           .setValue(`Shortcut ${shortcut} is busy`)
           .setAttribute("error", true)
           .dispatchEvent(new Event("error", { bubbles: true }));
         return;
       }
 
-      this.sidebarWidgetShortcutInput.removeAttribute("error");
-      this.sidebarWidgetShortcutInput
+      input.removeAttribute("error");
+      input
         .setValue(parts.join("+"))
         .dispatchEvent(new Event("input", { bubbles: true }));
     });
@@ -233,6 +259,12 @@ export class SidebarMainPopupSettings extends Panel {
               this.enableSidebarBoxHintToggle,
             ),
           ]),
+          createPopupSet("Open/close last active web panel", [
+            createPopupRow(
+              this.lastWebPanelShortcutInput,
+              this.lastWebPanelShortcutResetButton,
+            ),
+          ]),
           createPopupSet("Web panel button", [
             createPopupGroup(
               "Container indicator",
@@ -285,7 +317,9 @@ export class SidebarMainPopupSettings extends Panel {
    * @param {function(boolean):void} callbacks.enableSidebarBoxHint
    * @param {function(string):void} callbacks.containerBorder
    * @param {function(string):void} callbacks.tooltip
-   * @param {function(boolean):void} callbacks.tooltipFullUrl * @param {function(boolean, string, boolean, string):void} callbacks.visibility
+   * @param {function(boolean):void} callbacks.tooltipFullUrl
+   * @param {function(boolean, string, boolean, string):void} callbacks.visibility
+   * @param {function(string):void} callbacks.lastWebPanelShortcut
    * @param {function(boolean):void} callbacks.hideSidebarAnimated
    * @param {function(boolean):void} callbacks.hideToolbarAnimated
    */
@@ -302,6 +336,7 @@ export class SidebarMainPopupSettings extends Panel {
     tooltip,
     tooltipFullUrl,
     visibility,
+    lastWebPanelShortcut,
     hideSidebarAnimated,
     hideToolbarAnimated,
   }) {
@@ -317,6 +352,7 @@ export class SidebarMainPopupSettings extends Panel {
     this.onTooltipChange = tooltip;
     this.onTooltipFullUrlChange = tooltipFullUrl;
     this.onVisibilityChange = visibility;
+    this.onLastWebPanelShortcutChange = lastWebPanelShortcut;
     this.onAutoHideSidebarAnimatedChange = hideSidebarAnimated;
     this.onAutoHideToolbarAnimatedChange = hideToolbarAnimated;
 
@@ -385,6 +421,9 @@ export class SidebarMainPopupSettings extends Panel {
         this.sidebarWidgetShortcutInput.getValue(),
       ),
     );
+    this.lastWebPanelShortcutInput.addEventListener("input", () =>
+      lastWebPanelShortcut(this.lastWebPanelShortcutInput.getValue()),
+    );
     this.hideSidebarAnimatedToggle.addEventListener("toggle", () =>
       hideSidebarAnimated(this.hideSidebarAnimatedToggle.getPressed()),
     );
@@ -443,7 +482,12 @@ export class SidebarMainPopupSettings extends Panel {
     this.sidebarWidgetHideWebPanelToggle.setPressed(
       settings.sidebarWidgetHideWebPanel,
     );
-    this.sidebarWidgetShortcutInput.setValue(settings.sidebarWidgetShortcut);
+    this.sidebarWidgetShortcutInput
+      .setValue(settings.sidebarWidgetShortcut)
+      .removeAttribute("error");
+    this.lastWebPanelShortcutInput
+      .setValue(settings.lastWebPanelShortcut)
+      .removeAttribute("error");
     this.hideSidebarAnimatedToggle.setPressed(settings.hideSidebarAnimated);
     this.hideToolbarAnimatedToggle.setPressed(settings.hideToolbarAnimated);
 
@@ -545,6 +589,12 @@ export class SidebarMainPopupSettings extends Panel {
       this.settings.hideSidebarAnimated
     ) {
       this.onAutoHideSidebarAnimatedChange(this.settings.hideSidebarAnimated);
+    }
+    if (
+      this.lastWebPanelShortcutInput.getValue() !==
+      this.settings.lastWebPanelShortcut
+    ) {
+      this.onLastWebPanelShortcutChange(this.settings.lastWebPanelShortcut);
     }
     if (
       this.hideToolbarAnimatedToggle.getPressed() !==

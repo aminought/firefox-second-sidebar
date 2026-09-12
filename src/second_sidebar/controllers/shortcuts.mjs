@@ -11,9 +11,27 @@ export class Shortcuts {
   #setupListeners() {
     BrowserElements.root.addEventListener("keypress", (event) => {
       if (!this.enabled) return;
-      this.trySidebarWidgetShortcut(event);
+      if (this.trySidebarWidgetShortcut(event)) return;
+      if (this.tryLastWebPanelShortcut(event)) return;
       this.tryWebPanelShortcuts(event);
     });
+  }
+
+  /**
+   *
+   * @param {KeyboardEvent} event
+   * @returns {boolean}
+   */
+  tryLastWebPanelShortcut(event) {
+    const shortcut = SidebarControllers.sidebarController.lastWebPanelShortcut;
+    if (shortcut.length === 0) return false;
+
+    if (this.isShortcutPressed(shortcut, event)) {
+      event.preventDefault();
+      SidebarControllers.webPanelsController.switchLastWebPanel();
+      return true;
+    }
+    return false;
   }
 
   enable() {
@@ -27,61 +45,77 @@ export class Shortcuts {
   /**
    *
    * @param {KeyboardEvent} event
+   * @returns {boolean}
    */
   trySidebarWidgetShortcut(event) {
     const shortcut = SidebarControllers.sidebarController.sidebarWidgetShortcut;
-    if (shortcut.length === 0) return;
+    if (shortcut.length === 0) return false;
 
-    const shortcutParts = this.getShortcutPartsFromShortcut(shortcut);
-    const eventParts = this.getShortcutPartsFromEvent(event);
-    const layoutDependentEventParts =
-      this.#getLayoutDependentShortcutPartsFromEvent(event);
-
-    if (
-      this.isEqual(shortcutParts, eventParts) ||
-      this.isEqual(shortcutParts, layoutDependentEventParts)
-    ) {
+    if (this.isShortcutPressed(shortcut, event)) {
       event.preventDefault();
       SidebarControllers.sidebarMainCollapser.onSidebarCollapseButtonClick();
+      return true;
     }
+    return false;
   }
 
   /**
    *
    * @param {KeyboardEvent} event
+   * @returns {boolean}
    */
   tryWebPanelShortcuts(event) {
     const webPanelControllers = SidebarControllers.webPanelsController.getAll();
-    const eventParts = this.getShortcutPartsFromEvent(event);
-    const layoutDependentEventParts =
-      this.#getLayoutDependentShortcutPartsFromEvent(event);
-
     for (const webPanelController of webPanelControllers) {
       const shortcut = webPanelController.getShortcut();
       if (shortcut.length === 0) continue;
 
-      const shortcutParts = this.getShortcutPartsFromShortcut(shortcut);
-
-      if (
-        this.isEqual(shortcutParts, eventParts) ||
-        this.isEqual(shortcutParts, layoutDependentEventParts)
-      ) {
+      if (this.isShortcutPressed(shortcut, event)) {
         event.preventDefault();
         webPanelController.switchWebPanel();
-        return;
+        return true;
       }
     }
+    return false;
   }
 
   /**
    *
    * @param {string} shortcut
+   * @param {KeyboardEvent?} event
    * @returns {boolean}
    */
-  isSidebarWidgetShortcutBusy(shortcut) {
+  isSidebarWidgetShortcutBusy(shortcut, event = null) {
     const webPanelControllers = SidebarControllers.webPanelsController.getAll();
-    return webPanelControllers.some(
-      (webPanelController) => webPanelController.getShortcut() === shortcut,
+    return (
+      webPanelControllers.some((webPanelController) =>
+        this.#isShortcutBusy(webPanelController.getShortcut(), shortcut, event),
+      ) ||
+      this.#isShortcutBusy(
+        SidebarControllers.sidebarController.lastWebPanelShortcut,
+        shortcut,
+        event,
+      )
+    );
+  }
+
+  /**
+   *
+   * @param {string} shortcut
+   * @param {KeyboardEvent?} event
+   * @returns {boolean}
+   */
+  isLastWebPanelShortcutBusy(shortcut, event = null) {
+    const webPanelControllers = SidebarControllers.webPanelsController.getAll();
+    return (
+      webPanelControllers.some((webPanelController) =>
+        this.#isShortcutBusy(webPanelController.getShortcut(), shortcut, event),
+      ) ||
+      this.#isShortcutBusy(
+        SidebarControllers.sidebarController.sidebarWidgetShortcut,
+        shortcut,
+        event,
+      )
     );
   }
 
@@ -89,17 +123,63 @@ export class Shortcuts {
    *
    * @param {string} uuid
    * @param {string} shortcut
+   * @param {KeyboardEvent?} event
    * @returns {boolean}
    */
-  isWebPanelShortcutBusy(uuid, shortcut) {
+  isWebPanelShortcutBusy(uuid, shortcut, event = null) {
     const webPanelControllers = SidebarControllers.webPanelsController.getAll();
     return (
       webPanelControllers.some(
         (webPanelController) =>
           webPanelController.getUUID() !== uuid &&
-          webPanelController.getShortcut() === shortcut,
+          this.#isShortcutBusy(
+            webPanelController.getShortcut(),
+            shortcut,
+            event,
+          ),
       ) ||
-      shortcut === SidebarControllers.sidebarController.sidebarWidgetShortcut
+      this.#isShortcutBusy(
+        SidebarControllers.sidebarController.sidebarWidgetShortcut,
+        shortcut,
+        event,
+      ) ||
+      this.#isShortcutBusy(
+        SidebarControllers.sidebarController.lastWebPanelShortcut,
+        shortcut,
+        event,
+      )
+    );
+  }
+
+  /**
+   *
+   * @param {string} assignedShortcut
+   * @param {string} shortcut
+   * @param {KeyboardEvent?} event
+   * @returns {boolean}
+   */
+  #isShortcutBusy(assignedShortcut, shortcut, event) {
+    return (
+      assignedShortcut === shortcut ||
+      (event !== null && this.isShortcutPressed(assignedShortcut, event))
+    );
+  }
+
+  /**
+   *
+   * @param {string} shortcut
+   * @param {KeyboardEvent} event
+   * @returns {boolean}
+   */
+  isShortcutPressed(shortcut, event) {
+    if (shortcut.length === 0) return false;
+    const shortcutParts = this.getShortcutPartsFromShortcut(shortcut);
+    const eventParts = this.getShortcutPartsFromEvent(event);
+    const layoutDependentEventParts =
+      this.#getLayoutDependentShortcutPartsFromEvent(event);
+    return (
+      this.isEqual(shortcutParts, eventParts) ||
+      this.isEqual(shortcutParts, layoutDependentEventParts)
     );
   }
 
@@ -136,7 +216,13 @@ export class Shortcuts {
    * @returns {string[]}
    */
   getShortcutPartsFromShortcut(shortcut) {
-    return shortcut.split("+");
+    const parts = shortcut.split("+");
+    // "+" is both the separator and a valid key label.
+    const lastIndex = parts.length - 1;
+    if (parts[lastIndex] === "" && parts[lastIndex - 1] === "") {
+      parts.splice(-2, 2, "+");
+    }
+    return parts;
   }
 
   /**

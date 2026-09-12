@@ -19,7 +19,7 @@ https://github.com/user-attachments/assets/cd79d644-ca2c-4a30-ae8e-c265f41768b6
 - Settings:
   - General: `Position (Left / Right)` • `Width` • `Allow window dragging`
   - Visibility: `Auto-hide sidebar` • `Auto-hide behaiour (Inline / Overlay)` • `Hide web panel when sidebar is hidden` • `Set layout-independent shortcut to hide/show sidebar`
-  - Web panel: `Default floating panel offset` • `New panel position (Before plus button / After plus button)` • `Show geometry hint`
+  - Web panel: `Default floating panel offset` • `New panel position (Before plus button / After plus button)` • `Show geometry hint` • `Set layout-independent shortcut to open/close the last active panel`
   - Web panel button: `Container indicator (Off / Left / Right / Top / Bottom / Around)` • `Tooltip (Off / Title / URL / Title and URL)` • `Show full URL in tooltip`
   - Web panel toolbar: `Auto-hide forward button` • `Auto-hide back button`
   - Animations: `Animate sidebar` • `Animate web panel toolbar`
