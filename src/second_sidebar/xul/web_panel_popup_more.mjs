@@ -9,6 +9,7 @@ import {
 import { MenuSeparator } from "./base/menuseparator.mjs";
 import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";
+import { ToolbarButton } from "./base/toolbar_button.mjs"; // eslint-disable-line no-unused-vars
 import { PopupBody } from "./popup_body.mjs";
 import { WebPanelSettings } from "../settings/web_panel_settings.mjs"; // eslint-disable-line no-unused-vars
 import { isLeftMouseButton } from "../utils/buttons.mjs";
@@ -108,35 +109,37 @@ export class WebPanelPopupMore extends Panel {
    *
    * @param {function(string, boolean):void} callback
    */
-  listenMobileButtonClick(callback) {
-    this.mobileButton.addEventListener("click", (event) => {
-      if (isLeftMouseButton(event)) {
-        callback(this.settings.uuid, this.mobileButton.isChecked());
-      }
-    });
+  listenMobileButtonCommand(callback) {
+    this.#listenCheckboxButtonCommand(this.mobileButton, callback);
   }
 
   /**
    *
    * @param {function(string, boolean):void} callback
    */
-  listenTemporaryButtonClick(callback) {
-    this.temporaryButton.addEventListener("click", (event) => {
-      if (isLeftMouseButton(event)) {
-        callback(this.settings.uuid, this.temporaryButton.isChecked());
-      }
-    });
+  listenTemporaryButtonCommand(callback) {
+    this.#listenCheckboxButtonCommand(this.temporaryButton, callback);
   }
 
   /**
    *
    * @param {function(string, boolean):void} callback
    */
-  listenAlwaysOnTopButtonClick(callback) {
-    this.alwaysOnTopButton.addEventListener("click", (event) => {
-      if (isLeftMouseButton(event)) {
-        callback(this.settings.uuid, this.alwaysOnTopButton.isChecked());
-      }
+  listenAlwaysOnTopButtonCommand(callback) {
+    this.#listenCheckboxButtonCommand(this.alwaysOnTopButton, callback);
+  }
+
+  /**
+   *
+   * @param {ToolbarButton} button
+   * @param {function(string, boolean):void} callback
+   */
+  #listenCheckboxButtonCommand(button, callback) {
+    button.setAttribute("autocheck", false);
+    button.addEventListener("command", () => {
+      const checked = !button.isChecked();
+      button.setChecked(checked);
+      callback(this.settings.uuid, checked);
     });
   }
 
