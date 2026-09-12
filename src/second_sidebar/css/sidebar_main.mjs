@@ -13,7 +13,7 @@ export const SIDEBAR_MAIN_CSS = `
     &[overlay="true"] {
       position: absolute;
       z-index: 9999;
-      background-color: var(--toolbox-bgcolor);
+      background-color: var(--toolbox-background-color, var(--toolbox-bgcolor));
       box-shadow: var(--content-area-shadow);
 
       @media (-moz-windows-mica) {
@@ -137,7 +137,7 @@ export const SIDEBAR_MAIN_CSS = `
   }
 
   #widget-overflow-fixed-list .sb2-main-button {
-    padding: var(--arrowpanel-menuitem-padding);
+    padding: var(--panel-menuitem-padding, var(--arrowpanel-menuitem-padding));
   }
 
   :root:has(#sb2-wrapper[position="left"]) {

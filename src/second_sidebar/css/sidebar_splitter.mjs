@@ -1,9 +1,9 @@
 export const SIDEBAR_SPLITTER_CSS = `
   @media -moz-pref("browser.nova.enabled") {
     #sb2-splitter {
-      width: var(--chrome-window-gap);
+      width: var(--chrome-window-gap, var(--splitter-width));
       border-inline: none;
-      margin-inline: calc(-1 * var(--chrome-window-gap) + 1px);
+      margin-inline: calc(-1 * var(--chrome-window-gap, 1px) + 1px);
     }
 
     #sb2-after-splitter {
