@@ -85,17 +85,6 @@ export const POPUPS_CSS = `
         padding: 0;
       }
 
-      .subviewbutton[type="checkbox"]:not([checked="true"]) {
-        list-style-image: url(chrome://global/skin/icons/close.svg);
-        -moz-context-properties: fill;
-        fill: currentColor;
-        color: inherit;
-
-        .toolbarbutton-text {
-          padding-inline-start: 8px;
-        }
-      }
-
       #sb2-zoom-buttons {
         margin: var(--space-xsmall);
       }
