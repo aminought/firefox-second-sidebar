@@ -50,6 +50,10 @@ export class SidebarMainSettingsController {
           sidebarWidgetHideWebPanel,
           sidebarWidgetShortcut,
         }),
+      lastWebPanelShortcut: (value) =>
+        sendEvents(SidebarEvents.EDIT_SIDEBAR_LAST_WEB_PANEL_SHORTCUT, {
+          value,
+        }),
       hideSidebarAnimated: (value) =>
         sendEvents(SidebarEvents.EDIT_SIDEBAR_AUTO_HIDE_ANIMATED, { value }),
       hideToolbarAnimated: (value) =>

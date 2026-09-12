@@ -47,6 +47,7 @@ export const SidebarEvents = {
   EDIT_SIDEBAR_TOOLTIP: "edit_sidebar_tooltip",
   EDIT_SIDEBAR_TOOLTIP_FULL_URL: "edit_sidebar_tooltip_full_url",
   EDIT_SIDEBAR_VISIBILITY: "edit_sidebar_visibility",
+  EDIT_SIDEBAR_LAST_WEB_PANEL_SHORTCUT: "edit_sidebar_last_web_panel_shortcut",
   EDIT_SIDEBAR_AUTO_HIDE_ANIMATED: "edit_sidebar_auto_hide_animated",
   EDIT_SIDEBAR_TOOLBAR_AUTO_HIDE_ANIMATED:
     "edit_sidebar_toolbar_auto_hide_animated",
