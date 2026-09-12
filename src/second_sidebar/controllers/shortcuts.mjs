@@ -1,5 +1,6 @@
 import { BrowserElements } from "../browser_elements.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
+import { getLayoutIndependentKey } from "../utils/keyboard.mjs";
 
 export class Shortcuts {
   constructor() {
@@ -33,8 +34,13 @@ export class Shortcuts {
 
     const shortcutParts = this.getShortcutPartsFromShortcut(shortcut);
     const eventParts = this.getShortcutPartsFromEvent(event);
+    const layoutDependentEventParts =
+      this.#getLayoutDependentShortcutPartsFromEvent(event);
 
-    if (this.isEqual(shortcutParts, eventParts)) {
+    if (
+      this.isEqual(shortcutParts, eventParts) ||
+      this.isEqual(shortcutParts, layoutDependentEventParts)
+    ) {
       event.preventDefault();
       SidebarControllers.sidebarMainCollapser.onSidebarCollapseButtonClick();
     }
@@ -47,6 +53,8 @@ export class Shortcuts {
   tryWebPanelShortcuts(event) {
     const webPanelControllers = SidebarControllers.webPanelsController.getAll();
     const eventParts = this.getShortcutPartsFromEvent(event);
+    const layoutDependentEventParts =
+      this.#getLayoutDependentShortcutPartsFromEvent(event);
 
     for (const webPanelController of webPanelControllers) {
       const shortcut = webPanelController.getShortcut();
@@ -54,7 +62,10 @@ export class Shortcuts {
 
       const shortcutParts = this.getShortcutPartsFromShortcut(shortcut);
 
-      if (this.isEqual(shortcutParts, eventParts)) {
+      if (
+        this.isEqual(shortcutParts, eventParts) ||
+        this.isEqual(shortcutParts, layoutDependentEventParts)
+      ) {
         event.preventDefault();
         webPanelController.switchWebPanel();
         return;
@@ -103,7 +114,19 @@ export class Shortcuts {
     if (event.ctrlKey) parts.push("Ctrl");
     if (event.metaKey) parts.push("Meta");
     if (event.shiftKey) parts.push("Shift");
-    parts.push(event.key.toUpperCase());
+    parts.push(getLayoutIndependentKey(event));
+    return parts;
+  }
+
+  /**
+   * Keeps shortcuts saved with a layout-dependent key working in that layout.
+   *
+   * @param {KeyboardEvent} event
+   * @returns {string[]}
+   */
+  #getLayoutDependentShortcutPartsFromEvent(event) {
+    const parts = this.getShortcutPartsFromEvent(event);
+    parts[parts.length - 1] = event.key.toUpperCase();
     return parts;
   }
 
@@ -118,10 +141,11 @@ export class Shortcuts {
 
   /**
    *
-   * @param {string} shortcut
+   * @param {string[]} lhs
+   * @param {string[]} rhs
    * @returns {boolean}
    */
   isEqual(lhs, rhs) {
-    return JSON.stringify(lhs.sort()) == JSON.stringify(rhs.sort());
+    return JSON.stringify([...lhs].sort()) === JSON.stringify([...rhs].sort());
   }
 }
