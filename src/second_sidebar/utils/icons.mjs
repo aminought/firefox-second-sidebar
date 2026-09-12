@@ -71,7 +71,7 @@ export function fetchIconURL(url) {
  */
 export async function isIconAvailable(url) {
   try {
-    const response = await fetch(url, { credentials: "include" });
+    const response = await fetch(url, { credentials: "omit" });
     return response.status === 200;
   } catch {
     return false;
