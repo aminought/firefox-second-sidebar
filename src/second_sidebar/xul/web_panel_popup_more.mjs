@@ -109,24 +109,24 @@ export class WebPanelPopupMore extends Panel {
    *
    * @param {function(string, boolean):void} callback
    */
-  listenMobileButtonCommand(callback) {
-    this.#listenCheckboxButtonCommand(this.mobileButton, callback);
+  listenMobileButtonClick(callback) {
+    this.#listenCheckboxButtonClick(this.mobileButton, callback);
   }
 
   /**
    *
    * @param {function(string, boolean):void} callback
    */
-  listenTemporaryButtonCommand(callback) {
-    this.#listenCheckboxButtonCommand(this.temporaryButton, callback);
+  listenTemporaryButtonClick(callback) {
+    this.#listenCheckboxButtonClick(this.temporaryButton, callback);
   }
 
   /**
    *
    * @param {function(string, boolean):void} callback
    */
-  listenAlwaysOnTopButtonCommand(callback) {
-    this.#listenCheckboxButtonCommand(this.alwaysOnTopButton, callback);
+  listenAlwaysOnTopButtonClick(callback) {
+    this.#listenCheckboxButtonClick(this.alwaysOnTopButton, callback);
   }
 
   /**
@@ -134,12 +134,14 @@ export class WebPanelPopupMore extends Panel {
    * @param {ToolbarButton} button
    * @param {function(string, boolean):void} callback
    */
-  #listenCheckboxButtonCommand(button, callback) {
+  #listenCheckboxButtonClick(button, callback) {
     button.setAttribute("autocheck", false);
-    button.addEventListener("command", () => {
-      const checked = !button.isChecked();
-      button.setChecked(checked);
-      callback(this.settings.uuid, checked);
+    button.addEventListener("click", (event) => {
+      if (isLeftMouseButton(event)) {
+        const checked = !button.isChecked();
+        button.setChecked(checked);
+        callback(this.settings.uuid, checked);
+      }
     });
   }
 
