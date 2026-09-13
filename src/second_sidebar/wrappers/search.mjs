@@ -9,7 +9,12 @@ export class SearchService {
    * @returns {Promise<string?>}
    */
   static async getDefaultSubmissionUrl(query) {
-    const defaultEngine = await FirefoxSearchService.getDefault();
+    const searchService =
+      typeof FirefoxSearchService.getDefault === "function"
+        ? FirefoxSearchService
+        : Services.search;
+    if (!searchService) return null;
+    const defaultEngine = await searchService.getDefault();
     if (!defaultEngine) return null;
     const submission = defaultEngine.getSubmission(query);
     return submission?.uri?.spec ?? null;
