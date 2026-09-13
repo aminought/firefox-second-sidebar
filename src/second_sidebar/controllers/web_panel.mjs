@@ -137,18 +137,32 @@ export class WebPanelController {
       SidebarControllers.webPanelTooltipController.hidePopup();
     });
 
-    button.addEventListener("click", (event) => {
+    button.addEventListener("mousedown", (event) => {
+      if (
+        !isLeftMouseButton(event) ||
+        document.documentElement.hasAttribute("customizing")
+      ) {
+        return;
+      }
+
       event.stopPropagation();
       clearTimeout(tooltipTimer);
       SidebarControllers.webPanelTooltipController.hidePopup();
-      if (isLeftMouseButton(event)) {
-        this.switchWebPanel();
-      } else if (isMiddleMouseButton(event)) {
-        if (this.isActive()) {
-          SidebarControllers.sidebarController.close();
-        }
-        this.unload();
+
+      this.switchWebPanel();
+    });
+
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      if (!isMiddleMouseButton(event)) return;
+
+      clearTimeout(tooltipTimer);
+      SidebarControllers.webPanelTooltipController.hidePopup();
+
+      if (this.isActive()) {
+        SidebarControllers.sidebarController.close();
       }
+      this.unload();
     });
 
     return button;
