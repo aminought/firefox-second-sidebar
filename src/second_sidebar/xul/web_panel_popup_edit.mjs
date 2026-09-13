@@ -16,15 +16,18 @@ import {
   updateZoomButtons,
 } from "../utils/xul.mjs";
 
+import { BrowserElements } from "../browser_elements.mjs";
 import { Div } from "./base/div.mjs";
 import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";
 import { PopupBody } from "./popup_body.mjs";
+import { PopupDiscardConfirmation } from "./popup_discard_confirmation.mjs";
 import { PopupFooter } from "./popup_footer.mjs";
 import { PopupHeader } from "./popup_header.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { Toggle } from "./base/toggle.mjs";
 import { ToolbarSeparator } from "./base/toolbar_separator.mjs";
+import { VBox } from "./base/vbox.mjs";
 import { WebPanelController } from "../controllers/web_panel.mjs"; // eslint-disable-line no-unused-vars
 import { fetchIconURL } from "../utils/icons.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
@@ -46,7 +49,10 @@ export class WebPanelPopupEdit extends Panel {
     });
     this.setType("arrow")
       .setRole("group")
-      .setAttribute("no-open-on-anchor", "true");
+      .setAttribute("no-open-on-anchor", "true")
+      .setAttribute("noautohide", "true")
+      .setAttribute("consumeoutsideclicks", "false")
+      .setAttribute("level", "parent");
 
     this.urlInput = createInput({ placeholder: "URL" });
     this.dynamicTitleToggle = new Toggle({
@@ -105,13 +111,58 @@ export class WebPanelPopupEdit extends Panel {
     });
     this.cancelButton = createCancelButton();
     this.saveButton = createSaveButton();
+    this.discardConfirmation = new PopupDiscardConfirmation({
+      onDiscard: () => this.#discardChangesAndClose(),
+    });
+    this.backdrop = new VBox({ id: "sb2-web-panel-edit-backdrop" }).hide();
     this.#setupListeners();
     this.#compose();
+    BrowserElements.root.appendChild(this.backdrop);
 
     this.zoom = 1;
+    this.faviconRequestId = 0;
+    this.faviconRequestPending = false;
+    this.applyingFaviconRequest = false;
+    this.editSessionActive = false;
   }
 
   #setupListeners() {
+    this.urlInput.addEventListener("input", () => this.#cancelFaviconRequest());
+    this.faviconURLInput.addEventListener("input", () => {
+      if (!this.applyingFaviconRequest) {
+        this.#cancelFaviconRequest();
+      }
+    });
+
+    this.backdrop.addEventListener("mousedown", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    });
+    this.backdrop.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (isLeftMouseButton(event)) {
+        this.#requestClose();
+      }
+    });
+    this.backdrop.addEventListener("contextmenu", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    });
+
+    this.addEventListener("popupshown", (event) => {
+      if (event.target === this.getXUL()) {
+        this.backdrop.show();
+        SidebarControllers.webPanelsShortcuts.disable();
+      }
+    });
+    this.addEventListener("popuphidden", (event) => {
+      if (event.target === this.getXUL()) {
+        this.backdrop.hide();
+        SidebarControllers.webPanelsShortcuts.enable();
+      }
+    });
+
     this.titleResetButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
         this.titleInput
@@ -122,10 +173,32 @@ export class WebPanelPopupEdit extends Panel {
 
     this.faviconResetButton.addEventListener("click", async (event) => {
       if (isLeftMouseButton(event)) {
-        const faviconURL = await fetchIconURL(this.urlInput.getValue());
-        this.faviconURLInput
-          .setValue(faviconURL)
-          .dispatchEvent(new Event("input", { bubbles: true }));
+        const requestId = ++this.faviconRequestId;
+        this.faviconRequestPending = true;
+        this.saveButton.setAttribute("disabled", true);
+        try {
+          const faviconURL = await fetchIconURL(this.urlInput.getValue());
+          if (requestId !== this.faviconRequestId) {
+            return;
+          }
+          this.applyingFaviconRequest = true;
+          try {
+            this.faviconURLInput
+              .setValue(faviconURL)
+              .dispatchEvent(new Event("input", { bubbles: true }));
+          } finally {
+            this.applyingFaviconRequest = false;
+          }
+        } catch (error) {
+          if (requestId === this.faviconRequestId) {
+            console.error("Failed to request favicon:", error);
+          }
+        } finally {
+          if (requestId === this.faviconRequestId) {
+            this.faviconRequestPending = false;
+            this.saveButton.removeAttribute("disabled");
+          }
+        }
       }
     });
 
@@ -321,6 +394,7 @@ export class WebPanelPopupEdit extends Panel {
           ]),
         ),
         new PopupFooter().appendChildren(this.cancelButton, this.saveButton),
+        this.discardConfirmation,
       ),
     );
   }
@@ -563,11 +637,19 @@ export class WebPanelPopupEdit extends Panel {
    */
   listenSaveButtonClick(callback) {
     this.saveButton.addEventListener("click", (event) => {
-      if (isLeftMouseButton(event)) {
-        this.removeEventListener("popuphidden", this.cancelOnPopupHidden);
+      if (isLeftMouseButton(event) && !this.faviconRequestPending) {
+        this.#endEditSession();
         callback(this.settings.uuid);
       }
     });
+  }
+
+  /**
+   * @returns {WebPanelPopupEdit}
+   */
+  hidePopup() {
+    this.#requestClose();
+    return this;
   }
 
   /**
@@ -576,6 +658,10 @@ export class WebPanelPopupEdit extends Panel {
    * @returns {WebPanelPopupEdit}
    */
   openPopup(webPanelController) {
+    if (this.editSessionActive) {
+      this.#cancelChanges();
+    }
+    this.#endEditSession();
     const settings = webPanelController.dumpSettings();
     this.uuid = settings.uuid;
     this.urlInput.setValue(settings.url);
@@ -615,24 +701,128 @@ export class WebPanelPopupEdit extends Panel {
 
     this.webPanelController = webPanelController;
     this.settings = settings;
+    this.editSessionActive = true;
 
-    this.cancelOnPopupHidden = () => {
-      if (this.getState() !== "closed") {
+    this.closeOnPopupHidden = (event) => {
+      if (event.target !== this.getXUL() || this.getState() !== "closed") {
         return;
       }
       this.#cancelChanges();
-      this.removeEventListener("popuphidden", this.cancelOnPopupHidden);
+      this.#endEditSession();
     };
-    this.addEventListener("popuphidden", this.cancelOnPopupHidden);
-
-    this.addEventListener("popupshown", () =>
-      SidebarControllers.webPanelsShortcuts.disable(),
-    );
-    this.addEventListener("popuphidden", () =>
-      SidebarControllers.webPanelsShortcuts.enable(),
-    );
+    this.escapeOnKeyDown = (event) => {
+      if (event.key !== "Escape" || !this.editSessionActive) {
+        return;
+      }
+      if (this.#hasOpenPopupAboveEditor()) {
+        return;
+      }
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if (this.discardConfirmation.isVisible()) {
+        this.discardConfirmation.hide();
+        return;
+      }
+      this.#requestClose();
+    };
+    this.addEventListener("popuphidden", this.closeOnPopupHidden);
+    window.addEventListener("keydown", this.escapeOnKeyDown, true);
 
     return Panel.prototype.openPopup.call(this, webPanelController.button);
+  }
+
+  #requestClose() {
+    if (this.editSessionActive && this.#hasChanges()) {
+      this.discardConfirmation.show();
+      return;
+    }
+    Panel.prototype.hidePopup.call(this);
+  }
+
+  #discardChangesAndClose() {
+    this.#cancelFaviconRequest();
+    this.#cancelChanges();
+    this.#endEditSession();
+    Panel.prototype.hidePopup.call(this);
+  }
+
+  #endEditSession() {
+    this.editSessionActive = false;
+    this.#removeCloseListeners();
+    this.#cancelFaviconRequest();
+    this.backdrop.hide();
+    this.discardConfirmation.hide({ restoreFocus: false });
+  }
+
+  #cancelFaviconRequest() {
+    if (this.faviconRequestPending) {
+      this.faviconRequestId++;
+      this.faviconRequestPending = false;
+    }
+    this.saveButton.removeAttribute("disabled");
+  }
+
+  #removeCloseListeners() {
+    if (this.closeOnPopupHidden) {
+      this.removeEventListener("popuphidden", this.closeOnPopupHidden);
+      this.closeOnPopupHidden = null;
+    }
+    if (this.escapeOnKeyDown) {
+      window.removeEventListener("keydown", this.escapeOnKeyDown, true);
+      this.escapeOnKeyDown = null;
+    }
+  }
+
+  #hasOpenPopupAboveEditor() {
+    return Array.from(document.querySelectorAll("menupopup, panel")).some(
+      (popup) =>
+        popup !== this.getXUL() &&
+        ["open", "showing", "hiding"].includes(popup.state),
+    );
+  }
+
+  #hasChanges() {
+    const shortcutValue = this.shortcutInput.hasAttribute("error")
+      ? this.settings.shortcut
+      : this.shortcutInput.getValue();
+
+    return (
+      this.faviconRequestPending ||
+      this.urlInput.getValue() !== this.settings.url ||
+      this.dynamicTitleToggle.getPressed() !== this.settings.dynamicTitle ||
+      this.titleInput.getValue() !== this.settings.title ||
+      this.dynamicFaviconToggle.getPressed() !== this.settings.dynamicFavicon ||
+      this.faviconURLInput.getValue() !== this.settings.faviconURL ||
+      this.selectorToggle.getPressed() !== this.settings.selectorEnabled ||
+      this.selectorInput.getValue() !== this.settings.selector ||
+      (this.pinnedMenuList.getValue() === "true") !== this.settings.pinned ||
+      this.alwaysOnTopToggle.getPressed() !== this.settings.alwaysOnTop ||
+      this.floatingAnchorMenuList.getValue() !==
+        this.settings.floatingGeometry.anchor ||
+      this.offsetXTypeMenuList.getValue() !==
+        this.settings.floatingGeometry.offsetXType ||
+      this.offsetYTypeMenuList.getValue() !==
+        this.settings.floatingGeometry.offsetYType ||
+      this.widthTypeMenuList.getValue() !==
+        this.settings.floatingGeometry.widthType ||
+      this.heightTypeMenuList.getValue() !==
+        this.settings.floatingGeometry.heightType ||
+      String(this.containerMenuList.getValue()) !==
+        String(this.settings.userContextId) ||
+      this.temporaryToggle.getPressed() !== this.settings.temporary ||
+      this.mobileToggle.getPressed() !== this.settings.mobile ||
+      this.loadOnStartupToggle.getPressed() !== this.settings.loadOnStartup ||
+      this.loadLastUrlToggle.getPressed() !== this.settings.loadLastUrl ||
+      this.unloadOnCloseToggle.getPressed() !== this.settings.unloadOnClose ||
+      shortcutValue !== this.settings.shortcut ||
+      this.hideToolbarToggle.getPressed() !== this.settings.hideToolbar ||
+      this.hideSoundIconToggle.getPressed() !== this.settings.hideSoundIcon ||
+      this.hideNotificationBadgeToggle.getPressed() !==
+        this.settings.hideNotificationBadge ||
+      parseInt(this.periodicReloadMenuList.getValue()) !==
+        this.settings.periodicReload ||
+      this.zoom !== this.settings.zoom
+    );
   }
 
   #cancelChanges() {

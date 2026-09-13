@@ -9,16 +9,19 @@ import {
   createSubviewIconicButton,
 } from "../utils/xul.mjs";
 
+import { BrowserElements } from "../browser_elements.mjs";
 import { Div } from "./base/div.mjs";
 import { Panel } from "./base/panel.mjs";
 import { PanelMultiView } from "./base/panel_multi_view.mjs";
 import { PopupBody } from "./popup_body.mjs";
+import { PopupDiscardConfirmation } from "./popup_discard_confirmation.mjs";
 import { PopupFooter } from "./popup_footer.mjs";
 import { PopupHeader } from "./popup_header.mjs";
 import { SidebarControllers } from "../sidebar_controllers.mjs";
 import { SidebarSettings } from "../settings/sidebar_settings.mjs"; // eslint-disable-line no-unused-vars
 import { Toggle } from "./base/toggle.mjs";
 import { ToolbarSeparator } from "./base/toolbar_separator.mjs";
+import { VBox } from "./base/vbox.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
 
 const ICONS = {
@@ -31,7 +34,11 @@ export class SidebarMainPopupSettings extends Panel {
       id: "sb2-main-popup-settings",
       classList: ["sb2-popup", "sb2-popup-with-header"],
     });
-    this.setType("arrow").setRole("group");
+    this.setType("arrow")
+      .setRole("group")
+      .setAttribute("noautohide", "true")
+      .setAttribute("consumeoutsideclicks", "false")
+      .setAttribute("level", "parent");
 
     this.positionMenuList = this.#createPositionMenuList();
     this.paddingMenuList = this.#createPaddingMenuList();
@@ -75,11 +82,49 @@ export class SidebarMainPopupSettings extends Panel {
     this.enableSidebarBoxHintToggle = new Toggle();
     this.saveButton = createSaveButton();
     this.cancelButton = createCancelButton();
+    this.discardConfirmation = new PopupDiscardConfirmation({
+      onDiscard: () => this.#discardChangesAndClose(),
+    });
+    this.backdrop = new VBox({
+      id: "sb2-main-popup-settings-backdrop",
+    }).hide();
     this.#setupListeners();
     this.#compose();
+    BrowserElements.root.appendChild(this.backdrop);
+
+    this.editSessionActive = false;
   }
 
   #setupListeners() {
+    this.backdrop.addEventListener("mousedown", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    });
+    this.backdrop.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (isLeftMouseButton(event)) {
+        this.#requestClose();
+      }
+    });
+    this.backdrop.addEventListener("contextmenu", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    });
+
+    this.addEventListener("popupshown", (event) => {
+      if (event.target === this.getXUL()) {
+        this.backdrop.show();
+        SidebarControllers.webPanelsShortcuts.disable();
+      }
+    });
+    this.addEventListener("popuphidden", (event) => {
+      if (event.target === this.getXUL()) {
+        this.backdrop.hide();
+        SidebarControllers.webPanelsShortcuts.enable();
+      }
+    });
+
     this.#setupShortcutListeners(
       this.sidebarWidgetShortcutInput,
       this.sidebarWidgetShortcutResetButton,
@@ -300,6 +345,7 @@ export class SidebarMainPopupSettings extends Panel {
           ]),
         ),
         new PopupFooter().appendChildren(this.cancelButton, this.saveButton),
+        this.discardConfirmation,
       ),
     );
   }
@@ -421,8 +467,19 @@ export class SidebarMainPopupSettings extends Panel {
         this.sidebarWidgetShortcutInput.getValue(),
       ),
     );
+    this.sidebarWidgetShortcutInput.addEventListener("error", () =>
+      visibility(
+        this.autoHideSidebarToggle.getPressed(),
+        this.autoHideSidebarBehaviorMenuList.getValue(),
+        this.sidebarWidgetHideWebPanelToggle.getPressed(),
+        this.settings.sidebarWidgetShortcut,
+      ),
+    );
     this.lastWebPanelShortcutInput.addEventListener("input", () =>
       lastWebPanelShortcut(this.lastWebPanelShortcutInput.getValue()),
+    );
+    this.lastWebPanelShortcutInput.addEventListener("error", () =>
+      lastWebPanelShortcut(this.settings.lastWebPanelShortcut),
     );
     this.hideSidebarAnimatedToggle.addEventListener("toggle", () =>
       hideSidebarAnimated(this.hideSidebarAnimatedToggle.getPressed()),
@@ -451,10 +508,18 @@ export class SidebarMainPopupSettings extends Panel {
   listenSaveButtonClick(callback) {
     this.saveButton.addEventListener("click", (event) => {
       if (isLeftMouseButton(event)) {
-        this.removeEventListener("popuphidden", this.cancelOnPopupHidden);
+        this.#endEditSession();
         callback();
       }
     });
+  }
+
+  /**
+   * @returns {SidebarMainPopupSettings}
+   */
+  hidePopup() {
+    this.#requestClose();
+    return this;
   }
 
   /**
@@ -464,6 +529,10 @@ export class SidebarMainPopupSettings extends Panel {
    * @param {SidebarSettings} settings
    */
   openPopupAtScreen(screenX, screenY, settings) {
+    if (this.editSessionActive) {
+      this.#cancelChanges();
+    }
+    this.#endEditSession();
     this.positionMenuList.setValue(settings.position);
     this.paddingMenuList.setValue(settings.padding);
     this.allowWindowDraggingToggle.setPressed(settings.allowWindowDragging);
@@ -492,24 +561,120 @@ export class SidebarMainPopupSettings extends Panel {
     this.hideToolbarAnimatedToggle.setPressed(settings.hideToolbarAnimated);
 
     this.settings = settings;
+    this.editSessionActive = true;
 
-    this.cancelOnPopupHidden = () => {
-      if (this.getState() !== "closed") {
+    this.closeOnPopupHidden = (event) => {
+      if (event.target !== this.getXUL() || this.getState() !== "closed") {
         return;
       }
       this.#cancelChanges();
-      this.removeEventListener("popuphidden", this.cancelOnPopupHidden);
+      this.#endEditSession();
     };
-    this.addEventListener("popuphidden", this.cancelOnPopupHidden);
-
-    this.addEventListener("popupshown", () =>
-      SidebarControllers.webPanelsShortcuts.disable(),
-    );
-    this.addEventListener("popuphidden", () =>
-      SidebarControllers.webPanelsShortcuts.enable(),
-    );
+    this.escapeOnKeyDown = (event) => {
+      if (event.key !== "Escape" || !this.editSessionActive) {
+        return;
+      }
+      if (this.#hasOpenPopupAboveEditor()) {
+        return;
+      }
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if (this.discardConfirmation.isVisible()) {
+        this.discardConfirmation.hide();
+        return;
+      }
+      this.#requestClose();
+    };
+    this.addEventListener("popuphidden", this.closeOnPopupHidden);
+    window.addEventListener("keydown", this.escapeOnKeyDown, true);
 
     Panel.prototype.openPopupAtScreen.call(this, screenX, screenY);
+  }
+
+  #requestClose() {
+    if (this.editSessionActive && this.#hasChanges()) {
+      this.discardConfirmation.show();
+      return;
+    }
+    Panel.prototype.hidePopup.call(this);
+  }
+
+  #discardChangesAndClose() {
+    this.#cancelChanges();
+    this.#endEditSession();
+    Panel.prototype.hidePopup.call(this);
+  }
+
+  #endEditSession() {
+    this.editSessionActive = false;
+    this.#removeCloseListeners();
+    this.backdrop.hide();
+    this.discardConfirmation.hide({ restoreFocus: false });
+  }
+
+  #removeCloseListeners() {
+    if (this.closeOnPopupHidden) {
+      this.removeEventListener("popuphidden", this.closeOnPopupHidden);
+      this.closeOnPopupHidden = null;
+    }
+    if (this.escapeOnKeyDown) {
+      window.removeEventListener("keydown", this.escapeOnKeyDown, true);
+      this.escapeOnKeyDown = null;
+    }
+  }
+
+  #hasOpenPopupAboveEditor() {
+    return Array.from(document.querySelectorAll("menupopup, panel")).some(
+      (popup) =>
+        popup !== this.getXUL() &&
+        ["open", "showing", "hiding"].includes(popup.state),
+    );
+  }
+
+  #hasChanges() {
+    const sidebarWidgetShortcut = this.sidebarWidgetShortcutInput.hasAttribute(
+      "error",
+    )
+      ? this.settings.sidebarWidgetShortcut
+      : this.sidebarWidgetShortcutInput.getValue();
+    const lastWebPanelShortcut = this.lastWebPanelShortcutInput.hasAttribute(
+      "error",
+    )
+      ? this.settings.lastWebPanelShortcut
+      : this.lastWebPanelShortcutInput.getValue();
+
+    return (
+      this.positionMenuList.getValue() !== this.settings.position ||
+      this.paddingMenuList.getValue() !== this.settings.padding ||
+      this.allowWindowDraggingToggle.getPressed() !==
+        this.settings.allowWindowDragging ||
+      this.newWebPanelPositionMenuList.getValue() !==
+        this.settings.newWebPanelPosition ||
+      this.defaultFloatingOffsetMenuList.getValue() !==
+        this.settings.defaultFloatingOffset ||
+      this.autoHideBackToggle.getPressed() !==
+        this.settings.autoHideBackButton ||
+      this.autoHideForwardToggle.getPressed() !==
+        this.settings.autoHideForwardButton ||
+      this.enableSidebarBoxHintToggle.getPressed() !==
+        this.settings.enableSidebarBoxHint ||
+      this.containerBorderMenuList.getValue() !==
+        this.settings.containerBorder ||
+      this.tooltipMenuList.getValue() !== this.settings.tooltip ||
+      this.tooltipFullUrlToggle.getPressed() !== this.settings.tooltipFullUrl ||
+      this.autoHideSidebarToggle.getPressed() !==
+        this.settings.autoHideSidebar ||
+      this.autoHideSidebarBehaviorMenuList.getValue() !==
+        this.settings.autoHideSidebarBehavior ||
+      this.sidebarWidgetHideWebPanelToggle.getPressed() !==
+        this.settings.sidebarWidgetHideWebPanel ||
+      sidebarWidgetShortcut !== this.settings.sidebarWidgetShortcut ||
+      lastWebPanelShortcut !== this.settings.lastWebPanelShortcut ||
+      this.hideSidebarAnimatedToggle.getPressed() !==
+        this.settings.hideSidebarAnimated ||
+      this.hideToolbarAnimatedToggle.getPressed() !==
+        this.settings.hideToolbarAnimated
+    );
   }
 
   #cancelChanges() {
