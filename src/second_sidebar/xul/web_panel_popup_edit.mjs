@@ -782,161 +782,167 @@ export class WebPanelPopupEdit extends Panel {
   }
 
   #hasChanges() {
-    const shortcutValue = this.shortcutInput.hasAttribute("error")
-      ? this.settings.shortcut
-      : this.shortcutInput.getValue();
-
-    return (
-      this.faviconRequestPending ||
-      this.urlInput.getValue() !== this.settings.url ||
-      this.dynamicTitleToggle.getPressed() !== this.settings.dynamicTitle ||
-      this.titleInput.getValue() !== this.settings.title ||
-      this.dynamicFaviconToggle.getPressed() !== this.settings.dynamicFavicon ||
-      this.faviconURLInput.getValue() !== this.settings.faviconURL ||
-      this.selectorToggle.getPressed() !== this.settings.selectorEnabled ||
-      this.selectorInput.getValue() !== this.settings.selector ||
-      (this.pinnedMenuList.getValue() === "true") !== this.settings.pinned ||
-      this.alwaysOnTopToggle.getPressed() !== this.settings.alwaysOnTop ||
-      this.floatingAnchorMenuList.getValue() !==
-        this.settings.floatingGeometry.anchor ||
-      this.offsetXTypeMenuList.getValue() !==
-        this.settings.floatingGeometry.offsetXType ||
-      this.offsetYTypeMenuList.getValue() !==
-        this.settings.floatingGeometry.offsetYType ||
-      this.widthTypeMenuList.getValue() !==
-        this.settings.floatingGeometry.widthType ||
-      this.heightTypeMenuList.getValue() !==
-        this.settings.floatingGeometry.heightType ||
-      String(this.containerMenuList.getValue()) !==
-        String(this.settings.userContextId) ||
-      this.temporaryToggle.getPressed() !== this.settings.temporary ||
-      this.mobileToggle.getPressed() !== this.settings.mobile ||
-      this.loadOnStartupToggle.getPressed() !== this.settings.loadOnStartup ||
-      this.loadLastUrlToggle.getPressed() !== this.settings.loadLastUrl ||
-      this.unloadOnCloseToggle.getPressed() !== this.settings.unloadOnClose ||
-      shortcutValue !== this.settings.shortcut ||
-      this.hideToolbarToggle.getPressed() !== this.settings.hideToolbar ||
-      this.hideSoundIconToggle.getPressed() !== this.settings.hideSoundIcon ||
-      this.hideNotificationBadgeToggle.getPressed() !==
-        this.settings.hideNotificationBadge ||
-      parseInt(this.periodicReloadMenuList.getValue()) !==
-        this.settings.periodicReload ||
-      this.zoom !== this.settings.zoom
-    );
+    return this.faviconRequestPending || this.#getChangeReverters().length > 0;
   }
 
   #cancelChanges() {
-    if (this.urlInput.getValue() !== this.settings.url) {
-      this.onUrlChange(this.settings.uuid, this.settings.url);
+    for (const revert of this.#getChangeReverters()) {
+      revert();
     }
+  }
+
+  #getChangeReverters() {
+    const reverters = [];
+
     if (
       this.dynamicTitleToggle.getPressed() !== this.settings.dynamicTitle ||
       this.titleInput.getValue() !== this.settings.title
     ) {
-      this.onTitleChange(
-        this.settings.uuid,
-        this.settings.dynamicTitle,
-        this.settings.title,
+      reverters.push(() =>
+        this.onTitleChange(
+          this.settings.uuid,
+          this.settings.dynamicTitle,
+          this.settings.title,
+        ),
       );
     }
     if (
       this.dynamicFaviconToggle.getPressed() !== this.settings.dynamicFavicon ||
       this.faviconURLInput.getValue() !== this.settings.faviconURL
     ) {
-      this.onFaviconURLChange(
-        this.settings.uuid,
-        this.settings.dynamicFavicon,
-        this.settings.faviconURL,
+      reverters.push(() =>
+        this.onFaviconURLChange(
+          this.settings.uuid,
+          this.settings.dynamicFavicon,
+          this.settings.faviconURL,
+        ),
       );
     }
     if (this.selectorToggle.getPressed() !== this.settings.selectorEnabled) {
-      this.onSelectorEnabledChange(
-        this.settings.uuid,
-        this.settings.selectorEnabled,
+      reverters.push(() =>
+        this.onSelectorEnabledChange(
+          this.settings.uuid,
+          this.settings.selectorEnabled,
+        ),
       );
     }
     if (this.selectorInput.getValue() !== this.settings.selector) {
-      this.onSelectorChange(this.settings.uuid, this.settings.selector);
+      reverters.push(() =>
+        this.onSelectorChange(this.settings.uuid, this.settings.selector),
+      );
+    }
+    // URL and selector updates share a debounce timer. Restore the URL last so
+    // a selector rollback cannot cancel the navigation back to the saved URL.
+    if (this.urlInput.getValue() !== this.settings.url) {
+      reverters.push(() =>
+        this.onUrlChange(this.settings.uuid, this.settings.url),
+      );
     }
     if ((this.pinnedMenuList.getValue() === "true") !== this.settings.pinned) {
-      this.onPinnedChange(this.settings.uuid, this.settings.pinned);
+      reverters.push(() =>
+        this.onPinnedChange(this.settings.uuid, this.settings.pinned),
+      );
     }
     if (this.alwaysOnTopToggle.getPressed() !== this.settings.alwaysOnTop) {
-      this.onAlwaysOnTopChange(this.settings.uuid, this.settings.alwaysOnTop);
+      reverters.push(() =>
+        this.onAlwaysOnTopChange(this.settings.uuid, this.settings.alwaysOnTop),
+      );
     }
     if (
       this.floatingAnchorMenuList.getValue() !==
       this.settings.floatingGeometry.anchor
     ) {
-      this.onFloatingAnchorChange(
-        this.settings.uuid,
-        this.settings.floatingGeometry.anchor,
+      reverters.push(() =>
+        this.onFloatingAnchorChange(
+          this.settings.uuid,
+          this.settings.floatingGeometry.anchor,
+        ),
       );
     }
     if (
       this.offsetXTypeMenuList.getValue() !==
       this.settings.floatingGeometry.offsetXType
     ) {
-      this.onOffsetXTypeChange(
-        this.settings.uuid,
-        this.settings.floatingGeometry.offsetXType,
+      reverters.push(() =>
+        this.onOffsetXTypeChange(
+          this.settings.uuid,
+          this.settings.floatingGeometry.offsetXType,
+        ),
       );
     }
     if (
       this.offsetYTypeMenuList.getValue() !==
       this.settings.floatingGeometry.offsetYType
     ) {
-      this.onOffsetYTypeChange(
-        this.settings.uuid,
-        this.settings.floatingGeometry.offsetYType,
+      reverters.push(() =>
+        this.onOffsetYTypeChange(
+          this.settings.uuid,
+          this.settings.floatingGeometry.offsetYType,
+        ),
       );
     }
     if (
       this.widthTypeMenuList.getValue() !==
       this.settings.floatingGeometry.widthType
     ) {
-      this.onWidthTypeChange(
-        this.settings.uuid,
-        this.settings.floatingGeometry.widthType,
+      reverters.push(() =>
+        this.onWidthTypeChange(
+          this.settings.uuid,
+          this.settings.floatingGeometry.widthType,
+        ),
       );
     }
     if (
       this.heightTypeMenuList.getValue() !==
       this.settings.floatingGeometry.heightType
     ) {
-      this.onHeightTypeChange(
-        this.settings.uuid,
-        this.settings.floatingGeometry.heightType,
+      reverters.push(() =>
+        this.onHeightTypeChange(
+          this.settings.uuid,
+          this.settings.floatingGeometry.heightType,
+        ),
       );
     }
     if (
       String(this.containerMenuList.getValue()) !==
       String(this.settings.userContextId)
     ) {
-      this.onUserContextIdChange(
-        this.settings.uuid,
-        this.settings.userContextId,
+      reverters.push(() =>
+        this.onUserContextIdChange(
+          this.settings.uuid,
+          this.settings.userContextId,
+        ),
       );
     }
     if (this.temporaryToggle.getPressed() !== this.settings.temporary) {
-      this.onTemporaryChange(this.settings.uuid, this.settings.temporary);
+      reverters.push(() =>
+        this.onTemporaryChange(this.settings.uuid, this.settings.temporary),
+      );
     }
     if (this.mobileToggle.getPressed() !== this.settings.mobile) {
-      this.onMobileChange(this.settings.uuid, this.settings.mobile);
+      reverters.push(() =>
+        this.onMobileChange(this.settings.uuid, this.settings.mobile),
+      );
     }
     if (this.loadOnStartupToggle.getPressed() !== this.settings.loadOnStartup) {
-      this.onLoadOnStartupChange(
-        this.settings.uuid,
-        this.settings.loadOnStartup,
+      reverters.push(() =>
+        this.onLoadOnStartupChange(
+          this.settings.uuid,
+          this.settings.loadOnStartup,
+        ),
       );
     }
     if (this.loadLastUrlToggle.getPressed() !== this.settings.loadLastUrl) {
-      this.onLoadLastUrlChange(this.settings.uuid, this.settings.loadLastUrl);
+      reverters.push(() =>
+        this.onLoadLastUrlChange(this.settings.uuid, this.settings.loadLastUrl),
+      );
     }
     if (this.unloadOnCloseToggle.getPressed() !== this.settings.unloadOnClose) {
-      this.onUnloadOnCloseChange(
-        this.settings.uuid,
-        this.settings.unloadOnClose,
+      reverters.push(() =>
+        this.onUnloadOnCloseChange(
+          this.settings.uuid,
+          this.settings.unloadOnClose,
+        ),
       );
     }
 
@@ -944,30 +950,44 @@ export class WebPanelPopupEdit extends Panel {
       ? this.settings.shortcut
       : this.shortcutInput.getValue();
     if (shortcutValue !== this.settings.shortcut) {
-      this.onShortcutChange(this.settings.uuid, this.settings.shortcut);
+      reverters.push(() =>
+        this.onShortcutChange(this.settings.uuid, this.settings.shortcut),
+      );
     }
 
     if (this.hideToolbarToggle.getPressed() !== this.settings.hideToolbar) {
-      this.onHideToolbar(this.settings.uuid, this.settings.hideToolbar);
+      reverters.push(() =>
+        this.onHideToolbar(this.settings.uuid, this.settings.hideToolbar),
+      );
     }
     if (this.hideSoundIconToggle.getPressed() !== this.settings.hideSoundIcon) {
-      this.onHideSoundIcon(this.settings.uuid, this.settings.hideSoundIcon);
+      reverters.push(() =>
+        this.onHideSoundIcon(this.settings.uuid, this.settings.hideSoundIcon),
+      );
     }
     if (
       this.hideNotificationBadgeToggle.getPressed() !==
       this.settings.hideNotificationBadge
     ) {
-      this.onHideNotificationBadge(
-        this.settings.uuid,
-        this.settings.hideNotificationBadge,
+      reverters.push(() =>
+        this.onHideNotificationBadge(
+          this.settings.uuid,
+          this.settings.hideNotificationBadge,
+        ),
       );
     }
     if (
       parseInt(this.periodicReloadMenuList.getValue()) !==
       this.settings.periodicReload
     ) {
-      this.onPeriodicReload(this.settings.uuid, this.settings.periodicReload);
+      reverters.push(() =>
+        this.onPeriodicReload(this.settings.uuid, this.settings.periodicReload),
+      );
     }
-    this.onZoom(this.settings.uuid, this.settings.zoom);
+    if (this.zoom !== this.settings.zoom) {
+      reverters.push(() => this.onZoom(this.settings.uuid, this.settings.zoom));
+    }
+
+    return reverters;
   }
 }

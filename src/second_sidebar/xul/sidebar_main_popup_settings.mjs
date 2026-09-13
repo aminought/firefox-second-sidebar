@@ -632,106 +632,94 @@ export class SidebarMainPopupSettings extends Panel {
   }
 
   #hasChanges() {
-    const sidebarWidgetShortcut = this.sidebarWidgetShortcutInput.hasAttribute(
-      "error",
-    )
-      ? this.settings.sidebarWidgetShortcut
-      : this.sidebarWidgetShortcutInput.getValue();
-    const lastWebPanelShortcut = this.lastWebPanelShortcutInput.hasAttribute(
-      "error",
-    )
-      ? this.settings.lastWebPanelShortcut
-      : this.lastWebPanelShortcutInput.getValue();
-
-    return (
-      this.positionMenuList.getValue() !== this.settings.position ||
-      this.paddingMenuList.getValue() !== this.settings.padding ||
-      this.allowWindowDraggingToggle.getPressed() !==
-        this.settings.allowWindowDragging ||
-      this.newWebPanelPositionMenuList.getValue() !==
-        this.settings.newWebPanelPosition ||
-      this.defaultFloatingOffsetMenuList.getValue() !==
-        this.settings.defaultFloatingOffset ||
-      this.autoHideBackToggle.getPressed() !==
-        this.settings.autoHideBackButton ||
-      this.autoHideForwardToggle.getPressed() !==
-        this.settings.autoHideForwardButton ||
-      this.enableSidebarBoxHintToggle.getPressed() !==
-        this.settings.enableSidebarBoxHint ||
-      this.containerBorderMenuList.getValue() !==
-        this.settings.containerBorder ||
-      this.tooltipMenuList.getValue() !== this.settings.tooltip ||
-      this.tooltipFullUrlToggle.getPressed() !== this.settings.tooltipFullUrl ||
-      this.autoHideSidebarToggle.getPressed() !==
-        this.settings.autoHideSidebar ||
-      this.autoHideSidebarBehaviorMenuList.getValue() !==
-        this.settings.autoHideSidebarBehavior ||
-      this.sidebarWidgetHideWebPanelToggle.getPressed() !==
-        this.settings.sidebarWidgetHideWebPanel ||
-      sidebarWidgetShortcut !== this.settings.sidebarWidgetShortcut ||
-      lastWebPanelShortcut !== this.settings.lastWebPanelShortcut ||
-      this.hideSidebarAnimatedToggle.getPressed() !==
-        this.settings.hideSidebarAnimated ||
-      this.hideToolbarAnimatedToggle.getPressed() !==
-        this.settings.hideToolbarAnimated
-    );
+    return this.#getChangeReverters().length > 0;
   }
 
   #cancelChanges() {
+    for (const revert of this.#getChangeReverters()) {
+      revert();
+    }
+  }
+
+  #getChangeReverters() {
+    const reverters = [];
+
     if (this.positionMenuList.getValue() !== this.settings.position) {
-      this.onPositionChange(this.settings.position);
+      reverters.push(() => this.onPositionChange(this.settings.position));
     }
     if (this.paddingMenuList.getValue() !== this.settings.padding) {
-      this.onPaddingChange(this.settings.padding);
+      reverters.push(() => this.onPaddingChange(this.settings.padding));
     }
     if (
       this.allowWindowDraggingToggle.getPressed() !==
       this.settings.allowWindowDragging
     ) {
-      this.onAllowWindowDraggingChange(this.settings.allowWindowDragging);
+      reverters.push(() =>
+        this.onAllowWindowDraggingChange(this.settings.allowWindowDragging),
+      );
     }
     if (
       this.newWebPanelPositionMenuList.getValue() !==
       this.settings.newWebPanelPosition
     ) {
-      this.onNewWebPanelPositionChange(this.settings.newWebPanelPosition);
+      reverters.push(() =>
+        this.onNewWebPanelPositionChange(this.settings.newWebPanelPosition),
+      );
     }
     if (
       this.defaultFloatingOffsetMenuList.getValue() !==
       this.settings.defaultFloatingOffset
     ) {
-      this.onDefaultFloatingOffsetChange(this.settings.defaultFloatingOffset);
+      reverters.push(() =>
+        this.onDefaultFloatingOffsetChange(this.settings.defaultFloatingOffset),
+      );
     }
     if (
       this.autoHideBackToggle.getPressed() !== this.settings.autoHideBackButton
     ) {
-      this.onAutoHideBackButtonChange(this.settings.autoHideBackButton);
+      reverters.push(() =>
+        this.onAutoHideBackButtonChange(this.settings.autoHideBackButton),
+      );
     }
     if (
       this.autoHideForwardToggle.getPressed() !==
       this.settings.autoHideForwardButton
     ) {
-      this.onAutoHideForwardButtonChange(this.settings.autoHideForwardButton);
+      reverters.push(() =>
+        this.onAutoHideForwardButtonChange(this.settings.autoHideForwardButton),
+      );
     }
     if (
       this.enableSidebarBoxHintToggle.getPressed() !==
       this.settings.enableSidebarBoxHint
     ) {
-      this.onEnableSidebarBoxHintChange(this.settings.enableSidebarBoxHint);
+      reverters.push(() =>
+        this.onEnableSidebarBoxHintChange(this.settings.enableSidebarBoxHint),
+      );
     }
     if (
       this.containerBorderMenuList.getValue() !== this.settings.containerBorder
     ) {
-      this.onContainerBorderChange(this.settings.containerBorder);
+      reverters.push(() =>
+        this.onContainerBorderChange(this.settings.containerBorder),
+      );
     }
     if (this.tooltipMenuList.getValue() !== this.settings.tooltip) {
-      this.onTooltipChange(this.settings.tooltip);
+      reverters.push(() => this.onTooltipChange(this.settings.tooltip));
     }
     if (
       this.tooltipFullUrlToggle.getPressed() !== this.settings.tooltipFullUrl
     ) {
-      this.onTooltipFullUrlChange(this.settings.tooltipFullUrl);
+      reverters.push(() =>
+        this.onTooltipFullUrlChange(this.settings.tooltipFullUrl),
+      );
     }
+
+    const sidebarWidgetShortcut = this.sidebarWidgetShortcutInput.hasAttribute(
+      "error",
+    )
+      ? this.settings.sidebarWidgetShortcut
+      : this.sidebarWidgetShortcutInput.getValue();
     if (
       this.autoHideSidebarToggle.getPressed() !==
         this.settings.autoHideSidebar ||
@@ -739,33 +727,45 @@ export class SidebarMainPopupSettings extends Panel {
         this.settings.autoHideSidebarBehavior ||
       this.sidebarWidgetHideWebPanelToggle.getPressed() !==
         this.settings.sidebarWidgetHideWebPanel ||
-      this.sidebarWidgetShortcutInput.getValue() !==
-        this.settings.sidebarWidgetShortcut
+      sidebarWidgetShortcut !== this.settings.sidebarWidgetShortcut
     ) {
-      this.onVisibilityChange(
-        this.settings.autoHideSidebar,
-        this.settings.autoHideSidebarBehavior,
-        this.settings.sidebarWidgetHideWebPanel,
-        this.settings.sidebarWidgetShortcut,
+      reverters.push(() =>
+        this.onVisibilityChange(
+          this.settings.autoHideSidebar,
+          this.settings.autoHideSidebarBehavior,
+          this.settings.sidebarWidgetHideWebPanel,
+          this.settings.sidebarWidgetShortcut,
+        ),
       );
     }
     if (
       this.hideSidebarAnimatedToggle.getPressed() !==
       this.settings.hideSidebarAnimated
     ) {
-      this.onAutoHideSidebarAnimatedChange(this.settings.hideSidebarAnimated);
+      reverters.push(() =>
+        this.onAutoHideSidebarAnimatedChange(this.settings.hideSidebarAnimated),
+      );
     }
-    if (
-      this.lastWebPanelShortcutInput.getValue() !==
-      this.settings.lastWebPanelShortcut
-    ) {
-      this.onLastWebPanelShortcutChange(this.settings.lastWebPanelShortcut);
+
+    const lastWebPanelShortcut = this.lastWebPanelShortcutInput.hasAttribute(
+      "error",
+    )
+      ? this.settings.lastWebPanelShortcut
+      : this.lastWebPanelShortcutInput.getValue();
+    if (lastWebPanelShortcut !== this.settings.lastWebPanelShortcut) {
+      reverters.push(() =>
+        this.onLastWebPanelShortcutChange(this.settings.lastWebPanelShortcut),
+      );
     }
     if (
       this.hideToolbarAnimatedToggle.getPressed() !==
       this.settings.hideToolbarAnimated
     ) {
-      this.onAutoHideToolbarAnimatedChange(this.settings.hideToolbarAnimated);
+      reverters.push(() =>
+        this.onAutoHideToolbarAnimatedChange(this.settings.hideToolbarAnimated),
+      );
     }
+
+    return reverters;
   }
 }
