@@ -239,7 +239,9 @@ export class SidebarMainCollapser {
       this.hideSidebarTimer = setTimeout(() => {
         this.shouldAnimate(animate);
         this.fullScreenShouldAnimate(fullScreenAnimate);
-        SidebarControllers.sidebarMainController.collapse();
+        SidebarControllers.sidebarMainController.collapse({
+          animated: animate || fullScreenAnimate,
+        });
         if (saveLastOpenedWebPanel) {
           const webPanelController =
             SidebarControllers.webPanelsController.getActive();

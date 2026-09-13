@@ -143,6 +143,13 @@ export class WebPanelsBrowser extends Browser {
         overflow: unset !important;
         border: none !important;
       }
+
+      @media -moz-pref("browser.nova.enabled") {
+        .browserContainer {
+          border-radius: 0 !important;
+          box-shadow: none !important;
+        }
+      }
     `);
     windowRoot.appendChild(browserContainerStyle);
 

@@ -18,9 +18,18 @@ export const SIDEBAR_BOX_CSS = `
   }
 
   #sb2-box {
+    --sb2-box-top-left-radius: var(--border-radius-medium);
+    --sb2-box-top-right-radius: var(--border-radius-medium);
+    --sb2-box-bottom-right-radius: var(--border-radius-medium);
+    --sb2-box-bottom-left-radius: var(--border-radius-medium);
+
     background-color: var(--sidebar-background-color);
     color: var(--sidebar-text-color);
-    border-radius: var(--border-radius-medium);
+    border-radius:
+      var(--sb2-box-top-left-radius)
+      var(--sb2-box-top-right-radius)
+      var(--sb2-box-bottom-right-radius)
+      var(--sb2-box-bottom-left-radius);
     box-shadow: var(--content-area-shadow);
     border: 0.5px solid var(--sidebar-border-color);
     overflow: hidden;
@@ -130,5 +139,63 @@ export const SIDEBAR_BOX_CSS = `
     border: 1px solid var(--sidebar-border-color);
     font-size: small;
     font-weight: bold;
+  }
+
+  @media -moz-pref("browser.nova.enabled") {
+    /* Firefox Stable's card-style sidebar uses the toolbar surface rather than
+       the legacy opaque sidebar color. Keep only Second Sidebar on that token. */
+    :root[sb2-nova-card-layout]:not([lwtheme]) #sb2-box {
+      background-color: var(--sb2-nova-sidebar-surface-color);
+    }
+
+    #sb2-box[pinned="false"] {
+      --sb2-box-top-left-radius: var(--sb2-nova-radius);
+      --sb2-box-top-right-radius: var(--sb2-nova-radius);
+      --sb2-box-bottom-right-radius: var(--sb2-nova-radius);
+      --sb2-box-bottom-left-radius: var(--sb2-nova-radius);
+    }
+
+    #sb2-box[pinned="true"] {
+      --sb2-box-top-left-radius: var(--sb2-nova-radius);
+      --sb2-box-top-right-radius: var(--sb2-nova-radius);
+      --sb2-box-bottom-right-radius: var(--sb2-nova-connected-radius);
+      --sb2-box-bottom-left-radius: var(--sb2-nova-connected-radius);
+
+      background-clip: padding-box;
+      box-shadow: none;
+      border: var(--border-width, 1px) solid var(--sb2-nova-border-color);
+      border-block-end-width: var(--sb2-nova-card-border-width);
+
+      :root[lwtheme] & {
+        border-color: var(--sidebar-border-color, var(--sb2-nova-border-color));
+      }
+    }
+
+    /* Only the card layout visually joins a pinned panel to the launcher.
+       Nightly's connected layout keeps both top corners rounded. */
+    :root[sb2-nova-card-layout]
+      #sb2-wrapper[position="left"]
+      #sb2-box[pinned="true"] {
+      --sb2-box-top-left-radius: var(--sb2-nova-connected-radius);
+    }
+
+    :root[sb2-nova-card-layout]
+      #sb2-wrapper[position="right"]
+      #sb2-box[pinned="true"] {
+      --sb2-box-top-right-radius: var(--sb2-nova-connected-radius);
+    }
+
+    :root[sizemode="maximized"] #sb2-box[pinned="true"] {
+      --sb2-box-bottom-right-radius: 0;
+      --sb2-box-bottom-left-radius: 0;
+
+      border-block-end-width: 0;
+    }
+
+    #sb2-box #sb2-toolbar {
+      background-color: var(--sidebar-background-color);
+      border-block-end: var(--border-width, 1px) solid
+        var(--sidebar-border-color, var(--sb2-nova-border-color));
+    }
   }
 `;

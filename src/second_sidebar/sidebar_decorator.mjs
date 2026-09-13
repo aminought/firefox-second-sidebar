@@ -28,10 +28,20 @@ const STYLE =
 
 export class SidebarDecorator {
   static decorate() {
+    this.#setNovaLayoutMode();
     const style = document.createElement("style");
     style.innerHTML = STYLE;
     document.querySelector("head").appendChild(style);
     this.#collapse();
+  }
+
+  static #setNovaLayoutMode() {
+    const root = document.documentElement;
+    const usesCardLayout =
+      getComputedStyle(root)
+        .getPropertyValue("--chrome-block-radius")
+        .trim() !== "";
+    root.toggleAttribute("sb2-nova-card-layout", usesCardLayout);
   }
 
   static #collapse() {
