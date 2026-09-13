@@ -17,8 +17,10 @@ export const SIDEBAR_MAIN_CSS = `
       box-shadow: var(--content-area-shadow);
 
       @media (-moz-windows-mica) {
-        backdrop-filter: blur(32px);
-        background-color: light-dark(rgba(255, 255, 255, 0.6), rgba(0, 0, 0, 0.6));
+        /* The toolbox color can be translucent with Mica. Paint it over the
+           same opaque fallback Firefox uses for its expanding sidebar. */
+        background-color: light-dark(#e8e8e8, #202020);
+        background-image: image(var(--toolbox-background-color, var(--toolbox-bgcolor)));
       }
     }
 
@@ -115,6 +117,16 @@ export const SIDEBAR_MAIN_CSS = `
     }
   }
 
+  /* Keep the active web panel visually in sync with Firefox's selected tab.
+     The ID raises specificity above the native toolbarbutton [open] rule. */
+  #sb2-main .sb2-main-web-panel-button[open] > .toolbarbutton-badge-stack {
+    background-color: var(
+      --tab-background-color-selected,
+      var(--toolbarbutton-background-color-active)
+    );
+    box-shadow: var(--tab-box-shadow-selected, none);
+  }
+
   .sb2-main-button[temporary="true"] > stack.toolbarbutton-badge-stack {
     background-color: var(
       --attention-dot-color,
@@ -162,7 +174,106 @@ export const SIDEBAR_MAIN_CSS = `
 
   @media -moz-pref("browser.nova.enabled") {
     #sb2-main {
-      background-color: var(--toolbar-background-color);
+      box-sizing: border-box;
+      border: var(--sb2-nova-card-border-width) solid var(--sb2-nova-border-color);
+      border-radius: var(--sb2-nova-connected-radius);
+
+      /* Negative margins collapse the layout box, but chrome-block paint can
+         still extend past it as a border or shadow. Stop painting only after
+         the slide-out transition has completed. */
+      &[sb2-collapsed] {
+        visibility: hidden;
+      }
+
+      &[overlay="true"] {
+        color: var(--toolbox-text-color, var(--toolbar-text-color));
+        background-color: light-dark(#e8e8e8, #202020);
+        background-image:
+          var(--toolbox-background-gradient, image(transparent)),
+          image(var(--toolbox-background-color, var(--toolbox-bgcolor)));
+        background-size: 100vw 100vh, auto;
+        border-width: var(--border-width, 1px);
+        border-radius: var(--sb2-nova-radius);
+
+        :root[sb2-nova-card-layout] & {
+          background-color: var(--toolbox-background-color, var(--toolbox-bgcolor));
+          background-image: none;
+          background-size: auto;
+        }
+
+        :root[sb2-nova-card-layout][lwtheme] &:-moz-window-inactive {
+          color: var(--toolbox-text-color-inactive, var(--toolbox-text-color));
+          background-color: var(
+            --toolbox-background-color-inactive,
+            var(--toolbox-background-color, var(--toolbox-bgcolor))
+          );
+        }
+      }
+
+      /* Firefox's Stable card layout uses the toolbar surface for built-in
+         themes in both the persistent and expanding launcher states. */
+      :root[sb2-nova-card-layout]:not([lwtheme]) & {
+        background-color: var(--sb2-nova-sidebar-surface-color);
+      }
+    }
+
+    /* Nova's selected tab is a filled surface with an accent border. Matching
+       both layers keeps the active panel visible even when Mica is enabled. */
+    #sb2-main .sb2-main-web-panel-button[open] > .toolbarbutton-badge-stack {
+      box-sizing: border-box;
+      border: var(--border-width, 1px) solid transparent;
+      padding: calc(
+        var(--toolbarbutton-inner-padding, var(--toolbarbutton-padding-inner)) -
+          var(--border-width, 1px)
+      );
+      background:
+        var(--tab-border-color-accent, transparent) border-box border-area,
+        var(
+            --tab-background-color-selected,
+            var(--toolbarbutton-background-color-active)
+          )
+          padding-box;
+    }
+
+    #sb2-wrapper[position="left"] #sb2-main[overlay="true"] {
+      background-position-x: 0%;
+    }
+
+    #sb2-wrapper[position="right"] #sb2-main[overlay="true"] {
+      background-position-x: 100%;
+    }
+
+    :root[sizemode="maximized"] {
+      #sb2-main {
+        border-end-start-radius: 0;
+        border-end-end-radius: 0;
+        border-block-end-width: 0;
+      }
+
+      #sb2-wrapper[position="left"] #sb2-main {
+        border-start-start-radius: 0;
+        border-inline-start-width: 0;
+      }
+
+      #sb2-wrapper[position="right"] #sb2-main {
+        border-start-end-radius: 0;
+        border-inline-end-width: 0;
+      }
+    }
+
+    /* Firefox 155 keeps the card model in compact density even though its
+       window-gap token is zero. Preserve the one content-facing top corner. */
+    :root[uidensity="compact"] #sb2-wrapper[position="left"] #sb2-main {
+      border-start-end-radius: var(--sb2-nova-card-radius);
+    }
+
+    :root[uidensity="compact"] #sb2-wrapper[position="right"] #sb2-main {
+      border-start-start-radius: var(--sb2-nova-card-radius);
+    }
+
+    :root:is([inFullscreen], [inDOMFullscreen], [fullscreenNavToolboxHidden]) #sb2-main {
+      border: none;
+      border-radius: 0;
     }
   }
 `;

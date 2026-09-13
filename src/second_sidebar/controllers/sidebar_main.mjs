@@ -11,6 +11,7 @@ import { isRightMouseButton } from "../utils/buttons.mjs";
 export class SidebarMainController {
   constructor() {
     this.root = new XULElement({ element: document.documentElement });
+    this.collapseTransitionEndListener = null;
     SidebarMainPatcher.patch();
     this.#setupListeners();
   }
@@ -98,18 +99,63 @@ export class SidebarMainController {
     return !zeros.includes(marginRight) || !zeros.includes(marginLeft);
   }
 
-  collapse() {
+  /**
+   * @param {object} params
+   * @param {boolean} params.animated
+   */
+  collapse({ animated = false } = {}) {
     const position = SidebarElements.sidebarWrapper.getPosition();
+    const marginProperty =
+      position === "right" ? "margin-right" : "margin-left";
+    // A zero-width flex item still leaves #browser's Nova gap behind.
+    const browserGap = Number.parseFloat(
+      getComputedStyle(BrowserElements.browser.getXUL()).columnGap,
+    );
+    const collapseOffset =
+      SidebarElements.sidebarMain.getBoundingClientRect().width +
+      (Number.isFinite(browserGap) ? browserGap : 0);
+    this.#clearCollapseTransitionEndListener();
+    if (animated) {
+      this.collapseTransitionEndListener = (event) => {
+        if (
+          event.target !== SidebarElements.sidebarMain.getXUL() ||
+          event.propertyName !== marginProperty
+        ) {
+          return;
+        }
+        this.#clearCollapseTransitionEndListener();
+        SidebarElements.sidebarMain.setAttribute("sb2-collapsed", true);
+      };
+      SidebarElements.sidebarMain.addEventListener(
+        "transitionend",
+        this.collapseTransitionEndListener,
+      );
+    } else {
+      SidebarElements.sidebarMain.setAttribute("sb2-collapsed", true);
+    }
     SidebarElements.sidebarMain.setProperty(
-      position === "right" ? "margin-right" : "margin-left",
-      -SidebarElements.sidebarMain.getBoundingClientRect().width + "px",
+      marginProperty,
+      -collapseOffset + "px",
     );
     SidebarElements.sidebarCollapseButton.setOpen(false);
   }
 
   uncollapse() {
+    this.#clearCollapseTransitionEndListener();
+    SidebarElements.sidebarMain.removeAttribute("sb2-collapsed");
     SidebarElements.sidebarMain.setProperty("margin-right", "0px");
     SidebarElements.sidebarMain.setProperty("margin-left", "0px");
     SidebarElements.sidebarCollapseButton.setOpen(true);
+  }
+
+  #clearCollapseTransitionEndListener() {
+    if (!this.collapseTransitionEndListener) {
+      return;
+    }
+    SidebarElements.sidebarMain.removeEventListener(
+      "transitionend",
+      this.collapseTransitionEndListener,
+    );
+    this.collapseTransitionEndListener = null;
   }
 }
