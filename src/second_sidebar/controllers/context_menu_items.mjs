@@ -43,8 +43,14 @@ export class ContextMenuItemsController {
       gContextMenu.shouldShowSeparator("context-sep-open"),
     );
 
-    this.searchQuery = gContextMenu.selectedText || gContextMenu.linkTextStr;
-    SidebarElements.searchInWebPanelMenuItem.setSearchQuery(this.searchQuery);
+    this.searchQuery = gContextMenu.isTextSelected
+      ? gContextMenu.selectedText.trim()
+      : "";
+    const hideSearchItem = this.searchQuery.length === 0;
+    SidebarElements.searchInWebPanelMenuItem.toggleHidden(hideSearchItem);
+    if (!hideSearchItem) {
+      SidebarElements.searchInWebPanelMenuItem.setSearchQuery(this.searchQuery);
+    }
   }
 
   /**
@@ -60,7 +66,8 @@ export class ContextMenuItemsController {
   }
 
   async #searchInWebPanel() {
-    const url = await SearchService.getDefaulSubmissionUrl(this.searchQuery);
+    if (!this.searchQuery) return;
+    const url = await SearchService.getDefaultSubmissionUrl(this.searchQuery);
     if (url === null) return;
     SidebarControllers.webPanelNewController.createWebPanel(
       url,
