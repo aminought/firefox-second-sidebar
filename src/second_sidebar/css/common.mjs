@@ -28,7 +28,25 @@ export const COMMON_CSS = `
     }
 
     :root[sb2-nova-card-layout]:not([lwtheme]) {
-      --sb2-nova-sidebar-surface-color: var(--toolbar-background-color);
+      --sb2-nova-sidebar-surface-color: var(
+        --toolbar-background-color,
+        var(--toolbox-background-color, var(--sidebar-background-color))
+      );
+      --sb2-nova-sidebar-text-color: var(
+        --toolbox-text-color,
+        var(--sidebar-text-color)
+      );
+
+      @media (-moz-platform: linux) {
+        --sb2-nova-sidebar-surface-color: var(
+          --toolbox-background-color,
+          -moz-headerbar
+        );
+        --sb2-nova-sidebar-text-color: var(
+          --toolbox-text-color,
+          -moz-headerbartext
+        );
+      }
     }
 
     @media (-moz-windows-mica) {

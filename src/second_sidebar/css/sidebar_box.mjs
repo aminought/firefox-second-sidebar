@@ -146,6 +146,7 @@ export const SIDEBAR_BOX_CSS = `
        the legacy opaque sidebar color. Keep only Second Sidebar on that token. */
     :root[sb2-nova-card-layout]:not([lwtheme]) #sb2-box {
       background-color: var(--sb2-nova-sidebar-surface-color);
+      color: var(--sb2-nova-sidebar-text-color);
     }
 
     #sb2-box[pinned="false"] {
@@ -196,6 +197,14 @@ export const SIDEBAR_BOX_CSS = `
       background-color: var(--sidebar-background-color);
       border-block-end: var(--border-width, 1px) solid
         var(--sidebar-border-color, var(--sb2-nova-border-color));
+    }
+
+    @media (-moz-platform: linux) {
+      :root:not([sb2-nova-card-layout], [lwtheme]) #sb2-box,
+      :root:not([lwtheme]) #sb2-box #sb2-toolbar {
+        background-color: var(--toolbox-background-color, -moz-headerbar);
+        color: var(--toolbox-text-color, -moz-headerbartext);
+      }
     }
   }
 `;

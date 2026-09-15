@@ -213,7 +213,15 @@ export const SIDEBAR_MAIN_CSS = `
       /* Firefox's Stable card layout uses the toolbar surface for built-in
          themes in both the persistent and expanding launcher states. */
       :root[sb2-nova-card-layout]:not([lwtheme]) & {
+        color: var(--sb2-nova-sidebar-text-color);
         background-color: var(--sb2-nova-sidebar-surface-color);
+      }
+
+      @media (-moz-platform: linux) {
+        :root:not([sb2-nova-card-layout], [lwtheme]) & {
+          color: var(--toolbox-text-color, -moz-headerbartext);
+          background-color: var(--toolbox-background-color, -moz-headerbar);
+        }
       }
     }
 
@@ -241,6 +249,22 @@ export const SIDEBAR_MAIN_CSS = `
 
     #sb2-wrapper[position="right"] #sb2-main[overlay="true"] {
       background-position-x: 100%;
+    }
+
+    @media (-moz-platform: linux) {
+      /* Firefox's connected Nova layout has no native #browser gap. Preserve
+         separation from the adjacent panel or content on Linux. */
+      :root:not([sb2-nova-card-layout])
+        #sb2-wrapper[position="left"]
+        #sb2-main {
+        margin-right: var(--space-xsmall, 4px);
+      }
+
+      :root:not([sb2-nova-card-layout])
+        #sb2-wrapper[position="right"]
+        #sb2-main {
+        margin-left: var(--space-xsmall, 4px);
+      }
     }
 
     :root[sizemode="maximized"] {

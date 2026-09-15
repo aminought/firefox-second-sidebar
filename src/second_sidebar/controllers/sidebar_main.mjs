@@ -107,13 +107,22 @@ export class SidebarMainController {
     const position = SidebarElements.sidebarWrapper.getPosition();
     const marginProperty =
       position === "right" ? "margin-right" : "margin-left";
-    // A zero-width flex item still leaves #browser's Nova gap behind.
+    const sidebarMain = SidebarElements.sidebarMain.getXUL();
+    const sidebarMainStyle = getComputedStyle(sidebarMain);
+    // A zero-width flex item still leaves #browser's Nova gap and any
+    // content-facing fallback margin behind.
     const browserGap = Number.parseFloat(
       getComputedStyle(BrowserElements.browser.getXUL()).columnGap,
     );
+    const contentMargin = Number.parseFloat(
+      sidebarMainStyle.getPropertyValue(
+        position === "right" ? "margin-left" : "margin-right",
+      ),
+    );
     const collapseOffset =
-      SidebarElements.sidebarMain.getBoundingClientRect().width +
-      (Number.isFinite(browserGap) ? browserGap : 0);
+      sidebarMain.getBoundingClientRect().width +
+      (Number.isFinite(browserGap) ? browserGap : 0) +
+      (Number.isFinite(contentMargin) ? contentMargin : 0);
     this.#clearCollapseTransitionEndListener();
     if (animated) {
       this.collapseTransitionEndListener = (event) => {
@@ -143,8 +152,9 @@ export class SidebarMainController {
   uncollapse() {
     this.#clearCollapseTransitionEndListener();
     SidebarElements.sidebarMain.removeAttribute("sb2-collapsed");
-    SidebarElements.sidebarMain.setProperty("margin-right", "0px");
-    SidebarElements.sidebarMain.setProperty("margin-left", "0px");
+    SidebarElements.sidebarMain
+      .removeProperty("margin-right")
+      .removeProperty("margin-left");
     SidebarElements.sidebarCollapseButton.setOpen(true);
   }
 
