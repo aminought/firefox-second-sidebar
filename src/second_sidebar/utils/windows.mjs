@@ -9,7 +9,9 @@ export const isPopupWindow = () => {
     element: document.getElementById("main-window"),
   });
   return (
-    mainWindow.hasAttribute("chromehidden") &&
-    mainWindow.getAttribute("chromehidden").includes("extrachrome")
+    !window.toolbar.visible ||
+    mainWindow.hasAttribute("popup-window") ||
+    (mainWindow.hasAttribute("chromehidden") &&
+      mainWindow.getAttribute("chromehidden").includes("extrachrome"))
   );
 };
