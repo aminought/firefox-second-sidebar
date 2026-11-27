@@ -30,10 +30,10 @@ export class CustomizeModePatcher {
     return (
       moduleSource
         .replaceAll("CustomizableUI.getPlaceForItem", "getPlaceForItem")
-        .replace(/([^/])(CustomizableUI)(\.)/gm, "$1window.$2$3")
+        .replace(/([^/])(CustomizableUI)(\.)/gm, "$1globalThis.$2$3")
         .replace("browser.hidden = true", "browser.hidden = false")
         .replace(
-          "window.CustomizableUI.removeListener",
+          "globalThis.CustomizableUI.removeListener",
           "CustomizableUI.removeListener",
         ) + getPlaceForItem.toString()
     );
