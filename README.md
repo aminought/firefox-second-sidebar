@@ -16,7 +16,6 @@ https://github.com/user-attachments/assets/cd79d644-ca2c-4a30-ae8e-c265f41768b6
 
 - Actions: `Show` • `Hide`
 - Customize via [Customize Toolbar...](https://support.mozilla.org/en-US/kb/customize-firefox-controls-buttons-and-toolbars)
-- The Sidebar Settings header shows the installed Second Sidebar version.
 - Settings:
   - General: `Position (Left / Right)` • `Width` • `Allow window dragging`
   - Visibility: `Auto-hide sidebar` • `Auto-hide behaiour (Inline / Overlay)` • `Hide web panel when sidebar is hidden` • `Set layout-independent shortcut to hide/show sidebar`
