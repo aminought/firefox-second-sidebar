@@ -53,6 +53,9 @@ All paths below are relative to `src/second_sidebar/`, except the entry point.
   Preserve theme-token fallbacks and affected `browser.nova.enabled` rules.
 - Update the README when user-visible features or installation steps change.
   Keep edits focused; avoid unrelated formatting or framework/toolchain changes.
+- Before tagging a release, set `SIDEBAR_VERSION` in
+  `src/second_sidebar/xul/sidebar_main_popup_settings.mjs` to the release number
+  without the `v` prefix. Use a `-dev` suffix for the next version after the release.
 
 ## Changing settings
 

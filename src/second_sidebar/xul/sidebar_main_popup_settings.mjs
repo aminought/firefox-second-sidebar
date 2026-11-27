@@ -24,6 +24,8 @@ import { ToolbarSeparator } from "./base/toolbar_separator.mjs";
 import { VBox } from "./base/vbox.mjs";
 import { isLeftMouseButton } from "../utils/buttons.mjs";
 
+const SIDEBAR_VERSION = "2.1.0-dev";
+
 const ICONS = {
   UNDO: "chrome://global/skin/icons/undo.svg",
 };
@@ -251,7 +253,7 @@ export class SidebarMainPopupSettings extends Panel {
   #compose() {
     this.appendChild(
       new PanelMultiView().appendChildren(
-        new PopupHeader("Sidebar Settings"),
+        new PopupHeader(`Sidebar Settings · v${SIDEBAR_VERSION}`),
         new PopupBody().appendChildren(
           createPopupSet("", [
             createPopupGroup("Position", this.positionMenuList),
